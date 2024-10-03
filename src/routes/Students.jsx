@@ -19,6 +19,7 @@ import Dialog from '@mui/material/Dialog';
 import DialogActions from '@mui/material/DialogActions';
 import DialogContent from '@mui/material/DialogContent';
 import DialogTitle from '@mui/material/DialogTitle';
+import AddAlertIcon from '@mui/icons-material/AddAlert';
 import { TableHead } from '@mui/material';
 import Menu from '@mui/material/Menu';
 import MenuItem from '@mui/material/MenuItem';
@@ -27,16 +28,16 @@ import TextField from '@mui/material/TextField';
 import StudentViolationList from '../components/StudentViolationList';
 const Students = () => {
     const data = [
-        { name: 'John Doe', status: 'Active', date: '2023-10-01' },
-        { name: 'Jane Smith', status: 'Inactive', date: '2023-09-15' },
-        { name: 'Alice Johnson', status: 'Active', date: '2023-08-20' },
-        { name: 'Bob Brown', status: 'Inactive', date: '2023-07-30' },
-        { name: 'Charlie Davis', status: 'Active', date: '2023-06-25' },
-        { name: 'Diana Evans', status: 'Inactive', date: '2023-05-10' },
-        { name: 'Ethan Foster', status: 'Active', date: '2023-04-18' },
-        { name: 'Fiona Green', status: 'Inactive', date: '2023-03-22' },
-        { name: 'George Harris', status: 'Active', date: '2023-02-14' },
-        { name: 'Hannah Irving', status: 'Inactive', date: '2023-01-05' },
+        { id: 1, name: 'John Doe', violation: 'Late Submission', date: '2023-10-01' },
+        { id: 2, name: 'Jane Smith', violation: 'Plagiarism', date: '2023-09-15' },
+        { id: 3, name: 'Alice Johnson', violation: 'Cheating', date: '2023-08-20' },
+        { id: 4, name: 'Bob Brown', violation: 'Disruptive Behavior', date: '2023-07-30' },
+        { id: 5, name: 'Charlie Davis', violation: 'Late Submission', date: '2023-06-25' },
+        { id: 6, name: 'Diana Evans', violation: 'Plagiarism', date: '2023-05-10' },
+        { id: 7, name: 'Ethan Foster', violation: 'Cheating', date: '2023-04-18' },
+        { id: 8, name: 'Fiona Green', violation: 'Disruptive Behavior', date: '2023-03-22' },
+        { id: 9, name: 'George Harris', violation: 'Late Submission', date: '2023-02-14' },
+        { id: 10, name: 'Hannah Irving', violation: 'Plagiarism', date: '2023-01-05' },
     ];
     const [anchorEl, setAnchorEl] = React.useState(null);
     const open = Boolean(anchorEl);
@@ -69,29 +70,31 @@ const Students = () => {
 
     return (
         <>
-            <div className="container mx-auto p-4 ">
-                <div className='flex justify-between h-fit'>
+            <div className="container mx-auto p-4">
+                <div className='flex flex-col md:flex-row md:justify-between h-fit'>
                     <h1 className='text-3xl py-3'>Student List</h1>
                     <button className='bg-blue-500 my-2 p-2 rounded-sm text-white hover:bg-blue-600'
                     onClick={() => setAddStudentModal(true)}
                     >Add Student</button>
                 </div>
-                <div className="overflow-x-auto shadow-sm shadow-zinc-500 rounded-lg ">
+                <div className="overflow-x-auto shadow-sm shadow-zinc-500 rounded-lg">
                     <TableContainer component={Paper}>
                         <Table sx={{ minWidth: 500 }} aria-label="custom pagination table">
                             <TableHead>
-                                <TableRow>
+                                <TableRow className='text-left'>
+                                    <th className="py-5 px-4 border-b">ID</th>
                                     <th className="py-5 px-4 border-b">Name</th>
-                                    <th className="py-5 px-4 border-b">Status</th>
+                                    <th className="py-5 px-4 border-b">Violation</th>
                                     <th className="py-5 px-4 border-b">Date</th>
                                     <th className="py-5 px-4 border-b">Actions</th>
                                 </TableRow>
                             </TableHead>
                             <TableBody>
                                 {data.map((student, index) => (
-                                    <TableRow key={index} className="hover:bg-gray-50 text-center">
+                                    <TableRow key={index} className="hover:bg-gray-50">
+                                        <td className="py-2 px-4 border-b">{student.id}</td>
                                         <td className="py-2 px-4 border-b">{student.name}</td>
-                                        <td className="py-2 px-4 border-b">{student.status}</td>
+                                        <td className="py-2 px-4 border-b">{student.violation}</td>
                                         <td className="py-2 px-4 border-b">{student.date}</td>
                                         <td className="py-2 px-4 border-b">
                                         <Button
@@ -130,10 +133,15 @@ const Students = () => {
                 aria-labelledby="modal-modal-title"
                 aria-describedby="modal-modal-description"
             >
-                <div className='modal bg-white h-2/3 overflow-y-scroll w-2/3 my-auto rounded-md flex flex-col gap-y-3'>
-                    <h2 className='py-5 text-2xl font-bold text-center'>Student Violation History</h2>
+                <div className='modal bg-white h-2/3 overflow-y-scroll:hidden w-2/3 my-auto rounded-md flex flex-col gap-y-3'>
+                    <div className='flex flex-col justify-center items-center md:flex-row md:justify-between md:items-center md:w-full'>
+                        <h2 className='py-3 text-2xl font-bold text-center'>Student Violation History</h2>
+                        <Button className='bg-blue-500 p-2 rounded-sm text-white hover:bg-blue-600 hover:text-white'>
+                            <AddAlertIcon /> Alert
+                        </Button>
+                    </div>
+                   
                     <TextField
-                    required
                     id="outlined-required"
                     label="Student Name"
                     defaultValue="Hello World"
@@ -141,7 +149,6 @@ const Students = () => {
                     readOnly
                     />
                     <TextField
-                    required
                     id="outlined-required"
                     label="Status"
                     defaultValue="Hello World"
@@ -149,7 +156,6 @@ const Students = () => {
                     readOnly
                     />
                     <TextField
-                    required
                     id="outlined-required"
                     label="Date"
                     defaultValue="Hello World"
@@ -157,7 +163,7 @@ const Students = () => {
                     readOnly
                     />
                    <div id="Violation list">
-                        <h1 className='text-2xl'>History</h1>
+                        <h2 className='py-3 text-2xl font-bold text-center'>Violation Records</h2>
                         <StudentViolationList />
                    </div>
                 </div>

@@ -10,6 +10,8 @@ import {
 import Home from "./routes/Home";
 import Students from './routes/Students';
 import Layout from './layout';
+import Violations from './routes/Violations';
+import Chart from './routes/Chart';
 
 const router = createBrowserRouter([
   {
@@ -22,6 +24,14 @@ const router = createBrowserRouter([
       {
         path: "/Students",
         element: <Students />
+      },
+      {
+        path: "/Violations",
+        element: <Violations />
+      },
+      {
+        path: "/Chart",
+        element: <Chart />
       },
     ]
   },

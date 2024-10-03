@@ -15,6 +15,7 @@ import FirstPageIcon from '@mui/icons-material/FirstPage';
 import KeyboardArrowLeft from '@mui/icons-material/KeyboardArrowLeft';
 import KeyboardArrowRight from '@mui/icons-material/KeyboardArrowRight';
 import LastPageIcon from '@mui/icons-material/LastPage';
+import { TableHead } from '@mui/material';
 
 function TablePaginationActions(props) {
   const theme = useTheme();
@@ -77,8 +78,8 @@ TablePaginationActions.propTypes = {
   rowsPerPage: PropTypes.number.isRequired,
 };
 
-function createData(name, calories, fat) {
-  return { name, calories, fat };
+function createData(name, date) {
+  return { name, date };
 }
 
 const rows = [
@@ -167,6 +168,12 @@ export default function CustomPaginationActionsTable() {
   return (
     <TableContainer component={Paper}>
       <Table sx={{ minWidth: 500 }} aria-label="custom pagination table">
+        <TableHead>
+          <TableRow >
+            <th className="py-5 px-4 border-b w-1/2">Violation</th>
+            <th className="py-5 px-4 border-b w-1/2">Date Updated</th>
+          </TableRow>
+        </TableHead>
         <TableBody>
           {(rowsPerPage > 0
             ? rows.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
@@ -176,11 +183,8 @@ export default function CustomPaginationActionsTable() {
               <TableCell component="th" scope="row">
                 {row.name}
               </TableCell>
-              <TableCell style={{ width: 160 }} align="right">
-                {row.calories}
-              </TableCell>
-              <TableCell style={{ width: 160 }} align="right">
-                {row.fat}
+              <TableCell component="th" scope="row">
+                {row.date}
               </TableCell>
             </TableRow>
           ))}
@@ -188,7 +192,7 @@ export default function CustomPaginationActionsTable() {
             <TableRow style={{ height: 53 * emptyRows }}>
               <TableCell colSpan={6} />
             </TableRow>
-          )}//sds
+          )}
         </TableBody>
         <TableFooter>
           <TableRow>

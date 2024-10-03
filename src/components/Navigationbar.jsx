@@ -8,12 +8,13 @@ const Navigationbar = () => {
         <nav className="h-fit w-screen bg-red-500 p-3 justify-between flex text-white sticky">
             <div className="flex p-2 hover:bg-red-700 hover:rounded-md hover:cursor-pointer gap-x-2">
                 <img src={reactsvg} alt="React Logo" className="h-fit" />
-                <label className='flex justify-center self-center'>Student Violation</label>
+                <label className='flex justify-center self-center'>Batangas State University Disciplinary Management</label>
             </div>
             <div className="flex gap-x-5 justify-center self-center">
                 <Link className='p-2 hover:bg-red-700 hover:rounded-md hover:cursor-pointer' to="/">Home</Link>
                 <Link className='p-2 hover:bg-red-700 hover:rounded-md hover:cursor-pointer' to="/Students">Students</Link>
-                <Link className='p-2 hover:bg-red-700 hover:rounded-md hover:cursor-pointer' to="/violations">Violation</Link>
+                <Link className='p-2 hover:bg-red-700 hover:rounded-md hover:cursor-pointer' to="/Violations">Violation</Link>
+                <Link className='p-2 hover:bg-red-700 hover:rounded-md hover:cursor-pointer' to="/Chart">Charts</Link>
             </div>
         </nav>
     );
