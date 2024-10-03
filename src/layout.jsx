@@ -4,7 +4,7 @@ import { Outlet } from "react-router-dom";
 import './index.css'
 const Layout = () => {
     return (
-        <div className='overflow-x-scroll'>
+        <div className='overflow-x-scroll:hidden'>
             <Navigationbar />
             <Outlet />
         </div>

@@ -1,11 +1,30 @@
 import React from 'react';
 import Button from '@mui/material/Button';
+import PropTypes from 'prop-types';
+import Box from '@mui/material/Box';
+import Table from '@mui/material/Table';
+import TableBody from '@mui/material/TableBody';
+import TableCell from '@mui/material/TableCell';
+import TableContainer from '@mui/material/TableContainer';
+import TableFooter from '@mui/material/TableFooter';
+import TablePagination from '@mui/material/TablePagination';
+import TableRow from '@mui/material/TableRow';
+import Paper from '@mui/material/Paper';
+import IconButton from '@mui/material/IconButton';
+import FirstPageIcon from '@mui/icons-material/FirstPage';
+import KeyboardArrowLeft from '@mui/icons-material/KeyboardArrowLeft';
+import KeyboardArrowRight from '@mui/icons-material/KeyboardArrowRight';
+import LastPageIcon from '@mui/icons-material/LastPage';
+import Dialog from '@mui/material/Dialog';
+import DialogActions from '@mui/material/DialogActions';
+import DialogContent from '@mui/material/DialogContent';
+import DialogTitle from '@mui/material/DialogTitle';
+import { TableHead } from '@mui/material';
 import Menu from '@mui/material/Menu';
 import MenuItem from '@mui/material/MenuItem';
 import Modal from '@mui/material/Modal';
 import TextField from '@mui/material/TextField';
 import StudentViolationList from '../components/StudentViolationList';
-import CreateStudentModal from '../components/CreateStudentModal';
 const Students = () => {
     const data = [
         { name: 'John Doe', status: 'Active', date: '2023-10-01' },
@@ -57,51 +76,52 @@ const Students = () => {
                     onClick={() => setAddStudentModal(true)}
                     >Add Student</button>
                 </div>
-
                 <div className="overflow-x-auto shadow-sm shadow-zinc-500 rounded-lg ">
-                    <table className="min-w-full border-gray-200 rounded-md">
-                        <thead>
-                            <tr className="bg-gray-500 text-white text-lg font-bold">
-                                <th className="py-5 px-4 border-b">Name</th>
-                                <th className="py-5 px-4 border-b">Status</th>
-                                <th className="py-5 px-4 border-b">Date</th>
-                                <th className="py-5 px-4 border-b">Actions</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            {data.map((student, index) => (
-                                <tr key={index} className="hover:bg-gray-50 text-center">
-                                    <td className="py-2 px-4 border-b">{student.name}</td>
-                                    <td className="py-2 px-4 border-b">{student.status}</td>
-                                    <td className="py-2 px-4 border-b">{student.date}</td>
-                                    <td className="py-2 px-4 border-b">
-                                    <Button
-                                        id="basic-button"
-                                        aria-controls={open ? 'basic-menu' : undefined}
-                                        aria-haspopup="true"
-                                        aria-expanded={open ? 'true' : undefined}
-                                        onClick={handleClick}
-                                    >
-                                        Action
-                                    </Button>
-                                    <Menu
-                                        id="basic-menu"
-                                        anchorEl={anchorEl}
-                                        open={open}
-                                        onClose={handleClose}
-                                        MenuListProps={{
-                                        'aria-labelledby': 'basic-button',
-                                        }}
-                                    >
-                                        <MenuItem onClick={() => handleViewViolationModal(student)}>View Violation</MenuItem>
-                                        <MenuItem onClick={() => handleUpdateViolationModal(student)}>Update Violation</MenuItem>
-                                        <MenuItem onClick={() => handleDeleteViolationModal(student)}>Delete Violation</MenuItem>
-                                    </Menu>
-                                    </td>
-                                </tr>
-                            ))}
-                        </tbody>
-                    </table>
+                    <TableContainer component={Paper}>
+                        <Table sx={{ minWidth: 500 }} aria-label="custom pagination table">
+                            <TableHead>
+                                <TableRow>
+                                    <th className="py-5 px-4 border-b">Name</th>
+                                    <th className="py-5 px-4 border-b">Status</th>
+                                    <th className="py-5 px-4 border-b">Date</th>
+                                    <th className="py-5 px-4 border-b">Actions</th>
+                                </TableRow>
+                            </TableHead>
+                            <TableBody>
+                                {data.map((student, index) => (
+                                    <TableRow key={index} className="hover:bg-gray-50 text-center">
+                                        <td className="py-2 px-4 border-b">{student.name}</td>
+                                        <td className="py-2 px-4 border-b">{student.status}</td>
+                                        <td className="py-2 px-4 border-b">{student.date}</td>
+                                        <td className="py-2 px-4 border-b">
+                                        <Button
+                                            id="basic-button"
+                                            aria-controls={open ? 'basic-menu' : undefined}
+                                            aria-haspopup="true"
+                                            aria-expanded={open ? 'true' : undefined}
+                                            onClick={handleClick}
+                                        >
+                                            Action
+                                        </Button>
+                                        <Menu
+                                            id="basic-menu"
+                                            anchorEl={anchorEl}
+                                            open={open}
+                                            onClose={handleClose}
+                                            MenuListProps={{
+                                            'aria-labelledby': 'basic-button',
+                                            }}
+                                        >
+                                            <MenuItem onClick={() => handleViewViolationModal(student)}>View Violation</MenuItem>
+                                            <MenuItem onClick={() => handleUpdateViolationModal(student)}>Update Violation</MenuItem>
+                                            <MenuItem onClick={() => handleDeleteViolationModal(student)}>Delete Violation</MenuItem>
+                                        </Menu>
+                                        </td>
+                                    </TableRow>
+                                ))}
+                            </TableBody>
+                        </Table>
+                    </TableContainer>
                 </div>
             </div>
             { ViewModal && (<Modal
@@ -178,7 +198,6 @@ const Students = () => {
                 </Modal>)
             }
         </>
-
     );
 };
 

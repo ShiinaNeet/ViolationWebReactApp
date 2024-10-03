@@ -13,7 +13,7 @@ const Navigationbar = () => {
             <div className="flex gap-x-5 justify-center self-center">
                 <Link className='p-2 hover:bg-red-700 hover:rounded-md hover:cursor-pointer' to="/">Home</Link>
                 <Link className='p-2 hover:bg-red-700 hover:rounded-md hover:cursor-pointer' to="/Students">Students</Link>
-                <Link className='p-2 hover:bg-red-700 hover:rounded-md hover:cursor-pointer' to="/violation">Violation</Link>
+                <Link className='p-2 hover:bg-red-700 hover:rounded-md hover:cursor-pointer' to="/violations">Violation</Link>
             </div>
         </nav>
     );
