@@ -4,8 +4,8 @@ import Menu from '@mui/material/Menu';
 import MenuItem from '@mui/material/MenuItem';
 import Modal from '@mui/material/Modal';
 import TextField from '@mui/material/TextField';
-
 import StudentViolationList from '../components/StudentViolationList';
+import CreateStudentModal from '../components/CreateStudentModal';
 const Students = () => {
     const data = [
         { name: 'John Doe', status: 'Active', date: '2023-10-01' },
@@ -23,19 +23,20 @@ const Students = () => {
     const open = Boolean(anchorEl);
     const [ViewModal, setViewModal] = React.useState(false);
     const [targetStudent, setStudent] = React.useState({});
-
+    const [addStudentModal, setAddStudentModal] = React.useState(false);
     const handleClick = (event) => {
         setAnchorEl(event.currentTarget);
     };
     const handleClose = () => {
         setAnchorEl(null);
         setViewModal(false);
-        
+        setAddStudentModal(false);
     };
     const handleViewViolationModal = (person) => {
         setAnchorEl(null);
         setStudent(person);
         setViewModal(true);
+        setAddStudentModal(false);
         
     };
     const handleUpdateViolationModal = () => {
@@ -50,6 +51,13 @@ const Students = () => {
     return (
         <>
             <div className="container mx-auto p-4 ">
+                <div className='flex justify-between h-fit'>
+                    <h1 className='text-3xl py-3'>Student List</h1>
+                    <button className='bg-blue-500 my-2 p-2 rounded-sm text-white hover:bg-blue-600'
+                    onClick={() => setAddStudentModal(true)}
+                    >Add Student</button>
+                </div>
+
                 <div className="overflow-x-auto shadow-sm shadow-zinc-500 rounded-lg ">
                     <table className="min-w-full border-gray-200 rounded-md">
                         <thead>
@@ -134,6 +142,40 @@ const Students = () => {
                    </div>
                 </div>
             </Modal>)
+            }
+            { addStudentModal && 
+                (<Modal
+                    open={addStudentModal}
+                    onClose={handleClose}
+                    aria-labelledby="modal-modal-title"
+                    aria-describedby="modal-modal-description"
+                > 
+                <div className='modal bg-white h-fit w-fit rounded-md flex'>
+                  {/* <CreateStudentModal onClose={handleClose} /> */}
+                  <div className='flex flex-col w-[400px] gap-y-5'>
+                        <h2 className='py-3 text-2xl font-bold text-center'>Add New Student</h2>
+                        <TextField
+                        required
+                        id="outlined-required"
+                        label="Student Name"
+                        // onChange={(e) => setStudentName(e.target.value)}
+                        
+                        />
+                        <div className='flex gap-x-2'>
+                            <button 
+                            className='bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded w-full'
+                            onClick={() => handleSubmit()} >
+                                Submit
+                            </button>
+                            <button 
+                            className=' hover:bg-slate-200 text-black font-bold py-2 px-4 rounded w-full'
+                            onClick={handleClose} >
+                                Cancel
+                            </button>
+                        </div>
+                    </div>
+                </div>
+                </Modal>)
             }
         </>
 
