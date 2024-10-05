@@ -115,6 +115,7 @@ export default function Violations() {
     const [rows, setRows] = React.useState(initialRows);
     const [open, setOpen] = React.useState(false);
     const [openCreate, setOpenCreate] = React.useState(false);
+    const [openDelete, setopenDelete] = React.useState(false);
     const [currentRow, setCurrentRow] = React.useState({ id: '', name: '', description: '', date: '' });
     const [violations, setViolations] = React.useState({ name: '', description: '', date: ''});
     const emptyRows =
@@ -141,6 +142,7 @@ export default function Violations() {
     const handleClose = () => {
         setOpen(false);
         setOpenCreate(false);
+        setopenDelete(false);
         setCurrentRow({ id: '', name: '', description: '', date: '' });
         setViolations({ id: '', name: '', description: '', date: '' });
     };
@@ -160,9 +162,13 @@ export default function Violations() {
         handleClose();
     };
 
-    const handleDelete = (id) => {
+    const handleDelete = (id,name) => {
+        console.log("Deleted", name);
         setRows((prevRows) => prevRows.filter((row) => row.id !== id));
+        handleClose();
     };
+   
+    
 
     return (
         <div className="container h-full mx-auto">
@@ -179,7 +185,7 @@ export default function Violations() {
                     <Table sx={{ minWidth: 500 }} >
                         <TableHead>
                             <TableRow>
-                                <th className="py-5 px-4 font-bold text-center">Violation Name </th>
+                                <th className="py-5 px-4 font-bold ">Violation Name </th>
                                 <th className="py-5 px-4 font-bold">Violation Description </th>
                                 <th className="py-5 px-4 font-bold">Date Updated </th>
                                 <th className="py-5 px-4 font-bold text-center">Actions</th>
@@ -201,7 +207,9 @@ export default function Violations() {
                                             <Button variant="contained" color="primary" className="mr-2" onClick={() => handleOpen(row)}>
                                                 Edit
                                             </Button>
-                                            <Button variant="contained" color="secondary" onClick={() => handleDelete(row.id)}>
+                                            <Button variant="contained" color="secondary" 
+                                                onClick={() => { setCurrentRow({...row}); setopenDelete(true); }}
+                                            >
                                                 Delete
                                             </Button>
                                         </div>
@@ -238,7 +246,6 @@ export default function Violations() {
                             </TableRow>
                         </TableFooter>
                     </Table>
-
                     <Dialog open={open} onClose={handleClose}>
                         <DialogTitle>Edit Violation</DialogTitle>
                         <DialogContent>
@@ -318,6 +325,47 @@ export default function Violations() {
                             </Button>
                             <Button onClick={handleSave} color="primary">
                                 Save
+                            </Button>
+                        </DialogActions>
+                    </Dialog>
+                    <Dialog open={openDelete} onClose={handleClose}>
+                        <DialogTitle>Delete Violation?</DialogTitle>
+                        <DialogContent>
+                            <TextField
+                                autoFocus
+                                margin="dense"
+                                label="Violation Name"
+                                type="text"
+                                fullWidth
+                                value={currentRow.name}
+                                readOnly
+                            />
+                            <TextField
+                                margin="dense"
+                                label="Description"
+                                type="text"
+                                fullWidth
+                                value={currentRow.description}
+                                readOnly
+                            />
+                            <TextField
+                                margin="dense"
+                                label="Date Updated"
+                                type="date"
+                                fullWidth
+                                value={currentRow.date}
+                                readOnly
+                                InputLabelProps={{
+                                    shrink: true,
+                                }}
+                            />
+                        </DialogContent>
+                        <DialogActions>
+                            <Button onClick={()=>handleDelete(currentRow.id,currentRow.name)} color="primary">
+                                Delete
+                            </Button>
+                            <Button onClick={handleClose} color="primary">
+                                Cancel
                             </Button>
                         </DialogActions>
                     </Dialog>
