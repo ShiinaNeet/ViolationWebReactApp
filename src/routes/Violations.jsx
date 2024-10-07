@@ -20,7 +20,8 @@ import DialogActions from '@mui/material/DialogActions';
 import DialogContent from '@mui/material/DialogContent';
 import DialogTitle from '@mui/material/DialogTitle';
 import TextField from '@mui/material/TextField';
-import { TableHead } from '@mui/material';
+import { Alert, AlertTitle, Snackbar, TableHead } from '@mui/material';
+import axios from 'axios';
 
 function TablePaginationActions(props) {
     const { count, page, rowsPerPage, onPageChange } = props;
@@ -112,12 +113,16 @@ const initialRows = [
 export default function Violations() {
     const [page, setPage] = React.useState(0);
     const [rowsPerPage, setRowsPerPage] = React.useState(5);
-    const [rows, setRows] = React.useState(initialRows);
+    const [rows, setRows] = React.useState([]);
     const [open, setOpen] = React.useState(false);
     const [openCreate, setOpenCreate] = React.useState(false);
     const [openDelete, setopenDelete] = React.useState(false);
-    const [currentRow, setCurrentRow] = React.useState({ id: '', name: '', description: '', date: '' });
-    const [violations, setViolations] = React.useState({ name: '', description: '', date: ''});
+    const [currentRow, setCurrentRow] = React.useState({ id: '', name: '', description: '' });
+    const [violations, setViolations] = React.useState({ name: '', description: ''});
+    const [alertMessage, setAlertMessage] = React.useState({open: false ,title: '', message: '', variant: 'success'});
+
+    const vertical = 'bottom';
+    const horizontal = 'right';
     const emptyRows =
         page > 0 ? Math.max(0, (1 + page) * rowsPerPage - rows.length) : 0;
 
@@ -146,8 +151,15 @@ export default function Violations() {
         setCurrentRow({ id: '', name: '', description: '', date: '' });
         setViolations({ id: '', name: '', description: '', date: '' });
     };
-
-    const handleSave = () => {
+    const handleAlertClose = (event, reason) => {
+        if (reason === 'clickaway') {
+          return;
+        }
+    
+        setAlertMessage({open:false});
+      };
+    
+    const handleSave = async () => {
         // setRows((prevRows) => {
         //     const existingIndex = prevRows.findIndex((r) => r.id === currentRow.id);
         //     if (existingIndex >= 0) {
@@ -158,18 +170,107 @@ export default function Violations() {
         //         return [...prevRows, { ...currentRow, id: prevRows.length + 1 }];
         //     }
         // });
-        console.log("Saved");
-        handleClose();
-    };
-
-    const handleDelete = (id,name) => {
-        console.log("Deleted", name);
-        setRows((prevRows) => prevRows.filter((row) => row.id !== id));
-        handleClose();
-    };
-   
+        setAlertMessage({open:true, title: 'Success', message: 'Violation has been added successfully', variant: 'success'});
+        // try {
+        //     const response = await axios.post('/violation/create', violations, {
+        //         headers: {
+        //             'Content-Type': 'application/json',
+        //         }
+        //     });
     
+        //     if (response.data.status === 'Success') {
+        //         console.log("Saved");
+        //         fetchData(); 
+        //     } else {
+        //         console.log("Failed to save");
+        //     }
+        // } catch (e) {
+        //     console.log("Error Occurred: ", e);
+        //     setAlertMessage({open:true, title: 'Error Occured!', message: 'Please try again later.', variant: 'error'});
+        // }
+        handleClose();
+    };
+    const handleUpdate = async () => {
+        // setRows((prevRows) => {
+        //     const existingIndex = prevRows.findIndex((r) => r.id === currentRow.id);
+        //     if (existingIndex >= 0) {
+        //         const updatedRows = [...prevRows];
+        //         updatedRows[existingIndex] = currentRow;
+        //         return updatedRows;
+        //     } else {
+        //         return [...prevRows, { ...currentRow, id: prevRows.length + 1 }];
+        //     }
+        // });
+        // try {
+        //     const response = await axios.post('/violation/update', currentRow, {
+        //         headers: {
+        //             'Content-Type': 'application/json',
+        //         }
+        //     });
+    
+        //     if (response.data.status === 'Success') {
+        //         console.log("Saved");
+        //         fetchData(); 
+        //     } else {
+        //         console.log("Failed to Update");
+        //     }
+        // } catch (e) {
+        //     console.log("Error Occurred: ", e);
+        //     setAlertMessage({open:true, title: 'Error Occured!', message: 'Please try again later.', variant: 'error'});
+        // }
+        setAlertMessage({open:true, title: 'Success', message: 'Violation has been Updated successfully',variant: 'info'});
+        handleClose();
+    };
+    const handleDelete = async (id,name) => {
 
+        // try {
+        //     const response = await axios.post('/violation/update', id, {
+        //         headers: {
+        //             'Content-Type': 'application/json',
+        //         }
+        //     });
+    
+        //     if (response.data.status === 'Success') {
+        //         console.log("Deleted");
+        //         fetchData(); 
+        //     } else {
+        //         console.log("Failed to Delete. Please Try again later");
+        //     }
+        // } catch (e) {
+        //     console.log("Error Occurred: ", e);
+            setAlertMessage({open:true, title: 'Error Occured!', message: 'Please try again later.', variant: 'error'});
+        // }
+       
+        // setRows((prevRows) => prevRows.filter((row) => row.id !== id));
+        // setAlertMessage({open:true, title: 'Success', message: 'Violation has been Deleted successfully', variant: 'warning'});
+        handleClose();
+    };
+    
+    React.useEffect(() => {
+        
+        fetchData();
+        setRows(initialRows);
+        return () => {
+            console.log('Violations component unmounted');
+        }
+    }, [page, rowsPerPage]);
+
+    const fetchData = async () => {
+        try {
+            const response = await axios.get('https://student-discipline-api-fmm2.onrender.com/violation/paginated', {
+                params: {
+                    skip: page * rowsPerPage,
+                    limit: rowsPerPage
+                },
+                headers: {
+                    'Content-Type': 'application/json',
+                }
+            });
+            setRows(response.data);
+        } catch (error) {
+            console.error('There was an error fetching the data!', error);
+        }
+    };
     return (
         <div className="container h-full mx-auto">
              <div className="container mx-auto p-4 ">
@@ -187,7 +288,6 @@ export default function Violations() {
                             <TableRow>
                                 <th className="py-5 px-4 font-bold ">Violation Name </th>
                                 <th className="py-5 px-4 font-bold">Violation Description </th>
-                                <th className="py-5 px-4 font-bold">Date Updated </th>
                                 <th className="py-5 px-4 font-bold text-center">Actions</th>
                             </TableRow>
                         </TableHead>
@@ -201,7 +301,6 @@ export default function Violations() {
                                         {row.name}
                                     </TableCell>
                                     <TableCell>{row.description}</TableCell>
-                                    <TableCell>{row.date}</TableCell>
                                     <td>
                                         <div className='flex gap-x-2 justify-center'>
                                             <Button variant="contained" color="primary" className="mr-2" onClick={() => handleOpen(row)}>
@@ -282,7 +381,7 @@ export default function Violations() {
                             <Button onClick={handleClose} color="primary">
                                 Cancel
                             </Button>
-                            <Button onClick={handleSave} color="primary">
+                            <Button onClick={handleUpdate} color="primary">
                                 Save
                             </Button>
                         </DialogActions>
@@ -306,17 +405,6 @@ export default function Violations() {
                                 fullWidth
                                 value={violations.description}
                                 onChange={(e) => setViolations({ ...violations, description: e.target.value })}
-                            />
-                            <TextField
-                                margin="dense"
-                                label="Date Updated"
-                                type="date"
-                                fullWidth
-                                value={violations.date}
-                                onChange={(e) => setViolations({ ...violations, date: e.target.value })}
-                                InputLabelProps={{
-                                    shrink: true,
-                                }}
                             />
                         </DialogContent>
                         <DialogActions>
@@ -371,7 +459,16 @@ export default function Violations() {
                     </Dialog>
                 </TableContainer>
             </div>
-            
+            <Snackbar open={alertMessage.open} autoHideDuration={3000} onClose={handleAlertClose} anchorOrigin={{ vertical, horizontal }} key={vertical + horizontal}>
+                <Alert
+                onClose={handleAlertClose}
+                severity={alertMessage.variant}
+                sx={{ width: '100%' }}
+                >
+                    <AlertTitle>{alertMessage.title}</AlertTitle>
+                    {alertMessage.message}
+                </Alert>
+            </Snackbar>
         </div>
         
     );
