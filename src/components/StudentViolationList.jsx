@@ -16,6 +16,8 @@ import KeyboardArrowLeft from '@mui/icons-material/KeyboardArrowLeft';
 import KeyboardArrowRight from '@mui/icons-material/KeyboardArrowRight';
 import LastPageIcon from '@mui/icons-material/LastPage';
 import { TableHead } from '@mui/material';
+import axios from 'axios';
+import formatDate from '../utils/moment';
 
 function TablePaginationActions(props) {
   const theme = useTheme();
@@ -78,83 +80,14 @@ TablePaginationActions.propTypes = {
   rowsPerPage: PropTypes.number.isRequired,
 };
 
-function createData(name, date) {
-  return { name, date };
-}
-
-const rows = [
-    createData('Late Submission', '2023-10-01'),
-    createData('Absent', '2023-10-02'),
-    createData('Disruptive Behavior', '2023-10-03'),
-    createData('Incomplete Homework', '2023-10-04'),
-    createData('Cheating', '2023-10-05'),
-    createData('Unapproved Device Usage', '2023-10-06'),
-    createData('Dress Code Violation', '2023-10-07'),
-    createData('Bullying', '2023-10-08'),
-    createData('Skipping Class', '2023-10-09'),
-    createData('Vandalism', '2023-10-10'),
-    createData('Tardiness', '2023-10-11'),
-    createData('Disrespectful Behavior', '2023-10-12'),
-    createData('Fighting', '2023-10-13'),
-    createData('Forgery', '2023-10-14'),
-    createData('Gambling', '2023-10-15'),
-    createData('Insubordination', '2023-10-16'),
-    createData('Littering', '2023-10-17'),
-    createData('Loitering', '2023-10-18'),
-    createData('Plagiarism', '2023-10-19'),
-    createData('Profanity', '2023-10-20'),
-    createData('Smoking', '2023-10-21'),
-    createData('Theft', '2023-10-22'),
-    createData('Truancy', '2023-10-23'),
-    createData('Unauthorized Absence', '2023-10-24'),
-    createData('Unauthorized Area', '2023-10-25'),
-    createData('Unauthorized Use of Equipment', '2023-10-26'),
-    createData('Unexcused Absence', '2023-10-27'),
-    createData('Unprepared for Class', '2023-10-28'),
-    createData('Unsafe Behavior', '2023-10-29'),
-    createData('Verbal Abuse', '2023-10-30'),
-    createData('Violence', '2023-10-31'),
-    createData('Weapons Possession', '2023-11-01'),
-    createData('Chewing Gum', '2023-11-02'),
-    createData('Classroom Disruption', '2023-11-03'),
-    createData('Defiance', '2023-11-04'),
-    createData('Disrespect', '2023-11-05'),
-    createData('Dress Code', '2023-11-06'),
-    createData('Drug Use', '2023-11-07'),
-    createData('Electronic Device', '2023-11-08'),
-    createData('False Alarm', '2023-11-09'),
-    createData('Falsification', '2023-11-10'),
-    createData('Fighting', '2023-11-11'),
-    createData('Forgery', '2023-11-12'),
-    createData('Gambling', '2023-11-13'),
-    createData('Harassment', '2023-11-14'),
-    createData('Inappropriate Language', '2023-11-15'),
-    createData('Insubordination', '2023-11-16'),
-    createData('Littering', '2023-11-17'),
-    createData('Loitering', '2023-11-18'),
-    createData('Plagiarism', '2023-11-19'),
-    createData('Profanity', '2023-11-20'),
-    createData('Smoking', '2023-11-21'),
-    createData('Theft', '2023-11-22'),
-    createData('Truancy', '2023-11-23'),
-    createData('Unauthorized Absence', '2023-11-24'),
-    createData('Unauthorized Area', '2023-11-25'),
-    createData('Unauthorized Use of Equipment', '2023-11-26'),
-    createData('Unexcused Absence', '2023-11-27'),
-    createData('Unprepared for Class', '2023-11-28'),
-    createData('Unsafe Behavior', '2023-11-29'),
-    createData('Verbal Abuse', '2023-11-30'),
-    createData('Violence', '2023-12-01'),
-    createData('Weapons Possession', '2023-12-02'),
-].sort((a, b) => (a.date < b.date ? -1 : 1));
- 
-
-export default function CustomPaginationActionsTable() {
+export default function StudentViolationList(props) {
+  const { student } = props;
   const [page, setPage] = React.useState(0);
   const [rowsPerPage, setRowsPerPage] = React.useState(5);
-
+  const [data, setData] = React.useState([]);
+  // console.log(student);
   const emptyRows =
-    page > 0 ? Math.max(0, (1 + page) * rowsPerPage - rows.length) : 0;
+    page > 0 ? Math.max(0, (1 + page) * rowsPerPage - data.length) : 0;
 
   const handleChangePage = (event, newPage) => {
     setPage(newPage);
@@ -165,26 +98,42 @@ export default function CustomPaginationActionsTable() {
     setPage(0);
   };
 
+  React.useEffect(() => {
+    if (student && Array.isArray(student.violations)) {
+      setData(student.violations);
+    } else {
+      setData([]);
+    }
+    return () => setData([]);
+  }, [student]);
+
   return (
     <TableContainer component={Paper}>
       <Table sx={{ minWidth: 500 }} aria-label="custom pagination table">
         <TableHead>
-          <TableRow >
+          <TableRow>
             <th className="py-5 px-4 border-b w-1/2">Violation</th>
             <th className="py-5 px-4 border-b w-1/2">Date Updated</th>
           </TableRow>
         </TableHead>
         <TableBody>
+          {data.length === 0 && (
+            <TableRow>
+              <TableCell colSpan={2} className="text-center">
+                No Violations
+              </TableCell>
+            </TableRow>
+          )}
           {(rowsPerPage > 0
-            ? rows.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
-            : rows
+            ? data.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
+            : data
           ).map((row) => (
             <TableRow key={row.name}>
               <TableCell component="th" scope="row">
                 {row.name}
               </TableCell>
               <TableCell component="th" scope="row">
-                {row.date}
+                {formatDate(new Date(parseInt(row.date)), 'MMMM DD, YYYY')}
               </TableCell>
             </TableRow>
           ))}
@@ -199,7 +148,7 @@ export default function CustomPaginationActionsTable() {
             <TablePagination
               rowsPerPageOptions={[5, 10, 25, { label: 'All', value: -1 }]}
               colSpan={3}
-              count={rows.length}
+              count={data.length}
               rowsPerPage={rowsPerPage}
               page={page}
               slotProps={{

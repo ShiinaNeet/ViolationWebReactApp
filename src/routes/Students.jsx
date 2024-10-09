@@ -1,7 +1,6 @@
 import React, { useEffect } from 'react';
 import Button from '@mui/material/Button';
 import PropTypes from 'prop-types';
-import Box from '@mui/material/Box';
 import Table from '@mui/material/Table';
 import TableBody from '@mui/material/TableBody';
 import TableCell from '@mui/material/TableCell';
@@ -20,8 +19,14 @@ import DialogActions from '@mui/material/DialogActions';
 import DialogContent from '@mui/material/DialogContent';
 import DialogTitle from '@mui/material/DialogTitle';
 import AddAlertIcon from '@mui/icons-material/AddAlert';
-import { TableHead } from '@mui/material';
-import Menu from '@mui/material/Menu';
+import Box from '@mui/material/Box';
+import OutlinedInput from '@mui/material/OutlinedInput';
+import InputLabel from '@mui/material/InputLabel';
+import FormControl from '@mui/material/FormControl';
+import Select from '@mui/material/Select';
+import Chip from '@mui/material/Chip';
+import { useTheme } from '@mui/material/styles';
+import { Alert, AlertTitle, Snackbar, TableHead } from '@mui/material';
 import MenuItem from '@mui/material/MenuItem';
 import Modal from '@mui/material/Modal';
 import TextField from '@mui/material/TextField';
@@ -87,7 +92,23 @@ TablePaginationActions.propTypes = {
     page: PropTypes.number.isRequired,
     rowsPerPage: PropTypes.number.isRequired,
 };
-
+const ITEM_HEIGHT = 48;
+const ITEM_PADDING_TOP = 8;
+const MenuProps = {
+  PaperProps: {
+    style: {
+      maxHeight: ITEM_HEIGHT * 4.5 + ITEM_PADDING_TOP,
+      width: 250,
+    },
+  },
+};
+function getStyles(name, personName, theme) {
+    return {
+      fontWeight: personName.includes(name)
+        ? theme.typography.fontWeightMedium
+        : theme.typography.fontWeightRegular,
+    };
+}
 const Students = () => {
     const data = [
         { id: 1, name: 'John Doe', violation: 'Late Submission', count: 3, department: 'Computer Science', year: '3rd Year', section: 'A' },
@@ -141,15 +162,44 @@ const Students = () => {
         { id: 49, name: 'Umar Vance', violation: 'Late Submission', count: 3, department: 'Computer Science', year: '3rd Year', section: 'A' },
         { id: 50, name: 'Vera White', violation: 'Plagiarism', count: 1, department: 'Information Technology', year: '2nd Year', section: 'B' }
     ];
+
     const [anchorEl, setAnchorEl] = React.useState(null);
     const open = Boolean(anchorEl);
     const [ViewModal, setViewModal] = React.useState(false);
     const [targetStudent, setStudent] = React.useState({
-        id: 0,
-        name: '',
-        violation: '',
-        date: ''
+        userid: 0,
+        fullname: '',
+        violations: [],
+        year: '',
+        department: '',
+        section: ''
+  
     });
+    const [violationList, setViolationList] = React.useState([]);
+
+    const theme = useTheme();
+    const handleChange = (event) => {
+        const {
+        target: { value },
+        } = event;
+        setPersonName(
+        // On autofill we get a stringified value.
+        typeof value === 'string' ? value.split(',') : value,
+        );
+    };
+    const vertical = 'bottom';
+    const horizontal = 'right';
+    const [alertMessage, setAlertMessage] = React.useState({open: false ,title: '', message: '', variant: ''});
+    const [errorMessages, setErrorMessages] = React.useState([]);
+    const handleAlertClose = (event, reason) => {
+        if (reason === 'clickaway') {
+          return;
+        }
+    
+        setAlertMessage({open:false});
+      };
+
+
     const [page, setPage] = React.useState(0);
     const [rows, setRows] = React.useState([]);
     const [rowsPerPage, setRowsPerPage] = React.useState(5);
@@ -165,13 +215,17 @@ const Students = () => {
 
 
     const [addStudentModal, setAddStudentModal] = React.useState(false);
+    const [updateStudentViolationModal, setUpdateStudentViolationModal] = React.useState(false);
     const [deleteStudentViolationModal, setDeleteStudentViolationModal] = React.useState(false);
     const [messageStudentModal, setMessageStudentModal] = React.useState(false);
 
     useEffect(() => {
-        setRows(data);
-    }, [ page, rowsPerPage]);
-
+        // if ((page + 1) * rowsPerPage >= rows.length) {
+        //     fetchData();
+        // }
+        fetchViolationData();
+        fetchData();
+    }, []);
     const handleClick = (event) => {
         setAnchorEl(event.currentTarget);
     };
@@ -181,20 +235,31 @@ const Students = () => {
         setAddStudentModal(false);
         setMessageStudentModal(false);
         setDeleteStudentViolationModal(false);
-        setStudent({});
+        setUpdateStudentViolationModal(false);
+        setStudent({
+            fullname: '',
+            violations: [],
+            year: '',
+            department: '',
+            section: ''});
+        fetchData();
     };
     const handleViewViolationModal = (person) => {
         setAnchorEl(null);
         console.log(person);
-        setStudent(person);
+        // setStudent(person);
+        fetchUser(person);
         setViewModal(true);
         setAddStudentModal(false);
         
     };
-    const handleUpdateViolationModal = () => {
+    const handleUpdateViolationModal = (person) => {
         setAnchorEl(null);
+        setUpdateStudentViolationModal(true);
+        setStudent(person);
         
     };
+    
     const handleDeleteViolationModal = (person) => {
         setDeleteStudentViolationModal(true);
         setStudent(person);
@@ -202,10 +267,169 @@ const Students = () => {
         
     };
     const handleDelete = async () => {
-        console.log('Deleting violation...');
+        
+        if(targetStudent.userid == '' || targetStudent.userid == null || targetStudent.userid == 0){
+            console.log("No violation to delete");
+            setAlertMessage({open:true, title: 'Error occured!', message: 'There is no target student to be deleted! Please try again!',variant: 'info'});
+            return;
+        }
+        axios.delete(`/user/delete/${targetStudent.userid}`, 
+            {
+            headers: {
+                'Content-Type': 'application/json',
+            }
+        })
+        .then((response) => {
+            setErrorMessages([]);
+            if (response.data.status ===  'success') {
+                console.log("Saved");
+                fetchData();
+                setAlertMessage({open:true, title: 'Success', message: 'Student Violation was updated successfully!',variant: 'info'});
+                setDeleteStudentViolationModal(false);
+            } else {
+                console.log("Failed to Update");
+                setAlertMessage({open:true, title: 'Failed', message: response.data.description, variant: 'info'});
+            }
+        })
+        .catch((e) => {
+            console.log("Error Occurred: ", e);
+            setErrorMessages([]);
+            setAlertMessage({ open: true, title: 'Error Occurred!', message: 'Please try again later.', variant: 'error' });
+        });
         setDeleteStudentViolationModal(false);
+       
     }
-    
+    const fetchData = async () => {
+        axios.get('/user/paginated', {
+            params: {
+            skip: page * rowsPerPage,
+            limit: 100
+            },
+            headers: {
+            'Content-Type': 'application/json',
+            }
+        })
+        .then((response) => {
+            if(response.data.status === "success"){
+                setRows(prevRows => {
+                    const newRows = response.data.data.filter(
+                        newRow => !prevRows.some(row => row.id === newRow.id)
+                    );
+                    return [...prevRows, ...newRows]; // Append only unique rows
+                });
+            }
+            else{
+                console.log("Failed to fetch data");
+            }
+        })
+        .catch((error) => {
+            console.error('There was an error fetching the data!', error);
+        });
+    };
+    const fetchViolationData = async () => {
+        axios.get('https://student-discipline-api-fmm2.onrender.com/violation/paginated', {
+            params: {
+            skip: 0,
+            limit: 100
+            },
+            headers: {
+            'Content-Type': 'application/json',
+            }
+        })
+        .then((response) => {
+            if(response.data.success === true){
+                console.log("Violation data fetched successfully");
+                setViolationList(response.data.total);
+                console.log(violationList);
+            }
+            else{
+                console.log("Failed to fetch data");
+            }
+        })
+        .catch((error) => {
+            console.error('There was an error fetching the data!', error);
+        });
+    };
+    const fetchUser = async (person) => {
+        axios.get(`/user/${person.userid}`, {
+            headers: {
+            'Content-Type': 'application/json',
+            }
+        })
+        .then((response) => {
+               setStudent({ 
+               fullname: response.data.fullname, 
+               userid: response.data.userid, 
+               violations: response.data.violations.length > 0 ? response.data.violations : [],
+               year: response.data.year,
+               department: response.data.department,
+               section: response.data.section
+               });
+                // console.log(targetStudent);           
+        })
+        .catch((error) => {
+            console.error('There was an error fetching the data!', error);
+        });
+    };
+    const [selectedViolation, setSelectedViolation] = React.useState({name: '', _id:'', date: '', description:''});
+
+    const handleDeleteViolation = (index) => {
+        const updatedViolations = [...targetStudent.violations];
+        updatedViolations.splice(index, 1);
+        setStudent({ ...targetStudent, violations: updatedViolations });
+    };
+
+   
+    const handleAddViolation = () => {
+        if (selectedViolation && !targetStudent.violations.some(v => v.name === selectedViolation.name)) {
+            const updatedViolations = [...targetStudent.violations, selectedViolation];
+            setStudent({ ...targetStudent, violations: updatedViolations });
+            setSelectedViolation("");
+        }
+    };
+    const transformedViolations = targetStudent.violations.map(violation => ({
+        ...violation,
+        $oid: violation._id,
+        _id: undefined // Remove the _id field
+    }));
+    const handleUpdateViolation = () => {
+        // console.log('Updating violation...');
+        // console.log("Current student violation: ",targetStudent.violations);
+        if(targetStudent.violations.length == 0 || targetStudent.department == ''){
+            console.log("No violation to update");
+            setAlertMessage({open:true, title: 'Error occured!', message: 'Student Violation and Department fields are required!',variant: 'info'});
+            return;
+        }
+        axios.put(`/user/update/${targetStudent.userid}`, 
+            {   
+            department: targetStudent.department,
+            violations: transformedViolations
+            },
+            {
+            headers: {
+                'Content-Type': 'application/json',
+            }
+        })
+        .then((response) => {
+            setErrorMessages([]);
+            if (response.data.status ===  'success') {
+                console.log("Saved");
+                fetchData();
+                setAlertMessage({open:true, title: 'Success', message: 'Student Violation was updated successfully!',variant: 'info'});
+                setUpdateStudentViolationModal(false);
+            } else {
+                console.log("Failed to Update");
+                setAlertMessage({open:true, title: 'Failed', message: response.data.description, variant: 'info'});
+            }
+        })
+        .catch((e) => {
+            console.log("Error Occurred: ", e);
+            setErrorMessages([]);
+            setAlertMessage({ open: true, title: 'Error Occurred!', message: 'Please try again later.', variant: 'error' });
+        });
+   
+    }
+
     return (
         <>
             <div className="container mx-auto p-4">
@@ -225,7 +449,6 @@ const Students = () => {
                                     <th className="py-5 px-4 border-b">ID</th>
                                     <th className="py-5 px-4 border-b">Name</th>
                                     <th className="py-5 px-4 border-b">Violation</th>
-                                    <th className="py-5 px-4 border-b">Count</th>
                                     <th className="py-5 px-4 border-b">Department</th>
                                     <th className="py-5 px-4 border-b">Year</th>
                                     <th className="py-5 px-4 border-b">Section</th>
@@ -233,44 +456,23 @@ const Students = () => {
                                 </TableRow>
                             </TableHead>
                             <TableBody>
-                                
                                 {(rowsPerPage > 0
-                                    ? data.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
-                                    : data
+                                    ? rows.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
+                                    : rows
                                 ).map((student) => (
-                                    <TableRow key={student.id} className="hover:bg-gray-50">
-                                        <td className="py-2 px-4 border-b">{student.id}</td>
-                                        <td className="py-2 px-4 border-b">{student.name}</td>
-                                        <td className="py-2 px-4 border-b">{student.violation}</td>
-                                        <td className="py-2 px-4 border-b">{student.count}</td>
+                                    <tr key={student.userid} className="hover:bg-gray-50" >
+                                        <td className="py-2 px-4 border-b">{student.userid}</td>
+                                        <td className="py-2 px-4 border-b">{student.fullname}</td>
+                                        <td className="py-2 px-4 border-b">{student.violations.length > 0 ? student.violations[0].name : ''}</td>
                                         <td className="py-2 px-4 border-b">{student.department}</td>
                                         <td className="py-2 px-4 border-b">{student.year}</td>
                                         <td className="py-2 px-4 border-b">{student.section}</td>
                                         <td className="py-2 px-4 border-b">
-                                            <Button
-                                                id="basic-button"
-                                                aria-controls={open ? 'basic-menu' : undefined}
-                                                aria-haspopup="true"
-                                                aria-expanded={open ? 'true' : undefined}
-                                                onClick={handleClick}
-                                            >
-                                                Action
-                                            </Button>
-                                            <Menu
-                                                id="basic-menu"
-                                                anchorEl={anchorEl}
-                                                open={open}
-                                                onClose={handleClose}
-                                                MenuListProps={{
-                                                    'aria-labelledby': 'basic-button',
-                                                }}
-                                            >
-                                                <MenuItem onClick={() => handleViewViolationModal(student)}>View Violation</MenuItem>
-                                                <MenuItem onClick={() => handleUpdateViolationModal(student)}>Update Violation</MenuItem>
-                                                <MenuItem onClick={() => handleDeleteViolationModal(student)}>Delete Violation</MenuItem>
-                                            </Menu>
+                                            <Button onClick={() => handleViewViolationModal(student)}>View Violation</Button>
+                                            <Button onClick={() => handleUpdateViolationModal(student)}>Update Violation</Button>
+                                            <Button onClick={() => handleDeleteViolationModal(student)}>Delete Violation</Button>
                                         </td>
-                                    </TableRow>
+                                    </tr>
                                 ))}
                                 {emptyRows > 0 && (
                                     <TableRow style={{ height: 53 * emptyRows }}>
@@ -281,7 +483,7 @@ const Students = () => {
                             <TableFooter>
                                 <TableRow>
                                     <TablePagination
-                                        rowsPerPageOptions={[5, 10, 25, { label: 'All', value: -1 }]}
+                                        rowsPerPageOptions={[5, 10, 25]}
                                         
                                         count={rows.length}
                                         rowsPerPage={rowsPerPage}
@@ -321,30 +523,20 @@ const Students = () => {
                             </Button>
                         </div>
                         
-                        <TextField
-                            id="outlined-required"
-                            label="Student Name"
-                            value={targetStudent.name}
-                            onChange={(e) => setStudent({ ...targetStudent, name: e.target.value })}
-                            readOnly
-                        />
-                        <TextField
-                            id="outlined-required"
-                            label="Status"
-                            value={targetStudent.violation}
-                            onChange={(e) => setStudent({ ...targetStudent, violation: e.target.value })}
-                            readOnly
-                        />
-                        <TextField
-                            id="outlined-required"
-                            label="Date"
-                            value={targetStudent.date}
-                            onChange={(e) => setStudent({ ...targetStudent, date: e.target.value })}
-                            readOnly
-                        />
+                        <label
+                        readOnly
+                        >
+                            Name: {targetStudent.fullname}
+                        </label>
+                        <label
+                        readOnly
+                        >
+                            Violation: { targetStudent.violations && targetStudent.violations.length > 0 ? targetStudent.violations[0].name : ''}
+                        </label>
+                   
                         <div id="Violation list">
                             <h2 className='py-3 text-2xl font-bold text-center'>Violation Records</h2>
-                            <StudentViolationList />
+                            <StudentViolationList student={targetStudent} />
                         </div>
                     </div>
                 </Modal>)
@@ -380,19 +572,104 @@ const Students = () => {
                     </div>
                 </Modal>)
             }
+             { updateStudentViolationModal &&
+                <Dialog open={updateStudentViolationModal} onClose={handleClose} fullWidth={true} maxWidth="sm">
+                    <DialogTitle>Edit Violation</DialogTitle>
+                    <DialogContent>
+                    <div>
+                        <h3>Current Violations</h3>
+                        <ul>
+                            {targetStudent.violations.map((violation, index) => (
+                                <li key={index} className='bg-slate-300 my-2 rounded-sm flex justify-between text-black'>
+                                   <label className='p-2'>{violation.name} </label> 
+                                    <Button
+                                        onClick={() => handleDeleteViolation(index)}
+                                        className='hover:bg-slate-500 hover:text-white'
+                                    >
+                                        Delete
+                                    </Button>
+                                </li>
+                            ))}
+                        </ul>
+                    </div>
+                    <div className='my-5 w-full'>
+                        <h3 className='mb-3'>Add Violation</h3>
+                        <div className='flex '>
+                            <select
+                                className="w-full border rounded  flex-1"
+                                value={selectedViolation.name}
+                                onChange={(e) => {
+                                    const selectedName = e.target.value;
+                                    const violation = violationList.find(v => v.name === selectedName);
+                                    setSelectedViolation({name: violation.name, _id: violation._id, date: violation.date, description: violation.description});
+                                    
+                                }}
+
+                            >
+                                <option value="">Select Violation</option>
+                                {violationList.map((violation, index) => (
+                                    <option key={index} value={violation.name}>
+                                        {violation.name}
+                                    </option>
+                                ))}
+                            </select>
+                            <Button
+                                className=''
+                                onClick={handleAddViolation}
+                                color="primary"
+                            >
+                                Add
+                            </Button>
+                        </div>
+                        
+                        <TextField
+                        className='my-5 py-5'
+                        label="Department"
+                        type="text"
+                        variant="standard"
+                        value={targetStudent.department}
+                        onChange={(e) => setStudent({ ...targetStudent, department: e.target.value })}
+                        slotProps={{
+                            inputLabel: {
+                            shrink: true,
+                            },
+                        }}
+                        fullWidth
+                        />
+                        
+                    </div>
+                    </DialogContent>
+                    <DialogActions>
+                        <Button className='bg-red-500'
+                        onClick={handleUpdateViolation}
+                        >
+                            Update Student
+                        </Button>
+                        <Button onClick={handleClose} color="primary">
+                            Cancel
+                        </Button>
+                    </DialogActions>
+                </Dialog>
+            }  
             { deleteStudentViolationModal &&
                 <Dialog open={deleteStudentViolationModal} onClose={handleClose}>
-                    <DialogTitle>Delete Violation?</DialogTitle>
+                    <DialogTitle>Are you sure you want to delete this violation?</DialogTitle>
                     <DialogContent>
-                        <TextField
-                            autoFocus
-                            margin="dense"
-                            label="Violation Name"
-                            type="text"
-                            fullWidth
-                            value={targetStudent.violation}
-                            readOnly
-                        />
+                        <div className='flex flex-col gap-y-2'>
+                            <p></p>
+                            <label>Name: {targetStudent.fullname}</label>
+                            <label>Department: {targetStudent.department && targetStudent.department.length > 0 ? targetStudent.department : 'No department attached'}</label>
+                            <br />
+                            <label>Violation(s): </label>
+                            <ul>
+                                {targetStudent.violations.map((violation, index) => (
+                                    <li key={index} className='bg-slate-300 my-2 rounded-sm flex justify-between text-black'>
+                                    <label className='p-2'>{violation.name} </label> 
+                                    </li>
+                                ))}
+                            </ul>
+                        </div>
+                        
                     </DialogContent>
                     <DialogActions>
                         <Button className='bg-red-500'
@@ -407,8 +684,20 @@ const Students = () => {
                 </Dialog>
             }  
             { messageStudentModal && <AlertMessageStudent open={messageStudentModal} handleClose={handleClose} data={targetStudent} /> }
+            <Snackbar open={alertMessage.open} autoHideDuration={3000} onClose={handleAlertClose} anchorOrigin={{ vertical, horizontal }} key={vertical + horizontal}>
+                <Alert
+                onClose={handleAlertClose}
+                icon={false}
+                severity="info"
+                sx={{ width: '100%' }}
+                >
+                    <AlertTitle>{alertMessage.title}</AlertTitle>
+                    {errorMessages.length > 0 ? errorMessages.join(', ') : alertMessage.message}
+                </Alert>
+            </Snackbar>
         </>
     );
+        
 };
 
 export default Students;

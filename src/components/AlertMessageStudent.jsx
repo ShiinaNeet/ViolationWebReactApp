@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { useEffect } from 'react'
 import DialogTitle from '@mui/material/DialogTitle';
 import Dialog from '@mui/material/Dialog';
 import Button from '@mui/material/Button';
@@ -8,12 +8,15 @@ import DialogActions from '@mui/material/DialogActions';
 import SendIcon from '@mui/icons-material/Send';
 import formatDate from '../utils/moment';
 import { Alert, AlertTitle, Snackbar } from '@mui/material';
+import axios from 'axios';
+
 export default function AlertMessageStudent({ open, handleClose, data }) {
     const [message, setMessage] = React.useState({
         body: '',
         name: data?.name || '',
         violation: data?.violation || '',
-        date: Date.now(),
+        date: formatDate(new Date(), 'MMMM D, YYYY'),
+        error: false,
     });
     const [alertMessage, setAlertMessage] = React.useState({open: false ,title: '', message: '', variant: 'success'});
     const vertical = 'bottom';
@@ -38,24 +41,30 @@ export default function AlertMessageStudent({ open, handleClose, data }) {
         //         return [...prevRows, { ...currentRow, id: prevRows.length + 1 }];
         //     }
         // });
-        setAlertMessage({open:true, title: 'Success', message: 'Violation has been added successfully', variant: 'success'});
-        // try {
-        //     const response = await axios.post('/violation/create', violations, {
-        //         headers: {
-        //             'Content-Type': 'application/json',
-        //         }
-        //     });
-    
-        //     if (response.data.status === 'Success') {
-        //         console.log("Saved");
+        if(message.body === '') {
+            setMessage({...message, error: true});
+            return
+        }
+        setAlertMessage({open:true, title: 'Success', message: 'Email was sent succesfully!', variant: 'success'});
+        // axios.post('/violation/create', violations, {
+        //     headers: {
+        //     'Content-Type': 'application/json',
+        //     }
+        // })
+        // .then((response) => {
+        //     if (response.data.success === true) {
+        //         console.log("Email was sent succesfully!");
+        //         setAlertMessage({open:true, title: 'Success', message: 'Email was sent succesfully!', variant: 'success'});
         //         fetchData(); 
         //     } else {
-        //         console.log("Failed to save");
+        //         console.log("Failed to send email: ", response.data.message);
+        //         setAlertMessage({open:true, title: 'Error Occured!', message: response.data.message, variant: 'error'});
         //     }
-        // } catch (e) {
+        // })
+        // .catch((e) => {
         //     console.log("Error Occurred: ", e);
         //     setAlertMessage({open:true, title: 'Error Occured!', message: 'Please try again later.', variant: 'error'});
-        // }
+        // });
         
     };
 
@@ -79,11 +88,16 @@ export default function AlertMessageStudent({ open, handleClose, data }) {
                         rows={6}
                         variant="standard"
                         fullWidth
+                        required={true}
+                        error={message.error}
+                        helperText={message.error ? 'Message is required' : ''}
                         value={message.body}
                         onChange={(e) => setMessage({ ...message, body: e.target.value })}
                     />
                     <label htmlFor="" className='flex justify-end text-base text-blue-500'>
-                        {formatDate(message.date)}
+                        {
+                            message.date
+                        } 
                     </label>
                 </DialogContent>
                 <DialogActions>

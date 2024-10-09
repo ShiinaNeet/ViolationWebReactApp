@@ -22,6 +22,7 @@ import DialogTitle from '@mui/material/DialogTitle';
 import TextField from '@mui/material/TextField';
 import { Alert, AlertTitle, Snackbar, TableHead } from '@mui/material';
 import axios from 'axios';
+import formatDate from '../utils/moment';
 
 function TablePaginationActions(props) {
     const { count, page, rowsPerPage, onPageChange } = props;
@@ -117,14 +118,14 @@ export default function Violations() {
     const [open, setOpen] = React.useState(false);
     const [openCreate, setOpenCreate] = React.useState(false);
     const [openDelete, setopenDelete] = React.useState(false);
-    const [currentRow, setCurrentRow] = React.useState({ id: '', name: '', description: '' });
-    const [violations, setViolations] = React.useState({ name: '', description: ''});
-    const [alertMessage, setAlertMessage] = React.useState({open: false ,title: '', message: '', variant: 'success'});
-
+    const [currentRow, setCurrentRow] = React.useState({ _id: '', name: '', description: '', date: '' });
+    const [search, setSearch] = React.useState('');
+    const [violations, setViolations] = React.useState({ name: '', description: '', date: Date.now() });
+    const [alertMessage, setAlertMessage] = React.useState({open: false ,title: '', message: '', variant: ''});
+    const [errorMessages, setErrorMessages] = React.useState([]);
     const vertical = 'bottom';
     const horizontal = 'right';
-    const emptyRows =
-        page > 0 ? Math.max(0, (1 + page) * rowsPerPage - rows.length) : 0;
+    const emptyRows = page > 0 ? Math.max(0, (1 + page) * rowsPerPage - rows.length) : 0;
 
     const handleChangePage = (event, newPage) => {
         setPage(newPage);
@@ -148,8 +149,9 @@ export default function Violations() {
         setOpen(false);
         setOpenCreate(false);
         setopenDelete(false);
-        setCurrentRow({ id: '', name: '', description: '', date: '' });
+        setCurrentRow({ _id: '', name: '', description: '', date: '' });
         setViolations({ id: '', name: '', description: '', date: '' });
+     
     };
     const handleAlertClose = (event, reason) => {
         if (reason === 'clickaway') {
@@ -160,134 +162,219 @@ export default function Violations() {
       };
     
     const handleSave = async () => {
-        // setRows((prevRows) => {
-        //     const existingIndex = prevRows.findIndex((r) => r.id === currentRow.id);
-        //     if (existingIndex >= 0) {
-        //         const updatedRows = [...prevRows];
-        //         updatedRows[existingIndex] = currentRow;
-        //         return updatedRows;
-        //     } else {
-        //         return [...prevRows, { ...currentRow, id: prevRows.length + 1 }];
-        //     }
-        // });
-        setAlertMessage({open:true, title: 'Success', message: 'Violation has been added successfully', variant: 'success'});
-        // try {
-        //     const response = await axios.post('/violation/create', violations, {
-        //         headers: {
-        //             'Content-Type': 'application/json',
-        //         }
-        //     });
-    
-        //     if (response.data.status === 'Success') {
-        //         console.log("Saved");
-        //         fetchData(); 
-        //     } else {
-        //         console.log("Failed to save");
-        //     }
-        // } catch (e) {
-        //     console.log("Error Occurred: ", e);
-        //     setAlertMessage({open:true, title: 'Error Occured!', message: 'Please try again later.', variant: 'error'});
-        // }
+        if(violations.name === '' || violations.description === '') {
+            setAlertMessage({open:true, title: 'Error', variant: 'error'});
+            setErrorMessages(['Please fill in all fields']);
+            return
+        }
+        axios.post('/violation/create', 
+            {   
+                "name": violations.name,
+                "date": Date.now().toString(),
+                "description":violations.description 
+            }, 
+            {
+            headers: {
+            'Content-Type': 'application/json',
+            }
+        })
+        .then((response) => {
+            setErrorMessages([]);
+            if (response.data.status === 'success') {
+                console.log("Saved");
+                setAlertMessage({open:true, title: 'Success', message: 'Violation has been added successfully', variant: 'success'});
+                fetchData();
+            } else {
+                console.log("Failed to save");
+                setAlertMessage({open:true, title: 'Failed', message: response.data.message, variant: 'info'});
+            }
+        })
+        .catch((e) => {
+            console.log("Error Occurred: ", e);
+            setErrorMessages([]);
+            setAlertMessage({ open: true, title: 'Error Occurred!', message: 'Please try again later.', variant: 'error' });
+        });
         handleClose();
     };
     const handleUpdate = async () => {
-        // setRows((prevRows) => {
-        //     const existingIndex = prevRows.findIndex((r) => r.id === currentRow.id);
-        //     if (existingIndex >= 0) {
-        //         const updatedRows = [...prevRows];
-        //         updatedRows[existingIndex] = currentRow;
-        //         return updatedRows;
-        //     } else {
-        //         return [...prevRows, { ...currentRow, id: prevRows.length + 1 }];
-        //     }
-        // });
-        // try {
-        //     const response = await axios.post('/violation/update', currentRow, {
-        //         headers: {
-        //             'Content-Type': 'application/json',
-        //         }
-        //     });
-    
-        //     if (response.data.status === 'Success') {
-        //         console.log("Saved");
-        //         fetchData(); 
-        //     } else {
-        //         console.log("Failed to Update");
-        //     }
-        // } catch (e) {
-        //     console.log("Error Occurred: ", e);
-        //     setAlertMessage({open:true, title: 'Error Occured!', message: 'Please try again later.', variant: 'error'});
-        // }
-        setAlertMessage({open:true, title: 'Success', message: 'Violation has been Updated successfully',variant: 'info'});
+        if(currentRow.name === '' || currentRow.description === '') {
+            setAlertMessage({open:true, title: 'Error', variant: 'error'});
+            setErrorMessages(['Please fill in all fields']);
+            return
+        }
+       
+        axios.put(`/violation/update?violation_id=${currentRow._id}`, 
+            {   
+            "name": currentRow.name,
+            "date": Date.now().toString(),
+            "description":currentRow.description 
+            },
+            {
+            headers: {
+                'Content-Type': 'application/json',
+            }
+        })
+        .then((response) => {
+            setErrorMessages([]);
+            if (response.data.success ===  true) {
+                console.log("Saved");
+                fetchData();
+                setAlertMessage({open:true, title: 'Success', message: 'Violation has been Updated successfully',variant: 'info'});
+            } else {
+                console.log("Failed to Update");
+                setAlertMessage({open:true, title: 'Failed', message: response.data.message, variant: 'info'});
+            }
+        })
+        .catch((e) => {
+            console.log("Error Occurred: ", e);
+            setErrorMessages([]);
+            setAlertMessage({ open: true, title: 'Error Occurred!', message: 'Please try again later.', variant: 'error' });
+        });
+   
         handleClose();
     };
-    const handleDelete = async (id,name) => {
-
-        // try {
-        //     const response = await axios.post('/violation/update', id, {
-        //         headers: {
-        //             'Content-Type': 'application/json',
-        //         }
-        //     });
-    
-        //     if (response.data.status === 'Success') {
-        //         console.log("Deleted");
-        //         fetchData(); 
-        //     } else {
-        //         console.log("Failed to Delete. Please Try again later");
-        //     }
-        // } catch (e) {
-        //     console.log("Error Occurred: ", e);
-            setAlertMessage({open:true, title: 'Error Occured!', message: 'Please try again later.', variant: 'error'});
-        // }
-       
-        // setRows((prevRows) => prevRows.filter((row) => row.id !== id));
-        // setAlertMessage({open:true, title: 'Success', message: 'Violation has been Deleted successfully', variant: 'warning'});
+    const handleDelete = async (_id,name) => {
+        if(_id === '') {
+            setAlertMessage({open:true, title: 'Error', variant: 'error'});
+            setErrorMessages(['Please fill in all fields']);
+            return
+        }
+        axios.delete(`/violation/delete/${_id}`,{
+            headers: {
+            'Content-Type': 'application/json',
+            }
+        })
+        .then((response) => {
+            setErrorMessages([]);
+            if (response.data.status === 'success') {
+                setAlertMessage({open:true, title: 'Success', message: 'Violation has been Deleted successfully', variant: 'warning'});
+                console.log("Deleted");
+                fetchData();
+            } else {
+                console.log("Failed to Delete. Please Try again later");
+            }
+        })
+        .catch((e) => {
+            console.log("Error Occurred: ", e);
+            setErrorMessages([]);
+            setAlertMessage({ open: true, title: 'Error Occurred!', message: 'Please try again later.', variant: 'error' });
+        });
+   
         handleClose();
     };
     
     React.useEffect(() => {
         
         fetchData();
-        setRows(initialRows);
+        //setRows(initialRows);
         return () => {
             console.log('Violations component unmounted');
         }
     }, [page, rowsPerPage]);
 
     const fetchData = async () => {
-        try {
-            const response = await axios.get('https://student-discipline-api-fmm2.onrender.com/violation/paginated', {
-                params: {
-                    skip: page * rowsPerPage,
-                    limit: rowsPerPage
-                },
-                headers: {
-                    'Content-Type': 'application/json',
-                }
-            });
-            setRows(response.data);
-        } catch (error) {
+        axios.get('https://student-discipline-api-fmm2.onrender.com/violation/paginated', {
+            params: {
+            skip: page * rowsPerPage,
+            limit: rowsPerPage
+            },
+            headers: {
+            'Content-Type': 'application/json',
+            }
+        })
+        .then((response) => {
+            if(response.data.success === true){
+                console.log("Data fetched successfully");
+                setRows(response.data.total);
+            }
+            else{
+                console.log("Failed to fetch data");
+            }
+        })
+        .catch((error) => {
             console.error('There was an error fetching the data!', error);
-        }
+        });
     };
+
+    const searchFunction = async () => {
+        if(search === '') {
+            return
+        }
+        console.log(search);
+        // axios.get('https://student-discipline-api-fmm2.onrender.com/violation/search', {
+        //     params: {
+        //     query: search
+        //     },
+        //     headers: {
+        //     'Content-Type': 'application/json',
+        //     }
+        // })
+        // .then((response) => {
+        //     if(response.data.success === true){
+        //         console.log("Searched data fetched successfully!");
+        //         setRows(response.data.data);
+        //     }
+        //     else{
+        //         console.log("Failed to fetch search data");
+        //     }
+        // })
+        // .catch((error) => {
+        //     console.error('There was an error searching the data!', error);
+        // });
+    };
+
+    // const debounce = (func, delay) => {
+    //     let debounceTimer;
+    //     return function(...args) {
+    //         clearTimeout(debounceTimer);
+    //         debounceTimer = setTimeout(() => {
+    //             // console.log('Debounced function called with args:', args);
+    //             func.apply(this, args);
+    //         }, delay);
+    //     };
+    // };
+
+    // const debouncedSearchFunction = debounce(searchFunction, 300);
+
     return (
         <div className="container h-full mx-auto">
              <div className="container mx-auto p-4 ">
-                <div className='flex justify-between h-fit'>
-                    <h1 className='text-3xl py-3'>Violation List</h1>
-                    <button className='bg-blue-500 my-2 p-2 rounded-sm text-white hover:bg-blue-600'
-                    onClick={() => handleCreateOpen()}
+             <h1 className='text-3xl py-3'>Violation List</h1>
+                <div className='flex justify-end h-fit gap-x-2'>
+                <button className='bg-blue-500 my-2 p-5 rounded-sm text-white hover:bg-blue-600'
+                onClick={() => handleCreateOpen()}
+                >
+                    Add Violation
+                </button>
+                </div>
+                <div className='flex justify-between h-fit gap-x-2'>
+                    <TextField
+                    className='my-2 py-2'
+                    autoFocus
+                    margin="dense"
+                    label="Search Violation"
+                    type="text"
+                    fullWidth
+                    value={search}
+                    onChange={(e) => {
+                        setSearch(e.target.value);
+                        // debouncedSearchFunction(e.target.value);
+                    }}
+                    />
+                    <button className='bg-blue-500 my-2 p-5 rounded-sm text-white hover:bg-blue-600'
+                    onClick={() => searchFunction()}
                     >
-                        Add Violation
+                       Search
                     </button>
                 </div>
+                
                 <TableContainer component={Paper}>
                     <Table sx={{ minWidth: 500 }} >
                         <TableHead>
                             <TableRow>
                                 <th className="py-5 px-4 font-bold ">Violation Name </th>
                                 <th className="py-5 px-4 font-bold">Violation Description </th>
+                                <th className="py-5 px-4 font-bold">Date</th>
                                 <th className="py-5 px-4 font-bold text-center">Actions</th>
                             </TableRow>
                         </TableHead>
@@ -296,11 +383,13 @@ export default function Violations() {
                                 ? rows.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
                                 : rows
                             ).map((row) => (
-                                <TableRow key={row.id}>
+                                <TableRow key={row._id}>
                                     <TableCell component="th" scope="row">
                                         {row.name}
                                     </TableCell>
                                     <TableCell>{row.description}</TableCell>
+                                    <TableCell>{formatDate(new Date(parseInt(row.date)), 'MMMM DD, YYYY')}</TableCell>
+                                    
                                     <td>
                                         <div className='flex gap-x-2 justify-center'>
                                             <Button variant="contained" color="primary" className="mr-2" onClick={() => handleOpen(row)}>
@@ -355,6 +444,7 @@ export default function Violations() {
                                 type="text"
                                 fullWidth
                                 value={currentRow.name}
+                                required={true}
                                 onChange={(e) => setCurrentRow({ ...currentRow, name: e.target.value })}
                             />
                             <TextField
@@ -362,20 +452,11 @@ export default function Violations() {
                                 label="Description"
                                 type="text"
                                 fullWidth
+                                required={true}
                                 value={currentRow.description}
                                 onChange={(e) => setCurrentRow({ ...currentRow, description: e.target.value })}
                             />
-                            <TextField
-                                margin="dense"
-                                label="Date Updated"
-                                type="date"
-                                fullWidth
-                                value={currentRow.date}
-                                onChange={(e) => setCurrentRow({ ...currentRow, date: e.target.value })}
-                                InputLabelProps={{
-                                    shrink: true,
-                                }}
-                            />
+                            
                         </DialogContent>
                         <DialogActions>
                             <Button onClick={handleClose} color="primary">
@@ -439,9 +520,9 @@ export default function Violations() {
                             <TextField
                                 margin="dense"
                                 label="Date Updated"
-                                type="date"
+                                type="text"
                                 fullWidth
-                                value={currentRow.date}
+                                value={formatDate(new Date(parseInt(currentRow.date)), 'MMMM DD, YYYY')}
                                 readOnly
                                 InputLabelProps={{
                                     shrink: true,
@@ -449,7 +530,7 @@ export default function Violations() {
                             />
                         </DialogContent>
                         <DialogActions>
-                            <Button onClick={()=>handleDelete(currentRow.id,currentRow.name)} color="primary">
+                            <Button onClick={()=>handleDelete(currentRow._id,currentRow.name)} color="primary">
                                 Delete
                             </Button>
                             <Button onClick={handleClose} color="primary">
@@ -462,11 +543,12 @@ export default function Violations() {
             <Snackbar open={alertMessage.open} autoHideDuration={3000} onClose={handleAlertClose} anchorOrigin={{ vertical, horizontal }} key={vertical + horizontal}>
                 <Alert
                 onClose={handleAlertClose}
-                severity={alertMessage.variant}
+                icon={false}
+                severity="info"
                 sx={{ width: '100%' }}
                 >
                     <AlertTitle>{alertMessage.title}</AlertTitle>
-                    {alertMessage.message}
+                    {errorMessages.length > 0 ? errorMessages.join(', ') : alertMessage.message}
                 </Alert>
             </Snackbar>
         </div>

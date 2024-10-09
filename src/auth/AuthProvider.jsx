@@ -1,13 +1,38 @@
+import axios from 'axios';
 import React, { createContext, useContext, useState, useEffect } from 'react';
 
 const AuthContext = createContext();
 
 export const AuthProvider = ({ children }) => {
   const [isAuthenticated, setIsAuthenticated] = useState(false);
-
-  const login = () => {
-    localStorage.setItem('accessToken', 'your-access-token');
-    setIsAuthenticated(true);
+ 
+  const login = (name,password) => {
+  
+    axios.post('/auth/login',{
+      fullname: name,
+      password: password
+    } ,{
+      headers: {
+        'Content-Type': 'application/json',
+      },
+    }).then((response) => {
+      if (response.data.status === true) {
+        console.log('Logged in successfully!');
+        console.log(response)
+        localStorage.setItem('accessToken', 'your-access-token');
+        setIsAuthenticated(true);
+        return true;
+        
+      } else {
+        console.log('Failed to login: ', response.data.message);
+        return false;
+      }
+    })
+    .catch((error) => {
+      console.error('There was an error logging in!', error);
+      return false;
+    });
+    // setIsAuthenticated(true);
   };
 
   const logout = () => {
