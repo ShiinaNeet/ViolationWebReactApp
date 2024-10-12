@@ -9,7 +9,9 @@ const ProtectedRoute = ({ element, roles }) => {
   if (isAuthenticated && (location.pathname.toLowerCase() === '/login')) {
     return <Navigate to="/Students" replace />;
   }
-
+  if(location.pathname.toLowerCase() === '/login'){
+    return element;
+  }
   if (!isAuthenticated && location.pathname.toLowerCase() !== '/login') {
     return <Navigate to="/Login" replace />;
   }
