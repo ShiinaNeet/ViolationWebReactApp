@@ -21,8 +21,11 @@ export const AuthProvider = ({ children }) => {
       if (response.data.status === 'success') {
         console.log('Logged in successfully!');
         console.log(response);
-        const authtoken = localStorage.setItem('accessToken', response.data.api_token);
-        setupAxiosInterceptors(authtoken);
+        const authTokens = {
+          accessToken: localStorage.getItem('accessToken'),
+        };
+        
+        setupAxiosInterceptors(authTokens);
         setIsAuthenticated(true);
         useCallback();
         
