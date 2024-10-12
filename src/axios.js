@@ -51,8 +51,8 @@ const setupAxiosInterceptors = (authTokens) => {
             config.headers.Authorization = `Bearer ${authTokens.accessToken}`;
             axios.defaults.headers.common['Authorization'] = `Bearer ${authTokens.accessToken}`;
             if(accessToken){
+                axios.defaults.headers.common['Authorization'] = `Bearer ${accessToken}`;
                 config.headers.Authorization = `Bearer ${accessToken}`;
-                config.headers.Authorization = `Bearer ${authTokens.accessToken}`;
             }
           
             return config;
