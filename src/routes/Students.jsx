@@ -125,7 +125,8 @@ const Students = () => {
         violations: [],
         year: '',
         department: '',
-        section: ''
+        section: '',
+        email: '',
   
     });
     const [violationList, setViolationList] = React.useState([]);
@@ -172,10 +173,12 @@ const Students = () => {
     const [deleteStudentViolationModal, setDeleteStudentViolationModal] = React.useState(false);
     const [messageStudentModal, setMessageStudentModal] = React.useState(false);
 
+  
+
     useEffect(() => {
-        // if ((page + 1) * rowsPerPage >= rows.length) {
-        //     fetchData();
-        // }
+        if ((page + 1) * rowsPerPage >= rows.length) {
+            fetchData();
+        }
         fetchViolationData();
         fetchData();
     }, []);
@@ -321,7 +324,8 @@ const Students = () => {
                userid: response.data.userid, 
                violations: response.data.violations.length > 0 ? response.data.violations : [],
                year_and_department: response.data.year_and_department,
-               section: response.data.section
+               section: response.data.section,
+               email: response.data.email
                });
                 // console.log(targetStudent);           
         })
@@ -424,8 +428,8 @@ const Students = () => {
                                 {(rowsPerPage > 0
                                     ? rows.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
                                     : rows
-                                ).map((student) => (
-                                    <tr key={student.userid} className="hover:bg-gray-50" >
+                                ).map((student, index) => (
+                                    <tr key={index} className="hover:bg-gray-50" >
                                         <td className="py-2 px-4 border-b">{student.userid}</td>
                                         <td className="py-2 px-4 border-b">{student.fullname}</td>
                                         <td className="py-2 px-4 border-b">{student.violations.length > 0 ? student.violations[0].name : ''}</td>
@@ -453,19 +457,10 @@ const Students = () => {
                             <TableFooter>
                                 <TableRow>
                                     <TablePagination
-                                        rowsPerPageOptions={[5, 10, 25]}
-                                        
+                                        rowsPerPageOptions={[{ label: 'All', value: -1 }]} 
                                         count={rows.length}
                                         rowsPerPage={rowsPerPage}
                                         page={page}
-                                        slotProps={{
-                                            select: {
-                                                inputProps: {
-                                                    'aria-label': 'rows per page',
-                                                },
-                                                native: true,
-                                            },
-                                        }}
                                         onPageChange={handleChangePage}
                                         onRowsPerPageChange={handleChangeRowsPerPage}
                                         ActionsComponent={TablePaginationActions}
@@ -500,6 +495,14 @@ const Students = () => {
                                 Name: 
                             </strong> 
                                 {targetStudent.fullname}
+                        </label>
+                        <label
+                        readOnly
+                        >
+                           <strong className='font-bold'> 
+                                Email Address: 
+                            </strong> 
+                                {targetStudent.email && targetStudent.email.length > 0 ? targetStudent.email : 'No Email Address'}
                         </label>
                         <label readOnly>
                             <strong className='font-bold'>Department: </strong> {targetStudent.year_and_department 

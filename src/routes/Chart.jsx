@@ -41,11 +41,11 @@ export default function Chart() {
 
     return (
         <>
-            <div className="h-screen w-full flex items-center flex-col p-10">
-                <div className='w-full h-1/3  p-5 shadow-sm shadow-red-400 overflow-y-visible'>
+            <div className="h-screen w-full flex items-center flex-col p-10 gap-y-5">
+                <div className='w-full h-1/3 p-5 shadow-sm shadow-red-400 overflow-y-visible group'>
                     <div className='flex justify-between'>
                         <h1 className='text-lg font-bold'>Monthly</h1>
-                        <Button onClick={fetchData}><RestartAltIcon/>Reload</Button>
+                        <button onClick={fetchData} className='group-hover:block hidden text-cyan-600 hover:bg-cyan-100 p-2 rounded-md'><RestartAltIcon/>Reload</button>
                     </div>
                     {loading ? (
                         <p>Loading...</p>
@@ -62,10 +62,10 @@ export default function Chart() {
                         />
                     )}
                 </div>
-                <div className='w-full h-1/3  p-5 shadow-sm shadow-red-400'>
+                <div className='w-full h-1/3 p-5 shadow-sm shadow-red-400 overflow-y-visible group'>
                     <div className='flex justify-between'>
                         <h1 className='text-lg font-bold'>Overall</h1>
-                        <Button><RestartAltIcon/>Reload</Button>
+                        <button onClick={fetchData} className='group-hover:block hidden text-cyan-600 hover:bg-cyan-100 p-2 rounded-md'><RestartAltIcon/>Reload</button>
                     </div>
                     {loading ? (
                         <p>Loading...</p>

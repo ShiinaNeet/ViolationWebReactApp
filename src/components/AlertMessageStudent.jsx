@@ -36,7 +36,8 @@ export default function AlertMessageStudent({ open, handleClose, data }) {
         body: '',
         fullName: "",
         violationName: [],
-        // email: '',
+        email: '',
+        userid: '',
         date: formatDate(new Date(), 'MMMM D, YYYY'),
         error: false,
     });
@@ -51,20 +52,16 @@ export default function AlertMessageStudent({ open, handleClose, data }) {
         }
     
         setAlertMessage({open:false});
-        //handleClose();
       };
-
+    const handleViolation = () => {
+        let violationsname = '';
+        message.violationName.forEach(element => {
+            violationsname += element.name + ', ';
+        });
+        return violationsname;
+    }
     const sendMessage = async () => {
-        // setRows((prevRows) => {
-        //     const existingIndex = prevRows.findIndex((r) => r.id === currentRow.id);
-        //     if (existingIndex >= 0) {
-        //         const updatedRows = [...prevRows];
-        //         updatedRows[existingIndex] = currentRow;
-        //         return updatedRows;
-        //     } else {
-        //         return [...prevRows, { ...currentRow, id: prevRows.length + 1 }];
-        //     }
-        // });
+       
         setIsLoading(true);
         // if(message.body === '' || message.violationName.length === 0 || message.email === '') {
         if(message.body === '' || message.violationName.length === 0) {
@@ -73,28 +70,33 @@ export default function AlertMessageStudent({ open, handleClose, data }) {
             setIsLoading(false);
             return
         }
-            setAlertMessage({open:true, title: 'Success', message: 'Email was sent succesfully!', variant: 'success'});
-        // axios.post('/violation/create', violations, {
-        //     headers: {
-        //     'Content-Type': 'application/json',
-        //     }
-        // })
-        // .then((response) => {
-        //     if (response.data.success === true) {
-        //         console.log("Email was sent succesfully!");
-        //         setAlertMessage({open:true, title: 'Success', message: 'Email was sent succesfully!', variant: 'success'});
-        //         fetchData(); 
-        //         handleClose();
-        //     } else {
-        //         console.log("Failed to send email: ", response.data.message);
-        //         setAlertMessage({open:true, title: 'Error Occured!', message: response.data.message, variant: 'error'});
-        //     }
-        // })
-        // .catch((e) => {
-        //     console.log("Error Occurred: ", e);
-        //     setAlertMessage({open:true, title: 'Error Occured!', message: 'Please try again later.', variant: 'error'});
-        // });
-        setIsLoading(false);
+            // setAlertMessage({open:true, title: 'Success', message: 'Email was sent succesfully!', variant: 'success'});
+        await axios.post('/email/send/violation', {
+            userid: data.userid,
+            message: message.body,
+            violation_name: handleViolation(),
+        }, {
+            headers: {
+            'Content-Type': 'application/json',
+            }
+        })
+        .then((response) => {
+            if (response.data.status === 'success') {
+                console.log("Email was sent succesfully!");
+                setAlertMessage({open:true, title: 'Success', message: 'Email was sent succesfully!', variant: 'success'});
+                setIsLoading(false);
+            } else {
+                console.log("Failed to send email: ", response.data.message);
+                setAlertMessage({open:true, title: 'Error Occured!', message: response.data.message, variant: 'error'});
+                setIsLoading(false);
+            }
+        })
+        .catch((e) => {
+            console.log("Error Occurred: ", e);
+            setIsLoading(false);
+            setAlertMessage({open:true, title: 'Error Occured!', message: 'Please try again later.', variant: 'error'});
+        });
+      
     };
 
     useEffect(() => {
@@ -102,7 +104,8 @@ export default function AlertMessageStudent({ open, handleClose, data }) {
             setMessage({
                 ...message,
                 fullName: data.fullname,
-                // email: data.email
+                userid: data.userid,
+                email: data.email ? data.email : '',
                
             });
             setViolations(data.violations);
@@ -147,18 +150,17 @@ export default function AlertMessageStudent({ open, handleClose, data }) {
                     </Select>
                 </DialogTitle>
                 <DialogContent className=''>
-                    {/* <TextField
-                        autoFocus
+                    <TextField
                         id="standard-multiline-static"
                         label="Email Address"
                         variant="standard"
                         fullWidth
-                        required={true}
+                        readOnly={true}
                         error={message.error}
                         helperText={message.error ? 'Email Address is required' : ''}
                         value={message.email}
-                        onChange={(e) => setMessage({ ...message, email: e.target.value })}
-                    /> */}
+                        className='cursor-none'
+                    />
                     <TextField
                         autoFocus
                         id="standard-multiline-static"
@@ -188,7 +190,7 @@ export default function AlertMessageStudent({ open, handleClose, data }) {
                     </Button>
                 </DialogActions>
             </Dialog>
-            <Snackbar open={alertMessage.open} autoHideDuration={2000} onClose={handleAlertClose} anchorOrigin={{ vertical, horizontal }} key={vertical + horizontal}>
+            <Snackbar open={alertMessage.open} autoHideDuration={3000} onClose={handleAlertClose} anchorOrigin={{ vertical, horizontal }} key={vertical + horizontal}>
                 <Alert
                 onClose={handleAlertClose}
                 severity={alertMessage.variant}
