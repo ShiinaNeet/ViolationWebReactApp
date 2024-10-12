@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect } from 'react';
+import React, { useCallback, useRef, useEffect } from 'react';
 import { useAuth } from '../auth/AuthProvider';
 import { useNavigate } from 'react-router-dom';
 import Button from '@mui/material/Button';
@@ -16,6 +16,9 @@ const Login = () => {
   const [errorMessages, setErrorMessages] = React.useState([]);
   const [isLoading, setIsLoading] = React.useState(false);
   const [account, setAccount] = React.useState({name: '', password: ''});
+  
+  const animationPlayed = useRef(false); // Track if the animation has been played
+  const formRef = useRef(null); // Ref for the form element
 
   const handleAlertClose = (event, reason) => {
     if (reason === 'clickaway') {
@@ -56,7 +59,11 @@ const Login = () => {
 
   return (
     <div className="flex flex-col items-center justify-center h-screen ">
-      <form onSubmit={handleLogin} className='flex flex-col bg-slate-100 w-full md:w-2/3 p-3 rounded-md gap-y-5 border-2 border-red-500 border-solid shadow-sm shadow-red-400 animate-slide-in'>
+      <form 
+        ref={formRef}
+        onSubmit={handleLogin} 
+        className='flex flex-col bg-slate-100 w-full md:w-2/3 p-3 rounded-md gap-y-5 border-2 border-red-500 border-solid shadow-sm shadow-red-400'
+      >
         <h1 className=" text-3xl text-center font-mono font-extrabold">STUDENT VIOLATION TRACKING APP</h1>
         <TextField 
         id="outlined-basic" 
