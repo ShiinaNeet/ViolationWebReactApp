@@ -21,7 +21,7 @@ export const AuthProvider = ({ children }) => {
       if (response.data.status === 'success') {
         console.log('Logged in successfully!');
         console.log(response);
-        localStorage.setItem('accessToken', response.data.accessToken);
+        localStorage.setItem('accessToken', response.data.api_token);
         const authTokens = {
           accessToken: localStorage.getItem('accessToken'),
         };
