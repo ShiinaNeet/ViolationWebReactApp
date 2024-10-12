@@ -1,5 +1,6 @@
 import axios from 'axios';
 import React, { createContext, useContext, useState, useEffect, useCallback } from 'react';
+import { setupAxiosInterceptors } from '../axios';
 
 const AuthContext = createContext();
 
@@ -20,9 +21,11 @@ export const AuthProvider = ({ children }) => {
       if (response.data.status === 'success') {
         console.log('Logged in successfully!');
         console.log(response);
-        localStorage.setItem('accessToken', response.data.api_token);
+        const authtoken = localStorage.setItem('accessToken', response.data.api_token);
+        setupAxiosInterceptors(authtoken);
         setIsAuthenticated(true);
         useCallback();
+        
       } else {
         console.log('Failed to login: ', response.data.message);
         return false;
