@@ -47,8 +47,14 @@ const setupAxiosInterceptors = (authTokens) => {
             // } else if (authTokens?.accessToken) {
             //     config.headers.Authorization = `Bearer ${authTokens.accessToken}`;
             // }
+            const accessToken = localStorage.getItem('accessToken');
             config.headers.Authorization = `Bearer ${authTokens.accessToken}`;
             axios.defaults.headers.common['Authorization'] = `Bearer ${authTokens.accessToken}`;
+            if(accessToken){
+                config.headers.Authorization = `Bearer ${accessToken}`;
+                config.headers.Authorization = `Bearer ${authTokens.accessToken}`;
+            }
+          
             return config;
         },
         (error) => {

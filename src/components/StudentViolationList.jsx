@@ -127,13 +127,13 @@ export default function StudentViolationList(props) {
           {(rowsPerPage > 0
             ? data.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
             : data
-          ).map((row) => (
-            <TableRow key={row.name}>
+          ).map((row,index) => (
+            <TableRow key={index}>
               <TableCell component="th" scope="row">
                 {row.name}
               </TableCell>
               <TableCell component="th" scope="row">
-                {formatDate(new Date(parseInt(row.date)), 'MMMM DD, YYYY')}
+                {formatDate(new Date(parseInt(row.date)), 'MMMM DD, YYYY - hh:mm A')}
               </TableCell>
             </TableRow>
           ))}

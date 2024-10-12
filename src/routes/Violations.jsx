@@ -84,36 +84,10 @@ TablePaginationActions.propTypes = {
     rowsPerPage: PropTypes.number.isRequired,
 };
 
-function createData(id, name, description, date) {
-    return { id, name, description, date };
-}
-
-const initialRows = [
-    createData(1, 'Late Submission', 'Submitted assignment late', '2023-10-01'),
-    createData(2, 'Absent', 'Absent without notice', '2023-10-02'),
-    createData(3, 'Disruptive Behavior', 'Disrupted the class', '2023-10-03'),
-    createData(4, 'Cheating', 'Caught cheating during exam', '2023-10-04'),
-    createData(5, 'Incomplete Homework', 'Did not complete homework', '2023-10-05'),
-    createData(6, 'Tardiness', 'Arrived late to class', '2023-10-06'),
-    createData(7, 'Unauthorized Use of Phone', 'Used phone during class', '2023-10-07'),
-    createData(8, 'Disrespectful Behavior', 'Showed disrespect to teacher', '2023-10-08'),
-    createData(9, 'Vandalism', 'Damaged school property', '2023-10-09'),
-    createData(10, 'Bullying', 'Bullied another student', '2023-10-10'),
-    createData(11, 'Skipping Class', 'Skipped class without permission', '2023-10-11'),
-    createData(12, 'Dress Code Violation', 'Did not follow dress code', '2023-10-12'),
-    createData(13, 'Plagiarism', 'Copied someone else\'s work', '2023-10-13'),
-    createData(14, 'Fighting', 'Involved in a physical fight', '2023-10-14'),
-    createData(15, 'Smoking', 'Caught smoking on campus', '2023-10-15'),
-    createData(16, 'Alcohol Use', 'Caught drinking alcohol on campus', '2023-10-16'),
-    createData(17, 'Drug Use', 'Caught using drugs on campus', '2023-10-17'),
-    createData(18, 'Theft', 'Stole property from another student', '2023-10-18'),
-    createData(19, 'Forgery', 'Forged a parent\'s signature', '2023-10-19'),
-    createData(20, 'Insubordination', 'Refused to follow teacher\'s instructions', '2023-10-20'),
-].sort((a, b) => (a.date < b.date ? -1 : 1));
 
 export default function Violations() {
     const [page, setPage] = React.useState(0);
-    const [rowsPerPage, setRowsPerPage] = React.useState(5);
+    const [rowsPerPage, setRowsPerPage] = React.useState(6);
     const [rows, setRows] = React.useState([]);
     const [open, setOpen] = React.useState(false);
     const [openCreate, setOpenCreate] = React.useState(false);
@@ -126,13 +100,13 @@ export default function Violations() {
     const vertical = 'bottom';
     const horizontal = 'right';
     const emptyRows = page > 0 ? Math.max(0, (1 + page) * rowsPerPage - rows.length) : 0;
-
+    const [isLoading, setIsLoading] = React.useState(false);
     const handleChangePage = (event, newPage) => {
         setPage(newPage);
     };
 
     const handleChangeRowsPerPage = (event) => {
-        setRowsPerPage(parseInt(event.target.value, 10));
+        setRowsPerPage(parseInt(event.target.value, 6));
         setPage(0);
     };
 
@@ -162,9 +136,11 @@ export default function Violations() {
       };
     
     const handleSave = async () => {
+        setIsLoading(true);
         if(violations.name === '' || violations.description === '') {
             setAlertMessage({open:true, title: 'Error', variant: 'error'});
             setErrorMessages(['Please fill in all fields']);
+            setIsLoading(false);
             return
         }
         axios.post('/violation/create', 
@@ -184,22 +160,28 @@ export default function Violations() {
                 console.log("Saved");
                 setAlertMessage({open:true, title: 'Success', message: 'Violation has been added successfully', variant: 'success'});
                 fetchData();
+                setIsLoading(false);
+                handleClose();
             } else {
                 console.log("Failed to save");
                 setAlertMessage({open:true, title: 'Failed', message: response.data.message, variant: 'info'});
             }
+            setIsLoading(false);
         })
         .catch((e) => {
             console.log("Error Occurred: ", e);
             setErrorMessages([]);
+            setIsLoading(false);
             setAlertMessage({ open: true, title: 'Error Occurred!', message: 'Please try again later.', variant: 'error' });
         });
-        handleClose();
+       
     };
     const handleUpdate = async () => {
+        setIsLoading(true);
         if(currentRow.name === '' || currentRow.description === '') {
             setAlertMessage({open:true, title: 'Error', variant: 'error'});
             setErrorMessages(['Please fill in all fields']);
+            setIsLoading(false);
             return
         }
        
@@ -220,6 +202,9 @@ export default function Violations() {
                 console.log("Saved");
                 fetchData();
                 setAlertMessage({open:true, title: 'Success', message: 'Violation has been Updated successfully',variant: 'info'});
+                setIsLoading(false);
+                handleClose();
+
             } else {
                 console.log("Failed to Update");
                 setAlertMessage({open:true, title: 'Failed', message: response.data.message, variant: 'info'});
@@ -230,10 +215,10 @@ export default function Violations() {
             setErrorMessages([]);
             setAlertMessage({ open: true, title: 'Error Occurred!', message: 'Please try again later.', variant: 'error' });
         });
-   
-        handleClose();
+        setIsLoading(false);
     };
     const handleDelete = async (_id,name) => {
+        setIsLoading(false);
         if(_id === '') {
             setAlertMessage({open:true, title: 'Error', variant: 'error'});
             setErrorMessages(['Please fill in all fields']);
@@ -250,17 +235,19 @@ export default function Violations() {
                 setAlertMessage({open:true, title: 'Success', message: 'Violation has been Deleted successfully', variant: 'warning'});
                 console.log("Deleted");
                 fetchData();
+                handleClose();
             } else {
                 console.log("Failed to Delete. Please Try again later");
             }
+            setIsLoading(false);
         })
         .catch((e) => {
             console.log("Error Occurred: ", e);
             setErrorMessages([]);
             setAlertMessage({ open: true, title: 'Error Occurred!', message: 'Please try again later.', variant: 'error' });
+            setIsLoading(false);
         });
    
-        handleClose();
     };
     
     React.useEffect(() => {
@@ -270,13 +257,13 @@ export default function Violations() {
         return () => {
             console.log('Violations component unmounted');
         }
-    }, [page, rowsPerPage]);
+    }, []);
 
     const fetchData = async () => {
-        axios.get('https://student-discipline-api-fmm2.onrender.com/violation/paginated', {
+        axios.get('/violation/paginated', {
             params: {
-            skip: page * rowsPerPage,
-            limit: rowsPerPage
+            skip: 0,
+            limit: 100
             },
             headers: {
             'Content-Type': 'application/json',
@@ -338,16 +325,17 @@ export default function Violations() {
 
     return (
         <div className="container h-full mx-auto">
-             <div className="container mx-auto p-4 ">
-             <h1 className='text-3xl py-3'>Violation List</h1>
-                <div className='flex justify-end h-fit gap-x-2'>
-                <button className='bg-blue-500 my-2 p-5 rounded-sm text-white hover:bg-blue-600'
-                onClick={() => handleCreateOpen()}
-                >
-                    Add Violation
-                </button>
-                </div>
+             <div className="container mx-auto py-5 ">
                 <div className='flex justify-between h-fit gap-x-2'>
+                    <h1 className='text-3xl py-3'>Violation List</h1>
+                    
+                    <button className='bg-blue-500 my-2 px-2 rounded-sm text-white hover:bg-blue-600'
+                    onClick={() => handleCreateOpen()}
+                    >
+                        Add Violation
+                    </button>
+                </div>
+                {/* <div className='flex justify-between h-fit gap-x-2'>
                     <TextField
                     className='my-2 py-2'
                     autoFocus
@@ -366,7 +354,7 @@ export default function Violations() {
                     >
                        Search
                     </button>
-                </div>
+                </div> */}
                 
                 <TableContainer component={Paper}>
                     <Table sx={{ minWidth: 500 }} >
@@ -389,44 +377,35 @@ export default function Violations() {
                                     </TableCell>
                                     <TableCell>{row.description}</TableCell>
                                     <TableCell>{formatDate(new Date(parseInt(row.date)), 'MMMM DD, YYYY')}</TableCell>
-                                    
-                                    <td>
-                                        <div className='flex gap-x-2 justify-center'>
-                                            <Button variant="contained" color="primary" className="mr-2" onClick={() => handleOpen(row)}>
-                                                Edit
-                                            </Button>
-                                            <Button variant="contained" color="secondary" 
-                                                onClick={() => { setCurrentRow({...row}); setopenDelete(true); }}
-                                            >
-                                                Delete
-                                            </Button>
-                                        </div>
+                                    <td className='flex gap-x-2 flex-row justify-center items-center'>
+                                        <Button
+                                        className=' p-2 rounded-sm text-white hover:bg-yellow-600 hover:text-white'
+                                        onClick={() => handleOpen(row)}>
+                                            Edit
+                                        </Button>
+                                        <Button
+                                        className=' p-2 rounded-sm text-white hover:bg-red-600 hover:text-white'
+                                        onClick={() => { setCurrentRow({...row}); setopenDelete(true); }}
+                                        >
+                                            Delete
+                                        </Button>
                                     </td>
                                     
                                 </TableRow>
                             ))}
-                            {emptyRows > 0 && (
+                            {rows.length == 0 && (
                                 <TableRow style={{ height: 53 * emptyRows }}>
-                                    <TableCell colSpan={6} />
+                                    <TableCell colSpan={6} >Loading....</TableCell>
                                 </TableRow>
                             )}
                         </TableBody>
                         <TableFooter>
                             <TableRow>
                                 <TablePagination
-                                    rowsPerPageOptions={[5, 10, 25, { label: 'All', value: -1 }]}
-                                    colSpan={4}
+                                    rowsPerPageOptions={[{ label: 'All', value: -1 }]} // Provide an array of options
                                     count={rows.length}
                                     rowsPerPage={rowsPerPage}
                                     page={page}
-                                    slotProps={{
-                                        select: {
-                                            inputProps: {
-                                                'aria-label': 'rows per page',
-                                            },
-                                            native: true,
-                                        },
-                                    }}
                                     onPageChange={handleChangePage}
                                     onRowsPerPageChange={handleChangeRowsPerPage}
                                     ActionsComponent={TablePaginationActions}
@@ -459,11 +438,11 @@ export default function Violations() {
                             
                         </DialogContent>
                         <DialogActions>
+                            <Button onClick={handleUpdate} color="primary" disabled={isLoading}>
+                                { isLoading ? 'Saving....' :'Save'}
+                            </Button>
                             <Button onClick={handleClose} color="primary">
                                 Cancel
-                            </Button>
-                            <Button onClick={handleUpdate} color="primary">
-                                Save
                             </Button>
                         </DialogActions>
                     </Dialog>
@@ -489,11 +468,11 @@ export default function Violations() {
                             />
                         </DialogContent>
                         <DialogActions>
+                            <Button onClick={handleSave} color="primary" disabled={isLoading}>
+                                { isLoading ? 'Saving....' :'Save'}
+                            </Button>
                             <Button onClick={handleClose} color="primary">
                                 Cancel
-                            </Button>
-                            <Button onClick={handleSave} color="primary">
-                                Save
                             </Button>
                         </DialogActions>
                     </Dialog>

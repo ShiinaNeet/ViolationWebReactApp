@@ -32,6 +32,10 @@ import Modal from '@mui/material/Modal';
 import TextField from '@mui/material/TextField';
 import StudentViolationList from '../components/StudentViolationList';
 import AlertMessageStudent from '../components/AlertMessageStudent';
+import formatDate from '../utils/moment';
+import DeleteOutlineIcon from '@mui/icons-material/DeleteOutline';
+import AddIcon from '@mui/icons-material/Add';
+
 
 function TablePaginationActions(props) {
     const { count, page, rowsPerPage, onPageChange } = props;
@@ -110,61 +114,10 @@ function getStyles(name, personName, theme) {
     };
 }
 const Students = () => {
-    const data = [
-        { id: 1, name: 'John Doe', violation: 'Late Submission', count: 3, department: 'Computer Science', year: '3rd Year', section: 'A' },
-        { id: 2, name: 'Jane Smith', violation: 'Plagiarism', count: 1, department: 'Information Technology', year: '2nd Year', section: 'B' },
-        { id: 3, name: 'Alice Johnson', violation: 'Cheating', count: 2, department: 'Software Engineering', year: '4th Year', section: 'C' },
-        { id: 4, name: 'Bob Brown', violation: 'Disruptive Behavior', count: 1, department: 'Computer Science', year: '1st Year', section: 'D' },
-        { id: 5, name: 'Charlie Davis', violation: 'Late Submission', count: 2, department: 'Information Technology', year: '3rd Year', section: 'A' },
-        { id: 6, name: 'Diana Evans', violation: 'Plagiarism', count: 1, department: 'Software Engineering', year: '2nd Year', section: 'B' },
-        { id: 7, name: 'Ethan Foster', violation: 'Cheating', count: 3, department: 'Computer Science', year: '4th Year', section: 'C' },
-        { id: 8, name: 'Fiona Green', violation: 'Disruptive Behavior', count: 1, department: 'Information Technology', year: '1st Year', section: 'D' },
-        { id: 9, name: 'George Harris', violation: 'Late Submission', count: 2, department: 'Software Engineering', year: '3rd Year', section: 'A' },
-        { id: 10, name: 'Hannah Irving', violation: 'Plagiarism', count: 1, department: 'Computer Science', year: '2nd Year', section: 'B' },
-        { id: 11, name: 'Ian Jacobs', violation: 'Cheating', count: 2, department: 'Information Technology', year: '4th Year', section: 'C' },
-        { id: 12, name: 'Jackie King', violation: 'Disruptive Behavior', count: 1, department: 'Software Engineering', year: '1st Year', section: 'D' },
-        { id: 13, name: 'Kevin Lee', violation: 'Late Submission', count: 3, department: 'Computer Science', year: '3rd Year', section: 'A' },
-        { id: 14, name: 'Laura Martinez', violation: 'Plagiarism', count: 1, department: 'Information Technology', year: '2nd Year', section: 'B' },
-        { id: 15, name: 'Mike Nelson', violation: 'Cheating', count: 2, department: 'Software Engineering', year: '4th Year', section: 'C' },
-        { id: 16, name: 'Nina O\'Connor', violation: 'Disruptive Behavior', count: 1, department: 'Computer Science', year: '1st Year', section: 'D' },
-        { id: 17, name: 'Oscar Perez', violation: 'Late Submission', count: 2, department: 'Information Technology', year: '3rd Year', section: 'A' },
-        { id: 18, name: 'Paula Quinn', violation: 'Plagiarism', count: 1, department: 'Software Engineering', year: '2nd Year', section: 'B' },
-        { id: 19, name: 'Quincy Roberts', violation: 'Cheating', count: 3, department: 'Computer Science', year: '4th Year', section: 'C' },
-        { id: 20, name: 'Rachel Scott', violation: 'Disruptive Behavior', count: 1, department: 'Information Technology', year: '1st Year', section: 'D' },
-        { id: 21, name: 'Sam Taylor', violation: 'Late Submission', count: 2, department: 'Software Engineering', year: '3rd Year', section: 'A' },
-        { id: 22, name: 'Tina Underwood', violation: 'Plagiarism', count: 1, department: 'Computer Science', year: '2nd Year', section: 'B' },
-        { id: 23, name: 'Uma Vance', violation: 'Cheating', count: 2, department: 'Information Technology', year: '4th Year', section: 'C' },
-        { id: 24, name: 'Victor White', violation: 'Disruptive Behavior', count: 1, department: 'Software Engineering', year: '1st Year', section: 'D' },
-        { id: 25, name: 'Wendy Xiong', violation: 'Late Submission', count: 3, department: 'Computer Science', year: '3rd Year', section: 'A' },
-        { id: 26, name: 'Xander Young', violation: 'Plagiarism', count: 1, department: 'Information Technology', year: '2nd Year', section: 'B' },
-        { id: 27, name: 'Yara Zane', violation: 'Cheating', count: 2, department: 'Software Engineering', year: '4th Year', section: 'C' },
-        { id: 28, name: 'Zachary Adams', violation: 'Disruptive Behavior', count: 1, department: 'Computer Science', year: '1st Year', section: 'D' },
-        { id: 29, name: 'Abby Baker', violation: 'Late Submission', count: 2, department: 'Information Technology', year: '3rd Year', section: 'A' },
-        { id: 30, name: 'Brian Clark', violation: 'Plagiarism', count: 1, department: 'Software Engineering', year: '2nd Year', section: 'B' },
-        { id: 31, name: 'Cathy Davis', violation: 'Cheating', count: 3, department: 'Computer Science', year: '4th Year', section: 'C' },
-        { id: 32, name: 'David Evans', violation: 'Disruptive Behavior', count: 1, department: 'Information Technology', year: '1st Year', section: 'D' },
-        { id: 33, name: 'Eva Foster', violation: 'Late Submission', count: 2, department: 'Software Engineering', year: '3rd Year', section: 'A' },
-        { id: 34, name: 'Frank Green', violation: 'Plagiarism', count: 1, department: 'Computer Science', year: '2nd Year', section: 'B' },
-        { id: 35, name: 'Grace Harris', violation: 'Cheating', count: 2, department: 'Information Technology', year: '4th Year', section: 'C' },
-        { id: 36, name: 'Henry Irving', violation: 'Disruptive Behavior', count: 1, department: 'Software Engineering', year: '1st Year', section: 'D' },
-        { id: 37, name: 'Ivy Jacobs', violation: 'Late Submission', count: 3, department: 'Computer Science', year: '3rd Year', section: 'A' },
-        { id: 38, name: 'Jack King', violation: 'Plagiarism', count: 1, department: 'Information Technology', year: '2nd Year', section: 'B' },
-        { id: 39, name: 'Karen Lee', violation: 'Cheating', count: 2, department: 'Software Engineering', year: '4th Year', section: 'C' },
-        { id: 40, name: 'Leo Martinez', violation: 'Disruptive Behavior', count: 1, department: 'Computer Science', year: '1st Year', section: 'D' },
-        { id: 41, name: 'Mona Nelson', violation: 'Late Submission', count: 2, department: 'Information Technology', year: '3rd Year', section: 'A' },
-        { id: 42, name: 'Nate O\'Connor', violation: 'Plagiarism', count: 1, department: 'Software Engineering', year: '2nd Year', section: 'B' },
-        { id: 43, name: 'Olivia Perez', violation: 'Cheating', count: 3, department: 'Computer Science', year: '4th Year', section: 'C' },
-        { id: 44, name: 'Paul Quinn', violation: 'Disruptive Behavior', count: 1, department: 'Information Technology', year: '1st Year', section: 'D' },
-        { id: 45, name: 'Quinn Roberts', violation: 'Late Submission', count: 2, department: 'Software Engineering', year: '3rd Year', section: 'A' },
-        { id: 46, name: 'Rita Scott', violation: 'Plagiarism', count: 1, department: 'Computer Science', year: '2nd Year', section: 'B' },
-        { id: 47, name: 'Steve Taylor', violation: 'Cheating', count: 2, department: 'Information Technology', year: '4th Year', section: 'C' },
-        { id: 48, name: 'Tara Underwood', violation: 'Disruptive Behavior', count: 1, department: 'Software Engineering', year: '1st Year', section: 'D' },
-        { id: 49, name: 'Umar Vance', violation: 'Late Submission', count: 3, department: 'Computer Science', year: '3rd Year', section: 'A' },
-        { id: 50, name: 'Vera White', violation: 'Plagiarism', count: 1, department: 'Information Technology', year: '2nd Year', section: 'B' }
-    ];
-
+   
     const [anchorEl, setAnchorEl] = React.useState(null);
     const open = Boolean(anchorEl);
+    const [isLoading, setIsLoading] = React.useState(false);
     const [ViewModal, setViewModal] = React.useState(false);
     const [targetStudent, setStudent] = React.useState({
         userid: 0,
@@ -267,10 +220,11 @@ const Students = () => {
         
     };
     const handleDelete = async () => {
-        
+        setIsLoading(true);
         if(targetStudent.userid == '' || targetStudent.userid == null || targetStudent.userid == 0){
             console.log("No violation to delete");
             setAlertMessage({open:true, title: 'Error occured!', message: 'There is no target student to be deleted! Please try again!',variant: 'info'});
+            setIsLoading(false);
             return;
         }
         axios.delete(`/user/delete/${targetStudent.userid}`, 
@@ -284,20 +238,24 @@ const Students = () => {
             if (response.data.status ===  'success') {
                 console.log("Saved");
                 fetchData();
-                setAlertMessage({open:true, title: 'Success', message: 'Student Violation was updated successfully!',variant: 'info'});
+                setAlertMessage({open:true, title: 'Success', message: 'Student Violation was deleted successfully!',variant: 'info'});
+                setIsLoading(false);
                 setDeleteStudentViolationModal(false);
+                handleClose();
             } else {
                 console.log("Failed to Update");
                 setAlertMessage({open:true, title: 'Failed', message: response.data.description, variant: 'info'});
+                setIsLoading(false);
             }
+           
         })
         .catch((e) => {
             console.log("Error Occurred: ", e);
             setErrorMessages([]);
             setAlertMessage({ open: true, title: 'Error Occurred!', message: 'Please try again later.', variant: 'error' });
+            setIsLoading(false);
         });
-        setDeleteStudentViolationModal(false);
-       
+
     }
     const fetchData = async () => {
         axios.get('/user/paginated', {
@@ -311,12 +269,13 @@ const Students = () => {
         })
         .then((response) => {
             if(response.data.status === "success"){
-                setRows(prevRows => {
-                    const newRows = response.data.data.filter(
-                        newRow => !prevRows.some(row => row.id === newRow.id)
-                    );
-                    return [...prevRows, ...newRows]; // Append only unique rows
-                });
+                // setRows(prevRows => {
+                //     const newRows = response.data.data.filter(
+                //         newRow => !prevRows.some(row => row.id === newRow.id)
+                //     );
+                //     return [...prevRows, ...newRows]; // Append only unique rows
+                // });
+                setRows(response.data.data);
             }
             else{
                 console.log("Failed to fetch data");
@@ -361,8 +320,7 @@ const Students = () => {
                fullname: response.data.fullname, 
                userid: response.data.userid, 
                violations: response.data.violations.length > 0 ? response.data.violations : [],
-               year: response.data.year,
-               department: response.data.department,
+               year_and_department: response.data.year_and_department,
                section: response.data.section
                });
                 // console.log(targetStudent);           
@@ -381,7 +339,10 @@ const Students = () => {
 
    
     const handleAddViolation = () => {
-        if (selectedViolation && !targetStudent.violations.some(v => v.name === selectedViolation.name)) {
+        // if (selectedViolation && !targetStudent.violations.some(v => v.name === selectedViolation.name)) {
+        if (selectedViolation ) {
+            setSelectedViolation({ ...selectedViolation, date: new Date().getTime() });
+            console.log(selectedViolation);
             const updatedViolations = [...targetStudent.violations, selectedViolation];
             setStudent({ ...targetStudent, violations: updatedViolations });
             setSelectedViolation("");
@@ -395,14 +356,16 @@ const Students = () => {
     const handleUpdateViolation = () => {
         // console.log('Updating violation...');
         // console.log("Current student violation: ",targetStudent.violations);
+        setIsLoading(true);
         if(targetStudent.violations.length == 0 || targetStudent.department == ''){
             console.log("No violation to update");
             setAlertMessage({open:true, title: 'Error occured!', message: 'Student Violation and Department fields are required!',variant: 'info'});
+            setIsLoading(false);
             return;
         }
         axios.put(`/user/update/${targetStudent.userid}`, 
             {   
-            department: targetStudent.department,
+            year_and_department: targetStudent.year_and_department,
             violations: transformedViolations
             },
             {
@@ -416,23 +379,26 @@ const Students = () => {
                 console.log("Saved");
                 fetchData();
                 setAlertMessage({open:true, title: 'Success', message: 'Student Violation was updated successfully!',variant: 'info'});
+                setIsLoading(false);
                 setUpdateStudentViolationModal(false);
             } else {
                 console.log("Failed to Update");
                 setAlertMessage({open:true, title: 'Failed', message: response.data.description, variant: 'info'});
+                setIsLoading(false);
             }
         })
         .catch((e) => {
             console.log("Error Occurred: ", e);
             setErrorMessages([]);
             setAlertMessage({ open: true, title: 'Error Occurred!', message: 'Please try again later.', variant: 'error' });
+            setIsLoading(false);
         });
    
     }
 
     return (
         <>
-            <div className="container mx-auto p-4">
+            <div className="container mx-auto py-5">
                 <div className='flex flex-col md:flex-row md:justify-between h-fit'>
                     <h1 className='text-3xl py-3'>Student List</h1>
                     {/* <button className='bg-blue-500 my-2 p-2 rounded-sm text-white hover:bg-blue-600'
@@ -441,7 +407,7 @@ const Students = () => {
                         Add Student
                     </button> */}
                 </div>
-                <div className=" shadow-sm shadow-zinc-500 rounded-lg">
+                <div className="shadow-sm shadow-zinc-500 rounded-lg">
                     <TableContainer component={Paper}>
                         <Table sx={{ minWidth: 500 }} >
                             <TableHead>
@@ -449,10 +415,9 @@ const Students = () => {
                                     <th className="py-5 px-4 border-b">ID</th>
                                     <th className="py-5 px-4 border-b">Name</th>
                                     <th className="py-5 px-4 border-b">Violation</th>
-                                    <th className="py-5 px-4 border-b">Department</th>
-                                    <th className="py-5 px-4 border-b">Year</th>
-                                    <th className="py-5 px-4 border-b">Section</th>
-                                    <th className="py-5 px-4 border-b">Actions</th>
+                                    <th className="py-5 px-4 border-b">Department and Year</th>
+                                    <th className='py-5 px-4 border-b text-center'>Date</th>
+                                    <th className="py-5 px-4 border-b text-center">Actions</th>
                                 </TableRow>
                             </TableHead>
                             <TableBody>
@@ -464,19 +429,24 @@ const Students = () => {
                                         <td className="py-2 px-4 border-b">{student.userid}</td>
                                         <td className="py-2 px-4 border-b">{student.fullname}</td>
                                         <td className="py-2 px-4 border-b">{student.violations.length > 0 ? student.violations[0].name : ''}</td>
-                                        <td className="py-2 px-4 border-b">{student.department}</td>
-                                        <td className="py-2 px-4 border-b">{student.year}</td>
-                                        <td className="py-2 px-4 border-b">{student.section}</td>
-                                        <td className="py-2 px-4 border-b">
-                                            <Button onClick={() => handleViewViolationModal(student)}>View Violation</Button>
-                                            <Button onClick={() => handleUpdateViolationModal(student)}>Update Violation</Button>
-                                            <Button onClick={() => handleDeleteViolationModal(student)}>Delete Violation</Button>
+                                        <td className="py-2 px-4 border-b">{student.year_and_department}</td>
+                                        <td className="py-2 px-4 border-b">{student.violations.length > 0 ? formatDate(new Date(parseInt(student.violations[0].date)), "MMMM DD, YYYY - hh:mm A" ) : ''}</td>
+                                        <td className="py-2 px-4 border-b flex items-center justify-center">
+                                            <Button 
+                                            className=' p-2 rounded-sm text-white hover:bg-blue-600 hover:text-white'
+                                            onClick={() => handleViewViolationModal(student)}>View</Button>
+                                            <Button 
+                                            className=' p-2 rounded-sm text-white hover:bg-yellow-600 hover:text-white'
+                                            onClick={() => handleUpdateViolationModal(student)}>Update</Button>
+                                            <Button 
+                                            className=' p-2 rounded-sm text-white hover:bg-red-600 hover:text-white'
+                                            onClick={() => handleDeleteViolationModal(student)}>Delete</Button>
                                         </td>
                                     </tr>
                                 ))}
-                                {emptyRows > 0 && (
+                                {rows.length == 0 && (
                                     <TableRow style={{ height: 53 * emptyRows }}>
-                                        <TableCell colSpan={6} />
+                                        <TableCell colSpan={6} > Loading.... </TableCell>
                                     </TableRow>
                                 )}
                             </TableBody>
@@ -526,14 +496,30 @@ const Students = () => {
                         <label
                         readOnly
                         >
-                            Name: {targetStudent.fullname}
+                           <strong className='font-bold'> 
+                                Name: 
+                            </strong> 
+                                {targetStudent.fullname}
                         </label>
-                        <label
+                        <label readOnly>
+                            <strong className='font-bold'>Department: </strong> {targetStudent.year_and_department 
+                                                                                ? targetStudent.year_and_department.includes(' - ') 
+                                                                                    ? targetStudent.year_and_department.split(' - ')[0] 
+                                                                                    : 'Incorrect Format' 
+                                                                                : 'No Data'}
+                        </label>
+                        <label readOnly>
+                            <strong className='font-bold'>  Year: </strong> {targetStudent.year_and_department 
+                                                                                ? targetStudent.year_and_department.includes(' - ') 
+                                                                                    ? targetStudent.year_and_department.split(' - ')[1] 
+                                                                                    : 'Incorrect Format' 
+                                                                                : 'No Data'}
+                        </label>
+                        {/* <label
                         readOnly
                         >
-                            Violation: { targetStudent.violations && targetStudent.violations.length > 0 ? targetStudent.violations[0].name : ''}
-                        </label>
-                   
+                            <strong className='font-bold'> Violation: </strong>{ targetStudent.violations && targetStudent.violations.length > 0 ? targetStudent.violations[0].name : ''}
+                        </label> */}
                         <div id="Violation list">
                             <h2 className='py-3 text-2xl font-bold text-center'>Violation Records</h2>
                             <StudentViolationList student={targetStudent} />
@@ -580,13 +566,13 @@ const Students = () => {
                         <h3>Current Violations</h3>
                         <ul>
                             {targetStudent.violations.map((violation, index) => (
-                                <li key={index} className='bg-slate-300 my-2 rounded-sm flex justify-between text-black'>
+                                <li key={index} className='my-2 rounded-sm flex justify-between text-black border-2 border-solid border-red-500 '>
                                    <label className='p-2'>{violation.name} </label> 
                                     <Button
                                         onClick={() => handleDeleteViolation(index)}
-                                        className='hover:bg-slate-500 hover:text-white'
+                                        className='hover:border-1 hover:border-solid hover:border-blue-500 hover:border- hover:text-white rounded-none'
                                     >
-                                        Delete
+                                      <DeleteOutlineIcon color="error"/>
                                     </Button>
                                 </li>
                             ))}
@@ -618,17 +604,17 @@ const Students = () => {
                                 onClick={handleAddViolation}
                                 color="primary"
                             >
-                                Add
+                               <AddIcon /> Add
                             </Button>
                         </div>
                         
                         <TextField
                         className='my-5 py-5'
-                        label="Department"
+                        label="Department and Year (e.g. Computer Science - 3rd Year)"
                         type="text"
                         variant="standard"
-                        value={targetStudent.department}
-                        onChange={(e) => setStudent({ ...targetStudent, department: e.target.value })}
+                        value={targetStudent.year_and_department}
+                        onChange={(e) => setStudent({ ...targetStudent, year_and_department: e.target.value })}
                         slotProps={{
                             inputLabel: {
                             shrink: true,
@@ -642,8 +628,9 @@ const Students = () => {
                     <DialogActions>
                         <Button className='bg-red-500'
                         onClick={handleUpdateViolation}
+                        disabled={isLoading}
                         >
-                            Update Student
+                            { isLoading ? 'Updating Student' : 'Update Student'}
                         </Button>
                         <Button onClick={handleClose} color="primary">
                             Cancel
@@ -658,12 +645,17 @@ const Students = () => {
                         <div className='flex flex-col gap-y-2'>
                             <p></p>
                             <label>Name: {targetStudent.fullname}</label>
-                            <label>Department: {targetStudent.department && targetStudent.department.length > 0 ? targetStudent.department : 'No department attached'}</label>
+                            <label readOnly>
+                            <   strong className='font-bold'>Department: </strong> {targetStudent.year_and_department && targetStudent.year_and_department.includes(' - ') ? targetStudent.year_and_department.split(' - ')[0] : ''}
+                            </label>
+                            <label readOnly>
+                                <strong className='font-bold'>  Year: </strong> {targetStudent.year_and_department && targetStudent.year_and_department.includes(' - ') ? targetStudent.year_and_department.split(' - ')[1] : ''}
+                            </label>
                             <br />
                             <label>Violation(s): </label>
                             <ul>
                                 {targetStudent.violations.map((violation, index) => (
-                                    <li key={index} className='bg-slate-300 my-2 rounded-sm flex justify-between text-black'>
+                                    <li key={index} className='border-2 border-solid border-red-500 my-2 rounded-sm flex justify-between text-black'>
                                     <label className='p-2'>{violation.name} </label> 
                                     </li>
                                 ))}
@@ -674,8 +666,9 @@ const Students = () => {
                     <DialogActions>
                         <Button className='bg-red-500'
                         onClick={handleDelete}
+                        disabled={isLoading}
                         >
-                            Delete
+                            {isLoading ? 'Deleting student...' : 'Delete student'}
                         </Button>
                         <Button onClick={handleClose} color="primary">
                             Cancel

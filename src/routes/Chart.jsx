@@ -1,25 +1,88 @@
-import React from 'react'
+import React, { useEffect } from 'react';
 import { PieChart } from '@mui/x-charts/PieChart';
+import axios from 'axios';
+import { Button } from '@mui/material';
+import RestartAltIcon from '@mui/icons-material/RestartAlt';
+import { valueFormatter } from '../utils/ChartData';
 
 export default function Chart() {
+    const [data, setData] = React.useState([]);
+    const [loading, setLoading] = React.useState(false);
+
+    const fetchData = async () => {
+        setLoading(true);
+        try {
+            const response = await axios.get('/violation/statistic', {
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+            });
+            console.log("Response: ", response);
+            if (response.status === 200) {
+                console.log("Data fetched successfully");
+                const transformedData = response.data.map((item, index) => ({
+                    id: index,
+                    value: item.count,
+                    label: `${item.violation_name} (${item.count})`,
+                }));
+                setData(transformedData);
+            } else {
+                console.log("Failed to fetch data");
+            }
+        } catch (error) {
+            console.error('There was an error fetching the data!', error);
+        } finally {
+            setLoading(false);
+        }
+    };
+    useEffect(() => {
+        fetchData();
+    }, []);
+
     return (
         <>
-            <div className="h-screen w-full flex items-center justify-center">
-                <div className='w-full p-2 sm:p-0 sm:w-2/3 h-1/2 flex flex-col items-center justify-center'>
-                    <PieChart
-                        series={[
-                            {
-                                data: [
-                                    { id: 0, value: 40, label: 'Violation A (40%)' },
-                                    { id: 1, value: 30, label: 'Violation B (30%)' },
-                                    { id: 2, value: 20, label: 'Violation C (20%)' },
-                                    { id: 3, value: 10, label: 'Violation D (10%)' },
-                                ],
-                            },
-                        ]}
-                    />
+            <div className="h-screen w-full flex items-center flex-col p-10">
+                <div className='w-full h-1/3  p-5 shadow-sm shadow-red-400 overflow-y-visible'>
+                    <div className='flex justify-between'>
+                        <h1 className='text-lg font-bold'>Monthly</h1>
+                        <Button onClick={fetchData}><RestartAltIcon/>Reload</Button>
+                    </div>
+                    {loading ? (
+                        <p>Loading...</p>
+                    ) : (
+                        <PieChart
+                            series={[
+                                {
+                                    data: data,
+                                    highlightScope: { fade: 'global', highlight: 'item' },
+                                    faded: { innerRadius: 30, additionalRadius: -30, color: 'gray' },
+                                    valueFormatter,
+                                },
+                            ]}
+                        />
+                    )}
+                </div>
+                <div className='w-full h-1/3  p-5 shadow-sm shadow-red-400'>
+                    <div className='flex justify-between'>
+                        <h1 className='text-lg font-bold'>Overall</h1>
+                        <Button><RestartAltIcon/>Reload</Button>
+                    </div>
+                    {loading ? (
+                        <p>Loading...</p>
+                    ) : (
+                        <PieChart
+                            series={[
+                                {
+                                    data: data,
+                                    highlightScope: { fade: 'global', highlight: 'item' },
+                                    faded: { innerRadius: 30, additionalRadius: -30, color: 'gray' },
+                                    valueFormatter,
+                                },
+                            ]}
+                        />
+                    )}
                 </div>
             </div>
         </>
-    )
+    );
 }

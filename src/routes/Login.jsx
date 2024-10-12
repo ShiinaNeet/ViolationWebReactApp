@@ -1,10 +1,9 @@
-import React from 'react';
+import React, { useCallback } from 'react';
 import { useAuth } from '../auth/AuthProvider';
 import { useNavigate } from 'react-router-dom';
 import Button from '@mui/material/Button';
 import TextField from '@mui/material/TextField';
 import { Alert, AlertTitle, Snackbar } from '@mui/material';
-
 
 const Login = () => {
   const { login } = useAuth();
@@ -15,7 +14,7 @@ const Login = () => {
   
   const [alertMessage, setAlertMessage] = React.useState({open: false ,title: '', message: '', variant: ''});
   const [errorMessages, setErrorMessages] = React.useState([]);
-
+  const [isLoading, setIsLoading] = React.useState(false);
   const [account, setAccount] = React.useState({name: '', password: ''});
 
   const handleAlertClose = (event, reason) => {
@@ -26,21 +25,38 @@ const Login = () => {
     setAlertMessage({open:false});
   };
   
-  const handleLogin = () => {
-    if(account.name === '' || account.password === '') {
-      // alert('Please fill in all fields');
+  const handleLogin = useCallback(async (event) => {
+    event.preventDefault(); // Prevent default form submission behavior
+    setIsLoading(true);
+    if (account.name === '' || account.password === '') {
       setAlertMessage({open: true, title: 'Error', message: 'Please fill in all fields', variant: 'error'});
+      setIsLoading(false);
       return;
     }
-    if(login(account.name, account.password) == true) {
-      navigate('/Students');
+    try {
+      const success = await login(account.name, account.password);
+      setIsLoading(false);
+      if (success) {
+        navigate('/Students');
+      } else {
+        setAlertMessage({open: true, title: 'Error', message: 'Invalid login credentials', variant: 'error'});
+      }
+    } catch (error) {
+      setAlertMessage({open: true, title: 'Error', message: error.message, variant: 'error'});
+      setIsLoading(false);
     }
-     // Redirect to home or any other route after login
-  };
+  }, [account, login, navigate]);
+
+  useEffect(() => {
+    if (!animationPlayed.current) {
+      formRef.current.classList.add('animate-slide-in');
+      animationPlayed.current = true;
+    }
+  }, []);
 
   return (
     <div className="flex flex-col items-center justify-center h-screen ">
-      <div className='flex flex-col bg-slate-100 w-full sm:w-1/3 p-3 rounded-md gap-y-5 shadow-sm shadow-red-400 animate-slide-in'>
+      <form onSubmit={handleLogin} className='flex flex-col bg-slate-100 w-full md:w-2/3 p-3 rounded-md gap-y-5 border-2 border-red-500 border-solid shadow-sm shadow-red-400 animate-slide-in'>
         <h1 className=" text-3xl text-center font-mono font-extrabold">STUDENT VIOLATION TRACKING APP</h1>
         <TextField 
         id="outlined-basic" 
@@ -50,14 +66,15 @@ const Login = () => {
         value={account.name}
         />
         <TextField 
-        id="outlined-basic" 
+        id="outlined-password-input"
+        type="password"
         label="Password" 
         variant="outlined" 
         value={account.password}
         onChange={(e) => setAccount({...account, password: e.target.value})}
         />
-        <Button onClick={handleLogin} className=''>Login</Button>
-      </div>
+        <Button type="submit" className='' disabled={isLoading}>{isLoading ? 'Logging in...': 'Login'}</Button>
+      </form>
       <Snackbar open={alertMessage.open} autoHideDuration={3000} onClose={handleAlertClose} anchorOrigin={{ vertical, horizontal }} key={vertical + horizontal}>
         <Alert
         onClose={handleAlertClose}
