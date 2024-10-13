@@ -163,7 +163,8 @@ const Students = () => {
     };
 
     const handleChangeRowsPerPage = (event) => {
-        setRowsPerPage(parseInt(event.target.value, 10));
+        console.log("Rows per page: ", event.target.value);
+        setRowsPerPage(parseInt(event.target.value, 5));
         setPage(0);
     };
 
@@ -176,11 +177,11 @@ const Students = () => {
   
 
     useEffect(() => {
-        if ((page + 1) * rowsPerPage >= rows.length) {
-            fetchData();
-        }
+        
         fetchViolationData();
         fetchData();
+
+
     }, []);
     const handleClick = (event) => {
         setAnchorEl(event.currentTarget);
@@ -198,7 +199,7 @@ const Students = () => {
             year: '',
             department: '',
             section: ''});
-        fetchData();
+     
     };
     const handleViewViolationModal = (person) => {
         setAnchorEl(null);
@@ -263,7 +264,7 @@ const Students = () => {
     const fetchData = async () => {
         axios.get('/user/paginated', {
             params: {
-            skip: page * rowsPerPage,
+            skip: 0,
             limit: 100
             },
             headers: {
@@ -278,6 +279,8 @@ const Students = () => {
                 //     );
                 //     return [...prevRows, ...newRows]; // Append only unique rows
                 // });
+                setPage(0);
+                console.log("Fetch data from fetch data function: ", response.data.data);
                 setRows(response.data.data);
             }
             else{
@@ -300,9 +303,9 @@ const Students = () => {
         })
         .then((response) => {
             if(response.data.success === true){
-                console.log("Violation data fetched successfully");
+                // console.log("Violation data fetched successfully");
                 setViolationList(response.data.total);
-                console.log(violationList);
+                
             }
             else{
                 console.log("Failed to fetch data");

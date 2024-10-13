@@ -36,15 +36,15 @@ const router = createBrowserRouter([
       },
       {
         path: '/Students',
-        element: <ProtectedRoute element={<Students />} roles={['admin', 'user']} />,
+        element: <ProtectedRoute element={<Students />} />,
       },
       {
         path: '/Violations',
-        element: <ProtectedRoute element={<Violations />} roles={['admin']} />,
+        element: <ProtectedRoute element={<Violations />}  />,
       },
       {
         path: '/Chart',
-        element: <ProtectedRoute element={<Chart />} roles={['admin', 'user']} />,
+        element: <ProtectedRoute element={<Chart />}  />,
       },
     ],
   },
