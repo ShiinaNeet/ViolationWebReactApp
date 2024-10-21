@@ -67,7 +67,7 @@ const Login = () => {
         <h1 className=" text-3xl text-center font-mono font-extrabold">STUDENT VIOLATION TRACKING APP</h1>
         <TextField 
         id="outlined-basic" 
-        label="Full Name" 
+        label="Username" 
         variant="outlined" 
         onChange={(e) => setAccount({...account, name: e.target.value})}
         value={account.name}
