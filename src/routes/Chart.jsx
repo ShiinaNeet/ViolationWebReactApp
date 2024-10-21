@@ -42,7 +42,7 @@ export default function Chart() {
     return (
         <>
             <div className=" w-full flex items-center flex-col p-10 gap-y-5">
-                <div className="w-full p-5 overflow-y-visible group">
+                <div className="w-full p-5 overflow-y-visible group h-[500px]">
                     <div className="flex justify-between">
                         <h1 className="text-lg font-bold">Monthly</h1>
                         <button
@@ -74,12 +74,12 @@ export default function Chart() {
                                     arcLabelRadius: 90,
                                 },
                             ]}
-                            height={250}
-                            width={500}
+                         
+                            
                         />
                     )}
                 </div>
-                <div className="w-full p-5 overflow-y-visible group">
+                <div className="w-full p-5 overflow-y-visible group h-[500px]">
                     <div className="flex justify-between">
                         <h1 className="text-lg font-bold">Overall</h1>
                         <button
@@ -111,8 +111,7 @@ export default function Chart() {
                                     arcLabelRadius: 90,
                                 },
                             ]}
-                            height={250}
-                            width={500}
+                         
                         />
                     )}
                 </div>
