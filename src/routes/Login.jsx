@@ -92,7 +92,7 @@ const Login = () => {
                 </h1>
                 <TextField
                     id="outlined-basic"
-                    label="Full Name"
+                    label="Username"
                     variant="outlined"
                     onChange={(e) =>
                         setAccount({ ...account, name: e.target.value })
