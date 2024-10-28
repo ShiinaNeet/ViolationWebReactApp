@@ -628,7 +628,7 @@ const Students = () => {
                     aria-describedby="modal-modal-description"
                 >
                     <div className="modal bg-white h-fit sm:w-fit w-full my-auto rounded-md flex flex-col gap-y-3">
-                        <div className="flex flex-col justify-center items-center md:flex-row sm:justify-between sm:items-center sm:w-full">
+                        <div className="flex flex-col justify-center items-center md:flex-row sm:justify-between sm:items-center sm:w-full gap-x-5">
                             <h2 className="py-3 sm:text-2xl sm:font-bold text-center font-semibold">
                                 Student Violation History
                             </h2>
