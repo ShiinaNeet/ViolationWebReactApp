@@ -126,59 +126,51 @@ export default function StudentViolationList(props) {
     return (
         <Box>
             <Paper>
-                <Box
-                    display="flex"
-                    justifyContent="space-between"
-                    p={2}
-                    bgcolor="grey.200"
-                >
-                    <Box flex="1">Name</Box>
-                    <Box flex="1">Date</Box>
-                </Box>
-                {data
-                    .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
-                    .map((row, index) => (
-                        <Box
-                            display="flex"
-                            justifyContent="space-between"
-                            p={2}
-                            key={index}
-                            borderBottom="1px solid grey"
-                        >
-                            <Box flex="1">{row.name}</Box>
-                            <Box flex="1">
-                                {formatDate(
-                                    new Date(parseInt(row.date)),
-                                    "MMMM DD, YYYY - hh:mm A"
-                                )}
-                            </Box>
-                        </Box>
-                    ))}
-                {emptyRows > 0 && <Box style={{ height: 53 * emptyRows }} />}
-                <Box display="flex" justifyContent="flex-end" p={2}>
-                    <TablePagination
-                        rowsPerPageOptions={[
-                            5,
-                            10,
-                            25,
-                            { label: "All", value: -1 },
-                        ]}
-                        count={data.length}
-                        rowsPerPage={rowsPerPage}
-                        page={page}
-                        slotProps={{
-                            select: {
-                                inputProps: {
-                                    "aria-label": "rows per page",
-                                },
-                                native: true,
-                            },
-                        }}
-                        onPageChange={handleChangePage}
-                        onRowsPerPageChange={handleChangeRowsPerPage}
-                        ActionsComponent={TablePaginationActions}
-                    />
-                </Box>
+                <TableContainer>
+                    <Table size='small' >
+                        <TableHead>
+                            <TableRow>
+                                <TableCell>Name</TableCell>
+                                <TableCell>Date</TableCell>
+                            </TableRow>
+                        </TableHead>
+                        <TableBody>
+                            {data
+                                .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
+                                .map((row, index) => (
+                                    <TableRow key={index}>
+                                        <TableCell>{row.name}</TableCell>
+                                        <TableCell>
+                                            {formatDate(
+                                                new Date(parseInt(row.date)),
+                                                "MMMM DD, YYYY - hh:mm A"
+                                            )}
+                                        </TableCell>
+                                    </TableRow>
+                                ))}
+                            {emptyRows > 0 && (
+                                <TableRow style={{ height: 53 * emptyRows }}>
+                                    <TableCell colSpan={6} />
+                                </TableRow>
+                            )}
+                        </TableBody>
+                        <TableFooter>
+                            <TableRow>
+                                <TablePagination
+                                    rowsPerPageOptions={[
+                                        { label: "All", value: -1 },
+                                    ]}
+                                    count={data.length}
+                                    rowsPerPage={rowsPerPage}
+                                    page={page}
+                                    onPageChange={handleChangePage}
+                                    onRowsPerPageChange={handleChangeRowsPerPage}
+                                    ActionsComponent={TablePaginationActions}
+                                />
+                            </TableRow>
+                        </TableFooter>
+                    </Table>
+                </TableContainer>
             </Paper>
         </Box>
     );

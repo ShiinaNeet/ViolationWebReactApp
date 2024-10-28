@@ -19,6 +19,11 @@ import DialogActions from "@mui/material/DialogActions";
 import DialogContent from "@mui/material/DialogContent";
 import DialogTitle from "@mui/material/DialogTitle";
 import AddAlertIcon from "@mui/icons-material/AddAlert";
+import CloseIcon from '@mui/icons-material/Close';
+import RemoveRedEyeIcon from '@mui/icons-material/RemoveRedEye';
+import EditIcon from '@mui/icons-material/Edit';
+import DeleteIcon from '@mui/icons-material/Delete';
+import Tooltip from '@mui/material/Tooltip';
 import Box from "@mui/material/Box";
 import OutlinedInput from "@mui/material/OutlinedInput";
 import InputLabel from "@mui/material/InputLabel";
@@ -188,7 +193,7 @@ const Students = () => {
         setAnchorEl(null);
         setViewModal(false);
         setAddStudentModal(false);
-        setMessageStudentModal(false);
+        // setMessageStudentModal(false);
         setDeleteStudentViolationModal(false);
         setUpdateStudentViolationModal(false);
         setStudent({
@@ -199,9 +204,12 @@ const Students = () => {
             section: "",
         });
     };
+    const handleSendMessageModalClose = () => {
+        setMessageStudentModal(false);
+    }
     const handleViewViolationModal = (person) => {
         setAnchorEl(null);
-        console.log(person);
+        // console.log(person);
         // setStudent(person);
         fetchUser(person);
         setViewModal(true);
@@ -524,7 +532,7 @@ const Students = () => {
                                         <td className="py-2 px-4 border-b">
                                             {student.year_and_department}
                                         </td>
-                                        <td className="py-2 px-4 border-b flex-shrink-1">
+                                        <td className="py-2 px-4 border-b flex-shrink-1 text-center">
                                             {student.violations.length > 0
                                                 ? formatDate(
                                                       new Date(
@@ -538,37 +546,43 @@ const Students = () => {
                                                   )
                                                 : ""}
                                         </td>
-                                        <td className="py-2 px-4 border-b flex items-center justify-center">
-                                            <Button
-                                                className=" p-2 rounded-sm text-white hover:bg-blue-600 hover:text-white"
-                                                onClick={() =>
-                                                    handleViewViolationModal(
-                                                        student
-                                                    )
-                                                }
-                                            >
-                                                View
-                                            </Button>
-                                            <Button
-                                                className=" p-2 rounded-sm text-white hover:bg-yellow-600 hover:text-white"
-                                                onClick={() =>
-                                                    handleUpdateViolationModal(
-                                                        student
-                                                    )
-                                                }
-                                            >
-                                                Update
-                                            </Button>
-                                            <Button
-                                                className=" p-2 rounded-sm text-white hover:bg-red-600 hover:text-white"
-                                                onClick={() =>
-                                                    handleDeleteViolationModal(
-                                                        student
-                                                    )
-                                                }
-                                            >
-                                                Delete
-                                            </Button>
+                                        <td className="border-b flex justify-center">
+                                            <Tooltip title="View Student">
+                                                <Button
+                                                    className="rounded-sm text-white hover:bg-blue-600 hover:text-white"
+                                                    onClick={() =>
+                                                        handleViewViolationModal(
+                                                            student
+                                                        )
+                                                    }
+                                                >
+                                                    <RemoveRedEyeIcon />
+                                                </Button>
+                                            </Tooltip>
+                                            <Tooltip title="Edit Student">
+                                                <Button
+                                                    className=" rounded-sm text-white hover:bg-yellow-600 hover:text-white"
+                                                    onClick={() =>
+                                                        handleUpdateViolationModal(
+                                                            student
+                                                        )
+                                                    }
+                                                >
+                                                    <EditIcon />
+                                                </Button>
+                                            </Tooltip>
+                                            <Tooltip title="Delete Student">
+                                                <Button
+                                                    className="rounded-sm text-white hover:bg-red-600 hover:text-white"
+                                                    onClick={() =>
+                                                        handleDeleteViolationModal(
+                                                            student
+                                                        )
+                                                    }
+                                                >
+                                                    <DeleteIcon />
+                                                </Button>
+                                            </Tooltip>
                                         </td>
                                     </tr>
                                 ))}
@@ -613,17 +627,25 @@ const Students = () => {
                     aria-labelledby="modal-modal-title"
                     aria-describedby="modal-modal-description"
                 >
-                    <div className="modal bg-white h-2/3 overflow-y-scroll  sm:w-2/3 w-full my-auto rounded-md flex flex-col gap-y-3">
-                        <div className="flex flex-col justify-center items-center md:flex-row md:justify-between md:items-center md:w-full">
-                            <h2 className="py-3 text-2xl font-bold text-center">
+                    <div className="modal bg-white h-fit sm:w-fit w-full my-auto rounded-md flex flex-col gap-y-3">
+                        <div className="flex flex-col justify-center items-center md:flex-row sm:justify-between sm:items-center sm:w-full">
+                            <h2 className="py-3 sm:text-2xl sm:font-bold text-center font-semibold">
                                 Student Violation History
                             </h2>
-                            <Button
-                                className="bg-blue-500 p-2 rounded-sm text-white hover:bg-blue-600 hover:text-white"
-                                onClick={() => setMessageStudentModal(true)}
-                            >
-                                <AddAlertIcon /> Alert
-                            </Button>
+                            <div className="gap-x-2">
+                                <Button
+                                    className="bg-blue-500 p-2 rounded-sm text-white hover:bg-blue-600 hover:text-white"
+                                    onClick={() => setMessageStudentModal(true)}
+                                >
+                                    <AddAlertIcon /> Alert
+                                </Button>
+                                <Button
+                                    className="bg-red-500 p-2 rounded-sm text-white hover:bg-red-600 hover:text-white"
+                                    onClick={handleClose}
+                                >
+                                    <CloseIcon /> Close
+                                </Button>
+                            </div>
                         </div>
 
                         <label readOnly>
@@ -669,7 +691,7 @@ const Students = () => {
                             <strong className='font-bold'> Violation: </strong>{ targetStudent.violations && targetStudent.violations.length > 0 ? targetStudent.violations[0].name : ''}
                         </label> */}
                         <div id="Violation list">
-                            <h2 className="py-3 text-2xl font-bold text-center">
+                            <h2 className="py-3 text-2xl font-bold text-left">
                                 Violation Records
                             </h2>
                             <StudentViolationList student={targetStudent} />
@@ -892,7 +914,7 @@ const Students = () => {
             {messageStudentModal && (
                 <AlertMessageStudent
                     open={messageStudentModal}
-                    handleClose={handleClose}
+                    handleClose={handleSendMessageModalClose}
                     data={targetStudent}
                 />
             )}

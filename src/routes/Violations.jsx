@@ -14,12 +14,16 @@ import FirstPageIcon from "@mui/icons-material/FirstPage";
 import KeyboardArrowLeft from "@mui/icons-material/KeyboardArrowLeft";
 import KeyboardArrowRight from "@mui/icons-material/KeyboardArrowRight";
 import LastPageIcon from "@mui/icons-material/LastPage";
+import EditIcon from '@mui/icons-material/Edit';
+import DeleteIcon from '@mui/icons-material/Delete';
+import AddIcon from '@mui/icons-material/Add';
 import Button from "@mui/material/Button";
 import Dialog from "@mui/material/Dialog";
 import DialogActions from "@mui/material/DialogActions";
 import DialogContent from "@mui/material/DialogContent";
 import DialogTitle from "@mui/material/DialogTitle";
 import TextField from "@mui/material/TextField";
+import Tooltip from '@mui/material/Tooltip';
 import { Alert, AlertTitle, Snackbar, TableHead } from "@mui/material";
 import axios from "axios";
 import formatDate from "../utils/moment";
@@ -383,12 +387,14 @@ export default function Violations() {
             <div className="container md:mx-auto py-5 ">
                 <div className="flex justify-between h-fit gap-x-2 m-2 md:m-0 text-sm md:text-md">
                     <h1 className="text-3xl py-3">Violation List</h1>
-                    <button
-                        className="bg-blue-500 my-2 px-2 rounded-sm text-white hover:bg-blue-600"
-                        onClick={() => handleCreateOpen()}
-                    >
-                        Add Violation
-                    </button>
+                    <Tooltip title="Create Violation">
+                        <button
+                            className="bg-blue-500 my-2 px-2 rounded-sm text-white hover:bg-blue-600"
+                            onClick={() => handleCreateOpen()}
+                        >
+                            <AddIcon /> Create
+                        </button>
+                    </Tooltip>
                 </div>
                 {/* <div className='flex justify-between h-fit gap-x-2'>
                     <TextField
@@ -444,22 +450,26 @@ export default function Violations() {
                                             "MMMM DD, YYYY"
                                         )}
                                     </TableCell>
-                                    <td className="flex gap-x-2 flex-row justify-center items-center">
-                                        <Button
-                                            className=" p-2 rounded-sm text-white hover:bg-yellow-600 hover:text-white"
-                                            onClick={() => handleOpen(row)}
-                                        >
-                                            Edit
-                                        </Button>
-                                        <Button
-                                            className=" p-2 rounded-sm text-white hover:bg-red-600 hover:text-white"
-                                            onClick={() => {
-                                                setCurrentRow({ ...row });
-                                                setopenDelete(true);
-                                            }}
-                                        >
-                                            Delete
-                                        </Button>
+                                    <td className="flex justify-center">
+                                        <Tooltip title="Edit">
+                                            <Button
+                                                className=" p-2 rounded-sm text-white hover:bg-yellow-600 hover:text-white"
+                                                onClick={() => handleOpen(row)}
+                                            >
+                                                    <EditIcon />
+                                            </Button>
+                                        </Tooltip>
+                                        <Tooltip title="Delete">
+                                            <Button
+                                                className=" p-2 rounded-sm text-white hover:bg-red-600 hover:text-white"
+                                                onClick={() => {
+                                                    setCurrentRow({ ...row });
+                                                    setopenDelete(true);
+                                                }}
+                                            >
+                                                    <DeleteIcon />
+                                            </Button>
+                                        </Tooltip>
                                     </td>
                                 </TableRow>
                             ))}
