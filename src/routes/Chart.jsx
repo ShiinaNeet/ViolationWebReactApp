@@ -1,13 +1,15 @@
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import { PieChart } from "@mui/x-charts/PieChart";
 import axios from "axios";
 import { Button } from "@mui/material";
 import RestartAltIcon from "@mui/icons-material/RestartAlt";
 import { valueFormatter } from "../utils/ChartData";
+import { StyledEngineProvider } from '@mui/material/styles';
 
 export default function Chart() {
     const [data, setData] = React.useState([]);
     const [loading, setLoading] = React.useState(false);
+    const [screenWidth, setScreenWidth] = useState(window.innerWidth);
 
     const fetchData = async () => {
         setLoading(true);
@@ -35,14 +37,55 @@ export default function Chart() {
             setLoading(false);
         }
     };
+
     useEffect(() => {
         fetchData();
     }, []);
 
+    useEffect(() => {
+        const handleResize = () => {
+            setScreenWidth(window.innerWidth);
+        };
+
+        window.addEventListener("resize", handleResize);
+        return () => {
+            window.removeEventListener("resize", handleResize);
+        };
+    }, []);
+
+    const pieParams = {
+        height: 200,
+        width: 400,
+    };
+
+    const legendProps = screenWidth < 730 ? {
+        padding: { bottom: -50 },
+        direction: 'row',
+        itemMarkHeight: 10,
+        position: { 
+            horizontal: 'left',
+            vertical: 'top', 
+        },
+        itemMarkWidth: 20,
+        itemGap: 5,
+        spacing: 20,
+    } : {
+         padding: { right: 0 },
+        direction: 'column',
+        itemMarkHeight: 10,
+        position: { 
+            horizontal: 'right',
+            vertical: 'top', 
+        },
+        itemMarkWidth: 20,
+        itemGap: 5,
+        spacing: 20,
+    };
+
     return (
         <>
-            <div className=" w-full flex items-center flex-col p-10 gap-y-5">
-                <div className="w-full p-5 overflow-y-visible group h-[500px]">
+            <div className="w-full flex items-center flex-col p-10 gap-y-5">
+                <div className="w-full p-5 overflow-visible group h-full">
                     <div className="flex justify-between">
                         <h1 className="text-lg font-bold">Monthly</h1>
                         <button
@@ -56,30 +99,34 @@ export default function Chart() {
                     {loading ? (
                         <p>Loading...</p>
                     ) : (
-                        <PieChart
-                            series={[
-                                {
-                                    data: data,
-                                    highlightScope: {
-                                        fade: "global",
-                                        highlight: "item",
+                        <StyledEngineProvider injectFirst>
+                            <PieChart
+                                series={[
+                                    {
+                                        data: data,
+                                        highlightScope: {
+                                            fade: "global",
+                                            highlight: "item",
+                                        },
+                                        faded: {
+                                            innerRadius: 30,
+                                            additionalRadius: -30,
+                                            color: "gray",
+                                        },
+                                        valueFormatter,
+                                        arcLabelMinAngle: 20,
+                                        arcLabelRadius: 90,
                                     },
-                                    faded: {
-                                        innerRadius: 30,
-                                        additionalRadius: -30,
-                                        color: "gray",
-                                    },
-                                    valueFormatter,
-                                    arcLabelMinAngle: 20,
-                                    arcLabelRadius: 90,
-                                },
-                            ]}
-                         
-                            
-                        />
+                                ]}
+                                slotProps={{
+                                    legend: legendProps,
+                                }}
+                                height={screenWidth < 1000 ? 600 : 500}
+                            />
+                        </StyledEngineProvider>
                     )}
                 </div>
-                <div className="w-full p-5 overflow-y-visible group h-[500px]">
+                <div className="w-full p-5 overflow-visible group h-full ">
                     <div className="flex justify-between">
                         <h1 className="text-lg font-bold">Overall</h1>
                         <button
@@ -111,7 +158,11 @@ export default function Chart() {
                                     arcLabelRadius: 90,
                                 },
                             ]}
-                         
+                            slotProps={{
+                                legend: legendProps,
+                            }}
+                          
+                            height={screenWidth < 1000 ? 600 : 500}
                         />
                     )}
                 </div>
