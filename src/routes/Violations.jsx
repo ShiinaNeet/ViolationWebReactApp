@@ -384,40 +384,40 @@ export default function Violations() {
 
     return (
         <div className="container h-full mx-auto">
-            <div className="container md:mx-auto py-5 ">
-                <div className="flex justify-between h-fit gap-x-2 m-2 md:m-0 text-sm md:text-md">
-                    <h1 className="text-3xl py-3">Violation List</h1>
-                    <Tooltip title="Create Violation">
-                        <button
-                            className="bg-blue-500 my-2 px-2 rounded-sm text-white hover:bg-blue-600"
-                            onClick={() => handleCreateOpen()}
-                        >
-                            <AddIcon /> Create
-                        </button>
-                    </Tooltip>
-                </div>
-                {/* <div className='flex justify-between h-fit gap-x-2'>
+            <div className="flex justify-between h-fit gap-x-2 m-2 md:m-0 text-sm md:text-md">
+                <h1 className="text-3xl py-3">Violation List</h1>
+                <Tooltip title="Create Violation">
+                    <button
+                        className="bg-blue-500 my-2 px-2 rounded-sm text-white hover:bg-blue-600"
+                        onClick={() => handleCreateOpen()}
+                    >
+                        <AddIcon /> Create
+                    </button>
+                </Tooltip>
+            </div>
+                {/* 
+                <div className='flex justify-between h-fit gap-x-2'>
                     <TextField
                     className='my-2 py-2'
                     autoFocus
                     margin="dense"
                     label="Search Violation"
                     type="text"
-                    fullWidth
-                    value={search}
-                    onChange={(e) => {
-                        setSearch(e.target.value);
-                        // debouncedSearchFunction(e.target.value);
-                    }}
-                    />
-                    <button className='bg-blue-500 my-2 p-5 rounded-sm text-white hover:bg-blue-600'
-                    onClick={() => searchFunction()}
-                    >
-                       Search
-                    </button>
-                </div> */}
-
-                <TableContainer component={Paper}>
+                        fullWidth
+                        value={search}
+                        onChange={(e) => {
+                            setSearch(e.target.value);
+                            // debouncedSearchFunction(e.target.value);
+                        }}
+                        />
+                        <button className='bg-blue-500 my-2 p-5 rounded-sm text-white hover:bg-blue-600'
+                        onClick={() => searchFunction()}
+                        >
+                        Search
+                        </button>
+                    </div> */}
+            <div className="shadow-sm shadow-zinc-500 rounded-lg">
+                <TableContainer component={Paper} className="">
                     <Table sx={{ minWidth: 500 }}>
                         <TableHead>
                             <TableRow>
@@ -434,9 +434,9 @@ export default function Violations() {
                         <TableBody>
                             {(rowsPerPage > 0
                                 ? rows.slice(
-                                      page * rowsPerPage,
-                                      page * rowsPerPage + rowsPerPage
-                                  )
+                                        page * rowsPerPage,
+                                        page * rowsPerPage + rowsPerPage
+                                    )
                                 : rows
                             ).map((row) => (
                                 <TableRow key={row._id}>
@@ -643,6 +643,7 @@ export default function Violations() {
                     </Dialog>
                 </TableContainer>
             </div>
+                
             <Snackbar
                 open={alertMessage.open}
                 autoHideDuration={3000}

@@ -131,7 +131,7 @@ export default function StudentViolationList(props) {
                         <TableHead>
                             <TableRow>
                                 <TableCell>Name</TableCell>
-                                <TableCell>Date</TableCell>
+                                {/* <TableCell>Date</TableCell> */}
                             </TableRow>
                         </TableHead>
                         <TableBody>
@@ -140,12 +140,12 @@ export default function StudentViolationList(props) {
                                 .map((row, index) => (
                                     <TableRow key={index}>
                                         <TableCell>{row.name}</TableCell>
-                                        <TableCell>
+                                        {/* <TableCell>
                                             {formatDate(
                                                 new Date(parseInt(row.date)),
                                                 "MMMM DD, YYYY - hh:mm A"
                                             )}
-                                        </TableCell>
+                                        </TableCell> */}
                                     </TableRow>
                                 ))}
                             {emptyRows > 0 && (
