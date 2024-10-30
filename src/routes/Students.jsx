@@ -476,16 +476,16 @@ const Students = () => {
 
     return (
         <>
-            <div className="container mx-auto py-5">
+            <div className="container mx-auto">
                 <div className="flex flex-col md:flex-row md:justify-between h-fit">
-                    <h1 className="text-3xl p-3">Student List</h1>
+                    <h1 className="text-3xl py-3">Student List</h1>
                     {/* <button className='bg-blue-500 my-2 p-2 rounded-sm text-white hover:bg-blue-600'
                         onClick={() => setAddStudentModal(true)}
                     >
                         Add Student
                     </button> */}
                 </div>
-                <div className="shadow-sm shadow-zinc-500 rounded-lg p-3">
+                <div className="shadow-sm shadow-zinc-500 rounded-lg">
                     <TableContainer component={Paper}>
                         <Table sx={{ minWidth: 500 }}>
                             <TableHead>
