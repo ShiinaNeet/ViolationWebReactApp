@@ -27,6 +27,7 @@ import Tooltip from "@mui/material/Tooltip";
 import {
   Alert,
   AlertTitle,
+  Chip,
   FormControl,
   InputLabel,
   MenuItem,
@@ -133,11 +134,14 @@ export default function UserManagement() {
   const [isLoading, setIsLoading] = React.useState(false);
   const handleChangePage = (event, newPage) => {
     setPage(newPage);
+    fetchData(newPage * rowsPerPage, rowsPerPage);
   };
 
   const handleChangeRowsPerPage = (event) => {
-    setRowsPerPage(parseInt(event.target.value, 6));
+    const newRowsPerPage = parseInt(event.target.value, 10);
+    setRowsPerPage(newRowsPerPage);
     setPage(0);
+    fetchData(0, newRowsPerPage);
   };
 
   const handleOpen = (row) => {
@@ -178,11 +182,11 @@ export default function UserManagement() {
   const handleSave = async () => {
     setIsLoading(true);
     if (
-      violations.first_name === "" ||
-      violations.last_name === "" ||
-      violations.email === "" ||
-      violations.type === "" ||
-      violations.password === ""
+      user.first_name === "" ||
+      user.last_name === "" ||
+      user.email === "" ||
+      user.type === "" ||
+      user.password === ""
     ) {
       setAlertMessage({ open: true, title: "Error", variant: "error" });
       setErrorMessages(["Please fill in all fields"]);
@@ -191,11 +195,13 @@ export default function UserManagement() {
     }
     axios
       .post(
-        "/admin/user/create",
+        "/user/create/admin",
         {
-          name: violations.name,
-          date: Date.now().toString(),
-          description: violations.description,
+          first_name: user.first_name,
+          last_name: user.last_name,
+          email: user.email,
+          type: user.type,
+          password: user.password,
         },
         {
           headers: {
@@ -210,10 +216,10 @@ export default function UserManagement() {
           setAlertMessage({
             open: true,
             title: "Success",
-            message: "Violation has been added successfully",
+            message: "User has been created successfully",
             variant: "success",
           });
-          fetchData();
+          fetchData(page * rowsPerPage, rowsPerPage);
           setIsLoading(false);
           handleClose();
         } else {
@@ -239,135 +245,135 @@ export default function UserManagement() {
         });
       });
   };
-  const handleUpdate = async () => {
-    setIsLoading(true);
-    if (
-      currentRow.first_name === "" ||
-      currentRow.last_name === "" ||
-      currentRow.email === "" ||
-      currentRow.type === ""
-    ) {
-      setAlertMessage({ open: true, title: "Error", variant: "error" });
-      setErrorMessages(["Please fill in all fields"]);
-      setIsLoading(false);
-      return;
-    }
+  // const handleUpdate = async () => {
+  //   setIsLoading(true);
+  //   if (
+  //     currentRow.first_name === "" ||
+  //     currentRow.last_name === "" ||
+  //     currentRow.email === "" ||
+  //     currentRow.type === ""
+  //   ) {
+  //     setAlertMessage({ open: true, title: "Error", variant: "error" });
+  //     setErrorMessages(["Please fill in all fields"]);
+  //     setIsLoading(false);
+  //     return;
+  //   }
 
-    axios
-      .put(
-        `/admin/user/update?user_id=${currentRow._id}`,
-        {
-          first_name: currentRow.first_name,
-          last_name: currentRow.last_name,
-          email: currentRow.email,
-          type: currentRow.type,
-        },
-        {
-          headers: {
-            "Content-Type": "application/json",
-          },
-        }
-      )
-      .then((response) => {
-        setErrorMessages([]);
-        if (response.data.success === true) {
-          console.log("Saved");
-          fetchData();
-          setAlertMessage({
-            open: true,
-            title: "Success",
-            message: "User has been Updated successfully",
-            variant: "info",
-          });
-          setIsLoading(false);
-          handleClose();
-        } else {
-          console.log("Failed to Update");
-          setAlertMessage({
-            open: true,
-            title: "Failed",
-            message: response.data.message,
-            variant: "info",
-          });
-        }
-      })
-      .catch((e) => {
-        console.log("Error Occurred: ", e);
-        setErrorMessages([]);
-        setAlertMessage({
-          open: true,
-          title: "Error Occurred!",
-          message: "Please try again later.",
-          variant: "error",
-        });
-      });
-    setIsLoading(false);
-  };
-  const handleDelete = async (_id, name) => {
-    setIsLoading(false);
-    if (_id === "") {
-      setAlertMessage({ open: true, title: "Error", variant: "error" });
-      setErrorMessages(["User ID is missing. Please try again!"]);
-      return;
-    }
-    axios
-      .delete(`/admin/user/delete/${_id}`, {
-        headers: {
-          "Content-Type": "application/json",
-        },
-      })
-      .then((response) => {
-        setErrorMessages([]);
-        if (response.data.status === "success") {
-          setAlertMessage({
-            open: true,
-            title: "Success",
-            message: "User has been Deleted successfully",
-            variant: "warning",
-          });
-          console.log("Deleted");
-          fetchData();
-          handleClose();
-        } else {
-          console.log("Failed to Delete. Please Try again later");
-        }
-        setIsLoading(false);
-      })
-      .catch((e) => {
-        console.log("Error Occurred: ", e);
-        setErrorMessages([]);
-        setAlertMessage({
-          open: true,
-          title: "Error Occurred!",
-          message: "Please try again later.",
-          variant: "error",
-        });
-        setIsLoading(false);
-      });
-  };
+  //   axios
+  //     .put(
+  //       `/admin/user/update?user_id=${currentRow._id}`,
+  //       {
+  //         first_name: currentRow.first_name,
+  //         last_name: currentRow.last_name,
+  //         email: currentRow.email,
+  //         type: currentRow.type,
+  //       },
+  //       {
+  //         headers: {
+  //           "Content-Type": "application/json",
+  //         },
+  //       }
+  //     )
+  //     .then((response) => {
+  //       setErrorMessages([]);
+  //       if (response.data.success === true) {
+  //         console.log("Saved");
+  //         fetchData(page * rowsPerPage, rowsPerPage);
+  //         setAlertMessage({
+  //           open: true,
+  //           title: "Success",
+  //           message: "User has been Updated successfully",
+  //           variant: "info",
+  //         });
+  //         setIsLoading(false);
+  //         handleClose();
+  //       } else {
+  //         console.log("Failed to Update");
+  //         setAlertMessage({
+  //           open: true,
+  //           title: "Failed",
+  //           message: response.data.message,
+  //           variant: "info",
+  //         });
+  //       }
+  //     })
+  //     .catch((e) => {
+  //       console.log("Error Occurred: ", e);
+  //       setErrorMessages([]);
+  //       setAlertMessage({
+  //         open: true,
+  //         title: "Error Occurred!",
+  //         message: "Please try again later.",
+  //         variant: "error",
+  //       });
+  //     });
+  //   setIsLoading(false);
+  // };
+  // const handleDelete = async (_id, name) => {
+  //   setIsLoading(false);
+  //   if (_id === "") {
+  //     setAlertMessage({ open: true, title: "Error", variant: "error" });
+  //     setErrorMessages(["User ID is missing. Please try again!"]);
+  //     return;
+  //   }
+  //   axios
+  //     .delete(`/admin/user/delete/${_id}`, {
+  //       headers: {
+  //         "Content-Type": "application/json",
+  //       },
+  //     })
+  //     .then((response) => {
+  //       setErrorMessages([]);
+  //       if (response.data.status === "success") {
+  //         setAlertMessage({
+  //           open: true,
+  //           title: "Success",
+  //           message: "User has been Deleted successfully",
+  //           variant: "warning",
+  //         });
+  //         console.log("Deleted");
+  //         fetchData(page * rowsPerPage, rowsPerPage);
+  //         handleClose();
+  //       } else {
+  //         console.log("Failed to Delete. Please Try again later");
+  //       }
+  //       setIsLoading(false);
+  //     })
+  //     .catch((e) => {
+  //       console.log("Error Occurred: ", e);
+  //       setErrorMessages([]);
+  //       setAlertMessage({
+  //         open: true,
+  //         title: "Error Occurred!",
+  //         message: "Please try again later.",
+  //         variant: "error",
+  //       });
+  //       setIsLoading(false);
+  //     });
+  // };
 
   React.useEffect(() => {
-    fetchData();
+    fetchData(page * rowsPerPage, rowsPerPage);
     return () => {
       console.log("Users Management component unmounted");
     };
-  }, []);
+  }, [page, rowsPerPage]);
 
-  const fetchData = async () => {
+  const fetchData = async (skip, limit) => {
     axios
-      .get("/", {
+      .post("/user/paginated/admin", {
         params: {
-          skip: 0,
-          limit: 100,
+          skip: skip,
+          limit: limit,
         },
         headers: {
           "Content-Type": "application/json",
         },
       })
       .then((response) => {
-        if (response.data.success === true) {
+        if (response.data.status === "success") {
           console.log("Data fetched successfully");
-          setRows(response.data.total);
+          setRows(response.data.data);
         } else {
           console.log("Failed to fetch data");
         }
@@ -377,32 +383,32 @@ export default function UserManagement() {
       });
   };
 
-  const searchFunction = async () => {
-    if (search === "") {
-      return;
-    }
-    console.log(search);
-    // axios.get('https://student-discipline-api-fmm2.onrender.com/violation/search', {
-    //     params: {
-    //     query: search
-    //     },
-    //     headers: {
-    //     'Content-Type': 'application/json',
-    //     }
-    // })
-    // .then((response) => {
-    //     if(response.data.success === true){
-    //         console.log("Searched data fetched successfully!");
-    //         setRows(response.data.data);
-    //     }
-    //     else{
-    //         console.log("Failed to fetch search data");
-    //     }
-    // })
-    // .catch((error) => {
-    //     console.error('There was an error searching the data!', error);
-    // });
-  };
+  // const searchFunction = async () => {
+  //   if (search === "") {
+  //     return;
+  //   }
+  //   console.log(search);
+  //   // axios.get('https://student-discipline-api-fmm2.onrender.com/violation/search', {
+  //   //     params: {
+  //   //     query: search
+  //   //     },
+  //   //     headers: {
+  //   //     'Content-Type': 'application/json',
+  //   //     }
+  //   // })
+  //   // .then((response) => {
+  //   //     if(response.data.success === true){
+  //   //         console.log("Searched data fetched successfully!");
+  //   //         setRows(response.data.data);
+  //   //     }
+  //   //     else{
+  //   //         console.log("Failed to fetch search data");
+  //   //     }
+  //   // })
+  //   // .catch((error) => {
+  //   //     console.error('There was an error searching the data!', error);
+  //   // });
+  // };
 
   // const debounce = (func, delay) => {
   //     let debounceTimer;
@@ -458,8 +464,8 @@ export default function UserManagement() {
               <TableRow>
                 <th className="py-5 px-4 font-bold ">Name</th>
                 <th className="py-5 px-4 font-bold">Email address</th>
-                <th className="py-5 px-4 font-bold">Type</th>
-                <th className="py-5 px-4 font-bold text-center">Actions</th>
+                <th className="py-5 px-4 font-bold text-center">Type</th>
+                {/* <th className="py-5 px-4 font-bold text-center">Actions</th> */}
               </TableRow>
             </TableHead>
             <TableBody>
@@ -479,10 +485,15 @@ export default function UserManagement() {
                   <TableCell>
                     {row.email ? row.email : "No email address attached"}
                   </TableCell>
-                  <TableCell>
-                    {row.type ? row.type : "No type attached"}
+                  <TableCell align="center">
+                    <Button 
+                    className={`p-2 rounded-sm text-center
+                      ${row.type === "ADMIN" ? "primary" : "secondary"}`}
+                      color={row.type === "ADMIN" ? "primary" : "secondary"}
+                   >{row.type ? row.type : "No type attached"} </Button>
+                   
                   </TableCell>
-                  <td className="flex justify-center">
+                  {/* <td className="flex justify-center">
                     <Tooltip title="Edit">
                       <Button
                         className=" p-2 rounded-sm text-white hover:bg-yellow-600 hover:text-white"
@@ -502,7 +513,7 @@ export default function UserManagement() {
                         <DeleteIcon />
                       </Button>
                     </Tooltip>
-                  </td>
+                  </td> */}
                 </TableRow>
               ))}
               {rows.length == 0 && (
@@ -525,7 +536,7 @@ export default function UserManagement() {
               </TableRow>
             </TableFooter>
           </Table>
-          <Dialog open={open} onClose={handleClose}>
+          {/* <Dialog open={open} onClose={handleClose}>
             <DialogTitle>Edit User Information</DialogTitle>
             <DialogContent>
               <TextField
@@ -601,7 +612,7 @@ export default function UserManagement() {
                 Cancel
               </Button>
             </DialogActions>
-          </Dialog>
+          </Dialog> */}
           <Dialog open={openCreate} onClose={handleClose}>
             <DialogTitle>Create User</DialogTitle>
             <DialogContent>
@@ -671,7 +682,7 @@ export default function UserManagement() {
                     id="demo-simple-select"
                     value={user.type}
                     label="Type"
-                    onChange={(e) => setUser({ ...user, type: e.target.value })}
+                    onChange={(e) => {setUser({ ...user, type: e.target.value }),console.log(e.target.value)} }
                   >
                     <MenuItem value={"ADMIN"}>Admin</MenuItem>
                     <MenuItem value={"SECURITY"}>Security Guard</MenuItem>
@@ -688,7 +699,7 @@ export default function UserManagement() {
               </Button>
             </DialogActions>
           </Dialog>
-          <Dialog open={openDelete} onClose={handleClose}>
+          {/* <Dialog open={openDelete} onClose={handleClose}>
             <DialogTitle>Delete User?</DialogTitle>
             <DialogContent>
               <TextField
@@ -758,7 +769,7 @@ export default function UserManagement() {
                 Cancel
               </Button>
             </DialogActions>
-          </Dialog>
+          </Dialog> */}
         </TableContainer>
       </div>
 
