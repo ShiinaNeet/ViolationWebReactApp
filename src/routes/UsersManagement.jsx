@@ -363,7 +363,7 @@ export default function UserManagement() {
 
   const fetchData = async (skip, limit) => {
     axios
-      .post("/user/paginated/admin", {
+      .get("/user/paginated/admin", {
         params: {
           skip: skip,
           limit: limit,
