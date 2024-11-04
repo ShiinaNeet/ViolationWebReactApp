@@ -465,6 +465,7 @@ export default function UserManagement() {
             <TableHead>
               <TableRow>
                 <th className="py-5 px-4 font-bold ">Name</th>
+                <th className="py-5 px-4 font-bold ">Username</th>
                 <th className="py-5 px-4 font-bold">Email address</th>
                 <th className="py-5 px-4 font-bold text-center">Type</th>
                 {/* <th className="py-5 px-4 font-bold text-center">Actions</th> */}
@@ -484,6 +485,7 @@ export default function UserManagement() {
                       ? row.first_name + " " + row.last_name
                       : "No name attached"}
                   </TableCell>
+                  <TableCell>{row.username ? row.username : "No username"}</TableCell>
                   <TableCell>
                     {row.email ? row.email : "No email address attached"}
                   </TableCell>
