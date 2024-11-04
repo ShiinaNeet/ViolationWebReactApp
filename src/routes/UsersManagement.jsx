@@ -186,7 +186,8 @@ export default function UserManagement() {
       user.last_name === "" ||
       user.email === "" ||
       user.type === "" ||
-      user.password === ""
+      user.password === "" ||
+      user.username === ""
     ) {
       setAlertMessage({ open: true, title: "Error", variant: "error" });
       setErrorMessages(["Please fill in all fields"]);
@@ -202,6 +203,7 @@ export default function UserManagement() {
           email: user.email,
           type: user.type,
           password: user.password,
+          username: user.username,
         },
         {
           headers: {
@@ -486,12 +488,13 @@ export default function UserManagement() {
                     {row.email ? row.email : "No email address attached"}
                   </TableCell>
                   <TableCell align="center">
-                    <Button 
-                    className={`p-2 rounded-sm text-center
+                    <Button
+                      className={`p-2 rounded-sm text-center
                       ${row.type === "ADMIN" ? "primary" : "secondary"}`}
                       color={row.type === "ADMIN" ? "primary" : "secondary"}
-                   >{row.type ? row.type : "No type attached"} </Button>
-                   
+                    >
+                      {row.type ? row.type : "No type attached"}{" "}
+                    </Button>
                   </TableCell>
                   {/* <td className="flex justify-center">
                     <Tooltip title="Edit">
@@ -650,6 +653,21 @@ export default function UserManagement() {
                 <TextField
                   autoFocus
                   margin="dense"
+                  label="Username"
+                  type="text"
+                  fullWidth
+                  value={user.username}
+                  required={true}
+                  onChange={(e) =>
+                    setUser({
+                      ...user,
+                      username: e.target.value,
+                    })
+                  }
+                />
+                <TextField
+                  autoFocus
+                  margin="dense"
                   label="Email Address"
                   type="text"
                   fullWidth
@@ -682,7 +700,10 @@ export default function UserManagement() {
                     id="demo-simple-select"
                     value={user.type}
                     label="Type"
-                    onChange={(e) => {setUser({ ...user, type: e.target.value }),console.log(e.target.value)} }
+                    onChange={(e) => {
+                      setUser({ ...user, type: e.target.value }),
+                        console.log(e.target.value);
+                    }}
                   >
                     <MenuItem value={"ADMIN"}>Admin</MenuItem>
                     <MenuItem value={"SECURITY"}>Security Guard</MenuItem>
