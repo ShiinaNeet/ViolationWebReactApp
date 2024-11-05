@@ -426,7 +426,7 @@ export default function UserManagement() {
   // const debouncedSearchFunction = debounce(searchFunction, 300);
 
   return (
-    <div className="container h-full mx-auto">
+    <div className="container h-full mx-auto px-2">
       <div className="flex justify-between h-fit gap-x-2 m-2 md:m-0 text-sm md:text-md">
         <h1 className="text-3xl py-3">Users List</h1>
         <Tooltip title="Create User">
@@ -485,7 +485,9 @@ export default function UserManagement() {
                       ? row.first_name + " " + row.last_name
                       : "No name attached"}
                   </TableCell>
-                  <TableCell>{row.username ? row.username : "No username"}</TableCell>
+                  <TableCell>
+                    {row.username ? row.username : "No username"}
+                  </TableCell>
                   <TableCell>
                     {row.email ? row.email : "No email address attached"}
                   </TableCell>
