@@ -138,7 +138,7 @@ export default function UserManagement() {
   };
 
   const handleChangeRowsPerPage = (event) => {
-    const newRowsPerPage = parseInt(event.target.value, 10);
+    const newRowsPerPage = parseInt(event.target.value, 6);
     setRowsPerPage(newRowsPerPage);
     setPage(0);
     fetchData(0, newRowsPerPage);
@@ -365,8 +365,8 @@ export default function UserManagement() {
     axios
       .get("/user/paginated/admin", {
         params: {
-          skip: skip,
-          limit: limit,
+          skip: 0,
+          limit: 100,
         },
         headers: {
           "Content-Type": "application/json",
