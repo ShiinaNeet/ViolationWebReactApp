@@ -1,23 +1,27 @@
-import React from 'react';
-import { Navigate, useLocation } from 'react-router-dom';
-import { useAuth } from './AuthProvider';
+import React from "react";
+import { Navigate, useLocation } from "react-router-dom";
+import { useAuth } from "./AuthProvider";
 
-const ProtectedRoute = ({ element, roles }) => {
-  const { isAuthenticated } = useAuth();
+const ProtectedRoute = ({ element }) => {
+  const { isAuthenticated, userType } = useAuth();
   const location = useLocation();
-
-  if (isAuthenticated && (location.pathname.toLowerCase() === '/login')) {
-    return <Navigate to="/Students" replace />;
+  function redirectUserToTheirLayouts() {
+    if (userType.toLowerCase() === "admin") {
+      return <Navigate to="/students" replace />;
+    } else if (userType.toLowerCase() === "dean") {
+      return <Navigate to="/dean" replace />;
+    } else if (userType.toLowerCase() === "department_head") {
+      return <Navigate to="/department-head" replace />;
+    } else {
+      return <Navigate to="/students" replace />;
+    }
   }
-  if(location.pathname.toLowerCase() === '/login'){
-    return element;
+  if (isAuthenticated == true && location.pathname.toLowerCase() === "/login") {
+    redirectUserToTheirLayouts();
   }
-  if (!isAuthenticated && location.pathname.toLowerCase() !== '/login') {
-    return <Navigate to="/Login" replace />;
+  if (location.pathname.toLowerCase() === "/" && isAuthenticated) {
+    redirectUserToTheirLayouts();
   }
-
- 
-
   return element;
 };
 

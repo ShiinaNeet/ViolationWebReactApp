@@ -189,8 +189,13 @@ export default function UserManagement() {
       user.password === "" ||
       user.username === ""
     ) {
-      setAlertMessage({ open: true, title: "Error", variant: "error" });
-      setErrorMessages(["Please fill in all fields"]);
+      setAlertMessage({
+        open: true,
+        title: "Error",
+        message: "Please fill in all fields!",
+        variant: "error",
+      });
+      // setErrorMessages(["Please fill in all fields"]);
       setIsLoading(false);
       return;
     }
@@ -241,8 +246,8 @@ export default function UserManagement() {
         setIsLoading(false);
         setAlertMessage({
           open: true,
-          title: "Error Occurred!",
-          message: "Please try again later.",
+          title: e.title,
+          message: e.message,
           variant: "error",
         });
       });
@@ -382,83 +387,91 @@ export default function UserManagement() {
       })
       .catch((error) => {
         console.error("There was an error fetching the data!", error);
+        setAlertMessage({
+          open: true,
+          title: error.title,
+          message: error.message,
+          variant: "error",
+        });
       });
   };
 
-  // const searchFunction = async () => {
-  //   if (search === "") {
-  //     return;
-  //   }
-  //   console.log(search);
-  //   // axios.get('https://student-discipline-api-fmm2.onrender.com/violation/search', {
-  //   //     params: {
-  //   //     query: search
-  //   //     },
-  //   //     headers: {
-  //   //     'Content-Type': 'application/json',
-  //   //     }
-  //   // })
-  //   // .then((response) => {
-  //   //     if(response.data.success === true){
-  //   //         console.log("Searched data fetched successfully!");
-  //   //         setRows(response.data.data);
-  //   //     }
-  //   //     else{
-  //   //         console.log("Failed to fetch search data");
-  //   //     }
-  //   // })
-  //   // .catch((error) => {
-  //   //     console.error('There was an error searching the data!', error);
-  //   // });
-  // };
+  const searchFunction = async () => {
+    if (search === "") {
+      return;
+    }
+    console.log(search);
+    // axios.get('https://student-discipline-api-fmm2.onrender.com/violation/search', {
+    //     params: {
+    //     query: search
+    //     },
+    //     headers: {
+    //     'Content-Type': 'application/json',
+    //     }
+    // })
+    // .then((response) => {
+    //     if(response.data.success === true){
+    //         console.log("Searched data fetched successfully!");
+    //         setRows(response.data.data);
+    //     }
+    //     else{
+    //         console.log("Failed to fetch search data");
+    //     }
+    // })
+    // .catch((error) => {
+    //     console.error('There was an error searching the data!', error);
+    // });
+  };
 
-  // const debounce = (func, delay) => {
-  //     let debounceTimer;
-  //     return function(...args) {
-  //         clearTimeout(debounceTimer);
-  //         debounceTimer = setTimeout(() => {
-  //             // console.log('Debounced function called with args:', args);
-  //             func.apply(this, args);
-  //         }, delay);
-  //     };
-  // };
+  const debounce = (func, delay) => {
+    let debounceTimer;
+    return function (...args) {
+      clearTimeout(debounceTimer);
+      debounceTimer = setTimeout(() => {
+        // console.log('Debounced function called with args:', args);
+        func.apply(this, args);
+      }, delay);
+    };
+  };
 
-  // const debouncedSearchFunction = debounce(searchFunction, 300);
+  const debouncedSearchFunction = debounce(searchFunction, 300);
 
   return (
     <div className="container h-full mx-auto px-2">
-      <div className="flex justify-between h-fit gap-x-2 m-2 md:m-0 text-sm md:text-md">
-        <h1 className="text-3xl py-3">Users List</h1>
+      <div className="flex flex-col sm:flex-row justify-between gap-x-2 md:m-0 text-sm md:text-md pt-5">
+        <h1 className="text-3xl flex items-center">Users List</h1>
         <Tooltip title="Create User">
           <button
-            className="bg-blue-500 my-2 px-2 rounded-sm text-white hover:bg-blue-600"
+            className="bg-blue-500 my-2 p-2 rounded-sm text-white hover:bg-blue-600"
             onClick={() => handleCreateOpen()}
           >
             <AddIcon /> Create User
           </button>
         </Tooltip>
       </div>
-      {/* 
-                <div className='flex justify-between h-fit gap-x-2'>
-                    <TextField
-                    className='my-2 py-2'
-                    autoFocus
-                    margin="dense"
-                    label="Search Violation"
-                    type="text"
-                        fullWidth
-                        value={search}
-                        onChange={(e) => {
-                            setSearch(e.target.value);
-                            // debouncedSearchFunction(e.target.value);
-                        }}
-                        />
-                        <button className='bg-blue-500 my-2 p-5 rounded-sm text-white hover:bg-blue-600'
-                        onClick={() => searchFunction()}
-                        >
-                        Search
-                        </button>
-                    </div> */}
+      <div className="flex">
+        <TextField
+          className=""
+          autoFocus
+          label="Search by Name"
+          placeholder="Ex. John Doe"
+          id="standard-required"
+          variant="standard"
+          type="text"
+          fullWidth
+          value={search}
+          onChange={(e) => {
+            setSearch(e.target.value);
+            debouncedSearchFunction(e.target.value);
+          }}
+        />
+        <Button
+          className="rounded-sm text-white bg-blue-600 text-center  hover:bg-blue-750 hover:text-black"
+          onClick={() => searchFunction()}
+        >
+          Search
+        </Button>
+      </div>
       <div className="shadow-sm shadow-zinc-500 rounded-lg">
         <TableContainer component={Paper} className="">
           <Table sx={{ minWidth: 500 }}>
@@ -467,7 +480,7 @@ export default function UserManagement() {
                 <th className="py-5 px-4 font-bold ">Name</th>
                 <th className="py-5 px-4 font-bold ">Username</th>
                 <th className="py-5 px-4 font-bold">Email address</th>
-                <th className="py-5 px-4 font-bold text-center">Type</th>
+                <th className="py-5 px-4 font-bold text-center">Category</th>
                 {/* <th className="py-5 px-4 font-bold text-center">Actions</th> */}
               </TableRow>
             </TableHead>

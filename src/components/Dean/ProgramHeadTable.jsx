@@ -24,9 +24,19 @@ import DialogContent from "@mui/material/DialogContent";
 import DialogTitle from "@mui/material/DialogTitle";
 import TextField from "@mui/material/TextField";
 import Tooltip from "@mui/material/Tooltip";
-import { Alert, AlertTitle, Snackbar, TableHead } from "@mui/material";
+import {
+  Alert,
+  AlertTitle,
+  Chip,
+  FormControl,
+  InputLabel,
+  MenuItem,
+  Select,
+  Snackbar,
+  TableHead,
+} from "@mui/material";
 import axios from "axios";
-import formatDate from "../utils/moment";
+import formatDate from "@src/utils/moment";
 
 function TablePaginationActions(props) {
   const { count, page, rowsPerPage, onPageChange } = props;
@@ -88,7 +98,7 @@ TablePaginationActions.propTypes = {
   rowsPerPage: PropTypes.number.isRequired,
 };
 
-export default function Violations() {
+export default function UserManagement() {
   const [page, setPage] = React.useState(0);
   const [rowsPerPage, setRowsPerPage] = React.useState(6);
   const [rows, setRows] = React.useState([]);
@@ -97,15 +107,18 @@ export default function Violations() {
   const [openDelete, setopenDelete] = React.useState(false);
   const [currentRow, setCurrentRow] = React.useState({
     _id: "",
-    name: "",
-    description: "",
-    date: "",
+    first_name: "",
+    last_name: "",
+    email: "",
+    type: "",
   });
   const [search, setSearch] = React.useState("");
-  const [violations, setViolations] = React.useState({
-    name: "",
-    description: "",
-    date: Date.now(),
+  const [user, setUser] = React.useState({
+    first_name: "",
+    last_name: "",
+    email: "",
+    type: "",
+    password: "",
   });
   const [alertMessage, setAlertMessage] = React.useState({
     open: false,
@@ -121,11 +134,14 @@ export default function Violations() {
   const [isLoading, setIsLoading] = React.useState(false);
   const handleChangePage = (event, newPage) => {
     setPage(newPage);
+    fetchData(newPage * rowsPerPage, rowsPerPage);
   };
 
   const handleChangeRowsPerPage = (event) => {
-    setRowsPerPage(parseInt(event.target.value, 6));
+    const newRowsPerPage = parseInt(event.target.value, 6);
+    setRowsPerPage(newRowsPerPage);
     setPage(0);
+    fetchData(0, newRowsPerPage);
   };
 
   const handleOpen = (row) => {
@@ -140,8 +156,20 @@ export default function Violations() {
     setOpen(false);
     setOpenCreate(false);
     setopenDelete(false);
-    setCurrentRow({ _id: "", name: "", description: "", date: "" });
-    setViolations({ id: "", name: "", description: "", date: "" });
+    setCurrentRow({
+      _id: "",
+      first_name: "",
+      last_name: "",
+      email: "",
+      type: "",
+    });
+    setUser({
+      first_name: "",
+      last_name: "",
+      email: "",
+      type: "",
+      password: "",
+    });
   };
   const handleAlertClose = (event, reason) => {
     if (reason === "clickaway") {
@@ -153,7 +181,14 @@ export default function Violations() {
 
   const handleSave = async () => {
     setIsLoading(true);
-    if (violations.name === "" || violations.description === "") {
+    if (
+      user.first_name === "" ||
+      user.last_name === "" ||
+      user.email === "" ||
+      user.type === "" ||
+      user.password === "" ||
+      user.username === ""
+    ) {
       setAlertMessage({ open: true, title: "Error", variant: "error" });
       setErrorMessages(["Please fill in all fields"]);
       setIsLoading(false);
@@ -161,11 +196,14 @@ export default function Violations() {
     }
     axios
       .post(
-        "/violation/create",
+        "/user/create/admin",
         {
-          name: violations.name,
-          date: Date.now().toString(),
-          description: violations.description,
+          first_name: user.first_name,
+          last_name: user.last_name,
+          email: user.email,
+          type: user.type,
+          password: user.password,
+          username: user.username,
         },
         {
           headers: {
@@ -180,10 +218,10 @@ export default function Violations() {
           setAlertMessage({
             open: true,
             title: "Success",
-            message: "Violation has been added successfully",
+            message: "User has been created successfully",
             variant: "success",
           });
-          fetchData();
+          fetchData(page * rowsPerPage, rowsPerPage);
           setIsLoading(false);
           handleClose();
         } else {
@@ -211,7 +249,12 @@ export default function Violations() {
   };
   const handleUpdate = async () => {
     setIsLoading(true);
-    if (currentRow.name === "" || currentRow.description === "") {
+    if (
+      currentRow.first_name === "" ||
+      currentRow.last_name === "" ||
+      currentRow.email === "" ||
+      currentRow.type === ""
+    ) {
       setAlertMessage({ open: true, title: "Error", variant: "error" });
       setErrorMessages(["Please fill in all fields"]);
       setIsLoading(false);
@@ -220,11 +263,12 @@ export default function Violations() {
 
     axios
       .put(
-        `/violation/update?violation_id=${currentRow._id}`,
+        `/admin/user/update?user_id=${currentRow._id}`,
         {
-          name: currentRow.name,
-          date: Date.now().toString(),
-          description: currentRow.description,
+          first_name: currentRow.first_name,
+          last_name: currentRow.last_name,
+          email: currentRow.email,
+          type: currentRow.type,
         },
         {
           headers: {
@@ -236,11 +280,11 @@ export default function Violations() {
         setErrorMessages([]);
         if (response.data.success === true) {
           console.log("Saved");
-          fetchData();
+          fetchData(page * rowsPerPage, rowsPerPage);
           setAlertMessage({
             open: true,
             title: "Success",
-            message: "Violation has been Updated successfully",
+            message: "User has been Updated successfully",
             variant: "info",
           });
           setIsLoading(false);
@@ -260,8 +304,8 @@ export default function Violations() {
         setErrorMessages([]);
         setAlertMessage({
           open: true,
-          title: e.title,
-          message: e.message,
+          title: "Error Occurred!",
+          message: "Please try again later.",
           variant: "error",
         });
       });
@@ -271,11 +315,11 @@ export default function Violations() {
     setIsLoading(false);
     if (_id === "") {
       setAlertMessage({ open: true, title: "Error", variant: "error" });
-      setErrorMessages(["Please fill in all fields"]);
+      setErrorMessages(["User ID is missing. Please try again!"]);
       return;
     }
     axios
-      .delete(`/violation/delete/${_id}`, {
+      .delete(`/admin/user/delete/${_id}`, {
         headers: {
           "Content-Type": "application/json",
         },
@@ -286,11 +330,11 @@ export default function Violations() {
           setAlertMessage({
             open: true,
             title: "Success",
-            message: "Violation has been Deleted successfully",
+            message: "User has been Deleted successfully",
             variant: "warning",
           });
           console.log("Deleted");
-          fetchData();
+          fetchData(page * rowsPerPage, rowsPerPage);
           handleClose();
         } else {
           console.log("Failed to Delete. Please Try again later");
@@ -311,16 +355,15 @@ export default function Violations() {
   };
 
   React.useEffect(() => {
-    fetchData();
-    //setRows(initialRows);
+    fetchData(page * rowsPerPage, rowsPerPage);
     return () => {
-      console.log("Violations component unmounted");
+      console.log("Users Management component unmounted");
     };
-  }, []);
+  }, [page, rowsPerPage]);
 
-  const fetchData = async () => {
+  const fetchData = async (skip, limit) => {
     axios
-      .get("/violation/paginated", {
+      .get("/user/paginated/admin", {
         params: {
           skip: 0,
           limit: 100,
@@ -330,108 +373,101 @@ export default function Violations() {
         },
       })
       .then((response) => {
-        if (response.data.success === true) {
+        if (response.data.status === "success") {
           console.log("Data fetched successfully");
-          setRows(response.data.total);
+          setRows(response.data.data);
         } else {
           console.log("Failed to fetch data");
         }
       })
       .catch((error) => {
         console.error("There was an error fetching the data!", error);
-        setAlertMessage({
-          open: true,
-          title: error.title,
-          message: error.message,
-          variant: "error",
-        });
       });
   };
 
-  const searchFunction = async () => {
-    if (search === "") {
-      return;
-    }
-    console.log(search);
-    // axios.get('https://student-discipline-api-fmm2.onrender.com/violation/search', {
-    //     params: {
-    //     query: search
-    //     },
-    //     headers: {
-    //     'Content-Type': 'application/json',
-    //     }
-    // })
-    // .then((response) => {
-    //     if(response.data.success === true){
-    //         console.log("Searched data fetched successfully!");
-    //         setRows(response.data.data);
-    //     }
-    //     else{
-    //         console.log("Failed to fetch search data");
-    //     }
-    // })
-    // .catch((error) => {
-    //     console.error('There was an error searching the data!', error);
-    // });
-  };
+  // const searchFunction = async () => {
+  //   if (search === "") {
+  //     return;
+  //   }
+  //   console.log(search);
+  //   // axios.get('https://student-discipline-api-fmm2.onrender.com/violation/search', {
+  //   //     params: {
+  //   //     query: search
+  //   //     },
+  //   //     headers: {
+  //   //     'Content-Type': 'application/json',
+  //   //     }
+  //   // })
+  //   // .then((response) => {
+  //   //     if(response.data.success === true){
+  //   //         console.log("Searched data fetched successfully!");
+  //   //         setRows(response.data.data);
+  //   //     }
+  //   //     else{
+  //   //         console.log("Failed to fetch search data");
+  //   //     }
+  //   // })
+  //   // .catch((error) => {
+  //   //     console.error('There was an error searching the data!', error);
+  //   // });
+  // };
 
-  const debounce = (func, delay) => {
-    let debounceTimer;
-    return function (...args) {
-      clearTimeout(debounceTimer);
-      debounceTimer = setTimeout(() => {
-        // console.log('Debounced function called with args:', args);
-        func.apply(this, args);
-      }, delay);
-    };
-  };
+  // const debounce = (func, delay) => {
+  //     let debounceTimer;
+  //     return function(...args) {
+  //         clearTimeout(debounceTimer);
+  //         debounceTimer = setTimeout(() => {
+  //             // console.log('Debounced function called with args:', args);
+  //             func.apply(this, args);
+  //         }, delay);
+  //     };
+  // };
 
-  const debouncedSearchFunction = debounce(searchFunction, 300);
+  // const debouncedSearchFunction = debounce(searchFunction, 300);
 
   return (
     <div className="container h-full mx-auto px-2">
-      <div className="flex flex-col sm:flex-row justify-between gap-x-2 md:m-0 text-sm md:text-md pt-5">
-        <h1 className="text-3xl flex items-center">Violation List</h1>
-        <Tooltip title="Create Violation">
+      <div className="flex justify-between h-fit gap-x-2 m-2 md:m-0 text-sm md:text-md">
+        <h1 className="text-3xl py-3">Program Head List</h1>
+        {/* <Tooltip title="Create User">
           <button
-            className="bg-blue-500 my-2 p-2 rounded-sm text-white hover:bg-blue-600"
+            className="bg-blue-500 my-2 px-2 rounded-sm text-white hover:bg-blue-600"
             onClick={() => handleCreateOpen()}
           >
-            <AddIcon /> Create
+            <AddIcon /> Create User
           </button>
-        </Tooltip>
+        </Tooltip> */}
       </div>
-      <div className="flex">
-        <TextField
-          className=""
-          autoFocus
-          label="Search by Violation name"
-          placeholder="Ex. Cheating"
-          id="standard-required"
-          variant="standard"
-          type="text"
-          fullWidth
-          value={search}
-          onChange={(e) => {
-            setSearch(e.target.value);
-            debouncedSearchFunction(e.target.value);
-          }}
-        />
-        <Button
-          className="rounded-sm text-white bg-blue-600 text-center  hover:bg-blue-750 hover:text-black"
-          onClick={() => searchFunction()}
-        >
-          Search
-        </Button>
-      </div>
+      {/* 
+                <div className='flex justify-between h-fit gap-x-2'>
+                    <TextField
+                    className='my-2 py-2'
+                    autoFocus
+                    margin="dense"
+                    label="Search Violation"
+                    type="text"
+                        fullWidth
+                        value={search}
+                        onChange={(e) => {
+                            setSearch(e.target.value);
+                            // debouncedSearchFunction(e.target.value);
+                        }}
+                        />
+                        <button className='bg-blue-500 my-2 p-5 rounded-sm text-white hover:bg-blue-600'
+                        onClick={() => searchFunction()}
+                        >
+                        Search
+                        </button>
+                    </div> */}
       <div className="shadow-sm shadow-zinc-500 rounded-lg">
         <TableContainer component={Paper} className="">
           <Table sx={{ minWidth: 500 }}>
             <TableHead>
               <TableRow>
                 <th className="py-5 px-4 font-bold ">Name</th>
-                <th className="py-5 px-4 font-bold">Description</th>
-                <th className="py-5 px-4 font-bold">Date</th>
+                <th className="py-5 px-4 font-bold ">Username</th>
+                <th className="py-5 px-4 font-bold">Email address</th>
+                <th className="py-5 px-4 font-bold text-center">Type</th>
                 <th className="py-5 px-4 font-bold text-center">Actions</th>
               </TableRow>
             </TableHead>
@@ -445,24 +481,37 @@ export default function Violations() {
               ).map((row) => (
                 <TableRow key={row._id}>
                   <TableCell component="th" scope="row">
-                    {row.name}
+                    {row.first_name && row.last_name
+                      ? row.first_name + " " + row.last_name
+                      : "No name attached"}
                   </TableCell>
-                  <TableCell>{row.description}</TableCell>
                   <TableCell>
-                    {formatDate(new Date(parseInt(row.date)), "MMMM DD, YYYY")}
+                    {row.username ? row.username : "No username"}
+                  </TableCell>
+                  <TableCell>
+                    {row.email ? row.email : "No email address attached"}
+                  </TableCell>
+                  <TableCell align="center">
+                    <Button
+                      className={`p-2 rounded-sm text-center
+                      ${row.type === "ADMIN" ? "primary" : "secondary"}`}
+                      color={row.type === "ADMIN" ? "primary" : "secondary"}
+                    >
+                      {row.type ? row.type : "No type attached"}{" "}
+                    </Button>
                   </TableCell>
                   <td className="flex justify-center">
                     <Tooltip title="Edit">
                       <Button
-                        className=" p-2 rounded-sm text-white hover:bg-blue-600 hover:text-white"
+                        className=" rounded-sm text-white hover:bg-blue-600 hover:text-white"
                         onClick={() => handleOpen(row)}
                       >
                         <EditIcon />
                       </Button>
                     </Tooltip>
-                    <Tooltip title="Delete">
+                    {/* <Tooltip title="Delete">
                       <Button
-                        className=" p-2 rounded-sm text-white hover:bg-blue-600 hover:text-white"
+                        className=" p-2 rounded-sm text-white hover:bg-red-600 hover:text-white"
                         onClick={() => {
                           setCurrentRow({ ...row });
                           setopenDelete(true);
@@ -470,7 +519,7 @@ export default function Violations() {
                       >
                         <DeleteIcon />
                       </Button>
-                    </Tooltip>
+                    </Tooltip> */}
                   </td>
                 </TableRow>
               ))}
@@ -495,37 +544,71 @@ export default function Violations() {
             </TableFooter>
           </Table>
           <Dialog open={open} onClose={handleClose}>
-            <DialogTitle>Edit Violation</DialogTitle>
+            <DialogTitle>
+              Assign Program Chair to their Respective Departments
+            </DialogTitle>
             <DialogContent>
               <TextField
                 autoFocus
                 margin="dense"
-                label="Violation Name"
+                label="First Name"
                 type="text"
                 fullWidth
-                value={currentRow.name}
+                value={currentRow.first_name}
                 required={true}
                 onChange={(e) =>
                   setCurrentRow({
                     ...currentRow,
-                    name: e.target.value,
+                    first_name: e.target.value,
                   })
                 }
               />
               <TextField
+                autoFocus
                 margin="dense"
-                label="Description"
+                label="last Name"
                 type="text"
                 fullWidth
+                value={currentRow.last_name}
                 required={true}
-                value={currentRow.description}
                 onChange={(e) =>
                   setCurrentRow({
                     ...currentRow,
-                    description: e.target.value,
+                    last_name: e.target.value,
                   })
                 }
               />
+              <TextField
+                autoFocus
+                margin="dense"
+                label="Email Address"
+                type="text"
+                fullWidth
+                value={currentRow.email}
+                required={true}
+                onChange={(e) =>
+                  setCurrentRow({
+                    ...currentRow,
+                    email: e.target.value,
+                  })
+                }
+              />
+              <FormControl fullWidth margin="dense">
+                <InputLabel id="demo-simple-select-label">Category</InputLabel>
+                <Select
+                  labelId="demo-simple-select-label"
+                  id="demo-simple-select"
+                  value={currentRow.type}
+                  label="Category"
+                  onChange={(e) =>
+                    setCurrentRow({ ...currentRow, type: e.target.value })
+                  }
+                >
+                  <MenuItem value={"ADMIN"}>Admin</MenuItem>
+                  <MenuItem value={"SECURITY"}>Security Guard</MenuItem>
+                  //Departments only
+                </Select>
+              </FormControl>
             </DialogContent>
             <DialogActions>
               <Button
@@ -541,39 +624,103 @@ export default function Violations() {
             </DialogActions>
           </Dialog>
           <Dialog open={openCreate} onClose={handleClose}>
-            <DialogTitle>Create Violation</DialogTitle>
+            <DialogTitle>Create User</DialogTitle>
             <DialogContent>
-              <TextField
-                autoFocus
-                margin="dense"
-                label="Violation Name"
-                type="text"
-                fullWidth
-                value={violations.name}
-                onChange={(e) =>
-                  setViolations({
-                    ...violations,
-                    name: e.target.value,
-                  })
-                }
-              />
-              <TextField
-                margin="dense"
-                label="Description"
-                type="text"
-                fullWidth
-                value={violations.description}
-                onChange={(e) =>
-                  setViolations({
-                    ...violations,
-                    description: e.target.value,
-                  })
-                }
-              />
+              <form>
+                <TextField
+                  autoFocus
+                  margin="dense"
+                  label="First Name"
+                  type="text"
+                  fullWidth
+                  value={user.first_name}
+                  required={true}
+                  onChange={(e) =>
+                    setUser({
+                      ...user,
+                      first_name: e.target.value,
+                    })
+                  }
+                />
+                <TextField
+                  autoFocus
+                  margin="dense"
+                  label="last Name"
+                  type="text"
+                  fullWidth
+                  value={user.last_name}
+                  required={true}
+                  onChange={(e) =>
+                    setUser({
+                      ...user,
+                      last_name: e.target.value,
+                    })
+                  }
+                />
+                <TextField
+                  autoFocus
+                  margin="dense"
+                  label="Username"
+                  type="text"
+                  fullWidth
+                  value={user.username}
+                  required={true}
+                  onChange={(e) =>
+                    setUser({
+                      ...user,
+                      username: e.target.value,
+                    })
+                  }
+                />
+                <TextField
+                  autoFocus
+                  margin="dense"
+                  label="Email Address"
+                  type="text"
+                  fullWidth
+                  value={user.email}
+                  required={true}
+                  onChange={(e) =>
+                    setUser({
+                      ...user,
+                      email: e.target.value,
+                    })
+                  }
+                />
+                <TextField
+                  className="mb-1"
+                  id="outlined-password-input"
+                  label="Password"
+                  type="password"
+                  margin="dense"
+                  fullWidth
+                  required={true}
+                  autoComplete="current-password"
+                  onChange={(e) =>
+                    setUser({ ...user, password: e.target.value })
+                  }
+                />
+                <FormControl fullWidth margin="dense">
+                  <InputLabel id="demo-simple-select-label">Type</InputLabel>
+                  <Select
+                    labelId="demo-simple-select-label"
+                    id="demo-simple-select"
+                    value={user.type}
+                    label="Type"
+                    onChange={(e) => {
+                      setUser({ ...user, type: e.target.value }),
+                        console.log(e.target.value);
+                    }}
+                  >
+                    <MenuItem value={"ADMIN"}>Admin</MenuItem>
+                    <MenuItem value={"SECURITY"}>Security Guard</MenuItem>
+                  </Select>
+                </FormControl>
+              </form>
             </DialogContent>
             <DialogActions>
               <Button onClick={handleSave} color="primary" disabled={isLoading}>
-                {isLoading ? "Saving...." : "Save"}
+                {isLoading ? "Saving...." : "Create"}
               </Button>
               <Button onClick={handleClose} color="primary">
                 Cancel
@@ -581,38 +728,62 @@ export default function Violations() {
             </DialogActions>
           </Dialog>
           <Dialog open={openDelete} onClose={handleClose}>
-            <DialogTitle>Delete Violation?</DialogTitle>
+            <DialogTitle>Delete User?</DialogTitle>
             <DialogContent>
               <TextField
-                autoFocus
-                margin="dense"
-                label="Violation Name"
-                type="text"
-                fullWidth
-                value={currentRow.name}
-                readOnly
-              />
-              <TextField
-                margin="dense"
-                label="Description"
-                type="text"
-                fullWidth
-                value={currentRow.description}
-                readOnly
-              />
-              <TextField
-                margin="dense"
-                label="Date Updated"
-                type="text"
-                fullWidth
-                value={formatDate(
-                  new Date(parseInt(currentRow.date)),
-                  "MMMM DD, YYYY"
-                )}
-                readOnly
-                InputLabelProps={{
-                  shrink: true,
+                id="outlined-read-only-input"
+                slotProps={{
+                  input: {
+                    readOnly: true,
+                  },
                 }}
+                margin="dense"
+                label="First Name"
+                fullWidth
+                defaultValue={currentRow.first_name}
+                readOnly={true}
+              />
+              <TextField
+                id="outlined-read-only-input"
+                slotProps={{
+                  input: {
+                    readOnly: true,
+                  },
+                }}
+                margin="dense"
+                label="Last Name"
+                type="text"
+                fullWidth
+                defaultValue={currentRow.last_name}
+                readOnly
+              />
+              <TextField
+                id="outlined-read-only-input"
+                slotProps={{
+                  input: {
+                    readOnly: true,
+                  },
+                }}
+                margin="dense"
+                label="Email Address"
+                type="text"
+                fullWidth
+                defaultValue={currentRow.email}
+                readOnly
+              />
+              <TextField
+                id="outlined-read-only-input"
+                slotProps={{
+                  input: {
+                    readOnly: true,
+                  },
+                }}
+                margin="dense"
+                label="Type"
+                type="text"
+                fullWidth
+                defaultValue={currentRow.type}
+                readOnly
               />
             </DialogContent>
             <DialogActions>

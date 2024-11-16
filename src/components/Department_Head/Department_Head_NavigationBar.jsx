@@ -1,9 +1,9 @@
 import React from "react";
-import reactsvg from "../assets/react.svg";
+import reactsvg from "@src/assets/react.svg";
 import { Link } from "react-router-dom";
-import { useAuth } from "../auth/AuthProvider";
+import { useAuth } from "../../auth/AuthProvider";
 
-const Navigationbar = () => {
+const Department_Head_NavigationBar = () => {
   const { logout, isAuthenticated } = useAuth();
 
   return (
@@ -18,34 +18,22 @@ const Navigationbar = () => {
           Batangas State University Disciplinary Management
         </label>
       </div>
-      <div className="h-[100px] flex gap-x-5 items-center flex-wrap">
+      <div className="h-[100px] flex gap-x-5 items-center flex-wrap py-1">
         <Link
-          className="p-2 hover:bg-blue-700 hover:rounded-md hover:cursor-pointer"
-          to="/Students"
+          className="p-2 hover:bg-blue-700 hover:rounded-sm hover:cursor-pointer"
+          to="/department-head/home"
         >
-          Students
+          Home
         </Link>
         <Link
-          className="p-2 hover:bg-blue-700 hover:rounded-md hover:cursor-pointer"
-          to="/Violations"
+          className="p-2 hover:bg-blue-700 hover:rounded-sm hover:cursor-pointer"
+          to="/department-head/graph"
         >
-          Violation
-        </Link>
-        <Link
-          className="p-2 hover:bg-blue-700 hover:rounded-md hover:cursor-pointer"
-          to="/Users"
-        >
-          Users
-        </Link>
-        <Link
-          className="p-2 hover:bg-blue-700 hover:rounded-md hover:cursor-pointer"
-          to="/Chart"
-        >
-          Charts
+          Graphs
         </Link>
         {isAuthenticated && (
           <Link
-            className="p-2 hover:bg-blue-700 hover:rounded-md hover:cursor-pointer"
+            className="p-2 hover:bg-blue-700 hover:rounded-sm hover:cursor-pointer"
             onClick={logout}
           >
             Logout
@@ -58,4 +46,4 @@ const Navigationbar = () => {
   );
 };
 
-export default Navigationbar;
+export default Department_Head_NavigationBar;

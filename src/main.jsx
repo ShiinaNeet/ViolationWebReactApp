@@ -4,9 +4,18 @@ import "./index.css";
 
 import { createBrowserRouter, RouterProvider } from "react-router-dom";
 
-import Home from "./routes/Home";
-import Students from "./routes/Students";
 import Layout from "./layout";
+import DeanLayout from "./Dean_layout";
+import DepartmentHeadLayout from "./DepartmentHead_layout";
+
+//Dean Layout
+import Dean_Home from "./routes/Dean/Home";
+
+//Department head Layout
+import DepartmentHead_Home from "./routes/Department_head/Home";
+import ViolationBarChart from "./components/Department_Head/BarChartHead";
+
+import Students from "./routes/Students";
 import Violations from "./routes/Violations";
 import Chart from "./routes/Chart";
 import Login from "./routes/Login";
@@ -26,33 +35,54 @@ setupAxiosInterceptors(authTokens);
 
 const router = createBrowserRouter([
   {
-    element: <Layout />,
+    path: "/",
+    element: <ProtectedRoute element={<Layout />} />,
     children: [
       {
-        path: "/",
-        element: <ProtectedRoute element={<Home />} />,
-      },
-      {
-        path: "/Students",
+        path: "/students",
         element: <ProtectedRoute element={<Students />} />,
       },
       {
-        path: "/Violations",
+        path: "violations",
         element: <ProtectedRoute element={<Violations />} />,
       },
       {
-        path: "/Users",
+        path: "users",
         element: <ProtectedRoute element={<UsersManagement />} />,
       },
       {
-        path: "/Chart",
+        path: "chart",
         element: <ProtectedRoute element={<Chart />} />,
       },
     ],
   },
   {
-    path: "/Login",
-    element: <ProtectedRoute element={<Login />} />,
+    path: "/dean",
+    element: <ProtectedRoute element={<DeanLayout />} />,
+    children: [
+      {
+        path: "home",
+        element: <ProtectedRoute element={<Dean_Home />} />,
+      },
+    ],
+  },
+  {
+    path: "/department-head",
+    element: <ProtectedRoute element={<DepartmentHeadLayout />} />,
+    children: [
+      {
+        path: "home",
+        element: <ProtectedRoute element={<DepartmentHead_Home />} />,
+      },
+      {
+        path: "graph",
+        element: <ProtectedRoute element={<ViolationBarChart />} />,
+      },
+    ],
+  },
+  {
+    path: "/login",
+    element: <Login />,
   },
   {
     path: "*",
