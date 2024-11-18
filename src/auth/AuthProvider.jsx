@@ -19,7 +19,7 @@ export const AuthProvider = ({ children }) => {
       const response = await axios.post(
         "/auth/login",
         {
-          fullname: name,
+          username: name,
           password: password,
         },
         {
@@ -29,15 +29,14 @@ export const AuthProvider = ({ children }) => {
         }
       );
       if (response.data.status === "success") {
-        localStorage.setItem("accessToken", response.data.api_token);
+        localStorage.setItem("accessToken", response.data.access_token);
         const authTokens = {
           accessToken: localStorage.getItem("accessToken"),
         };
         setupAxiosInterceptors(authTokens);
         setIsAuthenticated(true);
-        // console.log(isAuthenticated);
-        // setUserType(response.data.user_type);
-        return response.data.data;
+        setUserType(response.data.account_type);
+        return response.data.account_type;
       } else {
         console.log("Failed to login: ", response.data.message);
         return false;
