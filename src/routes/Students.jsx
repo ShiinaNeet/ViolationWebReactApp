@@ -117,10 +117,12 @@ function getStyles(name, personName, theme) {
       : theme.typography.fontWeightRegular,
   };
 }
-const Students = () => {
+const Students = ({ DataToGet }) => {
   const [anchorEl, setAnchorEl] = React.useState(null);
   const open = Boolean(anchorEl);
   const [isLoading, setIsLoading] = React.useState(false);
+  const [isFetchingData, setIsFetchingData] = React.useState(false);
+  const [fetchingDataError, setFetchingDataError] = React.useState("");
   const [ViewModal, setViewModal] = React.useState(false);
   const [targetStudent, setStudent] = React.useState({
     userid: 0,
@@ -132,7 +134,11 @@ const Students = () => {
     email: "",
   });
   const [violationList, setViolationList] = React.useState([]);
-
+  const [searchFilter, setSearchFilter] = React.useState({
+    name: "",
+    violation: "",
+    department: "",
+  });
   const theme = useTheme();
   const handleChange = (event) => {
     const {
@@ -175,7 +181,7 @@ const Students = () => {
     setPage(0);
   };
 
-  const [addStudentModal, setAddStudentModal] = React.useState(false);
+  const [searchFilterModal, setSearchFilterModal] = React.useState(false);
   const [updateStudentViolationModal, setUpdateStudentViolationModal] =
     React.useState(false);
   const [deleteStudentViolationModal, setDeleteStudentViolationModal] =
@@ -184,7 +190,16 @@ const Students = () => {
 
   useEffect(() => {
     fetchViolationData();
-    fetchData();
+    fetchData("/user/paginated");
+    // if (DataToGet == "ADMIN") {
+    //   fetchData("/user/paginated");
+    // } else if (DataToGet == "PROGRAM HEAD") {
+    //   fetchData("/department_head/paginated");
+    //   console.log("Data to get: ", DataToGet);
+    // } else if (DataToGet == "DEAN") {
+    //   fetchData("/dean/paginated");
+    //   console.log("Data to get: ", DataToGet);
+    // }
   }, []);
   const handleClick = (event) => {
     setAnchorEl(event.currentTarget);
@@ -192,7 +207,7 @@ const Students = () => {
   const handleClose = () => {
     setAnchorEl(null);
     setViewModal(false);
-    setAddStudentModal(false);
+    setSearchFilterModal(false);
     // setMessageStudentModal(false);
     setDeleteStudentViolationModal(false);
     setUpdateStudentViolationModal(false);
@@ -213,7 +228,7 @@ const Students = () => {
     // setStudent(person);
     fetchUser(person);
     setViewModal(true);
-    setAddStudentModal(false);
+    setSearchFilterModal(false);
   };
   const handleUpdateViolationModal = (person) => {
     setAnchorEl(null);
@@ -225,6 +240,11 @@ const Students = () => {
     setDeleteStudentViolationModal(true);
     setStudent(person);
     setAnchorEl(null);
+  };
+  const handleSearch = (e) => {
+    e.preventDefault();
+    console.log(searchFilter);
+    console.log("Searching...");
   };
   const handleDelete = async () => {
     setIsLoading(true);
@@ -286,9 +306,10 @@ const Students = () => {
         setIsLoading(false);
       });
   };
-  const fetchData = async () => {
+  const fetchData = async (API_URI_TO_FETCH) => {
+    setIsFetchingData(true);
     axios
-      .get("/user/paginated", {
+      .get("user/paginated/student", {
         params: {
           skip: 0,
           limit: 100,
@@ -298,26 +319,37 @@ const Students = () => {
         },
       })
       .then((response) => {
-        if (response.data.status === "success") {
-          // setRows(prevRows => {
-          //     const newRows = response.data.data.filter(
-          //         newRow => !prevRows.some(row => row.id === newRow.id)
-          //     );
-          //     return [...prevRows, ...newRows]; // Append only unique rows
-          // });
+        if (response.data.status == "success") {
           setPage(0);
-          console.log(
-            "Fetch data from fetch data function: ",
-            response.data.data
-          );
+          setIsFetchingData(false);
+          setFetchingDataError("");
           setRows(response.data.data);
+          if (response.data.data.length == 0) {
+            setAlertMessage({
+              open: true,
+              title: "No Data",
+              message: "No student data found.",
+              variant: "info",
+            });
+          }
         } else {
           console.log("Failed to fetch data");
+          // setIsFetchingData(false);
+          // setFetchingDataError("Failed");
         }
       })
       .catch((error) => {
         console.error("There was an error fetching the data!", error);
+        setIsFetchingData(false);
+        setFetchingDataError("Failed");
+        setAlertMessage({
+          open: true,
+          title: error.title,
+          message: error.message,
+          variant: "info",
+        });
       });
+    setIsFetchingData(false);
   };
   const fetchViolationData = async () => {
     axios
@@ -362,10 +394,15 @@ const Students = () => {
           section: response.data.section,
           email: response.data.email,
         });
-        // console.log(targetStudent);
       })
       .catch((error) => {
         console.error("There was an error fetching the data!", error);
+        setAlertMessage({
+          open: true,
+          title: error.title,
+          message: error.message,
+          variant: "info",
+        });
       });
   };
   const [selectedViolation, setSelectedViolation] = React.useState({
@@ -473,20 +510,20 @@ const Students = () => {
   return (
     <>
       <div className="container mx-auto h-full px-2">
-        <div className="flex flex-col md:flex-row md:justify-between h-fit">
+        <div className="flex flex-row justify-between h-fit">
           <h1 className="text-3xl py-3">Student List</h1>
-          {/* <button className='bg-blue-500 my-2 p-2 rounded-sm text-white hover:bg-blue-600'
-                        onClick={() => setAddStudentModal(true)}
-                    >
-                        Add Student
-                    </button> */}
+          <button
+            className="bg-blue-500 my-2 p-2 rounded-sm text-white hover:bg-blue-600"
+            onClick={() => setSearchFilterModal(true)}
+          >
+            Filter
+          </button>
         </div>
         <div className="shadow-sm shadow-zinc-500 rounded-lg">
           <TableContainer component={Paper}>
             <Table sx={{ minWidth: 500 }}>
               <TableHead>
-                <TableRow className="text-left">
-                  {/* <th className="py-5 px-4 border-b">ID</th> */}
+                <TableRow className="text-left px-4">
                   <th className="py-5 px-4 border-b">Name</th>
                   <th className="py-5 px-4 border-b">Violation</th>
                   <th className="py-5 px-4 border-b">Department and Year</th>
@@ -536,26 +573,26 @@ const Students = () => {
                       </Tooltip>
                       <Tooltip title="Edit Student">
                         <Button
-                          className=" rounded-sm text-white hover:bg-yellow-600 hover:text-white"
+                          className=" rounded-sm text-white hover:bg-blue-600 hover:text-white"
                           onClick={() => handleUpdateViolationModal(student)}
                         >
                           <EditIcon />
                         </Button>
                       </Tooltip>
-                      <Tooltip title="Delete Student">
+                      {/* <Tooltip title="Delete Student">
                         <Button
                           className="rounded-sm text-white hover:bg-red-600 hover:text-white"
                           onClick={() => handleDeleteViolationModal(student)}
                         >
                           <DeleteIcon />
                         </Button>
-                      </Tooltip>
+                      </Tooltip> */}
                     </td>
                   </tr>
                 ))}
                 {rows.length == 0 && (
                   <TableRow style={{ height: 53 * emptyRows }}>
-                    <TableCell colSpan={6}> Loading.... </TableCell>
+                    <TableCell colSpan={6}> No Data</TableCell>
                   </TableRow>
                 )}
               </TableBody>
@@ -669,34 +706,62 @@ const Students = () => {
           </div>
         </Dialog>
       )}
-      {addStudentModal && (
+      {searchFilterModal && (
         <Modal
-          open={addStudentModal}
+          open={searchFilterModal}
           onClose={handleClose}
-          aria-labelledby="modal-modal-title"
-          aria-describedby="modal-modal-description"
+          // aria-labelledby="modal-modal-title"
+          // aria-describedby="modal-modal-description"
         >
-          <div className="modal bg-white h-fit w-fit rounded-md flex">
-            <div className="flex flex-col w-[400px] gap-y-5">
-              <h2 className="py-3 text-2xl font-bold text-center">
-                Add New Student
-              </h2>
-              <TextField required id="outlined-required" label="Student Name" />
-              <div className="flex gap-x-2">
-                <button
-                  className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded w-full"
-                  onClick={() => handleSave()}
-                >
-                  Submit
-                </button>
-                <button
-                  className=" hover:bg-slate-200 text-black font-bold py-2 px-4 rounded w-full"
-                  onClick={handleClose}
-                >
-                  Cancel
-                </button>
+          <div className="modal bg-white h-fit w-fit flex ">
+            <form onSubmit={handleSearch}>
+              <div className="flex flex-col w-[400px] gap-y-5">
+                <TextField
+                  id="standard-required"
+                  label="Student Name"
+                  value={searchFilter.name}
+                  onChange={(e) =>
+                    setSearchFilter({ ...searchFilter, name: e.target.value })
+                  }
+                  variant="standard"
+                />
+                <TextField
+                  id="standard-required"
+                  label="Violation"
+                  value={searchFilter.violation}
+                  onChange={(e) =>
+                    setSearchFilter({
+                      ...searchFilter,
+                      violation: e.target.value,
+                    })
+                  }
+                  variant="standard"
+                />
+                <TextField
+                  id="standard-required"
+                  label="Department"
+                  value={searchFilter.department}
+                  onChange={(e) =>
+                    setSearchFilter({
+                      ...searchFilter,
+                      department: e.target.value,
+                    })
+                  }
+                  variant="standard"
+                />
+                <div className="flex  justify-end  w-full gap-x-2">
+                  <Button type="submit" className="flex w-1/2 justify-end">
+                    Search with Filters
+                  </Button>
+                  <Button
+                    className="flex w-1/2"
+                    onClick={() => setSearchFilterModal(false)}
+                  >
+                    Close
+                  </Button>
+                </div>
               </div>
-            </div>
+            </form>
           </div>
         </Modal>
       )}
@@ -715,14 +780,14 @@ const Students = () => {
                 {targetStudent.violations.map((violation, index) => (
                   <li
                     key={index}
-                    className="my-2 rounded-sm flex justify-between text-black border-2 border-solid border-red-500 "
+                    className="my-2 rounded-sm flex justify-between text-black border-2 border-solid border-blue-500 "
                   >
                     <label className="p-2">{violation.name} </label>
                     <Button
                       onClick={() => handleDeleteViolation(index)}
                       className="hover:border-1 hover:border-solid hover:border-blue-500 hover:border- hover:text-white rounded-none"
                     >
-                      <DeleteOutlineIcon color="error" />
+                      <DeleteOutlineIcon color="primary" />
                     </Button>
                   </li>
                 ))}
