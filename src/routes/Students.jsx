@@ -565,7 +565,7 @@ const Students = ({ DataToGet }) => {
                     <td className="border-b flex justify-center sticky">
                       <Tooltip title="View Student">
                         <Button
-                          className="rounded-sm text-white hover:bg-blue-600 hover:text-white"
+                          className="rounded-sm text-white hover:bg-blue-100 hover:text-blue-700"
                           onClick={() => handleViewViolationModal(student)}
                         >
                           <RemoveRedEyeIcon />
@@ -573,7 +573,7 @@ const Students = ({ DataToGet }) => {
                       </Tooltip>
                       <Tooltip title="Edit Student">
                         <Button
-                          className=" rounded-sm text-white hover:bg-blue-600 hover:text-white"
+                          className="rounded-sm text-white hover:bg-blue-100 hover:text-blue-700"
                           onClick={() => handleUpdateViolationModal(student)}
                         >
                           <EditIcon />
@@ -622,13 +622,13 @@ const Students = ({ DataToGet }) => {
               </h2>
               <div className="gap-x-2">
                 <Button
-                  className="bg-blue-500 p-2 rounded-sm text-white hover:bg-blue-600 hover:text-white"
+                  className="bg-blue-500 p-2 rounded-sm text-white hover:bg-blue-100 hover:text-blue"
                   onClick={() => setMessageStudentModal(true)}
                 >
                   <AddAlertIcon /> Alert
                 </Button>
                 <Button
-                  className="bg-red-500 p-2 rounded-sm text-white hover:bg-red-600 hover:text-white"
+                  className=" p-2 rounded-sm text-white hover:bg-blue-200 hover:text-blue"
                   onClick={handleClose}
                 >
                   <CloseIcon /> Close
@@ -707,15 +707,16 @@ const Students = ({ DataToGet }) => {
         </Dialog>
       )}
       {searchFilterModal && (
-        <Modal
+        <Dialog
           open={searchFilterModal}
           onClose={handleClose}
-          // aria-labelledby="modal-modal-title"
-          // aria-describedby="modal-modal-description"
+          fullWidth={true}
+          maxWidth="sm"
         >
-          <div className="modal bg-white h-fit w-fit flex ">
-            <form onSubmit={handleSearch}>
-              <div className="flex flex-col w-[400px] gap-y-5">
+          <DialogTitle>Search</DialogTitle>
+          <DialogContent className=" flex ">
+            <form onSubmit={handleSearch} className="w-full">
+              <div className="flex flex-col gap-y-1">
                 <TextField
                   id="standard-required"
                   label="Student Name"
@@ -724,6 +725,7 @@ const Students = ({ DataToGet }) => {
                     setSearchFilter({ ...searchFilter, name: e.target.value })
                   }
                   variant="standard"
+                  fullWidth
                 />
                 <TextField
                   id="standard-required"
@@ -736,6 +738,7 @@ const Students = ({ DataToGet }) => {
                     })
                   }
                   variant="standard"
+                  fullWidth
                 />
                 <TextField
                   id="standard-required"
@@ -748,22 +751,26 @@ const Students = ({ DataToGet }) => {
                     })
                   }
                   variant="standard"
+                  fullWidth
                 />
-                <div className="flex  justify-end  w-full gap-x-2">
-                  <Button type="submit" className="flex w-1/2 justify-end">
-                    Search with Filters
-                  </Button>
-                  <Button
-                    className="flex w-1/2"
-                    onClick={() => setSearchFilterModal(false)}
-                  >
-                    Close
-                  </Button>
-                </div>
               </div>
             </form>
-          </div>
-        </Modal>
+          </DialogContent>
+          <DialogActions>
+            <Button
+              type="submit"
+              className="flex w-full sm:w-1/2 justify-center"
+            >
+              Search
+            </Button>
+            <Button
+              className="flex w-full sm:w-1/2 justify-center"
+              onClick={() => setSearchFilterModal(false)}
+            >
+              Close
+            </Button>
+          </DialogActions>
+        </Dialog>
       )}
       {updateStudentViolationModal && (
         <Dialog

@@ -111,6 +111,8 @@ export default function UserManagement() {
     last_name: "",
     email: "",
     type: "",
+    assigned_department: "",
+    username: "",
   });
   const [search, setSearch] = React.useState("");
   const [user, setUser] = React.useState({
@@ -119,6 +121,8 @@ export default function UserManagement() {
     email: "",
     type: "",
     password: "",
+    username: "",
+    assigned_department: "",
   });
   const [alertMessage, setAlertMessage] = React.useState({
     open: false,
@@ -162,6 +166,7 @@ export default function UserManagement() {
       last_name: "",
       email: "",
       type: "",
+      assigned_department: "",
     });
     setUser({
       first_name: "",
@@ -169,6 +174,7 @@ export default function UserManagement() {
       email: "",
       type: "",
       password: "",
+      assigned_department: "",
     });
   };
   const handleAlertClose = (event, reason) => {
@@ -209,6 +215,7 @@ export default function UserManagement() {
           type: user.type,
           password: user.password,
           username: user.username,
+          assigned_department: user.assigned_department,
         },
         {
           headers: {
@@ -383,6 +390,12 @@ export default function UserManagement() {
           setRows(response.data.data);
         } else {
           console.log("Failed to fetch data");
+          setAlertMessage({
+            open: true,
+            title: "No Data",
+            message: "No data available",
+            variant: "info",
+          });
         }
       })
       .catch((error) => {
@@ -724,6 +737,8 @@ export default function UserManagement() {
                   >
                     <MenuItem value={"ADMIN"}>Admin</MenuItem>
                     <MenuItem value={"SECURITY"}>Security Guard</MenuItem>
+                    <MenuItem value={"PROGRAM HEAD"}>Program Head</MenuItem>
+                    <MenuItem value={"DEAN"}>Dean</MenuItem>
                   </Select>
                 </FormControl>
               </form>

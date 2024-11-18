@@ -102,6 +102,7 @@ export default function UserManagement() {
   const [page, setPage] = React.useState(0);
   const [rowsPerPage, setRowsPerPage] = React.useState(6);
   const [rows, setRows] = React.useState([]);
+  const [departmentRows, setDepartmentRows] = React.useState([]);
   const [open, setOpen] = React.useState(false);
   const [openCreate, setOpenCreate] = React.useState(false);
   const [openDelete, setopenDelete] = React.useState(false);
@@ -111,6 +112,7 @@ export default function UserManagement() {
     last_name: "",
     email: "",
     type: "",
+    assigned_department: "",
   });
   const [search, setSearch] = React.useState("");
   const [user, setUser] = React.useState({
@@ -118,6 +120,7 @@ export default function UserManagement() {
     last_name: "",
     email: "",
     type: "",
+    assigned_department: "",
     password: "",
   });
   const [alertMessage, setAlertMessage] = React.useState({
@@ -162,6 +165,7 @@ export default function UserManagement() {
       last_name: "",
       email: "",
       type: "",
+      assigned_department: "",
     });
     setUser({
       first_name: "",
@@ -169,6 +173,7 @@ export default function UserManagement() {
       email: "",
       type: "",
       password: "",
+      assigned_department: "",
     });
   };
   const handleAlertClose = (event, reason) => {
@@ -253,14 +258,14 @@ export default function UserManagement() {
       currentRow.first_name === "" ||
       currentRow.last_name === "" ||
       currentRow.email === "" ||
-      currentRow.type === ""
+      currentRow.type === "" ||
+      currentRow.assigned_department === ""
     ) {
       setAlertMessage({ open: true, title: "Error", variant: "error" });
       setErrorMessages(["Please fill in all fields"]);
       setIsLoading(false);
       return;
     }
-
     axios
       .put(
         `/admin/user/update?user_id=${currentRow._id}`,
@@ -269,6 +274,7 @@ export default function UserManagement() {
           last_name: currentRow.last_name,
           email: currentRow.email,
           type: currentRow.type,
+          assigned_department: currentRow.assigned_department,
         },
         {
           headers: {
@@ -284,13 +290,13 @@ export default function UserManagement() {
           setAlertMessage({
             open: true,
             title: "Success",
-            message: "User has been Updated successfully",
+            message: "Program Head has been updated successfully.",
             variant: "info",
           });
           setIsLoading(false);
           handleClose();
         } else {
-          console.log("Failed to Update");
+          console.log("Failed to Update. Please Try again later");
           setAlertMessage({
             open: true,
             title: "Failed",
@@ -356,6 +362,7 @@ export default function UserManagement() {
 
   React.useEffect(() => {
     fetchData(page * rowsPerPage, rowsPerPage);
+    fetchDepartments();
     return () => {
       console.log("Users Management component unmounted");
     };
@@ -373,9 +380,44 @@ export default function UserManagement() {
         },
       })
       .then((response) => {
-        if (response.data.status === "success") {
+        if (response.data.status == "success") {
           console.log("Data fetched successfully");
           setRows(response.data.data);
+        } else {
+          console.log("Failed to fetch data");
+          setAlertMessage({
+            open: true,
+            title: "Failed",
+            message: "Failed to fetch data.",
+            variant: "info",
+          });
+        }
+      })
+      .catch((error) => {
+        console.error("There was an error fetching the data!", error);
+        setAlertMessage({
+          isOpen: true,
+          title: "Failed",
+          message: response.data.message,
+          variant: "info",
+        });
+      });
+  };
+  const fetchDepartments = async () => {
+    axios
+      .get("/department", {
+        params: {
+          skip: 0,
+          limit: 100,
+        },
+        headers: {
+          "Content-Type": "application/json",
+        },
+      })
+      .then((response) => {
+        if (response.data.status === "success") {
+          console.log("Data fetched successfully");
+          setDepartmentRows(response.data.data);
         } else {
           console.log("Failed to fetch data");
         }
@@ -427,8 +469,8 @@ export default function UserManagement() {
 
   return (
     <div className="container h-full mx-auto px-2">
-      <div className="flex justify-between h-fit gap-x-2 m-2 md:m-0 text-sm md:text-md">
-        <h1 className="text-3xl py-3">Program Head List</h1>
+      <div className="flex justify-between h-fit gap-x-2 my-2 md:m-0 text-sm md:text-md">
+        <h1 className="text-3xl py-3">Program Head</h1>
         {/* <Tooltip title="Create User">
           <button
             className="bg-blue-500 my-2 px-2 rounded-sm text-white hover:bg-blue-600"
@@ -500,32 +542,27 @@ export default function UserManagement() {
                       {row.type ? row.type : "No type attached"}{" "}
                     </Button>
                   </TableCell>
-                  <td className="flex justify-center">
-                    <Tooltip title="Edit">
+                  <TableCell
+                    align="center"
+                    className="flex items-center justify-center"
+                  >
+                    <Tooltip
+                      title="Edit"
+                      className="flex items-end justify-center"
+                    >
                       <Button
-                        className=" rounded-sm text-white hover:bg-blue-600 hover:text-white"
+                        className=" rounded-sm text-white"
                         onClick={() => handleOpen(row)}
                       >
                         <EditIcon />
                       </Button>
                     </Tooltip>
-                    {/* <Tooltip title="Delete">
-                      <Button
-                        className=" p-2 rounded-sm text-white hover:bg-red-600 hover:text-white"
-                        onClick={() => {
-                          setCurrentRow({ ...row });
-                          setopenDelete(true);
-                        }}
-                      >
-                        <DeleteIcon />
-                      </Button>
-                    </Tooltip> */}
-                  </td>
+                  </TableCell>
                 </TableRow>
               ))}
               {rows.length == 0 && (
                 <TableRow style={{ height: 53 * emptyRows }}>
-                  <TableCell colSpan={6}>Loading....</TableCell>
+                  <TableCell colSpan={6}>No Data.</TableCell>
                 </TableRow>
               )}
             </TableBody>
@@ -606,7 +643,36 @@ export default function UserManagement() {
                 >
                   <MenuItem value={"ADMIN"}>Admin</MenuItem>
                   <MenuItem value={"SECURITY"}>Security Guard</MenuItem>
-                  //Departments only
+                  <MenuItem value={"PROGRAM HEAD"}>Program Head</MenuItem>
+                  <MenuItem value={"DEAN"}>Dean</MenuItem>
+                </Select>
+              </FormControl>
+              <FormControl fullWidth margin="dense">
+                <InputLabel id="demo-simple-select-label">
+                  Department
+                </InputLabel>
+                <Select
+                  labelId="demo-simple-select-label"
+                  id="demo-simple-select"
+                  value={currentRow.assigned_department}
+                  label="Department"
+                  onChange={(e) =>
+                    setCurrentRow({
+                      ...currentRow,
+                      assigned_department: e.target.value,
+                    })
+                  }
+                >
+                  {/* <MenuItem value="">
+                    <em>None</em>
+                  </MenuItem> */}
+                  {departmentRows.map((department) => {
+                    return (
+                      <MenuItem key={department.name} value={department.name}>
+                        {department.name}
+                      </MenuItem>
+                    );
+                  })}
                 </Select>
               </FormControl>
             </DialogContent>
@@ -714,6 +780,8 @@ export default function UserManagement() {
                   >
                     <MenuItem value={"ADMIN"}>Admin</MenuItem>
                     <MenuItem value={"SECURITY"}>Security Guard</MenuItem>
+                    <MenuItem value={"PROGRAM HEAD"}>Program Head</MenuItem>
+                    <MenuItem value={"DEAN"}></MenuItem>
                   </Select>
                 </FormControl>
               </form>

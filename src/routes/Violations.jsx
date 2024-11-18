@@ -451,10 +451,10 @@ export default function Violations() {
                   <TableCell>
                     {formatDate(new Date(parseInt(row.date)), "MMMM DD, YYYY")}
                   </TableCell>
-                  <td className="flex justify-center">
+                  <TableCell className="flex  justify-center">
                     <Tooltip title="Edit">
                       <Button
-                        className=" p-2 rounded-sm text-white hover:bg-blue-600 hover:text-white"
+                        className="rounded-sm text-white hover:bg-blue-100 hover:text-blue"
                         onClick={() => handleOpen(row)}
                       >
                         <EditIcon />
@@ -462,7 +462,7 @@ export default function Violations() {
                     </Tooltip>
                     <Tooltip title="Delete">
                       <Button
-                        className=" p-2 rounded-sm text-white hover:bg-blue-600 hover:text-white"
+                        className="rounded-sm text-white hover:bg-blue-100 hover:text-blue"
                         onClick={() => {
                           setCurrentRow({ ...row });
                           setopenDelete(true);
@@ -471,7 +471,7 @@ export default function Violations() {
                         <DeleteIcon />
                       </Button>
                     </Tooltip>
-                  </td>
+                  </TableCell>
                 </TableRow>
               ))}
               {rows.length == 0 && (

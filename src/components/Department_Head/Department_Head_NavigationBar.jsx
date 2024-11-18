@@ -18,7 +18,7 @@ const Department_Head_NavigationBar = () => {
           Batangas State University Disciplinary Management
         </label>
       </div>
-      <div className="h-[100px] flex gap-x-5 items-center flex-wrap py-1">
+      <div className="h-[100px] flex gap-x-5 items-center flex-wrap py-1 px-5">
         <Link
           className="p-2 hover:bg-blue-700 hover:rounded-sm hover:cursor-pointer"
           to="/department-head/home"

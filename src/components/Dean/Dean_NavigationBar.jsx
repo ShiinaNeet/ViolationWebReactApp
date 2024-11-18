@@ -4,26 +4,30 @@ import { Link } from "react-router-dom";
 import { useAuth } from "../../auth/AuthProvider";
 
 const Dean_NavigationBar = () => {
-  const { logout, isAuthenticated } = useAuth();
+  const { logout, isAuthenticated, userType } = useAuth();
 
   return (
-    <nav className="h-fit w-screen bg-red-500 p-3 md:justify-between flex justify-center text-white sticky">
-      <div className="md:flex items-center px-2 hover:bg-red-700 hover:rounded-md hover:cursor-pointer hidden">
-        <img src={reactsvg} alt="React Logo" className="h-fit mx-2" />
+    <nav className="h-[100px] w-screen bg-blue-500 px-2 md:justify-between flex justify-center text-white sticky shadow-md">
+      <div className="md:flex px-2 hidden">
+        <img
+          src={reactsvg}
+          alt="React Logo"
+          className="h-fit mx-2 flex justify-center self-center"
+        />
         <label className="flex justify-center self-center">
           Batangas State University Disciplinary Management
         </label>
       </div>
-      <div className="h-[100px] flex gap-x-5 items-center flex-wrap py-1">
+      <div className="h-[100px] flex gap-x-5 items-center flex-wrap py-1 px-5">
         <Link
-          className="p-2 hover:bg-red-700 hover:rounded-md hover:cursor-pointer"
-          to="/Dean"
+          className="p-2 hover:bg-blue-700 hover:rounded-md hover:cursor-pointer"
+          to="/dean/home"
         >
-          Dean
+          {userType == "PROGRAM HEAD" ? "Program Head" : "Dean"}
         </Link>
         {isAuthenticated && (
           <Link
-            className="p-2 hover:bg-red-700 hover:rounded-md hover:cursor-pointer"
+            className="p-2 hover:bg-blue-700 hover:rounded-md hover:cursor-pointer"
             onClick={logout}
           >
             Logout
