@@ -55,7 +55,7 @@ const Login = () => {
       setIsLoading(false);
       //If there is time, use switch case instead of if else
       if (responseData == userType.admin) {
-        navigate("/students");
+        navigate("/violations");
       } else if (responseData == userType.dean) {
         navigate("/dean/home");
       } else if (responseData == userType.department_head) {

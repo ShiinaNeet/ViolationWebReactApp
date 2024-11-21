@@ -459,7 +459,7 @@ const Students = ({ DataToGet }) => {
     }
     axios
       .put(
-        `/user/update/${targetStudent.userid}`,
+        `/user/update/student/${targetStudent.userid}`,
         {
           year_and_department: targetStudent.year_and_department,
           violations: transformedViolations,

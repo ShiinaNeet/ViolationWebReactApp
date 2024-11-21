@@ -19,12 +19,12 @@ const Navigationbar = () => {
         </label>
       </div>
       <div className="h-[100px] flex gap-x-5 items-center flex-wrap">
-        <Link
+        {/* <Link
           className="p-2 hover:bg-blue-700 hover:rounded-md hover:cursor-pointer"
           to="/Students"
         >
           Students
-        </Link>
+        </Link> */}
         <Link
           className="p-2 hover:bg-blue-700 hover:rounded-md hover:cursor-pointer"
           to="/Violations"

@@ -254,13 +254,7 @@ export default function UserManagement() {
   };
   const handleUpdate = async () => {
     setIsLoading(true);
-    if (
-      currentRow.first_name === "" ||
-      currentRow.last_name === "" ||
-      currentRow.email === "" ||
-      currentRow.type === "" ||
-      currentRow.assigned_department === ""
-    ) {
+    if (currentRow.type === "" || currentRow.assigned_department === "") {
       setAlertMessage({ open: true, title: "Error", variant: "error" });
       setErrorMessages(["Please fill in all fields"]);
       setIsLoading(false);
@@ -268,15 +262,15 @@ export default function UserManagement() {
     }
     axios
       .put(
-        `/admin/user/update?user_id=${currentRow._id}`,
+        `/user/update/admin/${currentRow._id}?id=${currentRow._id}`,
         {
-          first_name: currentRow.first_name,
-          last_name: currentRow.last_name,
-          email: currentRow.email,
           type: currentRow.type,
           assigned_department: currentRow.assigned_department,
         },
         {
+          params: {
+            id: currentRow._id,
+          },
           headers: {
             "Content-Type": "application/json",
           },
@@ -284,7 +278,7 @@ export default function UserManagement() {
       )
       .then((response) => {
         setErrorMessages([]);
-        if (response.data.success === true) {
+        if (response.data.status === "success") {
           console.log("Saved");
           fetchData(page * rowsPerPage, rowsPerPage);
           setAlertMessage({
@@ -507,8 +501,8 @@ export default function UserManagement() {
             <TableHead>
               <TableRow>
                 <th className="py-5 px-4 font-bold ">Name</th>
-                <th className="py-5 px-4 font-bold ">Username</th>
                 <th className="py-5 px-4 font-bold">Email address</th>
+                <th className="py-5 px-4 font-bold ">Department</th>
                 <th className="py-5 px-4 font-bold text-center">Type</th>
                 <th className="py-5 px-4 font-bold text-center">Actions</th>
               </TableRow>
@@ -528,10 +522,12 @@ export default function UserManagement() {
                       : "No name attached"}
                   </TableCell>
                   <TableCell>
-                    {row.username ? row.username : "No username"}
+                    {row.email ? row.email : "No email address attached"}
                   </TableCell>
                   <TableCell>
-                    {row.email ? row.email : "No email address attached"}
+                    {row.assigned_department
+                      ? row.assigned_department
+                      : "No department attached"}
                   </TableCell>
                   <TableCell align="center">
                     <Button
@@ -585,51 +581,6 @@ export default function UserManagement() {
               Assign Program Chair to their Respective Departments
             </DialogTitle>
             <DialogContent>
-              <TextField
-                autoFocus
-                margin="dense"
-                label="First Name"
-                type="text"
-                fullWidth
-                value={currentRow.first_name}
-                required={true}
-                onChange={(e) =>
-                  setCurrentRow({
-                    ...currentRow,
-                    first_name: e.target.value,
-                  })
-                }
-              />
-              <TextField
-                autoFocus
-                margin="dense"
-                label="last Name"
-                type="text"
-                fullWidth
-                value={currentRow.last_name}
-                required={true}
-                onChange={(e) =>
-                  setCurrentRow({
-                    ...currentRow,
-                    last_name: e.target.value,
-                  })
-                }
-              />
-              <TextField
-                autoFocus
-                margin="dense"
-                label="Email Address"
-                type="text"
-                fullWidth
-                value={currentRow.email}
-                required={true}
-                onChange={(e) =>
-                  setCurrentRow({
-                    ...currentRow,
-                    email: e.target.value,
-                  })
-                }
-              />
               <FormControl fullWidth margin="dense">
                 <InputLabel id="demo-simple-select-label">Category</InputLabel>
                 <Select
@@ -683,183 +634,6 @@ export default function UserManagement() {
                 disabled={isLoading}
               >
                 {isLoading ? "Saving...." : "Save"}
-              </Button>
-              <Button onClick={handleClose} color="primary">
-                Cancel
-              </Button>
-            </DialogActions>
-          </Dialog>
-          <Dialog open={openCreate} onClose={handleClose}>
-            <DialogTitle>Create User</DialogTitle>
-            <DialogContent>
-              <form>
-                <TextField
-                  autoFocus
-                  margin="dense"
-                  label="First Name"
-                  type="text"
-                  fullWidth
-                  value={user.first_name}
-                  required={true}
-                  onChange={(e) =>
-                    setUser({
-                      ...user,
-                      first_name: e.target.value,
-                    })
-                  }
-                />
-                <TextField
-                  autoFocus
-                  margin="dense"
-                  label="last Name"
-                  type="text"
-                  fullWidth
-                  value={user.last_name}
-                  required={true}
-                  onChange={(e) =>
-                    setUser({
-                      ...user,
-                      last_name: e.target.value,
-                    })
-                  }
-                />
-                <TextField
-                  autoFocus
-                  margin="dense"
-                  label="Username"
-                  type="text"
-                  fullWidth
-                  value={user.username}
-                  required={true}
-                  onChange={(e) =>
-                    setUser({
-                      ...user,
-                      username: e.target.value,
-                    })
-                  }
-                />
-                <TextField
-                  autoFocus
-                  margin="dense"
-                  label="Email Address"
-                  type="text"
-                  fullWidth
-                  value={user.email}
-                  required={true}
-                  onChange={(e) =>
-                    setUser({
-                      ...user,
-                      email: e.target.value,
-                    })
-                  }
-                />
-                <TextField
-                  className="mb-1"
-                  id="outlined-password-input"
-                  label="Password"
-                  type="password"
-                  margin="dense"
-                  fullWidth
-                  required={true}
-                  autoComplete="current-password"
-                  onChange={(e) =>
-                    setUser({ ...user, password: e.target.value })
-                  }
-                />
-                <FormControl fullWidth margin="dense">
-                  <InputLabel id="demo-simple-select-label">Type</InputLabel>
-                  <Select
-                    labelId="demo-simple-select-label"
-                    id="demo-simple-select"
-                    value={user.type}
-                    label="Type"
-                    onChange={(e) => {
-                      setUser({ ...user, type: e.target.value }),
-                        console.log(e.target.value);
-                    }}
-                  >
-                    <MenuItem value={"ADMIN"}>Admin</MenuItem>
-                    <MenuItem value={"SECURITY"}>Security Guard</MenuItem>
-                    <MenuItem value={"PROGRAM HEAD"}>Program Head</MenuItem>
-                    <MenuItem value={"DEAN"}></MenuItem>
-                  </Select>
-                </FormControl>
-              </form>
-            </DialogContent>
-            <DialogActions>
-              <Button onClick={handleSave} color="primary" disabled={isLoading}>
-                {isLoading ? "Saving...." : "Create"}
-              </Button>
-              <Button onClick={handleClose} color="primary">
-                Cancel
-              </Button>
-            </DialogActions>
-          </Dialog>
-          <Dialog open={openDelete} onClose={handleClose}>
-            <DialogTitle>Delete User?</DialogTitle>
-            <DialogContent>
-              <TextField
-                id="outlined-read-only-input"
-                slotProps={{
-                  input: {
-                    readOnly: true,
-                  },
-                }}
-                margin="dense"
-                label="First Name"
-                fullWidth
-                defaultValue={currentRow.first_name}
-                readOnly={true}
-              />
-              <TextField
-                id="outlined-read-only-input"
-                slotProps={{
-                  input: {
-                    readOnly: true,
-                  },
-                }}
-                margin="dense"
-                label="Last Name"
-                type="text"
-                fullWidth
-                defaultValue={currentRow.last_name}
-                readOnly
-              />
-              <TextField
-                id="outlined-read-only-input"
-                slotProps={{
-                  input: {
-                    readOnly: true,
-                  },
-                }}
-                margin="dense"
-                label="Email Address"
-                type="text"
-                fullWidth
-                defaultValue={currentRow.email}
-                readOnly
-              />
-              <TextField
-                id="outlined-read-only-input"
-                slotProps={{
-                  input: {
-                    readOnly: true,
-                  },
-                }}
-                margin="dense"
-                label="Type"
-                type="text"
-                fullWidth
-                defaultValue={currentRow.type}
-                readOnly
-              />
-            </DialogContent>
-            <DialogActions>
-              <Button
-                onClick={() => handleDelete(currentRow._id, currentRow.name)}
-                color="primary"
-              >
-                Delete
               </Button>
               <Button onClick={handleClose} color="primary">
                 Cancel

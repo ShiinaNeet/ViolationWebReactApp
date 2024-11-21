@@ -7,7 +7,7 @@ const ProtectedRoute = ({ element }) => {
   const location = useLocation();
   function redirectUserToTheirLayouts() {
     if (userType.toLowerCase() === "admin") {
-      return <Navigate to="/students" replace />;
+      return <Navigate to="/violations" replace />;
     } else if (userType.toLowerCase() === "dean") {
       return <Navigate to="/dean" replace />;
     } else if (userType.toLowerCase() === "department_head") {
