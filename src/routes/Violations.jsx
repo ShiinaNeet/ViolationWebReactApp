@@ -445,9 +445,29 @@ export default function Violations() {
               ).map((row) => (
                 <TableRow key={row._id}>
                   <TableCell component="th" scope="row">
-                    {row.name}
+                    <div
+                      style={{
+                        whiteSpace: "nowrap",
+                        overflow: "hidden",
+                        textOverflow: "ellipsis",
+                        maxWidth: "250px",
+                      }}
+                    >
+                      {row.name}
+                    </div>
                   </TableCell>
-                  <TableCell>{row.description}</TableCell>
+                  <TableCell>
+                    <div
+                      style={{
+                        whiteSpace: "nowrap",
+                        overflow: "hidden",
+                        textOverflow: "ellipsis",
+                        maxWidth: "350px",
+                      }}
+                    >
+                      {row.description}
+                    </div>
+                  </TableCell>
                   <TableCell>
                     {formatDate(new Date(parseInt(row.date)), "MMMM DD, YYYY")}
                   </TableCell>
