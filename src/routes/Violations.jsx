@@ -445,28 +445,32 @@ export default function Violations() {
               ).map((row) => (
                 <TableRow key={row._id}>
                   <TableCell component="th" scope="row">
-                    <div
-                      style={{
-                        whiteSpace: "nowrap",
-                        overflow: "hidden",
-                        textOverflow: "ellipsis",
-                        maxWidth: "250px",
-                      }}
-                    >
-                      {row.name}
-                    </div>
+                    <Tooltip title={row.name} arrow>
+                      <div
+                        style={{
+                          whiteSpace: "nowrap",
+                          overflow: "hidden",
+                          textOverflow: "ellipsis",
+                          maxWidth: "250px",
+                        }}
+                      >
+                        {row.name}
+                      </div>
+                    </Tooltip>
                   </TableCell>
                   <TableCell>
-                    <div
-                      style={{
-                        whiteSpace: "nowrap",
-                        overflow: "hidden",
-                        textOverflow: "ellipsis",
-                        maxWidth: "350px",
-                      }}
-                    >
-                      {row.description}
-                    </div>
+                    <Tooltip title={row.description} arrow>
+                      <div
+                        style={{
+                          whiteSpace: "nowrap",
+                          overflow: "hidden",
+                          textOverflow: "ellipsis",
+                          maxWidth: "350px",
+                        }}
+                      >
+                        {row.description}
+                      </div>
+                    </Tooltip>
                   </TableCell>
                   <TableCell>
                     {formatDate(new Date(parseInt(row.date)), "MMMM DD, YYYY")}
