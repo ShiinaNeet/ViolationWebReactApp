@@ -7,7 +7,7 @@ const Navigationbar = () => {
   const { logout, isAuthenticated } = useAuth();
 
   return (
-    <nav className="h-[100px] w-screen bg-blue-500 px-2 md:justify-between flex justify-center text-white sticky shadow-md">
+    <nav className="h-[100px] w-screen bg-red-500 px-2 md:justify-between flex justify-center text-white sticky shadow-md">
       <div className="md:flex px-2 hidden">
         <img
           src={reactsvg}
@@ -26,26 +26,26 @@ const Navigationbar = () => {
           Students
         </Link> */}
         <Link
-          className="p-2 hover:bg-blue-700 hover:rounded-md hover:cursor-pointer"
+          className="p-2 hover:bg-red-700 hover:rounded-md hover:cursor-pointer"
           to="/Violations"
         >
           Violation
         </Link>
         <Link
-          className="p-2 hover:bg-blue-700 hover:rounded-md hover:cursor-pointer"
+          className="p-2 hover:bg-red-700 hover:rounded-md hover:cursor-pointer"
           to="/Users"
         >
           Users
         </Link>
         <Link
-          className="p-2 hover:bg-blue-700 hover:rounded-md hover:cursor-pointer"
+          className="p-2 hover:bg-red-700 hover:rounded-md hover:cursor-pointer"
           to="/Chart"
         >
           Charts
         </Link>
         {isAuthenticated && (
           <Link
-            className="p-2 hover:bg-blue-700 hover:rounded-md hover:cursor-pointer"
+            className="p-2 hover:bg-red-700 hover:rounded-md hover:cursor-pointer"
             onClick={logout}
           >
             Logout

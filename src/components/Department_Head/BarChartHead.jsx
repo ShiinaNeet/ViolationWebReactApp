@@ -43,6 +43,7 @@ export default function BarChartHead() {
         <h1 className="text-xl font-semibold">Department's Violations </h1>
         {!loading && data.length > 0 ? (
           <BarChart
+            colors={["#Ff0000", "#00FF00"]}
             height={300}
             xAxis={[
               {

@@ -114,6 +114,7 @@ export default function UserManagement() {
     assigned_department: "",
     username: "",
   });
+  const [departmentData, setDepartmentData] = React.useState([]);
   const [search, setSearch] = React.useState("");
   const [user, setUser] = React.useState({
     first_name: "",
@@ -407,6 +408,39 @@ export default function UserManagement() {
           variant: "error",
         });
       });
+    axios
+      .get("/department", {
+        params: {
+          skip: 0,
+          limit: 100,
+        },
+        headers: {
+          "Content-Type": "application/json",
+        },
+      })
+      .then((response) => {
+        if (response.data.status === "success") {
+          console.log("Department Data fetched successfully");
+          setDepartmentData(response.data.data);
+        } else {
+          console.log("Failed to fetch data");
+          setAlertMessage({
+            open: true,
+            title: "No Data",
+            message: "No data available",
+            variant: "info",
+          });
+        }
+      })
+      .catch((error) => {
+        console.error("There was an error fetching the data!", error);
+        setAlertMessage({
+          open: true,
+          title: error.title,
+          message: error.message,
+          variant: "error",
+        });
+      });
   };
 
   const searchFunction = async () => {
@@ -455,14 +489,14 @@ export default function UserManagement() {
         <h1 className="text-3xl flex items-center">Users List</h1>
         <Tooltip title="Create User">
           <button
-            className="bg-blue-500 my-2 p-2 rounded-sm text-white hover:bg-blue-600"
+            className="bg-red-500 my-2 p-2 rounded-sm text-white hover:bg-red-600"
             onClick={() => handleCreateOpen()}
           >
             <AddIcon /> Create User
           </button>
         </Tooltip>
       </div>
-      <div className="flex">
+      {/* <div className="flex">
         <TextField
           className=""
           autoFocus
@@ -484,7 +518,7 @@ export default function UserManagement() {
         >
           Search
         </Button>
-      </div>
+      </div> */}
       <div className="shadow-sm shadow-zinc-500 rounded-lg">
         <TableContainer component={Paper} className="">
           <Table sx={{ minWidth: 500 }}>
@@ -652,6 +686,7 @@ export default function UserManagement() {
               <form>
                 <TextField
                   autoFocus
+                  color="error"
                   margin="dense"
                   label="First Name"
                   type="text"
@@ -667,6 +702,7 @@ export default function UserManagement() {
                 />
                 <TextField
                   autoFocus
+                  color="error"
                   margin="dense"
                   label="last Name"
                   type="text"
@@ -683,6 +719,7 @@ export default function UserManagement() {
                 <TextField
                   autoFocus
                   margin="dense"
+                  color="error"
                   label="Username"
                   type="text"
                   fullWidth
@@ -697,6 +734,7 @@ export default function UserManagement() {
                 />
                 <TextField
                   autoFocus
+                  color="error"
                   margin="dense"
                   label="Email Address"
                   type="text"
@@ -712,6 +750,7 @@ export default function UserManagement() {
                 />
                 <TextField
                   className="mb-1"
+                  color="error"
                   id="outlined-password-input"
                   label="Password"
                   type="password"
@@ -724,8 +763,11 @@ export default function UserManagement() {
                   }
                 />
                 <FormControl fullWidth margin="dense">
-                  <InputLabel id="demo-simple-select-label">Type</InputLabel>
+                  <InputLabel id="demo-simple-select-label" color="error">
+                    Type
+                  </InputLabel>
                   <Select
+                    color="error"
                     labelId="demo-simple-select-label"
                     id="demo-simple-select"
                     value={user.type}
@@ -739,15 +781,43 @@ export default function UserManagement() {
                     <MenuItem value={"SECURITY"}>Security Guard</MenuItem>
                     <MenuItem value={"PROGRAM HEAD"}>Program Head</MenuItem>
                     <MenuItem value={"DEAN"}>Dean</MenuItem>
+                    <MenuItem value={"PROFESSOR"}>Professor</MenuItem>
                   </Select>
                 </FormControl>
+                {user.type === "PROFESSOR" && (
+                  <FormControl fullWidth margin="dense">
+                    <InputLabel id="demo-simple-select-label" color="error">
+                      Assign a Department
+                    </InputLabel>
+                    <Select
+                      color="error"
+                      labelId="demo-simple-select-label"
+                      id="demo-simple-select"
+                      value={user.assigned_department}
+                      label="Assign a Department"
+                      onChange={(e) => {
+                        setUser({
+                          ...user,
+                          assigned_department: e.target.value,
+                        }),
+                          console.log(e.target.value);
+                      }}
+                    >
+                      {departmentData.map((department) => (
+                        <MenuItem value={department.name}>
+                          {department.name}
+                        </MenuItem>
+                      ))}
+                    </Select>
+                  </FormControl>
+                )}
               </form>
             </DialogContent>
             <DialogActions>
-              <Button onClick={handleSave} color="primary" disabled={isLoading}>
+              <Button onClick={handleSave} color="error" disabled={isLoading}>
                 {isLoading ? "Saving...." : "Create"}
               </Button>
-              <Button onClick={handleClose} color="primary">
+              <Button onClick={handleClose} color="error">
                 Cancel
               </Button>
             </DialogActions>

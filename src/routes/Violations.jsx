@@ -394,14 +394,14 @@ export default function Violations() {
         <h1 className="text-3xl flex items-center">Violation List</h1>
         <Tooltip title="Create Violation">
           <button
-            className="bg-blue-500 my-2 p-2 rounded-sm text-white hover:bg-blue-600"
+            className="bg-red-500 my-2 p-2 rounded-sm text-white hover:bg-red-600"
             onClick={() => handleCreateOpen()}
           >
             <AddIcon /> Create
           </button>
         </Tooltip>
       </div>
-      <div className="flex">
+      {/* <div className="flex">
         <TextField
           className=""
           autoFocus
@@ -423,7 +423,7 @@ export default function Violations() {
         >
           Search
         </Button>
-      </div>
+      </div> */}
       <div className="shadow-sm shadow-zinc-500 rounded-lg">
         <TableContainer component={Paper} className="">
           <Table sx={{ minWidth: 500 }}>
@@ -475,24 +475,24 @@ export default function Violations() {
                   <TableCell>
                     {formatDate(new Date(parseInt(row.date)), "MMMM DD, YYYY")}
                   </TableCell>
-                  <TableCell className="flex  justify-center">
+                  <TableCell className="flex justify-center">
                     <Tooltip title="Edit">
                       <Button
-                        className="rounded-sm text-white hover:bg-blue-100 hover:text-blue"
+                        className="rounded-sm text-white hover:bg-red-100 hover:text-blue"
                         onClick={() => handleOpen(row)}
                       >
-                        <EditIcon />
+                        <EditIcon color="error" />
                       </Button>
                     </Tooltip>
                     <Tooltip title="Delete">
                       <Button
-                        className="rounded-sm text-white hover:bg-blue-100 hover:text-blue"
+                        className="rounded-sm text-white hover:bg-red-100 hover:text-blue"
                         onClick={() => {
                           setCurrentRow({ ...row });
                           setopenDelete(true);
                         }}
                       >
-                        <DeleteIcon />
+                        <DeleteIcon color="error" />
                       </Button>
                     </Tooltip>
                   </TableCell>
@@ -523,6 +523,7 @@ export default function Violations() {
             <DialogContent>
               <TextField
                 autoFocus
+                color="error"
                 margin="dense"
                 label="Violation Name"
                 type="text"
@@ -537,6 +538,7 @@ export default function Violations() {
                 }
               />
               <TextField
+                color="error"
                 margin="dense"
                 label="Description"
                 type="text"
@@ -552,14 +554,10 @@ export default function Violations() {
               />
             </DialogContent>
             <DialogActions>
-              <Button
-                onClick={handleUpdate}
-                color="primary"
-                disabled={isLoading}
-              >
+              <Button onClick={handleUpdate} color="error" disabled={isLoading}>
                 {isLoading ? "Saving...." : "Save"}
               </Button>
-              <Button onClick={handleClose} color="primary">
+              <Button onClick={handleClose} color="error">
                 Cancel
               </Button>
             </DialogActions>
@@ -569,6 +567,7 @@ export default function Violations() {
             <DialogContent>
               <TextField
                 autoFocus
+                color="error"
                 margin="dense"
                 label="Violation Name"
                 type="text"
@@ -582,6 +581,7 @@ export default function Violations() {
                 }
               />
               <TextField
+                color="error"
                 margin="dense"
                 label="Description"
                 type="text"
@@ -596,10 +596,10 @@ export default function Violations() {
               />
             </DialogContent>
             <DialogActions>
-              <Button onClick={handleSave} color="primary" disabled={isLoading}>
+              <Button onClick={handleSave} color="error" disabled={isLoading}>
                 {isLoading ? "Saving...." : "Save"}
               </Button>
-              <Button onClick={handleClose} color="primary">
+              <Button onClick={handleClose} color="error">
                 Cancel
               </Button>
             </DialogActions>
@@ -609,6 +609,7 @@ export default function Violations() {
             <DialogContent>
               <TextField
                 autoFocus
+                color="error"
                 margin="dense"
                 label="Violation Name"
                 type="text"
@@ -617,6 +618,7 @@ export default function Violations() {
                 readOnly
               />
               <TextField
+                color="error"
                 margin="dense"
                 label="Description"
                 type="text"
@@ -625,6 +627,7 @@ export default function Violations() {
                 readOnly
               />
               <TextField
+                color="error"
                 margin="dense"
                 label="Date Updated"
                 type="text"
@@ -642,11 +645,11 @@ export default function Violations() {
             <DialogActions>
               <Button
                 onClick={() => handleDelete(currentRow._id, currentRow.name)}
-                color="primary"
+                color="error"
               >
                 Delete
               </Button>
-              <Button onClick={handleClose} color="primary">
+              <Button onClick={handleClose} color="error">
                 Cancel
               </Button>
             </DialogActions>
