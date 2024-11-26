@@ -7,7 +7,7 @@ const Department_Head_NavigationBar = () => {
   const { logout, isAuthenticated } = useAuth();
 
   return (
-    <nav className="h-[100px] w-screen bg-blue-500 px-2 md:justify-between flex justify-center text-white sticky shadow-md">
+    <nav className="h-[100px] w-screen bg-red-500 px-2 md:justify-between flex justify-center text-white sticky shadow-md">
       <div className="md:flex px-2 hidden">
         <img
           src={reactsvg}
@@ -20,20 +20,20 @@ const Department_Head_NavigationBar = () => {
       </div>
       <div className="h-[100px] flex gap-x-5 items-center flex-wrap py-1 px-5">
         <Link
-          className="p-2 hover:bg-blue-700 hover:rounded-sm hover:cursor-pointer"
+          className="p-2 hover:bg-red-700 hover:rounded-sm hover:cursor-pointer"
           to="/department-head/home"
         >
           Home
         </Link>
         <Link
-          className="p-2 hover:bg-blue-700 hover:rounded-sm hover:cursor-pointer"
+          className="p-2 hover:bg-red-700 hover:rounded-sm hover:cursor-pointer"
           to="/department-head/graph"
         >
           Graphs
         </Link>
         {isAuthenticated && (
           <Link
-            className="p-2 hover:bg-blue-700 hover:rounded-sm hover:cursor-pointer"
+            className="p-2 hover:bg-red-700 hover:rounded-sm hover:cursor-pointer"
             onClick={logout}
           >
             Logout

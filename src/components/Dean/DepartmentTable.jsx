@@ -299,8 +299,9 @@ export default function DepartmentTable() {
           <Button
             className="bg-blue-500 my-2 px-2 rounded-sm text-white "
             onClick={() => handleCreateOpen()}
+            color="error"
           >
-            <AddIcon /> Create Department
+            <AddIcon color="error" /> Create Department
           </Button>
         </Tooltip>
       </div>
@@ -352,6 +353,7 @@ export default function DepartmentTable() {
               <form>
                 <TextField
                   autoFocus
+                  color="error"
                   margin="dense"
                   label="Department Name"
                   type="text"
@@ -368,10 +370,10 @@ export default function DepartmentTable() {
               </form>
             </DialogContent>
             <DialogActions>
-              <Button onClick={handleSave} color="primary" disabled={isLoading}>
+              <Button onClick={handleSave} color="error" disabled={isLoading}>
                 {isLoading ? "Saving...." : "Create"}
               </Button>
-              <Button onClick={handleClose} color="primary">
+              <Button onClick={handleClose} color="error">
                 Cancel
               </Button>
             </DialogActions>

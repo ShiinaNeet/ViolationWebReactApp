@@ -512,12 +512,12 @@ const Students = ({ DataToGet }) => {
       <div className="container mx-auto h-full px-2">
         <div className="flex flex-row justify-between h-fit">
           <h1 className="text-3xl py-3">Student List</h1>
-          <button
-            className="bg-blue-500 my-2 p-2 rounded-sm text-white hover:bg-blue-600"
+          {/* <button
+            className="bg-red-500 my-2 p-2 rounded-sm text-white hover:bg-red-600"
             onClick={() => setSearchFilterModal(true)}
           >
             Filter
-          </button>
+          </button> */}
         </div>
         <div className="shadow-sm shadow-zinc-500 rounded-lg">
           <TableContainer component={Paper}>
@@ -565,18 +565,20 @@ const Students = ({ DataToGet }) => {
                     <td className="border-b flex justify-center sticky">
                       <Tooltip title="View Student">
                         <Button
-                          className="rounded-sm text-white hover:bg-blue-100 hover:text-blue-700"
+                          className="rounded-sm text-white hover:bg-red-100 hover:text-red-700"
                           onClick={() => handleViewViolationModal(student)}
+                          color="error"
                         >
-                          <RemoveRedEyeIcon />
+                          <RemoveRedEyeIcon color="error" />
                         </Button>
                       </Tooltip>
                       <Tooltip title="Edit Student">
                         <Button
-                          className="rounded-sm text-white hover:bg-blue-100 hover:text-blue-700"
+                          className="rounded-sm text-white hover:bg-red-100 hover:text-red-700"
                           onClick={() => handleUpdateViolationModal(student)}
+                          color="error"
                         >
-                          <EditIcon />
+                          <EditIcon color="error" />
                         </Button>
                       </Tooltip>
                       {/* <Tooltip title="Delete Student">
@@ -622,14 +624,16 @@ const Students = ({ DataToGet }) => {
               </h2>
               <div className="gap-x-2">
                 <Button
-                  className="bg-blue-500 p-2 rounded-sm text-white hover:bg-blue-100 hover:text-blue"
+                  className="bg-red-500 p-2 rounded-sm text-red hover:bg-red-100"
                   onClick={() => setMessageStudentModal(true)}
+                  color="error"
                 >
-                  <AddAlertIcon /> Alert
+                  <AddAlertIcon color="error" /> Alert
                 </Button>
                 <Button
-                  className=" p-2 rounded-sm text-white hover:bg-blue-200 hover:text-blue"
+                  className=" p-2 rounded-sm hover:bg-red-200 "
                   onClick={handleClose}
+                  color="error"
                 >
                   <CloseIcon /> Close
                 </Button>
@@ -787,14 +791,14 @@ const Students = ({ DataToGet }) => {
                 {targetStudent.violations.map((violation, index) => (
                   <li
                     key={index}
-                    className="my-2 rounded-sm flex justify-between text-black border-2 border-solid border-blue-500 "
+                    className="my-2 rounded-sm flex justify-between text-black border-2 border-solid border-red-500 "
                   >
                     <label className="p-2">{violation.name} </label>
                     <Button
                       onClick={() => handleDeleteViolation(index)}
-                      className="hover:border-1 hover:border-solid hover:border-blue-500 hover:border- hover:text-white rounded-none"
+                      className="hover:border-1 hover:border-solid hover:border-red-500 hover:border- hover:text-white rounded-none"
                     >
-                      <DeleteOutlineIcon color="primary" />
+                      <DeleteOutlineIcon color="error" />
                     </Button>
                   </li>
                 ))}
@@ -826,19 +830,17 @@ const Students = ({ DataToGet }) => {
                     </option>
                   ))}
                 </select>
-                <Button
-                  className=""
-                  onClick={handleAddViolation}
-                  color="primary"
-                >
-                  <AddIcon /> Add
+                <Button onClick={handleAddViolation} color="error">
+                  <AddIcon color="error" /> Add
                 </Button>
               </div>
 
               <TextField
+                margin="dense"
                 className="my-5 py-5"
                 label="Department and Year (e.g. Computer Science - 3rd Year)"
                 type="text"
+                color="error"
                 variant="standard"
                 value={targetStudent.year_and_department}
                 onChange={(e) =>
@@ -861,10 +863,11 @@ const Students = ({ DataToGet }) => {
               className="bg-red-500"
               onClick={handleUpdateViolation}
               disabled={isLoading}
+              color="error"
             >
               {isLoading ? "Updating Student" : "Update Student"}
             </Button>
-            <Button onClick={handleClose} color="primary">
+            <Button onClick={handleClose} color="error">
               Cancel
             </Button>
           </DialogActions>

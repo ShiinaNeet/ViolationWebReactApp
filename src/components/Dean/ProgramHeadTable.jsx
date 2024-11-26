@@ -531,9 +531,8 @@ export default function UserManagement() {
                   </TableCell>
                   <TableCell align="center">
                     <Button
-                      className={`p-2 rounded-sm text-center
-                      ${row.type === "ADMIN" ? "primary" : "secondary"}`}
-                      color={row.type === "ADMIN" ? "primary" : "secondary"}
+                      className="p-2 rounded-sm text-center error"
+                      color="error"
                     >
                       {row.type ? row.type : "No type attached"}{" "}
                     </Button>
@@ -549,8 +548,9 @@ export default function UserManagement() {
                       <Button
                         className=" rounded-sm text-white"
                         onClick={() => handleOpen(row)}
+                        color="error"
                       >
-                        <EditIcon />
+                        <EditIcon color="error" />
                       </Button>
                     </Tooltip>
                   </TableCell>
@@ -582,8 +582,11 @@ export default function UserManagement() {
             </DialogTitle>
             <DialogContent>
               <FormControl fullWidth margin="dense">
-                <InputLabel id="demo-simple-select-label">Category</InputLabel>
+                <InputLabel id="demo-simple-select-label" color="error">
+                  Category
+                </InputLabel>
                 <Select
+                  color="error"
                   labelId="demo-simple-select-label"
                   id="demo-simple-select"
                   value={currentRow.type}
@@ -599,10 +602,11 @@ export default function UserManagement() {
                 </Select>
               </FormControl>
               <FormControl fullWidth margin="dense">
-                <InputLabel id="demo-simple-select-label">
+                <InputLabel id="demo-simple-select-label" color="error">
                   Department
                 </InputLabel>
                 <Select
+                  color="error"
                   labelId="demo-simple-select-label"
                   id="demo-simple-select"
                   value={currentRow.assigned_department}
@@ -628,14 +632,10 @@ export default function UserManagement() {
               </FormControl>
             </DialogContent>
             <DialogActions>
-              <Button
-                onClick={handleUpdate}
-                color="primary"
-                disabled={isLoading}
-              >
+              <Button onClick={handleUpdate} color="error" disabled={isLoading}>
                 {isLoading ? "Saving...." : "Save"}
               </Button>
-              <Button onClick={handleClose} color="primary">
+              <Button onClick={handleClose} color="error">
                 Cancel
               </Button>
             </DialogActions>

@@ -159,15 +159,12 @@ export default function AlertMessageStudent({ open, handleClose, data }) {
     <div className="w-full mx-0">
       <Dialog open={open} onClose={handleClose} fullWidth={true}>
         <div className="p-2 text-2xl">
-          <label className="font-bold">
-            {" "}
-            <strong className="font-bold">Dear </strong>
-            {message.fullName},
-          </label>
+          <label className="font-bold">Dear {message.fullName},</label>
           <br />
           {/* <label htmlFor="" className='my-5 text-base'> <strong className='font-bold'>Violation: </strong> {message.violations}</label> */}
           <InputLabel id="demo-multiple-name-label">Violation:</InputLabel>
           <Select
+            color="error"
             labelId="demo-multiple-name-label"
             id="demo-multiple-name"
             value={message.violationName}
@@ -200,11 +197,13 @@ export default function AlertMessageStudent({ open, handleClose, data }) {
             helperText={message.error ? "Email Address is required" : ""}
             value={message.email}
             className="cursor-none"
+            color="error"
           />
           <TextField
             autoFocus
             id="standard-multiline-static"
             label="Message"
+            color="error"
             multiline
             rows={6}
             variant="standard"
@@ -215,7 +214,7 @@ export default function AlertMessageStudent({ open, handleClose, data }) {
             value={message.body}
             onChange={(e) => setMessage({ ...message, body: e.target.value })}
           />
-          <label htmlFor="" className="flex justify-end text-base ">
+          <label htmlFor="" className="flex justify-start text-base ">
             {message.date}
           </label>
         </div>
@@ -226,10 +225,11 @@ export default function AlertMessageStudent({ open, handleClose, data }) {
             onClick={sendMessage}
             size="small"
             disabled={isLoading}
+            color="error"
           >
             {isLoading ? "Sending..." : "Send"}
           </Button>
-          <Button onClick={handleClose} color="primary" size="large">
+          <Button onClick={handleClose} color="error" size="large">
             Cancel
           </Button>
         </div>
