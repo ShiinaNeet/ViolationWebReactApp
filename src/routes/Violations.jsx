@@ -105,7 +105,7 @@ export default function Violations() {
   const [violations, setViolations] = React.useState({
     name: "",
     description: "",
-    date: Date.now(),
+    date: "",
   });
   const [alertMessage, setAlertMessage] = React.useState({
     open: false,
@@ -468,14 +468,14 @@ export default function Violations() {
                           maxWidth: "350px",
                         }}
                       >
-                        {row.description}
+                        {row.description.length > 0 ? row.description : "N/A"}
                       </div>
                     </Tooltip>
                   </TableCell>
                   <TableCell>
                     {formatDate(new Date(parseInt(row.date)), "MMMM DD, YYYY")}
                   </TableCell>
-                  <TableCell className="flex justify-center">
+                  <TableCell className="flex justify-center" align="center">
                     <Tooltip title="Edit">
                       <Button
                         className="rounded-sm text-white hover:bg-red-100 hover:text-blue"
@@ -518,7 +518,12 @@ export default function Violations() {
               </TableRow>
             </TableFooter>
           </Table>
-          <Dialog open={open} onClose={handleClose}>
+          <Dialog
+            open={open}
+            onClose={handleClose}
+            fullWidth="true"
+            maxWidth="md"
+          >
             <DialogTitle>Edit Violation</DialogTitle>
             <DialogContent>
               <TextField
@@ -562,7 +567,12 @@ export default function Violations() {
               </Button>
             </DialogActions>
           </Dialog>
-          <Dialog open={openCreate} onClose={handleClose}>
+          <Dialog
+            open={openCreate}
+            onClose={handleClose}
+            fullWidth="true"
+            maxWidth="md"
+          >
             <DialogTitle>Create Violation</DialogTitle>
             <DialogContent>
               <TextField
@@ -617,7 +627,7 @@ export default function Violations() {
                 value={currentRow.name}
                 readOnly
               />
-              <TextField
+              {/* <TextField
                 color="error"
                 margin="dense"
                 label="Description"
@@ -625,7 +635,7 @@ export default function Violations() {
                 fullWidth
                 value={currentRow.description}
                 readOnly
-              />
+              /> */}
               <TextField
                 color="error"
                 margin="dense"
