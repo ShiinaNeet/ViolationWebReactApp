@@ -25,6 +25,12 @@ const Dean_NavigationBar = () => {
         >
           {userType == "PROGRAM HEAD" ? "Program Head" : "Dean"}
         </Link>
+        <Link
+          className="p-2 hover:bg-red-700 hover:rounded-md hover:cursor-pointer"
+          to="/dean/students"
+        >
+          Students
+        </Link>
         {isAuthenticated && (
           <Link
             className="p-2 hover:bg-red-700 hover:rounded-md hover:cursor-pointer"
