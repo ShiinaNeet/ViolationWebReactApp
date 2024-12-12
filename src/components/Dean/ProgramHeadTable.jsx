@@ -581,11 +581,12 @@ export default function UserManagement() {
               Assign Program Chair to their Respective Departments
             </DialogTitle>
             <DialogContent>
-              <FormControl fullWidth margin="dense">
+              <FormControl fullWidth margin="dense" readOnly>
                 <InputLabel id="demo-simple-select-label" color="error">
                   Category
                 </InputLabel>
                 <Select
+                  readOnly
                   color="error"
                   labelId="demo-simple-select-label"
                   id="demo-simple-select"
@@ -654,7 +655,7 @@ export default function UserManagement() {
           onClose={handleAlertClose}
           icon={false}
           severity="info"
-          sx={{ width: "100%" }}
+          sx={{ width: "100</Button>%" }}
         >
           <AlertTitle>{alertMessage.title}</AlertTitle>
           {errorMessages.length > 0

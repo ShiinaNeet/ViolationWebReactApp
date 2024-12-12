@@ -111,7 +111,7 @@ export default function UserManagement() {
     last_name: "",
     email: "",
     type: "",
-    assigned_department: "",
+    assigned_department: null,
     username: "",
   });
   const [departmentData, setDepartmentData] = React.useState([]);
@@ -124,6 +124,7 @@ export default function UserManagement() {
     password: "",
     username: "",
     assigned_department: "",
+    assigned_departments: [],
   });
   const [alertMessage, setAlertMessage] = React.useState({
     open: false,
@@ -176,6 +177,7 @@ export default function UserManagement() {
       type: "",
       password: "",
       assigned_department: "",
+      assigned_departments: [],
     });
   };
   const handleAlertClose = (event, reason) => {
@@ -216,7 +218,10 @@ export default function UserManagement() {
           type: user.type,
           password: user.password,
           username: user.username,
-          assigned_department: user.assigned_department,
+          assigned_department:
+            user.type == "PROGRAM HEAD"
+              ? user.assigned_department
+              : user.assigned_departments,
         },
         {
           headers: {
@@ -482,7 +487,16 @@ export default function UserManagement() {
   };
 
   const debouncedSearchFunction = debounce(searchFunction, 300);
-
+  const addMultipleDepartment = (event) => {
+    const {
+      target: { value },
+    } = event;
+    setUser({
+      ...user,
+      assigned_departments:
+        typeof value === "string" ? value.split(",") : value,
+    });
+  };
   return (
     <div className="container h-full mx-auto px-2">
       <div className="flex flex-col sm:flex-row justify-between gap-x-2 md:m-0 text-sm md:text-md pt-5">
@@ -781,10 +795,10 @@ export default function UserManagement() {
                     <MenuItem value={"SECURITY"}>Security Guard</MenuItem>
                     <MenuItem value={"PROGRAM HEAD"}>Program Head</MenuItem>
                     <MenuItem value={"DEAN"}>Dean</MenuItem>
-                    <MenuItem value={"PROFESSOR"}>Professor</MenuItem>
+                    {/* <MenuItem value={"PROFESSOR"}>Professor</MenuItem> */}
                   </Select>
                 </FormControl>
-                {user.type === "PROFESSOR" && (
+                {user.type === "PROGRAM HEAD" && (
                   <FormControl fullWidth margin="dense">
                     <InputLabel id="demo-simple-select-label" color="error">
                       Assign a Department
@@ -803,8 +817,43 @@ export default function UserManagement() {
                           console.log(e.target.value);
                       }}
                     >
+                      {departmentData.map((department, idx) => (
+                        <MenuItem value={department.name} key={idx}>
+                          {department.name}
+                        </MenuItem>
+                      ))}
+                    </Select>
+                  </FormControl>
+                )}
+                {user.type === "DEAN" && (
+                  <FormControl fullWidth margin="dense">
+                    <InputLabel id="demo-simple-select-label" color="error">
+                      Assign to Department/s
+                    </InputLabel>
+                    <Select
+                      color="error"
+                      labelId="demo-simple-select-label"
+                      id="demo-simple-select"
+                      value={user.assigned_departments}
+                      label="Assign a Department"
+                      multiple
+                      onChange={(e) => {
+                        addMultipleDepartment(e);
+                        // console.log(e.target.value);
+                        // if (
+                        //   user.assigned_departments.includes(e.target.value)
+                        // ) {
+                        //   return;
+                        // } else {
+                        //   setUser({
+                        //     ...user,
+                        //     assigned_departments: e.target.value.split(","),
+                        //   });
+                        // }
+                      }}
+                    >
                       {departmentData.map((department) => (
-                        <MenuItem value={department.name}>
+                        <MenuItem key={department.name} value={department.name}>
                           {department.name}
                         </MenuItem>
                       ))}
