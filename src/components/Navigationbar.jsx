@@ -2,6 +2,7 @@ import React from "react";
 import reactsvg from "../assets/react.svg";
 import { Link } from "react-router-dom";
 import { useAuth } from "../auth/AuthProvider";
+import Notification from "./Notification";
 
 const Navigationbar = () => {
   const { logout, isAuthenticated } = useAuth();
@@ -18,7 +19,7 @@ const Navigationbar = () => {
           Batangas State University Disciplinary Management
         </label>
       </div>
-      <div className="h-[100px] flex gap-x-5 items-center flex-wrap">
+      <div className="h-[100px] flex gap-x-5 items-center flex-wrap mx-5">
         {/* <Link
           className="p-2 hover:bg-blue-700 hover:rounded-md hover:cursor-pointer"
           to="/Students"
@@ -26,31 +27,38 @@ const Navigationbar = () => {
           Students
         </Link> */}
         <Link
-          className="p-2 hover:bg-red-700 hover:rounded-md hover:cursor-pointer"
+          className="p-5 hover:bg-red-700 hover:rounded-md hover:cursor-pointer"
           to="/Violations"
         >
           Violation
         </Link>
         <Link
-          className="p-2 hover:bg-red-700 hover:rounded-md hover:cursor-pointer"
+          className="p-5 hover:bg-red-700 hover:rounded-md hover:cursor-pointer"
           to="/Users"
         >
           Users
         </Link>
         <Link
-          className="p-2 hover:bg-red-700 hover:rounded-md hover:cursor-pointer"
+          className="p-5 hover:bg-red-700 hover:rounded-md hover:cursor-pointer"
           to="/Chart"
         >
           Charts
         </Link>
+        <Link
+          className="p-5 hover:bg-red-700 hover:rounded-md hover:cursor-pointer"
+          to="/Notification"
+        >
+          Notification
+        </Link>
         {isAuthenticated && (
           <Link
-            className="p-2 hover:bg-red-700 hover:rounded-md hover:cursor-pointer"
+            className="p-5 hover:bg-red-700 hover:rounded-md hover:cursor-pointer"
             onClick={logout}
           >
             Logout
           </Link>
         )}
+
         {localStorage.getItem("accessToken") === null &&
           window.location.replace("/login")}
       </div>

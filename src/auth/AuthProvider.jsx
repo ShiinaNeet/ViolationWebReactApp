@@ -7,7 +7,6 @@ import React, {
   useCallback,
 } from "react";
 import { setupAxiosInterceptors } from "../axios";
-import { data } from "autoprefixer";
 
 const AuthContext = createContext();
 

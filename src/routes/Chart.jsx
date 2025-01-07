@@ -1,7 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { PieChart } from "@mui/x-charts/PieChart";
 import axios from "axios";
-import { Button } from "@mui/material";
 import RestartAltIcon from "@mui/icons-material/RestartAlt";
 import { valueFormatter } from "../utils/ChartData";
 import { StyledEngineProvider } from "@mui/material/styles";
@@ -53,11 +52,6 @@ export default function Chart() {
       window.removeEventListener("resize", handleResize);
     };
   }, []);
-
-  const pieParams = {
-    height: 200,
-    width: 400,
-  };
 
   const legendProps =
     screenWidth < 730

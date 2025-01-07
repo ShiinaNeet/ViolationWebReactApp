@@ -15,6 +15,7 @@ import Dean_Home from "./routes/Dean/Home";
 import DepartmentHead_Home from "./routes/Department_head/Home";
 import ViolationBarChart from "./components/Department_Head/BarChartHead";
 
+import Notification from "./routes/Notification";
 import Students from "./routes/Students";
 import Violations from "./routes/Violations";
 import Chart from "./routes/Chart";
@@ -54,6 +55,10 @@ const router = createBrowserRouter([
         path: "chart",
         element: <ProtectedRoute element={<Chart />} />,
       },
+      {
+        path: "/notification",
+        element: <ProtectedRoute element={<Notification />} />,
+      },
     ],
   },
   {
@@ -68,6 +73,10 @@ const router = createBrowserRouter([
         path: "students",
         element: <ProtectedRoute element={<Students />} />,
       },
+      {
+        path: "notification",
+        element: <ProtectedRoute element={<Notification />} />,
+      },
     ],
   },
   {
@@ -81,6 +90,10 @@ const router = createBrowserRouter([
       {
         path: "graph",
         element: <ProtectedRoute element={<ViolationBarChart />} />,
+      },
+      {
+        path: "notification",
+        element: <ProtectedRoute element={<Notification />} />,
       },
     ],
   },

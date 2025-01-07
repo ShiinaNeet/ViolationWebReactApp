@@ -1,4 +1,3 @@
-import React from "react";
 import reactsvg from "@src/assets/react.svg";
 import { Link } from "react-router-dom";
 import { useAuth } from "../../auth/AuthProvider";
@@ -30,6 +29,12 @@ const Dean_NavigationBar = () => {
           to="/dean/students"
         >
           Students
+        </Link>
+        <Link
+          className="p-5 hover:bg-red-700 hover:rounded-md hover:cursor-pointer"
+          to="/dean/Notification"
+        >
+          Notification
         </Link>
         {isAuthenticated && (
           <Link

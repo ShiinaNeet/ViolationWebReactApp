@@ -26,6 +26,12 @@ const Department_Head_NavigationBar = () => {
           Home
         </Link>
         <Link
+          className="p-5 hover:bg-red-700 hover:rounded-md hover:cursor-pointer"
+          to="/department-head/Notification"
+        >
+          Notification
+        </Link>
+        <Link
           className="p-2 hover:bg-red-700 hover:rounded-sm hover:cursor-pointer"
           to="/department-head/graph"
         >
