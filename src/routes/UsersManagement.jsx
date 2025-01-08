@@ -27,16 +27,21 @@ import Tooltip from "@mui/material/Tooltip";
 import {
   Alert,
   AlertTitle,
+  alpha,
   Chip,
+  Container,
   FormControl,
   InputLabel,
   MenuItem,
   Select,
   Snackbar,
+  styled,
   TableHead,
+  Toolbar,
 } from "@mui/material";
 import axios from "axios";
 import formatDate from "../utils/moment";
+import { red } from "@mui/material/colors";
 
 function TablePaginationActions(props) {
   const { count, page, rowsPerPage, onPageChange } = props;
@@ -497,20 +502,45 @@ export default function UserManagement() {
         typeof value === "string" ? value.split(",") : value,
     });
   };
+  const StyledToolbar = styled(Toolbar)(({ theme }) => ({
+    display: "flex",
+    alignItems: "center",
+    justifyContent: "space-between",
+    flexShrink: 0,
+    borderRadius: `calc(${theme.shape.borderRadius}px + 8px)`,
+    backdropFilter: "blur(24px)",
+    border: "1px solid",
+    borderColor: (theme.vars || theme).palette.divider,
+    backgroundColor: theme.vars
+      ? `rgba(${theme.vars.palette.background.defaultChannel} / 0.4)`
+      : alpha(theme.palette.background.default, 0.4),
+    boxShadow: `0px 4px 6px ${alpha(red[500], 0.9)}`,
+  }));
   return (
-    <div className="container h-full mx-auto px-2">
-      <div className="flex flex-col sm:flex-row justify-between gap-x-2 md:m-0 text-sm md:text-md pt-5">
-        <h1 className="text-3xl flex items-center">Users List</h1>
-        <Tooltip title="Create User">
-          <button
-            className="bg-red-500 my-2 p-2 rounded-sm text-white hover:bg-red-600"
-            onClick={() => handleCreateOpen()}
-          >
-            <AddIcon /> Create User
-          </button>
-        </Tooltip>
-      </div>
-      {/* <div className="flex">
+    <Container
+      sx={{
+        display: "flex",
+        flexDirection: "column",
+        alignItems: "center",
+        pt: { xs: 15, sm: 15 },
+        pb: { xs: 8, sm: 12 },
+        height: "100vh",
+      }}
+    >
+      <div className="w-full h-full mx-auto ">
+        <div className="flex flex-col md:flex-row justify-between gap-x-2 text-sm md:text-md bg-white my-2 rounded-md px-1 py-5">
+          <h1 className="md:text-3xl text-2xl flex items-center">Users List</h1>
+          <Tooltip title="Create User">
+            <Button
+              color="error"
+              onClick={() => handleCreateOpen()}
+              className="p-2"
+            >
+              <AddIcon /> Create User
+            </Button>
+          </Tooltip>
+        </div>
+        {/* <div className="flex">
         <TextField
           className=""
           autoFocus
@@ -533,48 +563,48 @@ export default function UserManagement() {
           Search
         </Button>
       </div> */}
-      <div className="shadow-sm shadow-zinc-500 rounded-lg">
-        <TableContainer component={Paper} className="">
-          <Table sx={{ minWidth: 500 }}>
-            <TableHead>
-              <TableRow>
-                <th className="py-5 px-4 font-bold ">Name</th>
-                <th className="py-5 px-4 font-bold ">Username</th>
-                <th className="py-5 px-4 font-bold">Email address</th>
-                <th className="py-5 px-4 font-bold text-center">Category</th>
-                {/* <th className="py-5 px-4 font-bold text-center">Actions</th> */}
-              </TableRow>
-            </TableHead>
-            <TableBody>
-              {(rowsPerPage > 0
-                ? rows.slice(
-                    page * rowsPerPage,
-                    page * rowsPerPage + rowsPerPage
-                  )
-                : rows
-              ).map((row) => (
-                <TableRow key={row._id}>
-                  <TableCell component="th" scope="row">
-                    {row.first_name && row.last_name
-                      ? row.first_name + " " + row.last_name
-                      : "No name attached"}
-                  </TableCell>
-                  <TableCell>
-                    {row.username ? row.username : "No username"}
-                  </TableCell>
-                  <TableCell>
-                    {row.email ? row.email : "No email address attached"}
-                  </TableCell>
-                  <TableCell align="center">
-                    <Button
-                      className={`p-2 rounded-sm text-center
+        <StyledToolbar variant="dense" disableGutters>
+          <TableContainer component={Paper} className="">
+            <Table sx={{ minWidth: 500 }}>
+              <TableHead>
+                <TableRow>
+                  <th className="py-5 px-4 font-bold ">Name</th>
+                  <th className="py-5 px-4 font-bold ">Username</th>
+                  <th className="py-5 px-4 font-bold">Email address</th>
+                  <th className="py-5 px-4 font-bold text-center">Category</th>
+                  {/* <th className="py-5 px-4 font-bold text-center">Actions</th> */}
+                </TableRow>
+              </TableHead>
+              <TableBody>
+                {(rowsPerPage > 0
+                  ? rows.slice(
+                      page * rowsPerPage,
+                      page * rowsPerPage + rowsPerPage
+                    )
+                  : rows
+                ).map((row) => (
+                  <TableRow key={row._id}>
+                    <TableCell component="th" scope="row">
+                      {row.first_name && row.last_name
+                        ? row.first_name + " " + row.last_name
+                        : "No name attached"}
+                    </TableCell>
+                    <TableCell>
+                      {row.username ? row.username : "No username"}
+                    </TableCell>
+                    <TableCell>
+                      {row.email ? row.email : "No email address attached"}
+                    </TableCell>
+                    <TableCell align="center">
+                      <Button
+                        className={`p-2 rounded-sm text-center
                       ${row.type === "ADMIN" ? "primary" : "secondary"}`}
-                      color={row.type === "ADMIN" ? "primary" : "secondary"}
-                    >
-                      {row.type ? row.type : "No type attached"}{" "}
-                    </Button>
-                  </TableCell>
-                  {/* <td className="flex justify-center">
+                        color={row.type === "ADMIN" ? "primary" : "secondary"}
+                      >
+                        {row.type ? row.type : "No type attached"}{" "}
+                      </Button>
+                    </TableCell>
+                    {/* <td className="flex justify-center">
                     <Tooltip title="Edit">
                       <Button
                         className=" p-2 rounded-sm text-white hover:bg-yellow-600 hover:text-white"
@@ -595,29 +625,29 @@ export default function UserManagement() {
                       </Button>
                     </Tooltip>
                   </td> */}
+                  </TableRow>
+                ))}
+                {rows.length == 0 && (
+                  <TableRow style={{ height: 53 * emptyRows }}>
+                    <TableCell colSpan={6}>Loading....</TableCell>
+                  </TableRow>
+                )}
+              </TableBody>
+              <TableFooter>
+                <TableRow>
+                  <TablePagination
+                    rowsPerPageOptions={[{ label: "All", value: -1 }]} // Provide an array of options
+                    count={rows.length}
+                    rowsPerPage={rowsPerPage}
+                    page={page}
+                    onPageChange={handleChangePage}
+                    onRowsPerPageChange={handleChangeRowsPerPage}
+                    ActionsComponent={TablePaginationActions}
+                  />
                 </TableRow>
-              ))}
-              {rows.length == 0 && (
-                <TableRow style={{ height: 53 * emptyRows }}>
-                  <TableCell colSpan={6}>Loading....</TableCell>
-                </TableRow>
-              )}
-            </TableBody>
-            <TableFooter>
-              <TableRow>
-                <TablePagination
-                  rowsPerPageOptions={[{ label: "All", value: -1 }]} // Provide an array of options
-                  count={rows.length}
-                  rowsPerPage={rowsPerPage}
-                  page={page}
-                  onPageChange={handleChangePage}
-                  onRowsPerPageChange={handleChangeRowsPerPage}
-                  ActionsComponent={TablePaginationActions}
-                />
-              </TableRow>
-            </TableFooter>
-          </Table>
-          {/* <Dialog open={open} onClose={handleClose}>
+              </TableFooter>
+            </Table>
+            {/* <Dialog open={open} onClose={handleClose}>
             <DialogTitle>Edit User Information</DialogTitle>
             <DialogContent>
               <TextField
@@ -694,184 +724,187 @@ export default function UserManagement() {
               </Button>
             </DialogActions>
           </Dialog> */}
-          <Dialog open={openCreate} onClose={handleClose}>
-            <DialogTitle>Create User</DialogTitle>
-            <DialogContent>
-              <form>
-                <TextField
-                  autoFocus
-                  color="error"
-                  margin="dense"
-                  label="First Name"
-                  type="text"
-                  fullWidth
-                  value={user.first_name}
-                  required={true}
-                  onChange={(e) =>
-                    setUser({
-                      ...user,
-                      first_name: e.target.value,
-                    })
-                  }
-                />
-                <TextField
-                  autoFocus
-                  color="error"
-                  margin="dense"
-                  label="last Name"
-                  type="text"
-                  fullWidth
-                  value={user.last_name}
-                  required={true}
-                  onChange={(e) =>
-                    setUser({
-                      ...user,
-                      last_name: e.target.value,
-                    })
-                  }
-                />
-                <TextField
-                  autoFocus
-                  margin="dense"
-                  color="error"
-                  label="Username"
-                  type="text"
-                  fullWidth
-                  value={user.username}
-                  required={true}
-                  onChange={(e) =>
-                    setUser({
-                      ...user,
-                      username: e.target.value,
-                    })
-                  }
-                />
-                <TextField
-                  autoFocus
-                  color="error"
-                  margin="dense"
-                  label="Email Address"
-                  type="text"
-                  fullWidth
-                  value={user.email}
-                  required={true}
-                  onChange={(e) =>
-                    setUser({
-                      ...user,
-                      email: e.target.value,
-                    })
-                  }
-                />
-                <TextField
-                  className="mb-1"
-                  color="error"
-                  id="outlined-password-input"
-                  label="Password"
-                  type="password"
-                  margin="dense"
-                  fullWidth
-                  required={true}
-                  autoComplete="current-password"
-                  onChange={(e) =>
-                    setUser({ ...user, password: e.target.value })
-                  }
-                />
-                <FormControl fullWidth margin="dense">
-                  <InputLabel id="demo-simple-select-label" color="error">
-                    Type
-                  </InputLabel>
-                  <Select
+            <Dialog open={openCreate} onClose={handleClose}>
+              <DialogTitle>Create User</DialogTitle>
+              <DialogContent>
+                <form>
+                  <TextField
+                    autoFocus
                     color="error"
-                    labelId="demo-simple-select-label"
-                    id="demo-simple-select"
-                    value={user.type}
-                    label="Type"
-                    onChange={(e) => {
-                      setUser({ ...user, type: e.target.value }),
-                        console.log(e.target.value);
-                    }}
-                  >
-                    <MenuItem value={"ADMIN"}>Admin</MenuItem>
-                    <MenuItem value={"SECURITY"}>Security Guard</MenuItem>
-                    <MenuItem value={"PROGRAM HEAD"}>Program Head</MenuItem>
-                    <MenuItem value={"DEAN"}>Dean</MenuItem>
-                    {/* <MenuItem value={"PROFESSOR"}>Professor</MenuItem> */}
-                  </Select>
-                </FormControl>
-                {user.type === "PROGRAM HEAD" && (
+                    margin="dense"
+                    label="First Name"
+                    type="text"
+                    fullWidth
+                    value={user.first_name}
+                    required={true}
+                    onChange={(e) =>
+                      setUser({
+                        ...user,
+                        first_name: e.target.value,
+                      })
+                    }
+                  />
+                  <TextField
+                    autoFocus
+                    color="error"
+                    margin="dense"
+                    label="last Name"
+                    type="text"
+                    fullWidth
+                    value={user.last_name}
+                    required={true}
+                    onChange={(e) =>
+                      setUser({
+                        ...user,
+                        last_name: e.target.value,
+                      })
+                    }
+                  />
+                  <TextField
+                    autoFocus
+                    margin="dense"
+                    color="error"
+                    label="Username"
+                    type="text"
+                    fullWidth
+                    value={user.username}
+                    required={true}
+                    onChange={(e) =>
+                      setUser({
+                        ...user,
+                        username: e.target.value,
+                      })
+                    }
+                  />
+                  <TextField
+                    autoFocus
+                    color="error"
+                    margin="dense"
+                    label="Email Address"
+                    type="text"
+                    fullWidth
+                    value={user.email}
+                    required={true}
+                    onChange={(e) =>
+                      setUser({
+                        ...user,
+                        email: e.target.value,
+                      })
+                    }
+                  />
+                  <TextField
+                    className="mb-1"
+                    color="error"
+                    id="outlined-password-input"
+                    label="Password"
+                    type="password"
+                    margin="dense"
+                    fullWidth
+                    required={true}
+                    autoComplete="current-password"
+                    onChange={(e) =>
+                      setUser({ ...user, password: e.target.value })
+                    }
+                  />
                   <FormControl fullWidth margin="dense">
                     <InputLabel id="demo-simple-select-label" color="error">
-                      Assign a Department
+                      Type
                     </InputLabel>
                     <Select
                       color="error"
                       labelId="demo-simple-select-label"
                       id="demo-simple-select"
-                      value={user.assigned_department}
-                      label="Assign a Department"
+                      value={user.type}
+                      label="Type"
                       onChange={(e) => {
-                        setUser({
-                          ...user,
-                          assigned_department: e.target.value,
-                        }),
+                        setUser({ ...user, type: e.target.value }),
                           console.log(e.target.value);
                       }}
                     >
-                      {departmentData.map((department, idx) => (
-                        <MenuItem value={department.name} key={idx}>
-                          {department.name}
-                        </MenuItem>
-                      ))}
+                      <MenuItem value={"ADMIN"}>Admin</MenuItem>
+                      <MenuItem value={"SECURITY"}>Security Guard</MenuItem>
+                      <MenuItem value={"PROGRAM HEAD"}>Program Head</MenuItem>
+                      <MenuItem value={"DEAN"}>Dean</MenuItem>
+                      {/* <MenuItem value={"PROFESSOR"}>Professor</MenuItem> */}
                     </Select>
                   </FormControl>
-                )}
-                {user.type === "DEAN" && (
-                  <FormControl fullWidth margin="dense">
-                    <InputLabel id="demo-simple-select-label" color="error">
-                      Assign to Department/s
-                    </InputLabel>
-                    <Select
-                      color="error"
-                      labelId="demo-simple-select-label"
-                      id="demo-simple-select"
-                      value={user.assigned_departments}
-                      label="Assign a Department"
-                      multiple
-                      onChange={(e) => {
-                        addMultipleDepartment(e);
-                        // console.log(e.target.value);
-                        // if (
-                        //   user.assigned_departments.includes(e.target.value)
-                        // ) {
-                        //   return;
-                        // } else {
-                        //   setUser({
-                        //     ...user,
-                        //     assigned_departments: e.target.value.split(","),
-                        //   });
-                        // }
-                      }}
-                    >
-                      {departmentData.map((department) => (
-                        <MenuItem key={department.name} value={department.name}>
-                          {department.name}
-                        </MenuItem>
-                      ))}
-                    </Select>
-                  </FormControl>
-                )}
-              </form>
-            </DialogContent>
-            <DialogActions>
-              <Button onClick={handleSave} color="error" disabled={isLoading}>
-                {isLoading ? "Saving...." : "Create"}
-              </Button>
-              <Button onClick={handleClose} color="error">
-                Cancel
-              </Button>
-            </DialogActions>
-          </Dialog>
-          {/* <Dialog open={openDelete} onClose={handleClose}>
+                  {user.type === "PROGRAM HEAD" && (
+                    <FormControl fullWidth margin="dense">
+                      <InputLabel id="demo-simple-select-label" color="error">
+                        Assign a Department
+                      </InputLabel>
+                      <Select
+                        color="error"
+                        labelId="demo-simple-select-label"
+                        id="demo-simple-select"
+                        value={user.assigned_department}
+                        label="Assign a Department"
+                        onChange={(e) => {
+                          setUser({
+                            ...user,
+                            assigned_department: e.target.value,
+                          }),
+                            console.log(e.target.value);
+                        }}
+                      >
+                        {departmentData.map((department, idx) => (
+                          <MenuItem value={department.name} key={idx}>
+                            {department.name}
+                          </MenuItem>
+                        ))}
+                      </Select>
+                    </FormControl>
+                  )}
+                  {user.type === "DEAN" && (
+                    <FormControl fullWidth margin="dense">
+                      <InputLabel id="demo-simple-select-label" color="error">
+                        Assign to Department/s
+                      </InputLabel>
+                      <Select
+                        color="error"
+                        labelId="demo-simple-select-label"
+                        id="demo-simple-select"
+                        value={user.assigned_departments}
+                        label="Assign a Department"
+                        multiple
+                        onChange={(e) => {
+                          addMultipleDepartment(e);
+                          // console.log(e.target.value);
+                          // if (
+                          //   user.assigned_departments.includes(e.target.value)
+                          // ) {
+                          //   return;
+                          // } else {
+                          //   setUser({
+                          //     ...user,
+                          //     assigned_departments: e.target.value.split(","),
+                          //   });
+                          // }
+                        }}
+                      >
+                        {departmentData.map((department) => (
+                          <MenuItem
+                            key={department.name}
+                            value={department.name}
+                          >
+                            {department.name}
+                          </MenuItem>
+                        ))}
+                      </Select>
+                    </FormControl>
+                  )}
+                </form>
+              </DialogContent>
+              <DialogActions>
+                <Button onClick={handleSave} color="error" disabled={isLoading}>
+                  {isLoading ? "Saving...." : "Create"}
+                </Button>
+                <Button onClick={handleClose} color="error">
+                  Cancel
+                </Button>
+              </DialogActions>
+            </Dialog>
+            {/* <Dialog open={openDelete} onClose={handleClose}>
             <DialogTitle>Delete User?</DialogTitle>
             <DialogContent>
               <TextField
@@ -942,28 +975,29 @@ export default function UserManagement() {
               </Button>
             </DialogActions>
           </Dialog> */}
-        </TableContainer>
-      </div>
+          </TableContainer>
+        </StyledToolbar>
 
-      <Snackbar
-        open={alertMessage.open}
-        autoHideDuration={3000}
-        onClose={handleAlertClose}
-        anchorOrigin={{ vertical, horizontal }}
-        key={vertical + horizontal}
-      >
-        <Alert
+        <Snackbar
+          open={alertMessage.open}
+          autoHideDuration={3000}
           onClose={handleAlertClose}
-          icon={false}
-          severity="info"
-          sx={{ width: "100%" }}
+          anchorOrigin={{ vertical, horizontal }}
+          key={vertical + horizontal}
         >
-          <AlertTitle>{alertMessage.title}</AlertTitle>
-          {errorMessages.length > 0
-            ? errorMessages.join(", ")
-            : alertMessage.message}
-        </Alert>
-      </Snackbar>
-    </div>
+          <Alert
+            onClose={handleAlertClose}
+            icon={false}
+            severity="info"
+            sx={{ width: "100%" }}
+          >
+            <AlertTitle>{alertMessage.title}</AlertTitle>
+            {errorMessages.length > 0
+              ? errorMessages.join(", ")
+              : alertMessage.message}
+          </Alert>
+        </Snackbar>
+      </div>
+    </Container>
   );
 }

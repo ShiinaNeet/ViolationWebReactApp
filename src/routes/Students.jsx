@@ -30,8 +30,17 @@ import InputLabel from "@mui/material/InputLabel";
 import FormControl from "@mui/material/FormControl";
 import Select from "@mui/material/Select";
 import Chip from "@mui/material/Chip";
-import { useTheme } from "@mui/material/styles";
-import { Alert, AlertTitle, Input, Snackbar, TableHead } from "@mui/material";
+import { alpha, useTheme } from "@mui/material/styles";
+import {
+  Alert,
+  AlertTitle,
+  Container,
+  Input,
+  Snackbar,
+  TableHead,
+  Toolbar,
+  styled,
+} from "@mui/material";
 import MenuItem from "@mui/material/MenuItem";
 import Modal from "@mui/material/Modal";
 import TextField from "@mui/material/TextField";
@@ -40,6 +49,7 @@ import AlertMessageStudent from "../components/AlertMessageStudent";
 import formatDate from "../utils/moment";
 import DeleteOutlineIcon from "@mui/icons-material/DeleteOutline";
 import AddIcon from "@mui/icons-material/Add";
+import { red } from "@mui/material/colors";
 
 function TablePaginationActions(props) {
   const { count, page, rowsPerPage, onPageChange } = props;
@@ -117,6 +127,20 @@ function getStyles(name, personName, theme) {
       : theme.typography.fontWeightRegular,
   };
 }
+const StyledToolbar = styled(Toolbar)(({ theme }) => ({
+  display: "flex",
+  alignItems: "center",
+  justifyContent: "space-between",
+  flexShrink: 0,
+  borderRadius: `calc(${theme.shape.borderRadius}px + 8px)`,
+  backdropFilter: "blur(24px)",
+  border: "1px solid",
+  borderColor: (theme.vars || theme).palette.divider,
+  backgroundColor: theme.vars
+    ? `rgba(${theme.vars.palette.background.defaultChannel} / 0.4)`
+    : alpha(theme.palette.background.default, 0.4),
+  boxShadow: `0px 4px 6px ${alpha(red[500], 0.9)}`,
+}));
 const Students = ({ DataToGet }) => {
   const [anchorEl, setAnchorEl] = React.useState(null);
   const open = Boolean(anchorEl);
@@ -509,79 +533,89 @@ const Students = ({ DataToGet }) => {
 
   return (
     <>
-      <div className="container mx-auto h-full px-2">
-        <div className="flex flex-row justify-between h-fit">
-          <h1 className="text-3xl py-3">Student List</h1>
-          {/* <button
+      <Container
+        sx={{
+          display: "flex",
+          flexDirection: "column",
+          alignItems: "center",
+          pt: { xs: 10, sm: 15 },
+          pb: { xs: 8, sm: 12 },
+          minHeight: "100vh",
+        }}
+      >
+        <div className="w-full mx-auto h-full">
+          <div className="flex flex-row justify-between h-fit bg-white p-2 rounded-md shadow-md my-2">
+            <h1 className="text-3xl py-3">Student List</h1>
+            {/* <button
             className="bg-red-500 my-2 p-2 rounded-sm text-white hover:bg-red-600"
             onClick={() => setSearchFilterModal(true)}
           >
             Filter
           </button> */}
-        </div>
-        <div className="shadow-sm shadow-zinc-500 rounded-lg">
-          <TableContainer component={Paper}>
-            <Table sx={{ minWidth: 500 }}>
-              <TableHead>
-                <TableRow className="text-left px-4">
-                  <th className="py-5 px-4 border-b">Name</th>
-                  <th className="py-5 px-4 border-b">Violation</th>
-                  <th className="py-5 px-4 border-b">Department and Year</th>
-                  <th className="py-5 px-4 border-b text-center">Date</th>
-                  <th className="py-5 px-4 border-b text-center sticky">
-                    Actions
-                  </th>
-                </TableRow>
-              </TableHead>
-              <TableBody>
-                {(rowsPerPage > 0
-                  ? rows.slice(
-                      page * rowsPerPage,
-                      page * rowsPerPage + rowsPerPage
-                    )
-                  : rows
-                ).map((student, index) => (
-                  <tr key={index} className="hover:bg-gray-50">
-                    {/* <td className="py-2 px-4 border-b">
+          </div>
+          <StyledToolbar variant="dense" disableGutters>
+            <TableContainer component={Paper}>
+              <Table sx={{ minWidth: 500 }}>
+                <TableHead>
+                  <TableRow className="text-left px-4">
+                    <th className="py-5 px-4 border-b">Name</th>
+                    <th className="py-5 px-4 border-b">Violation</th>
+                    <th className="py-5 px-4 border-b">Department and Year</th>
+                    <th className="py-5 px-4 border-b text-center">Date</th>
+                    <th className="py-5 px-4 border-b text-center sticky">
+                      Actions
+                    </th>
+                  </TableRow>
+                </TableHead>
+                <TableBody>
+                  {(rowsPerPage > 0
+                    ? rows.slice(
+                        page * rowsPerPage,
+                        page * rowsPerPage + rowsPerPage
+                      )
+                    : rows
+                  ).map((student, index) => (
+                    <tr key={index} className="hover:bg-gray-50">
+                      {/* <td className="py-2 px-4 border-b">
                                             {student.userid}
                                         </td> */}
-                    <td className="py-2 px-4 border-b">{student.fullname}</td>
-                    <td className="py-2 px-4 border-b">
-                      {student.violations.length > 0
-                        ? student.violations[0].name
-                        : ""}
-                    </td>
-                    <td className="py-2 px-4 border-b">
-                      {student.year_and_department}
-                    </td>
-                    <td className="py-2 px-4 border-b flex-shrink-1 text-center">
-                      {student.violations.length > 0
-                        ? formatDate(
-                            new Date(parseInt(student.violations[0].date)),
-                            "MMMM DD, YYYY - hh:mm A"
-                          )
-                        : ""}
-                    </td>
-                    <td className="border-b flex justify-center sticky">
-                      <Tooltip title="View Student">
-                        <Button
-                          className="rounded-sm text-white hover:bg-red-100 hover:text-red-700"
-                          onClick={() => handleViewViolationModal(student)}
-                          color="error"
-                        >
-                          <RemoveRedEyeIcon color="error" />
-                        </Button>
-                      </Tooltip>
-                      <Tooltip title="Edit Student">
-                        <Button
-                          className="rounded-sm text-white hover:bg-red-100 hover:text-red-700"
-                          onClick={() => handleUpdateViolationModal(student)}
-                          color="error"
-                        >
-                          <EditIcon color="error" />
-                        </Button>
-                      </Tooltip>
-                      {/* <Tooltip title="Delete Student">
+                      <td className="py-5 px-4 border-b">{student.fullname}</td>
+                      <td className="py-5 px-4 border-b">
+                        {student.violations.length > 0
+                          ? student.violations[0].name
+                          : ""}
+                      </td>
+                      <td className="py-5 px-4 border-b">
+                        {student.year_and_department}
+                      </td>
+                      <td className="py-5 px-4 border-b flex-shrink-1 text-center">
+                        {student.violations.length > 0
+                          ? formatDate(
+                              new Date(parseInt(student.violations[0].date)),
+                              "MMMM DD, YYYY - hh:mm A"
+                            )
+                          : ""}
+                      </td>
+                      <td className="border-b flex justify-center sticky">
+                        <Tooltip title="View Student">
+                          <Button
+                            className="rounded-sm text-white hover:bg-red-100 hover:text-red-700"
+                            onClick={() => handleViewViolationModal(student)}
+                            color="error"
+                          >
+                            <RemoveRedEyeIcon color="error" />
+                          </Button>
+                        </Tooltip>
+                        <Tooltip title="Edit Student">
+                          <Button
+                            className="rounded-sm text-white hover:bg-red-100 hover:text-red-700"
+                            onClick={() => handleUpdateViolationModal(student)}
+                            color="error"
+                          >
+                            <EditIcon color="error" />
+                          </Button>
+                        </Tooltip>
+                        {/* <Tooltip title="Delete Student">
                         <Button
                           className="rounded-sm text-white hover:bg-red-600 hover:text-white"
                           onClick={() => handleDeleteViolationModal(student)}
@@ -589,34 +623,40 @@ const Students = ({ DataToGet }) => {
                           <DeleteIcon />
                         </Button>
                       </Tooltip> */}
-                    </td>
-                  </tr>
-                ))}
-                {rows.length == 0 && (
-                  <TableRow style={{ height: 53 * emptyRows }}>
-                    <TableCell colSpan={6}> No Data</TableCell>
+                      </td>
+                    </tr>
+                  ))}
+                  {rows.length == 0 && (
+                    <TableRow style={{ height: 53 * emptyRows }}>
+                      <TableCell colSpan={6}> No Data</TableCell>
+                    </TableRow>
+                  )}
+                </TableBody>
+                <TableFooter>
+                  <TableRow>
+                    <TablePagination
+                      rowsPerPageOptions={[{ label: "All", value: -1 }]}
+                      count={rows.length}
+                      rowsPerPage={rowsPerPage}
+                      page={page}
+                      onPageChange={handleChangePage}
+                      onRowsPerPageChange={handleChangeRowsPerPage}
+                      ActionsComponent={TablePaginationActions}
+                    />
                   </TableRow>
-                )}
-              </TableBody>
-              <TableFooter>
-                <TableRow>
-                  <TablePagination
-                    rowsPerPageOptions={[{ label: "All", value: -1 }]}
-                    count={rows.length}
-                    rowsPerPage={rowsPerPage}
-                    page={page}
-                    onPageChange={handleChangePage}
-                    onRowsPerPageChange={handleChangeRowsPerPage}
-                    ActionsComponent={TablePaginationActions}
-                  />
-                </TableRow>
-              </TableFooter>
-            </Table>
-          </TableContainer>
+                </TableFooter>
+              </Table>
+            </TableContainer>
+          </StyledToolbar>
         </div>
-      </div>
+      </Container>
       {ViewModal && (
-        <Dialog open={ViewModal} onClose={handleClose}>
+        <Dialog
+          open={ViewModal}
+          onClose={handleClose}
+          fullWidth={true}
+          maxWidth="sm"
+        >
           <div className="px-2 flex-wrap">
             <div className="flex flex-col justify-center items-center md:flex-row sm:justify-between sm:items-center sm:w-full gap-x-5">
               <h2 className="py-3 sm:text-2xl sm:font-bold text-center font-semibold">

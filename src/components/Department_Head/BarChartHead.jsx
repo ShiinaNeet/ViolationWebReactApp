@@ -1,7 +1,8 @@
 import React, { useState, useEffect } from "react";
-import { Box } from "@mui/material";
+import { alpha, Box, Container } from "@mui/material";
 import { BarChart } from "@mui/x-charts/BarChart";
 import axios from "axios";
+import { red } from "@mui/material/colors";
 
 export default function BarChartHead() {
   const [data, setData] = useState([]);
@@ -38,29 +39,44 @@ export default function BarChartHead() {
   const seriesData = data.map((item) => item.count);
 
   return (
-    <div className="container mx-auto h-full p-2 m-5 md:w-full shadow-lg">
-      <Box sx={{ width: "100%", padding: "5px" }}>
-        <h1 className="text-xl font-semibold">Department's Violations </h1>
-        {!loading && data.length > 0 ? (
-          <BarChart
-            colors={["#Ff0000", "#00FF00"]}
-            height={300}
-            xAxis={[
-              {
-                scaleType: "band",
-                data: transformedData,
-              },
-            ]}
-            series={[
-              {
-                data: seriesData,
-              },
-            ]}
-          />
-        ) : (
-          <p>Loading...</p>
-        )}
-      </Box>
-    </div>
+    <Container
+      sx={{
+        pt: { xs: 10, sm: 15 },
+        height: "100vh",
+      }}
+    >
+      <div className="mx-auto h-full md:w-full px-4">
+        <Box
+          sx={{
+            padding: "10px",
+            borderRadius: "5px",
+            backgroundColor: "white",
+          }}
+        >
+          <h1 className="text-xl font-semibold">
+            Department&apos;s Violations{" "}
+          </h1>
+          {!loading && data.length > 0 ? (
+            <BarChart
+              colors={["#Ff0000", "#00FF00"]}
+              height={300}
+              xAxis={[
+                {
+                  scaleType: "band",
+                  data: transformedData,
+                },
+              ]}
+              series={[
+                {
+                  data: seriesData,
+                },
+              ]}
+            />
+          ) : (
+            <p>Loading...</p>
+          )}
+        </Box>
+      </div>
+    </Container>
   );
 }

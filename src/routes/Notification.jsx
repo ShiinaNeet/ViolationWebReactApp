@@ -1,12 +1,22 @@
+import { Container } from "@mui/material";
 import NotificationList from "../components/NotificationList";
 
 function Notification() {
   return (
-    <div className="container mx-auto h-full px-2">
-      <div className="flex flex-row justify-between h-fit">
+    <Container
+      sx={{
+        display: "flex",
+        flexDirection: "column",
+        alignItems: "center",
+        pt: { xs: 15, sm: 15 },
+        pb: { xs: 8, sm: 12 },
+        height: "100vh",
+      }}
+    >
+      <div className="w-full h-full mx-auto ">
         <NotificationList />
       </div>
-    </div>
+    </Container>
   );
 }
 

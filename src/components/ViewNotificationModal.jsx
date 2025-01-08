@@ -50,20 +50,21 @@ function ViewNotificationModal({ closeModal, notificationData }) {
         {notificationData.is_sent == false && (
           <p className="text-red-500 text-sm">Message in Queue</p>
         )}
-        {notificationData.sent_to.length > 0 && (
-          <p>
-            Sent to the following users:{" "}
-            {notificationData.sent_to.map((user, index) => (
-              <strong
-                key={index}
-                className="text-sm text-red-500 cursor-pointer"
-              >
-                {user +
-                  (index < notificationData.sent_to.length - 1 ? ", " : "")}
-              </strong>
-            ))}
-          </p>
-        )}
+        {notificationData.is_sent == true &&
+          notificationData.sent_to.length > 0 && (
+            <p>
+              Sent to the following users:{" "}
+              {notificationData.sent_to.map((user, index) => (
+                <strong
+                  key={index}
+                  className="text-sm text-red-500 cursor-pointer"
+                >
+                  {user +
+                    (index < notificationData.sent_to.length - 1 ? ", " : "")}
+                </strong>
+              ))}
+            </p>
+          )}
         <p className="text-right w-full text-red-400 text-sm">
           {formattedDate}
         </p>

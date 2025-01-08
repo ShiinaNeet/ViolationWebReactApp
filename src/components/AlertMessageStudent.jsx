@@ -157,7 +157,7 @@ export default function AlertMessageStudent({ open, handleClose, data }) {
   };
   return (
     <div className="w-full mx-0">
-      <Dialog open={open} onClose={handleClose} fullWidth={true}>
+      <Dialog open={open} onClose={handleClose} fullWidth={true} maxWidth="sm">
         <div className="p-2 text-2xl">
           <label className="font-bold">Dear {message.fullName},</label>
           <br />
@@ -218,7 +218,7 @@ export default function AlertMessageStudent({ open, handleClose, data }) {
             {message.date}
           </label>
         </div>
-        <div className="p-2 flex justify-end">
+        <div className="p-2 flex justify-end gap-x-2">
           <Button
             variant="contained"
             endIcon={<SendIcon />}

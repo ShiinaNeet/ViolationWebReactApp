@@ -27,6 +27,7 @@ import Tooltip from "@mui/material/Tooltip";
 import {
   Alert,
   AlertTitle,
+  alpha,
   Chip,
   FormControl,
   InputLabel,
@@ -37,6 +38,7 @@ import {
 } from "@mui/material";
 import axios from "axios";
 import formatDate from "@src/utils/moment";
+import { red } from "@mui/material/colors";
 
 function TablePaginationActions(props) {
   const { count, page, rowsPerPage, onPageChange } = props;
@@ -463,7 +465,7 @@ export default function UserManagement() {
 
   return (
     <div className="container h-full mx-auto px-2">
-      <div className="flex justify-between h-fit gap-x-2 my-2 md:m-0 text-sm md:text-md">
+      <div className="flex justify-between h-fit gap-x-2 my-2 md:m-0 text-sm md:text-md bg-white rounded-sm px-2">
         <h1 className="text-3xl py-3">Program Head</h1>
         {/* <Tooltip title="Create User">
           <button
@@ -495,7 +497,7 @@ export default function UserManagement() {
                         Search
                         </button>
                     </div> */}
-      <div className="shadow-sm shadow-zinc-500 rounded-lg">
+      <div style={{ boxShadow: `0px 4px 6px ${alpha(red[500], 0.9)}` }}>
         <TableContainer component={Paper} className="">
           <Table sx={{ minWidth: 500 }}>
             <TableHead>

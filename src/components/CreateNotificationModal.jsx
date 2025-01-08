@@ -1,7 +1,26 @@
-import { Button, TextField } from "@mui/material";
+import {
+  Button,
+  FormControl,
+  InputLabel,
+  MenuItem,
+  OutlinedInput,
+  Select,
+  TextField,
+} from "@mui/material";
 import axios from "axios";
 import React from "react";
 import PropTypes from "prop-types";
+
+const ITEM_HEIGHT = 48;
+const ITEM_PADDING_TOP = 8;
+const MenuProps = {
+  PaperProps: {
+    style: {
+      maxHeight: ITEM_HEIGHT * 4.5 + ITEM_PADDING_TOP,
+      width: 250,
+    },
+  },
+};
 
 function CreateNotificationModal({ closeModal, sendAlert }) {
   const [Notification, setNotification] = React.useState({
@@ -10,6 +29,7 @@ function CreateNotificationModal({ closeModal, sendAlert }) {
     subject: "",
     category: "",
     set_when: new Date().toISOString().slice(0, 16),
+    sent_to: [],
   });
   const formatToMicroseconds = (dateTime) => {
     const [date, time] = dateTime.split("T");
@@ -20,11 +40,14 @@ function CreateNotificationModal({ closeModal, sendAlert }) {
     console.log("Formatted value: ", e.target.value);
   };
   const sendNotification = () => {
+    console.log("Notification: ", Notification);
     if (
       Notification.subject === "" ||
       Notification.body === "" ||
       Notification.category === "" ||
-      Notification.set_when === ""
+      Notification.set_when === "" ||
+      Notification.sent_to.length === 0 ||
+      Notification.sent_to === undefined
     ) {
       setNotification({ ...Notification, error: true });
       return;
@@ -32,7 +55,7 @@ function CreateNotificationModal({ closeModal, sendAlert }) {
     const formattedValue = formatToMicroseconds(Notification.set_when);
 
     axios
-      .post("/notification", [], {
+      .post("/notification", Notification.sent_to, {
         params: {
           subject: Notification.subject,
           body: Notification.body,
@@ -53,7 +76,7 @@ function CreateNotificationModal({ closeModal, sendAlert }) {
       .catch((error) => {
         console.error("There was an error sending the notification!", error);
         sendAlert(
-          "Error occured!",
+          "Error occurred!",
           "Something went wrong while sending the notification"
         );
       })
@@ -127,6 +150,29 @@ function CreateNotificationModal({ closeModal, sendAlert }) {
           value={Notification.set_when} // Display in a valid format for datetime-local
           onChange={handleDateTimeChange}
         />
+        <FormControl fullWidth margin="dense">
+          <InputLabel id="demo-simple-select-label">
+            Sent to the following:
+          </InputLabel>
+          <Select
+            labelId="demo-multiple-name-label"
+            id="demo-multiple-name"
+            multiple
+            value={Notification.sent_to}
+            input={<OutlinedInput label="Sent to the following:" />}
+            MenuProps={MenuProps}
+            onChange={(e) => {
+              setNotification({ ...Notification, sent_to: e.target.value });
+              console.log("Sent to:", Notification.sent_to);
+            }}
+          >
+            <MenuItem value={"STUDENT"}>Student</MenuItem>
+            <MenuItem value={"ADMIN"}>Admin</MenuItem>
+            <MenuItem value={"SECURITY"}>Security Guard</MenuItem>
+            <MenuItem value={"PROGRAM HEAD"}>Program Head</MenuItem>
+            <MenuItem value={"DEAN"}>Dean</MenuItem>
+          </Select>
+        </FormControl>
         <Button onClick={sendNotification} color="error" fullWidth>
           Send Notification
         </Button>
