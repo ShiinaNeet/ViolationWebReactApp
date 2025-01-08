@@ -379,9 +379,6 @@ export default function UserManagement() {
 
   React.useEffect(() => {
     fetchData(page * rowsPerPage, rowsPerPage);
-    return () => {
-      console.log("Users Management component unmounted");
-    };
   }, [page, rowsPerPage]);
 
   const fetchData = async (skip, limit) => {
@@ -524,20 +521,19 @@ export default function UserManagement() {
         alignItems: "center",
         pt: { xs: 15, sm: 15 },
         pb: { xs: 8, sm: 12 },
-        height: "100vh",
+        height: "100svh",
       }}
     >
       <div className="w-full h-full mx-auto ">
         <div className="flex flex-col md:flex-row justify-between gap-x-2 text-sm md:text-md bg-white my-2 rounded-md px-1 py-5">
           <h1 className="md:text-3xl text-2xl flex items-center">Users List</h1>
           <Tooltip title="Create User">
-            <Button
-              color="error"
+            <button
+              className=" my-2 p-2 rounded-sm  hover:bg-red-200 text-red-500 hover:text-red-700"
               onClick={() => handleCreateOpen()}
-              className="p-2"
             >
               <AddIcon /> Create User
-            </Button>
+            </button>
           </Tooltip>
         </div>
         {/* <div className="flex">
@@ -724,186 +720,7 @@ export default function UserManagement() {
               </Button>
             </DialogActions>
           </Dialog> */}
-            <Dialog open={openCreate} onClose={handleClose}>
-              <DialogTitle>Create User</DialogTitle>
-              <DialogContent>
-                <form>
-                  <TextField
-                    autoFocus
-                    color="error"
-                    margin="dense"
-                    label="First Name"
-                    type="text"
-                    fullWidth
-                    value={user.first_name}
-                    required={true}
-                    onChange={(e) =>
-                      setUser({
-                        ...user,
-                        first_name: e.target.value,
-                      })
-                    }
-                  />
-                  <TextField
-                    autoFocus
-                    color="error"
-                    margin="dense"
-                    label="last Name"
-                    type="text"
-                    fullWidth
-                    value={user.last_name}
-                    required={true}
-                    onChange={(e) =>
-                      setUser({
-                        ...user,
-                        last_name: e.target.value,
-                      })
-                    }
-                  />
-                  <TextField
-                    autoFocus
-                    margin="dense"
-                    color="error"
-                    label="Username"
-                    type="text"
-                    fullWidth
-                    value={user.username}
-                    required={true}
-                    onChange={(e) =>
-                      setUser({
-                        ...user,
-                        username: e.target.value,
-                      })
-                    }
-                  />
-                  <TextField
-                    autoFocus
-                    color="error"
-                    margin="dense"
-                    label="Email Address"
-                    type="text"
-                    fullWidth
-                    value={user.email}
-                    required={true}
-                    onChange={(e) =>
-                      setUser({
-                        ...user,
-                        email: e.target.value,
-                      })
-                    }
-                  />
-                  <TextField
-                    className="mb-1"
-                    color="error"
-                    id="outlined-password-input"
-                    label="Password"
-                    type="password"
-                    margin="dense"
-                    fullWidth
-                    required={true}
-                    autoComplete="current-password"
-                    onChange={(e) =>
-                      setUser({ ...user, password: e.target.value })
-                    }
-                  />
-                  <FormControl fullWidth margin="dense">
-                    <InputLabel id="demo-simple-select-label" color="error">
-                      Type
-                    </InputLabel>
-                    <Select
-                      color="error"
-                      labelId="demo-simple-select-label"
-                      id="demo-simple-select"
-                      value={user.type}
-                      label="Type"
-                      onChange={(e) => {
-                        setUser({ ...user, type: e.target.value }),
-                          console.log(e.target.value);
-                      }}
-                    >
-                      <MenuItem value={"ADMIN"}>Admin</MenuItem>
-                      <MenuItem value={"SECURITY"}>Security Guard</MenuItem>
-                      <MenuItem value={"PROGRAM HEAD"}>Program Head</MenuItem>
-                      <MenuItem value={"DEAN"}>Dean</MenuItem>
-                      {/* <MenuItem value={"PROFESSOR"}>Professor</MenuItem> */}
-                    </Select>
-                  </FormControl>
-                  {user.type === "PROGRAM HEAD" && (
-                    <FormControl fullWidth margin="dense">
-                      <InputLabel id="demo-simple-select-label" color="error">
-                        Assign a Department
-                      </InputLabel>
-                      <Select
-                        color="error"
-                        labelId="demo-simple-select-label"
-                        id="demo-simple-select"
-                        value={user.assigned_department}
-                        label="Assign a Department"
-                        onChange={(e) => {
-                          setUser({
-                            ...user,
-                            assigned_department: e.target.value,
-                          }),
-                            console.log(e.target.value);
-                        }}
-                      >
-                        {departmentData.map((department, idx) => (
-                          <MenuItem value={department.name} key={idx}>
-                            {department.name}
-                          </MenuItem>
-                        ))}
-                      </Select>
-                    </FormControl>
-                  )}
-                  {user.type === "DEAN" && (
-                    <FormControl fullWidth margin="dense">
-                      <InputLabel id="demo-simple-select-label" color="error">
-                        Assign to Department/s
-                      </InputLabel>
-                      <Select
-                        color="error"
-                        labelId="demo-simple-select-label"
-                        id="demo-simple-select"
-                        value={user.assigned_departments}
-                        label="Assign a Department"
-                        multiple
-                        onChange={(e) => {
-                          addMultipleDepartment(e);
-                          // console.log(e.target.value);
-                          // if (
-                          //   user.assigned_departments.includes(e.target.value)
-                          // ) {
-                          //   return;
-                          // } else {
-                          //   setUser({
-                          //     ...user,
-                          //     assigned_departments: e.target.value.split(","),
-                          //   });
-                          // }
-                        }}
-                      >
-                        {departmentData.map((department) => (
-                          <MenuItem
-                            key={department.name}
-                            value={department.name}
-                          >
-                            {department.name}
-                          </MenuItem>
-                        ))}
-                      </Select>
-                    </FormControl>
-                  )}
-                </form>
-              </DialogContent>
-              <DialogActions>
-                <Button onClick={handleSave} color="error" disabled={isLoading}>
-                  {isLoading ? "Saving...." : "Create"}
-                </Button>
-                <Button onClick={handleClose} color="error">
-                  Cancel
-                </Button>
-              </DialogActions>
-            </Dialog>
+
             {/* <Dialog open={openDelete} onClose={handleClose}>
             <DialogTitle>Delete User?</DialogTitle>
             <DialogContent>
@@ -977,7 +794,182 @@ export default function UserManagement() {
           </Dialog> */}
           </TableContainer>
         </StyledToolbar>
-
+        <Dialog open={openCreate} onClose={handleClose}>
+          <DialogTitle>Create User</DialogTitle>
+          <DialogContent>
+            <form>
+              <TextField
+                autoFocus
+                color="error"
+                margin="dense"
+                label="First Name"
+                type="text"
+                fullWidth
+                value={user.first_name}
+                required={true}
+                onChange={(e) =>
+                  setUser({
+                    ...user,
+                    first_name: e.target.value,
+                  })
+                }
+              />
+              <TextField
+                autoFocus
+                color="error"
+                margin="dense"
+                label="last Name"
+                type="text"
+                fullWidth
+                value={user.last_name}
+                required={true}
+                onChange={(e) =>
+                  setUser({
+                    ...user,
+                    last_name: e.target.value,
+                  })
+                }
+              />
+              <TextField
+                autoFocus
+                margin="dense"
+                color="error"
+                label="Username"
+                autoComplete="username"
+                type="text"
+                fullWidth
+                value={user.username}
+                required={true}
+                onChange={(e) =>
+                  setUser({
+                    ...user,
+                    username: e.target.value,
+                  })
+                }
+              />
+              <TextField
+                autoFocus
+                color="error"
+                margin="dense"
+                label="Email Address"
+                type="text"
+                fullWidth
+                value={user.email}
+                required={true}
+                onChange={(e) =>
+                  setUser({
+                    ...user,
+                    email: e.target.value,
+                  })
+                }
+              />
+              <TextField
+                className="mb-1"
+                color="error"
+                id="outlined-password-input"
+                label="Password"
+                type="password"
+                margin="dense"
+                fullWidth
+                required={true}
+                autoComplete="current-password"
+                onChange={(e) => setUser({ ...user, password: e.target.value })}
+              />
+              <FormControl fullWidth margin="dense">
+                <InputLabel id="demo-simple-select-label" color="error">
+                  Type
+                </InputLabel>
+                <Select
+                  color="error"
+                  labelId="demo-simple-select-label"
+                  id="demo-simple-select"
+                  value={user.type}
+                  label="Type"
+                  onChange={(e) => {
+                    setUser({ ...user, type: e.target.value }),
+                      console.log(e.target.value);
+                  }}
+                >
+                  <MenuItem value={"ADMIN"}>Admin</MenuItem>
+                  <MenuItem value={"SECURITY"}>Security Guard</MenuItem>
+                  <MenuItem value={"PROGRAM HEAD"}>Program Head</MenuItem>
+                  <MenuItem value={"DEAN"}>Dean</MenuItem>
+                  {/* <MenuItem value={"PROFESSOR"}>Professor</MenuItem> */}
+                </Select>
+              </FormControl>
+              {user.type === "PROGRAM HEAD" && (
+                <FormControl fullWidth margin="dense">
+                  <InputLabel id="demo-simple-select-label" color="error">
+                    Assign a Department
+                  </InputLabel>
+                  <Select
+                    color="error"
+                    labelId="demo-simple-select-label"
+                    id="demo-simple-select"
+                    value={user.assigned_department}
+                    label="Assign a Department"
+                    onChange={(e) => {
+                      setUser({
+                        ...user,
+                        assigned_department: e.target.value,
+                      }),
+                        console.log(e.target.value);
+                    }}
+                  >
+                    {departmentData.map((department, idx) => (
+                      <MenuItem value={department.name} key={idx}>
+                        {department.name}
+                      </MenuItem>
+                    ))}
+                  </Select>
+                </FormControl>
+              )}
+              {user.type === "DEAN" && (
+                <FormControl fullWidth margin="dense">
+                  <InputLabel id="demo-simple-select-label" color="error">
+                    Assign to Department/s
+                  </InputLabel>
+                  <Select
+                    color="error"
+                    labelId="demo-simple-select-label"
+                    id="demo-simple-select"
+                    value={user.assigned_departments}
+                    label="Assign a Department"
+                    multiple
+                    onChange={(e) => {
+                      addMultipleDepartment(e);
+                      // console.log(e.target.value);
+                      // if (
+                      //   user.assigned_departments.includes(e.target.value)
+                      // ) {
+                      //   return;
+                      // } else {
+                      //   setUser({
+                      //     ...user,
+                      //     assigned_departments: e.target.value.split(","),
+                      //   });
+                      // }
+                    }}
+                  >
+                    {departmentData.map((department) => (
+                      <MenuItem key={department.name} value={department.name}>
+                        {department.name}
+                      </MenuItem>
+                    ))}
+                  </Select>
+                </FormControl>
+              )}
+            </form>
+          </DialogContent>
+          <DialogActions>
+            <Button onClick={handleSave} color="error" disabled={isLoading}>
+              {isLoading ? "Saving...." : "Create"}
+            </Button>
+            <Button onClick={handleClose} color="error">
+              Cancel
+            </Button>
+          </DialogActions>
+        </Dialog>
         <Snackbar
           open={alertMessage.open}
           autoHideDuration={3000}
