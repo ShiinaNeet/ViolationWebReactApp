@@ -176,16 +176,11 @@ const Department_Head_NavigationBar = () => {
             </IconButton>
 
             <Drawer
-              anchor="right"
+              anchor="top"
               open={open}
               onClose={toggleDrawer(false)}
               PaperProps={{
-                sx: { width: "30%" },
-              }}
-              SlideProps={{
-                Directions: "right",
-                easing: "ease-in-out",
-                appear: true,
+                sx: { top: "var(--template-frame-height, 0px)" },
               }}
             >
               <Box sx={{ p: 2, backgroundColor: "background.default" }}>

@@ -50,6 +50,8 @@ import formatDate from "../utils/moment";
 import DeleteOutlineIcon from "@mui/icons-material/DeleteOutline";
 import AddIcon from "@mui/icons-material/Add";
 import { red } from "@mui/material/colors";
+import axios from "axios";
+import { useAuth } from "../auth/AuthProvider";
 
 function TablePaginationActions(props) {
   const { count, page, rowsPerPage, onPageChange } = props;
@@ -142,27 +144,71 @@ const StyledToolbar = styled(Toolbar)(({ theme }) => ({
   boxShadow: `0px 4px 6px ${alpha(red[500], 0.9)}`,
 }));
 const Students = ({ DataToGet }) => {
+  const { userType } = useAuth();
+  const [CurrentUserType, setCurrentUserType] = React.useState({});
   const [anchorEl, setAnchorEl] = React.useState(null);
   const open = Boolean(anchorEl);
   const [isLoading, setIsLoading] = React.useState(false);
   const [isFetchingData, setIsFetchingData] = React.useState(false);
   const [fetchingDataError, setFetchingDataError] = React.useState("");
   const [ViewModal, setViewModal] = React.useState(false);
-  const [targetStudent, setStudent] = React.useState({
+  const [targetStudent, setTargetStudent] = React.useState({
+    _id: "",
     userid: 0,
     fullname: "",
     violations: [],
-    year: "",
-    department: "",
-    section: "",
+    year: "1st Year",
+    department: "CICS",
     email: "",
+    course: "BS Information Technology",
+    term: "First Semester",
   });
   const [violationList, setViolationList] = React.useState([]);
+  const [departments, setDepartments] = React.useState([]);
   const [searchFilter, setSearchFilter] = React.useState({
     name: "",
     violation: "",
     department: "",
   });
+  const yearList = ["1st year", "2nd year", "3rd year", "4th year", "5th year"];
+
+  const schoolTermList = [
+    "First Semester",
+    "Second Semester",
+    "Third Semester",
+    "Fourth Semester",
+    "Fifth Semester",
+    "Summer Term",
+  ];
+  const coursesList = [
+    "BS Information Technology",
+    "BS Computer Science",
+    "Doctor of Business Administration (DBA)",
+    "Master of Public Administration (MPA) (Thesis/Non-Thesis program)",
+    "Master of Business Administration (MBA) (Thesis/Non-Thesis program)",
+    "BS Accountancy",
+    "BS Accounting Management",
+    "BS Applied Economics",
+    "BS Business Administration Major in: Business Economics",
+    "BS Business Administration Major in: Financial Management",
+    "BS Business Administration Major in: Human Resource Development Management",
+    "BS Business Administration Major in: Marketing Management",
+    "BS Business Administration Major in: Operations Management",
+    "Associate in Accounting",
+    "Associate in Management",
+    "BS Hotel and Restaurant Management",
+    "BS Tourism Management",
+    "Associate in Hotel and Restaurant Management",
+    "Associate in Tourism Management",
+    "BA Public Administration",
+    "BS Customs Administration",
+    "BS Entrepreneurship",
+    "Doctor of Technology",
+    "Master of Technology",
+    "Bachelor of Industrial Technology (BIT 4 – years)",
+    "BS Nursing",
+    "BS Nutrition & Dietetics",
+  ];
   const theme = useTheme();
   const handleChange = (event) => {
     const {
@@ -215,6 +261,9 @@ const Students = ({ DataToGet }) => {
   useEffect(() => {
     fetchViolationData();
     fetchData("/user/paginated");
+    fetchDepartments();
+
+    setCurrentUserType(localStorage.getItem("userType"));
     // if (DataToGet == "ADMIN") {
     //   fetchData("/user/paginated");
     // } else if (DataToGet == "PROGRAM HEAD") {
@@ -235,12 +284,15 @@ const Students = ({ DataToGet }) => {
     // setMessageStudentModal(false);
     setDeleteStudentViolationModal(false);
     setUpdateStudentViolationModal(false);
-    setStudent({
+    setTargetStudent({
       fullname: "",
       violations: [],
       year: "",
       department: "",
-      section: "",
+      course: "",
+      term: "",
+      userid: 0,
+      email: "",
     });
   };
   const handleSendMessageModalClose = () => {
@@ -249,7 +301,7 @@ const Students = ({ DataToGet }) => {
   const handleViewViolationModal = (person) => {
     setAnchorEl(null);
     // console.log(person);
-    // setStudent(person);
+    // setTargetStudent(person);
     fetchUser(person);
     setViewModal(true);
     setSearchFilterModal(false);
@@ -257,12 +309,24 @@ const Students = ({ DataToGet }) => {
   const handleUpdateViolationModal = (person) => {
     setAnchorEl(null);
     setUpdateStudentViolationModal(true);
-    setStudent(person);
+    // setTargetStudent(person);
+    console.log("Person: ", person);
+    setTargetStudent((prev) => ({
+      _id: person._id,
+      email: person.email,
+      course: person.course ? person.course : "BS Information Technology",
+      term: person.term ? person.term : "First Semester",
+      department: person.year_and_department.split(" - ")[0],
+      year: person.year_and_department.split(" - ")[1],
+      violations: person.violations,
+      fullname: person.fullname,
+      userid: person.userid,
+    }));
   };
 
   const handleDeleteViolationModal = (person) => {
     setDeleteStudentViolationModal(true);
-    setStudent(person);
+    setTargetStudent(person);
     setAnchorEl(null);
   };
   const handleSearch = (e) => {
@@ -401,6 +465,35 @@ const Students = ({ DataToGet }) => {
         console.error("There was an error fetching the data!", error);
       });
   };
+  const fetchDepartments = async () => {
+    axios
+      .get("/department", {
+        params: {
+          skip: 0,
+          limit: 100,
+        },
+        headers: {
+          "Content-Type": "application/json",
+        },
+      })
+      .then((response) => {
+        if (response.data.status === "success") {
+          console.log("Data fetched successfully");
+          setDepartments(response.data.data);
+        } else {
+          console.log("Failed to fetch data");
+        }
+      })
+      .catch((error) => {
+        console.error("There was an error fetching the data!", error);
+        setAlertMessage({
+          open: true,
+          title: error.title,
+          message: error.message,
+          variant: "info",
+        });
+      });
+  };
   const fetchUser = async (person) => {
     axios
       .get(`/user/${person.userid}`, {
@@ -409,7 +502,7 @@ const Students = ({ DataToGet }) => {
         },
       })
       .then((response) => {
-        setStudent({
+        setTargetStudent({
           fullname: response.data.fullname,
           userid: response.data.userid,
           violations:
@@ -417,6 +510,8 @@ const Students = ({ DataToGet }) => {
           year_and_department: response.data.year_and_department,
           section: response.data.section,
           email: response.data.email,
+          course: response.data.course,
+          term: response.data.term,
         });
       })
       .catch((error) => {
@@ -439,23 +534,27 @@ const Students = ({ DataToGet }) => {
   const handleDeleteViolation = (index) => {
     const updatedViolations = [...targetStudent.violations];
     updatedViolations.splice(index, 1);
-    setStudent({ ...targetStudent, violations: updatedViolations });
+    setTargetStudent({ ...targetStudent, violations: updatedViolations });
   };
 
   const handleAddViolation = () => {
     // if (selectedViolation && !targetStudent.violations.some(v => v.name === selectedViolation.name)) {
-    if (selectedViolation) {
+    if (
+      selectedViolation._id.length > 0 &&
+      !targetStudent.violations.some((v) => v.name === selectedViolation.name)
+    ) {
       setSelectedViolation({
         ...selectedViolation,
         date: new Date().getTime(),
       });
-      console.log(selectedViolation);
+      console.log("Selected Violations: ", selectedViolation);
       const updatedViolations = [
         ...targetStudent.violations,
         selectedViolation,
       ];
-      setStudent({ ...targetStudent, violations: updatedViolations });
-      setSelectedViolation("");
+      setTargetStudent({ ...targetStudent, violations: updatedViolations });
+      setSelectedViolation({ name: "", _id: "", date: "", description: "" });
+      console.log("Updated Violations: ", targetStudent.violations);
     }
   };
   const transformedViolations = targetStudent.violations.map((violation) => ({
@@ -465,27 +564,39 @@ const Students = ({ DataToGet }) => {
   }));
   const handleUpdateViolation = () => {
     // console.log('Updating violation...');
-    // console.log("Current student violation: ",targetStudent.violations);
+    console.log("Current student violation: ", targetStudent);
     setIsLoading(true);
+
     if (
-      targetStudent.violations.length == 0 ||
-      targetStudent.department == ""
+      targetStudent.violations.length === 0 ||
+      targetStudent.department == "" ||
+      targetStudent.year == "" ||
+      targetStudent.course == "" ||
+      targetStudent.term == "" ||
+      targetStudent.term == null ||
+      targetStudent.course == null
     ) {
       console.log("No violation to update");
       setAlertMessage({
         open: true,
         title: "Error occured!",
-        message: "Student Violation and Department fields are required!",
+        message: "All fields are required!",
         variant: "info",
       });
       setIsLoading(false);
       return;
     }
+    console.log("Student to update: ", targetStudent);
     axios
       .put(
         `/user/update/student/${targetStudent.userid}`,
         {
-          year_and_department: targetStudent.year_and_department,
+          year_and_department:
+            targetStudent.year + " - " + targetStudent.department,
+          course: targetStudent.course
+            ? targetStudent.course
+            : "BS Information Technology",
+          term: targetStudent.term ? targetStudent.term : "First Semester",
           violations: transformedViolations,
         },
         {
@@ -545,7 +656,7 @@ const Students = ({ DataToGet }) => {
       >
         <div className="w-full mx-auto h-full">
           <div className="flex flex-row justify-between h-fit bg-white p-2 rounded-md shadow-md my-2">
-            <h1 className="text-3xl py-3">Student List</h1>
+            <h1 className="text-3xl py-3">Student Violations</h1>
             {/* <button
             className="bg-red-500 my-2 p-2 rounded-sm text-white hover:bg-red-600"
             onClick={() => setSearchFilterModal(true)}
@@ -606,15 +717,23 @@ const Students = ({ DataToGet }) => {
                             <RemoveRedEyeIcon color="error" />
                           </Button>
                         </Tooltip>
-                        <Tooltip title="Edit Student">
-                          <Button
-                            className="rounded-sm text-white hover:bg-red-100 hover:text-red-700"
-                            onClick={() => handleUpdateViolationModal(student)}
-                            color="error"
-                          >
-                            <EditIcon color="error" />
-                          </Button>
-                        </Tooltip>
+                        {CurrentUserType == "ADMIN" ||
+                        localStorage.getItem("userType") == "ADMIN" ? (
+                          <Tooltip title="Edit Student">
+                            <Button
+                              className="rounded-sm text-white hover:bg-red-100 hover:text-red-700"
+                              onClick={() =>
+                                handleUpdateViolationModal(student)
+                              }
+                              color="error"
+                            >
+                              <EditIcon color="error" />
+                            </Button>
+                          </Tooltip>
+                        ) : (
+                          ""
+                        )}
+
                         {/* <Tooltip title="Delete Student">
                         <Button
                           className="rounded-sm text-white hover:bg-red-600 hover:text-white"
@@ -626,9 +745,14 @@ const Students = ({ DataToGet }) => {
                       </td>
                     </tr>
                   ))}
-                  {rows.length == 0 && (
+                  {isFetchingData && (
                     <TableRow style={{ height: 53 * emptyRows }}>
-                      <TableCell colSpan={6}> No Data</TableCell>
+                      <TableCell colSpan={6}>Loading...</TableCell>
+                    </TableRow>
+                  )}
+                  {isFetchingData && rows.length == 0 && (
+                    <TableRow style={{ height: 53 * emptyRows }}>
+                      <TableCell colSpan={6}>No data</TableCell>
                     </TableRow>
                   )}
                 </TableBody>
@@ -716,6 +840,28 @@ const Students = ({ DataToGet }) => {
                       : "Incorrect Format"
                     : "No Data"
                 }
+                variant="standard"
+                slotProps={{
+                  input: {
+                    readOnly: true,
+                  },
+                }}
+              />
+              <TextField
+                id="standard-read-only-input"
+                label="Course"
+                value={targetStudent.course ? targetStudent.course : "No Data"}
+                variant="standard"
+                slotProps={{
+                  input: {
+                    readOnly: true,
+                  },
+                }}
+              />
+              <TextField
+                id="standard-read-only-input"
+                label="Term"
+                value={targetStudent.term ? targetStudent.term : "No Data"}
                 variant="standard"
                 slotProps={{
                   input: {
@@ -874,19 +1020,106 @@ const Students = ({ DataToGet }) => {
                   <AddIcon color="error" /> Add
                 </Button>
               </div>
-
-              <TextField
+              <div className="my-2">
+                <label htmlFor="course">Course</label>
+                <select
+                  id="course"
+                  name="course"
+                  className="w-full border rounded  flex-1 my-2"
+                  value={targetStudent.course}
+                  onChange={(e) => {
+                    setTargetStudent({
+                      ...targetStudent,
+                      course: e.target.value,
+                    });
+                    console.log("Course: ", e.target.value);
+                  }}
+                >
+                  {coursesList.map((course) => (
+                    <option key={course} value={course}>
+                      {course}
+                    </option>
+                  ))}
+                </select>
+              </div>
+              <div className="my-2">
+                <label htmlFor="term">Term</label>
+                <select
+                  id="term"
+                  name="term"
+                  className="w-full border rounded  flex-1 my-2"
+                  value={targetStudent.term}
+                  onChange={(e) => {
+                    setTargetStudent({
+                      ...targetStudent,
+                      term: e.target.value,
+                    });
+                    console.log("School Term: ", e.target.value);
+                  }}
+                >
+                  {schoolTermList.map((term) => (
+                    <option key={term} value={term}>
+                      {term}
+                    </option>
+                  ))}
+                </select>
+              </div>
+              <div className="my-2">
+                <label htmlFor="department">Department</label>
+                <select
+                  id="department"
+                  name="department"
+                  className="w-full border rounded  flex-1 my-2"
+                  value={targetStudent.department}
+                  onChange={(e) => {
+                    setTargetStudent({
+                      ...targetStudent,
+                      department: e.target.value,
+                    });
+                    console.log("Department: ", e.target.value);
+                  }}
+                >
+                  {departments.map((department) => (
+                    <option key={department.name} value={department.name}>
+                      {department.name}
+                    </option>
+                  ))}
+                </select>
+              </div>
+              <div className="my-2">
+                <label htmlFor="year">School Year</label>
+                <select
+                  id="year"
+                  name="year"
+                  className="w-full border rounded  flex-1 my-2"
+                  value={targetStudent.year}
+                  onChange={(e) => {
+                    setTargetStudent({
+                      ...targetStudent,
+                      year: e.target.value,
+                    });
+                    console.log("Year: ", e.target.value);
+                  }}
+                >
+                  {yearList.map((year) => (
+                    <option key={year} value={year}>
+                      {year}
+                    </option>
+                  ))}
+                </select>
+              </div>
+              {/* <TextField
                 margin="dense"
                 className="my-5 py-5"
-                label="Department and Year (e.g. Computer Science - 3rd Year)"
+                label="Year"
                 type="text"
                 color="error"
                 variant="standard"
-                value={targetStudent.year_and_department}
+                value={targetStudent.year}
                 onChange={(e) =>
-                  setStudent({
+                  setTargetStudent({
                     ...targetStudent,
-                    year_and_department: e.target.value,
+                    year: e.target.value,
                   })
                 }
                 slotProps={{
@@ -895,7 +1128,7 @@ const Students = ({ DataToGet }) => {
                   },
                 }}
                 fullWidth
-              />
+              /> */}
             </div>
           </DialogContent>
           <DialogActions>

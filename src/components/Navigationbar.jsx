@@ -141,6 +141,14 @@ const Navigationbar = () => {
             <Button variant="text" color="error" size="small">
               <Link
                 className=" hover:bg-red-100 hover:rounded-md hover:cursor-pointer"
+                to="/students"
+              >
+                Home
+              </Link>
+            </Button>
+            <Button variant="text" color="error" size="small">
+              <Link
+                className=" hover:bg-red-100 hover:rounded-md hover:cursor-pointer"
                 to="/Violations"
               >
                 Violation

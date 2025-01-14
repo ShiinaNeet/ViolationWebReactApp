@@ -29,6 +29,7 @@ export const AuthProvider = ({ children }) => {
       );
       if (response.data.status === "success") {
         localStorage.setItem("accessToken", response.data.access_token);
+        localStorage.setItem("userType", response.data.account_type);
         const authTokens = {
           accessToken: localStorage.getItem("accessToken"),
         };
