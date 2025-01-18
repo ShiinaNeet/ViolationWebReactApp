@@ -521,19 +521,20 @@ export default function UserManagement() {
         alignItems: "center",
         pt: { xs: 15, sm: 15 },
         pb: { xs: 8, sm: 12 },
-        height: "100svh",
+        height: "100vh",
       }}
     >
       <div className="w-full h-full mx-auto ">
         <div className="flex flex-col md:flex-row justify-between gap-x-2 text-sm md:text-md bg-white my-2 rounded-md px-1 py-5">
           <h1 className="md:text-3xl text-2xl flex items-center">Users List</h1>
           <Tooltip title="Create User">
-            <button
-              className=" my-2 p-2 rounded-sm  hover:bg-red-200 text-red-500 hover:text-red-700"
+            <Button
+              color="error"
               onClick={() => handleCreateOpen()}
+              className="p-2"
             >
               <AddIcon /> Create User
-            </button>
+            </Button>
           </Tooltip>
         </div>
         {/* <div className="flex">

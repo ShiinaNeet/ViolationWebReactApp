@@ -297,7 +297,7 @@ export default function DepartmentTable() {
     <div className="container h-full mx-auto px-2 mb-20 mt-5">
       <div className="flex flex-col sm:flex-row justify-between gap-x-2 md:m-0 text-sm md:text-md bg-white rounded-sm px-2">
         <h1 className="text-3xl py-3">Departments</h1>
-        <Tooltip title="Create Department">
+        {/* <Tooltip title="Create Department">
           <Button
             className="bg-blue-500 my-2 px-2 rounded-sm text-white "
             onClick={() => handleCreateOpen()}
@@ -305,7 +305,7 @@ export default function DepartmentTable() {
           >
             <AddIcon color="error" /> Create Department
           </Button>
-        </Tooltip>
+        </Tooltip> */}
       </div>
       <div style={{ boxShadow: `0px 4px 6px ${alpha(red[500], 0.9)}` }}>
         <TableContainer component={Paper} className="">
