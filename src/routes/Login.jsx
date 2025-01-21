@@ -25,6 +25,7 @@ const Login = () => {
     admin: "ADMIN",
     department_head: "PROGRAM HEAD",
     dean: "DEAN",
+    professor: "PROFESSOR",
   };
   const animationPlayed = useRef(false); // Track if the animation has been played
   const formRef = useRef(null); // Ref for the form element
@@ -58,7 +59,10 @@ const Login = () => {
         navigate("/violations");
       } else if (responseData == userType.dean) {
         navigate("/dean/home");
-      } else if (responseData == userType.department_head) {
+      } else if (
+        responseData == userType.department_head ||
+        responseData == userType.professor
+      ) {
         navigate("/department-head/home");
       } else {
         setAlertMessage({
