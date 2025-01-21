@@ -11,7 +11,7 @@ export default function BarChartHead() {
   const fetchData = async () => {
     setLoading(true);
     try {
-      const response = await axios.get("/violation/statistic", {
+      const response = await axios.get("/statistic", {
         headers: {
           "Content-Type": "application/json",
         },
@@ -19,7 +19,14 @@ export default function BarChartHead() {
       console.log("Response: ", response);
       if (response.status === 200) {
         console.log("Data fetched successfully");
-        setData(response.data);
+
+        const pieChartData = response.data.flatMap((department) =>
+          department.programs.map((program) => ({
+            name: program.program_name,
+            value: program.total_violations,
+          }))
+        );
+        setData(pieChartData);
       } else {
         console.log("Failed to fetch data");
       }
@@ -35,8 +42,8 @@ export default function BarChartHead() {
     fetchData();
   }, []);
 
-  const transformedData = data.map((item) => item.violation_name);
-  const seriesData = data.map((item) => item.count);
+  const transformedData = data.map((item) => item.name);
+  const seriesData = data.map((item) => item.value);
 
   return (
     <Container

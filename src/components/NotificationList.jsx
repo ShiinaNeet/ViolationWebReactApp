@@ -7,6 +7,7 @@ import {
   Chip,
   Container,
   Dialog,
+  DialogActions,
   DialogContent,
   DialogTitle,
   FormControl,
@@ -52,6 +53,7 @@ export default function NotificationList() {
   const horizontal = "right";
   const [isCreateModalOpen, setIsCreateModalOpen] = useState(false);
   const [isViewModalOpen, setIsViewModalOpen] = useState(false);
+  const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
   const [notifications, setNotifications] = useState([]);
   const [filteredNotifications, setFilteredNotifications] = useState([]);
   const [selectedNotification, setSelectedNotification] = useState(null);
@@ -69,20 +71,27 @@ export default function NotificationList() {
     variant: "",
   });
   // Fetch notifications from the API
-  const fetchNotifications = async () => {
+  const fetchNotifications = () => {
     setIsLoading(true);
     try {
-      const response = await axios.get(`notification`, {
-        headers: {
-          "Content-Type": "application/json",
-        },
-        params: {
-          search: notificationQueryParams.search,
-          sort: notificationQueryParams.sort,
-          sent: notificationQueryParams.sent,
-        },
-      });
-      setNotifications(response.data.queued_emails);
+      axios
+        .get(`notification`, {
+          headers: {
+            "Content-Type": "application/json",
+          },
+          params: {
+            skip: 0,
+            limit: 100,
+          },
+        })
+        .then((response) => {
+          if (response.data.status === "success") {
+            setNotifications(response.data.data);
+            setFilteredNotifications(response.data.data);
+            console.log("Notifications fetched:", response.data.data); // Check if this logs the correct data
+            applyFilter();
+          }
+        });
     } catch (error) {
       console.error("Error fetching notifications:", error);
     } finally {
@@ -92,17 +101,25 @@ export default function NotificationList() {
 
   // Apply filter to notifications
   const applyFilter = () => {
+    const currentTimestamp = Date.now();
+    if (filteredNotifications.length == 0) return;
     if (filter === "All") {
       setFilteredNotifications(notifications);
-    } else if (filter === "Message-Sent") {
+      console.log("Filtering all");
+    } else if (filter === "Sent") {
       setFilteredNotifications(
-        notifications.filter((notif) => notif.is_sent === true)
+        notifications.filter(
+          (notif) => Date.parse(notif.sent_at) < currentTimestamp
+        )
       );
-    } else if (filter === "Message-Queued") {
+    } else if (filter === "Queued") {
       setFilteredNotifications(
-        notifications.filter((notif) => notif.is_sent === false)
+        notifications.filter(
+          (notif) => Date.parse(notif.sent_at) >= currentTimestamp
+        )
       );
     }
+    console.log("Filtering");
   };
 
   // Fetch notifications on initial render
@@ -122,6 +139,7 @@ export default function NotificationList() {
   const handleClose = () => {
     setIsCreateModalOpen(false);
     setIsViewModalOpen(false);
+    setIsDeleteModalOpen(false);
   };
   const handleAlertClose = (event, reason) => {
     if (reason === "clickaway") {
@@ -136,21 +154,41 @@ export default function NotificationList() {
       message: message,
     });
   };
-
+  const axiosDeleteNotification = async () => {
+    console.log("Deleting notification:", selectedNotification);
+    axios
+      .delete("notification", { params: { id: selectedNotification.id } })
+      .then((response) => {
+        if (response.data.status === "success") {
+          sendAlert("Success", "Notification deleted successfully!");
+          fetchNotifications();
+        } else {
+          sendAlert("Error", "Please try again later");
+        }
+      })
+      .catch((error) => {
+        console.error(error);
+        sendAlert("Error", error.message);
+      })
+      .finally(() => {
+        setIsDeleteModalOpen(false);
+      });
+  };
   return (
     <div className="">
+      <div className="flex flex-row justify-between   my-2">
+        <h1 className="text-3xl py-3">Student Violations</h1>
+      </div>
       {isLoading ? (
         <p>Loading...</p>
       ) : (
         <StyledToolbar variant="dense" disableGutters>
-          <TableContainer component={Paper} className="py-2">
+          <TableContainer component={Paper} className="">
             <Table sx={{ minWidth: 500 }} aria-label="simple table">
-              <TableHead sx={{ padding: "0px" }}>
-                <TableRow
-                // sx={{ borderBottom: "2px solid red", padding: "0px" }}
-                >
+              <TableHead sx={{ padding: "10px" }}>
+                <TableRow>
                   <TableCell onClick={() => fetchNotifications()} size="small">
-                    <div className="hover:bg-red-100 py-1.5 px-3 rounded-sm flex items-start">
+                    <div className="hover:bg-red-100 py-2 px-3 rounded-sm flex items-start w-fit">
                       <ReplayIcon color="error" fontSize="small" />
                     </div>
                   </TableCell>
@@ -163,10 +201,21 @@ export default function NotificationList() {
                     </Button>
                   </TableCell>
                   <TableCell size="small"></TableCell>
-                  <TableCell size="small" align="center">
+                  <TableCell
+                    size="medium"
+                    align="center"
+                    sx={{ color: "red", textSizeAdjust: "auto" }}
+                  >
                     Status
                   </TableCell>
-                  <TableCell size="small" align="center">
+                  <TableCell
+                    size="small"
+                    align="center"
+                    sx={{ color: "red", textSizeAdjust: "auto" }}
+                  >
+                    Action
+                  </TableCell>
+                  {/* <TableCell size="medium" align="center" padding="normal">
                     <FormControl
                       sx={{ minWidth: 120 }}
                       error
@@ -186,61 +235,96 @@ export default function NotificationList() {
                         id="demo-simple-select-standard"
                       >
                         <MenuItem value="All">
-                          <em>All Message</em>
+                          <em>All</em>
                         </MenuItem>
-                        <MenuItem value="Message-Sent">Sent</MenuItem>
-                        <MenuItem value="Message-Queued">Queued</MenuItem>
+                        <MenuItem value="Sent">Sent</MenuItem>
+                        <MenuItem value="Queued">Queued</MenuItem>
                       </Select>
                     </FormControl>
-                  </TableCell>
+                  </TableCell> */}
                 </TableRow>
               </TableHead>
               <TableBody>
-                {filteredNotifications.map((notif, idx) => (
-                  <Tooltip title={"Click to view " + notif.subject} key={idx}>
-                    <TableRow
-                      key={idx}
-                      className=" border-gray-200 w-full border-separate hover:bg-gray-100 hover:cursor-pointer"
-                      onClick={() => {
-                        setSelectedNotification(notif);
-                        setIsViewModalOpen(true);
-                      }}
+                {filteredNotifications
+                  ? filteredNotifications.map((notif, idx) => (
+                      // <Tooltip
+                      //   title={"Click to view " + notif.subject}
+                      //   key={idx}
+                      // >
+                      <TableRow
+                        key={idx}
+                        className=" border-gray-200 w-full border-separate hover:bg-gray-100 hover:cursor-pointer"
+                        sx={{ paddingY: 2 }} // Increase vertical padding
+                      >
+                        <TableCell className="w-[10px] sm:w-[20px] md:w-[30px] lg:w-[40px] xl:w-[50px] 2xl:w-[60px] border text-center">
+                          <p> {idx + 1}.</p>
+                        </TableCell>
+                        <TableCell className="px-4 py-2 text-sm text-gray-800 md:text-lg font-semibold font-sans w-1/4 border ">
+                          <p className="font-semibold">{notif.subject}</p>
+                        </TableCell>
+                        <TableCell className="px-4 py-2 text-sm text-gray-800 max-w-20 overflow-hidden white-space-nowrap text-overflow-ellipsis border">
+                          <p className="font-thin">
+                            <strong className="font-semibold">
+                              {notif.category}
+                            </strong>{" "}
+                            - {notif.body}
+                          </p>{" "}
+                        </TableCell>
+                        {/* <TableCell
+                            className="w-[10px] sm:w-[20px] md:w-[30px] lg:w-[40px] xl:w-[50px] 2xl:w-[60px] border text-center"
+                            align="center"
+                          >
+                            <Chip
+                              label={notif.sent_at ? "Sent" : "Queued"}
+                              // color={notif.is_sent ? "secondary" : "error"}
+                              variant="outlined"
+                              size="small"
+                              className="w-full"
+                            />
+                          </TableCell> */}
+                        <TableCell
+                          className="px-4 py-2 text-sm text-gray-800 w-1/4 "
+                          align="center"
+                        >
+                          {moment(notif.send_at).format("MMMM DD, YYYY")}
+                        </TableCell>
+                        <TableCell className="w-fit" align="center">
+                          <Button
+                            color="error"
+                            variant="text"
+                            onClick={() => {
+                              setSelectedNotification(notif);
+                              setIsViewModalOpen(true);
+                            }}
+                          >
+                            View
+                          </Button>
+                          <Button
+                            color="error"
+                            variant="text"
+                            onClick={() => {
+                              setIsDeleteModalOpen(true);
+                              setSelectedNotification(notif);
+                            }}
+                          >
+                            Delete
+                          </Button>
+                        </TableCell>
+                      </TableRow>
+                      // </Tooltip>
+                    ))
+                  : ""}
+                {filteredNotifications.length === 0 && (
+                  <TableRow fullWidth align="center">
+                    <TableCell
+                      colSpan={5}
+                      className="text-center"
+                      align="center"
                     >
-                      <TableCell className="w-[10px] sm:w-[20px] md:w-[30px] lg:w-[40px] xl:w-[50px] 2xl:w-[60px] border text-center">
-                        <p> {idx + 1}.</p>
-                      </TableCell>
-                      <TableCell className="px-4 py-2 text-sm text-gray-800 md:text-lg font-semibold font-sans w-1/4 border ">
-                        <p className="font-semibold">{notif.subject}</p>
-                      </TableCell>
-                      <TableCell className="px-4 py-2 text-sm text-gray-800 max-w-20 overflow-hidden white-space-nowrap text-overflow-ellipsis border">
-                        <p className="font-thin">
-                          <strong className="font-semibold">
-                            {notif.category}
-                          </strong>{" "}
-                          - {notif.body}
-                        </p>{" "}
-                      </TableCell>
-                      <TableCell
-                        className="w-[10px] sm:w-[20px] md:w-[30px] lg:w-[40px] xl:w-[50px] 2xl:w-[60px] border text-center"
-                        align="center"
-                      >
-                        <Chip
-                          label={notif.is_sent ? "Sent" : "Queued"}
-                          color={notif.is_sent ? "secondary" : "error"}
-                          variant="outlined"
-                          size="small"
-                          className="w-full"
-                        />
-                      </TableCell>
-                      <TableCell
-                        className="px-4 py-2 text-sm text-gray-800 w-1/4 "
-                        align="center"
-                      >
-                        {moment(notif.sent_at).format("MMMM DD, YYYY")}
-                      </TableCell>
-                    </TableRow>
-                  </Tooltip>
-                ))}
+                      No Notifications.
+                    </TableCell>
+                  </TableRow>
+                )}
               </TableBody>
             </Table>
           </TableContainer>
@@ -271,6 +355,40 @@ export default function NotificationList() {
           <ViewNotificationModal
             closeModal={handleClose}
             notificationData={selectedNotification}
+            Snackbar={alertMessage}
+          />
+        </DialogContent>
+      </Dialog>
+      <Dialog
+        open={isDeleteModalOpen}
+        onClose={handleClose}
+        fullWidth={true}
+        maxWidth="sm"
+      >
+        <DialogTitle>Delete Notification?</DialogTitle>
+        <DialogContent>
+          <p>Are you sure you want to delete this notification?</p>
+        </DialogContent>
+        <DialogActions>
+          <Button onClick={axiosDeleteNotification} color="error">
+            Delete
+          </Button>
+          <Button onClick={handleClose} color="error">
+            Cancel
+          </Button>
+        </DialogActions>
+      </Dialog>
+      <Dialog
+        open={isViewModalOpen}
+        onClose={handleClose}
+        fullWidth={true}
+        maxWidth="sm"
+      >
+        <DialogContent>
+          <ViewNotificationModal
+            closeModal={handleClose}
+            notificationData={selectedNotification}
+            Snackbar={alertMessage}
           />
         </DialogContent>
       </Dialog>

@@ -109,9 +109,10 @@ export default function UserManagement() {
   const [openCreate, setOpenCreate] = React.useState(false);
   const [openDelete, setopenDelete] = React.useState(false);
   const [currentRow, setCurrentRow] = React.useState({
-    _id: "",
+    id: "",
     first_name: "",
     last_name: "",
+    username: "",
     email: "",
     type: "",
     assigned_department: "",
@@ -150,7 +151,11 @@ export default function UserManagement() {
   };
 
   const handleOpen = (row) => {
-    setCurrentRow(row);
+    setCurrentRow({
+      ...row,
+      assigned_department: getDepartmentValue(row.assigned_department),
+    });
+
     setOpen(true);
   };
   const handleCreateOpen = () => {
@@ -262,17 +267,27 @@ export default function UserManagement() {
       setIsLoading(false);
       return;
     }
+    console.log(currentRow);
+    // return;
+    const assignedDepartment = departmentRows.find(
+      (department) => department.name === currentRow.assigned_department
+    );
+    let departmentsToAssign = [assignedDepartment._id];
+
     axios
       .put(
-        `/user/update/admin/${currentRow._id}?id=${currentRow._id}`,
+        `admin`,
         {
+          id: currentRow.id,
+          username: currentRow.username,
+          first_name: currentRow.first_name,
+          last_name: currentRow.last_name,
+          assigned_department: departmentsToAssign,
+          email: currentRow.email,
+          password: currentRow.password,
           type: currentRow.type,
-          assigned_department: currentRow.assigned_department,
         },
         {
-          params: {
-            id: currentRow._id,
-          },
           headers: {
             "Content-Type": "application/json",
           },
@@ -366,7 +381,7 @@ export default function UserManagement() {
 
   const fetchData = async (skip, limit) => {
     axios
-      .get("/user/paginated/admin", {
+      .get("admin", {
         params: {
           skip: 0,
           limit: 100,
@@ -394,7 +409,7 @@ export default function UserManagement() {
         setAlertMessage({
           isOpen: true,
           title: "Failed",
-          message: response.data.message,
+          message: error.message,
           variant: "info",
         });
       });
@@ -423,80 +438,25 @@ export default function UserManagement() {
       });
   };
 
-  // const searchFunction = async () => {
-  //   if (search === "") {
-  //     return;
-  //   }
-  //   console.log(search);
-  //   // axios.get('https://student-discipline-api-fmm2.onrender.com/violation/search', {
-  //   //     params: {
-  //   //     query: search
-  //   //     },
-  //   //     headers: {
-  //   //     'Content-Type': 'application/json',
-  //   //     }
-  //   // })
-  //   // .then((response) => {
-  //   //     if(response.data.success === true){
-  //   //         console.log("Searched data fetched successfully!");
-  //   //         setRows(response.data.data);
-  //   //     }
-  //   //     else{
-  //   //         console.log("Failed to fetch search data");
-  //   //     }
-  //   // })
-  //   // .catch((error) => {
-  //   //     console.error('There was an error searching the data!', error);
-  //   // });
-  // };
+  const getDepartmentValue = (departmentId) => {
+    const department = departmentRows.find(
+      (department) => department._id === departmentId[0]
+    );
 
-  // const debounce = (func, delay) => {
-  //     let debounceTimer;
-  //     return function(...args) {
-  //         clearTimeout(debounceTimer);
-  //         debounceTimer = setTimeout(() => {
-  //             // console.log('Debounced function called with args:', args);
-  //             func.apply(this, args);
-  //         }, delay);
-  //     };
-  // };
-
-  // const debouncedSearchFunction = debounce(searchFunction, 300);
-
+    // Check if department was found
+    if (department) {
+      const { name } = department;
+      return name;
+    } else {
+      console.warn("Department not found for ID:", departmentId);
+      return null; // or you can return a default value
+    }
+  };
   return (
-    <div className="container h-full mx-auto px-2">
-      <div className="flex justify-between h-fit gap-x-2 my-2 md:m-0 text-sm md:text-md bg-white rounded-sm px-2">
+    <div className="container mx-auto px-2">
+      <div className="flex justify-between gap-x-2 my-2 md:m-0 text-sm md:text-md bg-white rounded-sm px-2">
         <h1 className="text-3xl py-3">Program Head</h1>
-        {/* <Tooltip title="Create User">
-          <button
-            className="bg-blue-500 my-2 px-2 rounded-sm text-white hover:bg-blue-600"
-            onClick={() => handleCreateOpen()}
-          >
-            <AddIcon /> Create User
-          </button>
-        </Tooltip> */}
       </div>
-      {/* 
-                <div className='flex justify-between h-fit gap-x-2'>
-                    <TextField
-                    className='my-2 py-2'
-                    autoFocus
-                    margin="dense"
-                    label="Search Violation"
-                    type="text"
-                        fullWidth
-                        value={search}
-                        onChange={(e) => {
-                            setSearch(e.target.value);
-                            // debouncedSearchFunction(e.target.value);
-                        }}
-                        />
-                        <button className='bg-blue-500 my-2 p-5 rounded-sm text-white hover:bg-blue-600'
-                        onClick={() => searchFunction()}
-                        >
-                        Search
-                        </button>
-                    </div> */}
       <div style={{ boxShadow: `0px 4px 6px ${alpha(red[500], 0.9)}` }}>
         <TableContainer component={Paper} className="">
           <Table sx={{ minWidth: 500 }}>
@@ -516,8 +476,8 @@ export default function UserManagement() {
                     page * rowsPerPage + rowsPerPage
                   )
                 : rows
-              ).map((row) => (
-                <TableRow key={row._id}>
+              ).map((row, index) => (
+                <TableRow key={index}>
                   <TableCell component="th" scope="row">
                     {row.first_name && row.last_name
                       ? row.first_name + " " + row.last_name
@@ -528,7 +488,7 @@ export default function UserManagement() {
                   </TableCell>
                   <TableCell>
                     {row.assigned_department
-                      ? row.assigned_department
+                      ? getDepartmentValue(row.assigned_department)
                       : "No department attached"}
                   </TableCell>
                   <TableCell align="center">
@@ -583,7 +543,7 @@ export default function UserManagement() {
               Assign Program Chair to their Respective Departments
             </DialogTitle>
             <DialogContent>
-              <FormControl fullWidth margin="dense" readOnly>
+              {/* <FormControl fullWidth margin="dense" readOnly>
                 <InputLabel id="demo-simple-select-label" color="error">
                   Category
                 </InputLabel>
@@ -603,7 +563,7 @@ export default function UserManagement() {
                   <MenuItem value={"PROGRAM HEAD"}>Program Head</MenuItem>
                   <MenuItem value={"DEAN"}>Dean</MenuItem>
                 </Select>
-              </FormControl>
+              </FormControl> */}
               <FormControl fullWidth margin="dense">
                 <InputLabel id="demo-simple-select-label" color="error">
                   Department
