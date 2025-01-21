@@ -4,17 +4,18 @@ import Students from "../Students";
 export default function Home() {
   return (
     <>
-      {/* <Container
+      <Container
         sx={{
           display: "flex",
           flexDirection: "column",
           alignItems: "center",
           pt: { xs: 10, sm: 15 },
           pb: { xs: 8, sm: 12 },
+          height: "100vh",
         }}
-      > */}
-      <Students DataToGet={"department_head"} />
-      {/* </Container> */}
+      >
+        <Students DataToGet={"department_head"} />
+      </Container>
     </>
   );
 }

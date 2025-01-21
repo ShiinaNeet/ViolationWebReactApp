@@ -15,7 +15,7 @@ export default function Chart() {
   const fetchData = async () => {
     setLoading(true);
     try {
-      const response = await axios.get("/violation/statistic", {
+      const response = await axios.get("statistic", {
         headers: {
           "Content-Type": "application/json",
         },

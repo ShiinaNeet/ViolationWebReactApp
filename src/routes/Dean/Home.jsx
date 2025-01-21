@@ -8,9 +8,9 @@ export default function Home() {
         sx={{
           display: "flex",
           flexDirection: "column",
-          alignItems: "center",
           pt: { xs: 10, sm: 15 },
           pb: { xs: 8, sm: 12 },
+          height: "100vh",
         }}
       >
         <ProgramHeadTable />
