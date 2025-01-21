@@ -14,8 +14,7 @@ import FirstPageIcon from "@mui/icons-material/FirstPage";
 import KeyboardArrowLeft from "@mui/icons-material/KeyboardArrowLeft";
 import KeyboardArrowRight from "@mui/icons-material/KeyboardArrowRight";
 import LastPageIcon from "@mui/icons-material/LastPage";
-import EditIcon from "@mui/icons-material/Edit";
-import DeleteIcon from "@mui/icons-material/Delete";
+
 import AddIcon from "@mui/icons-material/Add";
 import Button from "@mui/material/Button";
 import Dialog from "@mui/material/Dialog";
@@ -28,7 +27,6 @@ import {
   Alert,
   AlertTitle,
   alpha,
-  Chip,
   Container,
   FormControl,
   InputLabel,
@@ -40,7 +38,6 @@ import {
   Toolbar,
 } from "@mui/material";
 import axios from "axios";
-import formatDate from "../utils/moment";
 import { red } from "@mui/material/colors";
 
 function TablePaginationActions(props) {
@@ -107,20 +104,9 @@ export default function UserManagement() {
   const [page, setPage] = React.useState(0);
   const [rowsPerPage, setRowsPerPage] = React.useState(6);
   const [rows, setRows] = React.useState([]);
-  const [open, setOpen] = React.useState(false);
   const [openCreate, setOpenCreate] = React.useState(false);
-  const [openDelete, setopenDelete] = React.useState(false);
-  const [currentRow, setCurrentRow] = React.useState({
-    _id: "",
-    first_name: "",
-    last_name: "",
-    email: "",
-    type: "",
-    assigned_department: null,
-    username: "",
-  });
+
   const [departmentData, setDepartmentData] = React.useState([]);
-  const [search, setSearch] = React.useState("");
   const [user, setUser] = React.useState({
     first_name: "",
     last_name: "",
@@ -155,26 +141,13 @@ export default function UserManagement() {
     fetchData(0, newRowsPerPage);
   };
 
-  const handleOpen = (row) => {
-    setCurrentRow(row);
-    setOpen(true);
-  };
   const handleCreateOpen = () => {
     setOpenCreate(true);
   };
 
   const handleClose = () => {
-    setOpen(false);
     setOpenCreate(false);
-    setopenDelete(false);
-    setCurrentRow({
-      _id: "",
-      first_name: "",
-      last_name: "",
-      email: "",
-      type: "",
-      assigned_department: "",
-    });
+
     setUser({
       first_name: "",
       last_name: "",
@@ -194,7 +167,7 @@ export default function UserManagement() {
   };
 
   const handleSave = async () => {
-    setIsLoading(true);
+    setIsLoading(false);
     if (
       user.first_name === "" ||
       user.last_name === "" ||
@@ -213,20 +186,42 @@ export default function UserManagement() {
       setIsLoading(false);
       return;
     }
+    console.log("User to save:", user);
+    let departmentToAssign = [];
+    if (user.type === "PROGRAM HEAD") {
+      const department = departmentData.find(
+        (department) => department.name === user.assigned_department
+      );
+      if (department) {
+        departmentToAssign = [department];
+      }
+    } else if (user.type === "DEAN") {
+      departmentToAssign = departmentData.filter((department) =>
+        user.assigned_departments.includes(department.name)
+      );
+    } else if (user.type === "PROFESSOR") {
+      const department = departmentData.find(
+        (department) => department.name === user.assigned_department
+      );
+      if (department) {
+        departmentToAssign = [department];
+      }
+    }
+    const transformedDepartmentToAssign = departmentToAssign.map(
+      (department) => department._id
+    );
+
     axios
       .post(
-        "/user/create/admin",
+        "/admin",
         {
+          username: user.username,
           first_name: user.first_name,
           last_name: user.last_name,
+          assigned_department: transformedDepartmentToAssign,
           email: user.email,
           type: user.type,
           password: user.password,
-          username: user.username,
-          assigned_department:
-            user.type == "PROGRAM HEAD"
-              ? user.assigned_department
-              : user.assigned_departments,
         },
         {
           headers: {
@@ -381,9 +376,9 @@ export default function UserManagement() {
     fetchData(page * rowsPerPage, rowsPerPage);
   }, [page, rowsPerPage]);
 
-  const fetchData = async (skip, limit) => {
+  const fetchData = async () => {
     axios
-      .get("/user/paginated/admin", {
+      .get("admin", {
         params: {
           skip: 0,
           limit: 100,
@@ -450,45 +445,6 @@ export default function UserManagement() {
       });
   };
 
-  const searchFunction = async () => {
-    if (search === "") {
-      return;
-    }
-    console.log(search);
-    // axios.get('https://student-discipline-api-fmm2.onrender.com/violation/search', {
-    //     params: {
-    //     query: search
-    //     },
-    //     headers: {
-    //     'Content-Type': 'application/json',
-    //     }
-    // })
-    // .then((response) => {
-    //     if(response.data.success === true){
-    //         console.log("Searched data fetched successfully!");
-    //         setRows(response.data.data);
-    //     }
-    //     else{
-    //         console.log("Failed to fetch search data");
-    //     }
-    // })
-    // .catch((error) => {
-    //     console.error('There was an error searching the data!', error);
-    // });
-  };
-
-  const debounce = (func, delay) => {
-    let debounceTimer;
-    return function (...args) {
-      clearTimeout(debounceTimer);
-      debounceTimer = setTimeout(() => {
-        // console.log('Debounced function called with args:', args);
-        func.apply(this, args);
-      }, delay);
-    };
-  };
-
-  const debouncedSearchFunction = debounce(searchFunction, 300);
   const addMultipleDepartment = (event) => {
     const {
       target: { value },
@@ -895,10 +851,37 @@ export default function UserManagement() {
                   <MenuItem value={"SECURITY"}>Security Guard</MenuItem>
                   <MenuItem value={"PROGRAM HEAD"}>Program Head</MenuItem>
                   <MenuItem value={"DEAN"}>Dean</MenuItem>
-                  {/* <MenuItem value={"PROFESSOR"}>Professor</MenuItem> */}
+                  <MenuItem value={"PROFESSOR"}>Professor</MenuItem>
                 </Select>
               </FormControl>
               {user.type === "PROGRAM HEAD" && (
+                <FormControl fullWidth margin="dense">
+                  <InputLabel id="demo-simple-select-label" color="error">
+                    Assign a Department
+                  </InputLabel>
+                  <Select
+                    color="error"
+                    labelId="demo-simple-select-label"
+                    id="demo-simple-select"
+                    value={user.assigned_department}
+                    label="Assign a Department"
+                    onChange={(e) => {
+                      setUser({
+                        ...user,
+                        assigned_department: e.target.value,
+                      }),
+                        console.log(e.target.value);
+                    }}
+                  >
+                    {departmentData.map((department, idx) => (
+                      <MenuItem value={department.name} key={idx}>
+                        {department.name}
+                      </MenuItem>
+                    ))}
+                  </Select>
+                </FormControl>
+              )}
+              {user.type === "PROFESSOR" && (
                 <FormControl fullWidth margin="dense">
                   <InputLabel id="demo-simple-select-label" color="error">
                     Assign a Department

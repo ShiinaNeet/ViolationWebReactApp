@@ -22,27 +22,18 @@ import AddAlertIcon from "@mui/icons-material/AddAlert";
 import CloseIcon from "@mui/icons-material/Close";
 import RemoveRedEyeIcon from "@mui/icons-material/RemoveRedEye";
 import EditIcon from "@mui/icons-material/Edit";
-import DeleteIcon from "@mui/icons-material/Delete";
 import Tooltip from "@mui/material/Tooltip";
 import Box from "@mui/material/Box";
-import OutlinedInput from "@mui/material/OutlinedInput";
-import InputLabel from "@mui/material/InputLabel";
-import FormControl from "@mui/material/FormControl";
-import Select from "@mui/material/Select";
-import Chip from "@mui/material/Chip";
-import { alpha, useTheme } from "@mui/material/styles";
+import { alpha } from "@mui/material/styles";
 import {
   Alert,
   AlertTitle,
   Container,
-  Input,
   Snackbar,
   TableHead,
   Toolbar,
   styled,
 } from "@mui/material";
-import MenuItem from "@mui/material/MenuItem";
-import Modal from "@mui/material/Modal";
 import TextField from "@mui/material/TextField";
 import StudentViolationList from "../components/StudentViolationList";
 import AlertMessageStudent from "../components/AlertMessageStudent";
@@ -51,7 +42,6 @@ import DeleteOutlineIcon from "@mui/icons-material/DeleteOutline";
 import AddIcon from "@mui/icons-material/Add";
 import { red } from "@mui/material/colors";
 import axios from "axios";
-import { useAuth } from "../auth/AuthProvider";
 
 function TablePaginationActions(props) {
   const { count, page, rowsPerPage, onPageChange } = props;
@@ -112,23 +102,7 @@ TablePaginationActions.propTypes = {
   page: PropTypes.number.isRequired,
   rowsPerPage: PropTypes.number.isRequired,
 };
-const ITEM_HEIGHT = 48;
-const ITEM_PADDING_TOP = 8;
-const MenuProps = {
-  PaperProps: {
-    style: {
-      maxHeight: ITEM_HEIGHT * 4.5 + ITEM_PADDING_TOP,
-      width: 250,
-    },
-  },
-};
-function getStyles(name, personName, theme) {
-  return {
-    fontWeight: personName.includes(name)
-      ? theme.typography.fontWeightMedium
-      : theme.typography.fontWeightRegular,
-  };
-}
+
 const StyledToolbar = styled(Toolbar)(({ theme }) => ({
   display: "flex",
   alignItems: "center",
@@ -143,24 +117,21 @@ const StyledToolbar = styled(Toolbar)(({ theme }) => ({
     : alpha(theme.palette.background.default, 0.4),
   boxShadow: `0px 4px 6px ${alpha(red[500], 0.9)}`,
 }));
-const Students = ({ DataToGet }) => {
-  const { userType } = useAuth();
+const Students = () => {
+  // const { userType } = useAuth();
   const [CurrentUserType, setCurrentUserType] = React.useState({});
-  const [anchorEl, setAnchorEl] = React.useState(null);
-  const open = Boolean(anchorEl);
   const [isLoading, setIsLoading] = React.useState(false);
   const [isFetchingData, setIsFetchingData] = React.useState(false);
-  const [fetchingDataError, setFetchingDataError] = React.useState("");
   const [ViewModal, setViewModal] = React.useState(false);
   const [targetStudent, setTargetStudent] = React.useState({
-    _id: "",
+    id: "",
     userid: 0,
     fullname: "",
     violations: [],
-    year: "1st Year",
-    department: "CICS",
+    year: "",
+    department: "",
     email: "",
-    course: "BS Information Technology",
+    course: "",
     term: "First Semester",
   });
   const [violationList, setViolationList] = React.useState([]);
@@ -180,45 +151,48 @@ const Students = ({ DataToGet }) => {
     "Fifth Semester",
     "Summer Term",
   ];
-  const coursesList = [
-    "BS Information Technology",
-    "BS Computer Science",
-    "Doctor of Business Administration (DBA)",
-    "Master of Public Administration (MPA) (Thesis/Non-Thesis program)",
-    "Master of Business Administration (MBA) (Thesis/Non-Thesis program)",
-    "BS Accountancy",
-    "BS Accounting Management",
-    "BS Applied Economics",
-    "BS Business Administration Major in: Business Economics",
-    "BS Business Administration Major in: Financial Management",
-    "BS Business Administration Major in: Human Resource Development Management",
-    "BS Business Administration Major in: Marketing Management",
-    "BS Business Administration Major in: Operations Management",
-    "Associate in Accounting",
-    "Associate in Management",
-    "BS Hotel and Restaurant Management",
-    "BS Tourism Management",
-    "Associate in Hotel and Restaurant Management",
-    "Associate in Tourism Management",
-    "BA Public Administration",
-    "BS Customs Administration",
-    "BS Entrepreneurship",
-    "Doctor of Technology",
-    "Master of Technology",
-    "Bachelor of Industrial Technology (BIT 4 – years)",
-    "BS Nursing",
-    "BS Nutrition & Dietetics",
-  ];
-  const theme = useTheme();
-  const handleChange = (event) => {
-    const {
-      target: { value },
-    } = event;
-    setPersonName(
-      // On autofill we get a stringified value.
-      typeof value === "string" ? value.split(",") : value
-    );
-  };
+  // const coursesList = [
+  //   "BS Information Technology",
+  //   "BS Computer Science",
+  //   "Doctor of Business Administration (DBA)",
+  //   "Master of Public Administration (MPA) (Thesis/Non-Thesis program)",
+  //   "Master of Business Administration (MBA) (Thesis/Non-Thesis program)",
+  //   "BS Accountancy",
+  //   "BS Accounting Management",
+  //   "BS Applied Economics",
+  //   "BS Business Administration Major in: Business Economics",
+  //   "BS Business Administration Major in: Financial Management",
+  //   "BS Business Administration Major in: Human Resource Development Management",
+  //   "BS Business Administration Major in: Marketing Management",
+  //   "BS Business Administration Major in: Operations Management",
+  //   "Associate in Accounting",
+  //   "Associate in Management",
+  //   "BS Hotel and Restaurant Management",
+  //   "BS Tourism Management",
+  //   "Associate in Hotel and Restaurant Management",
+  //   "Associate in Tourism Management",
+  //   "BA Public Administration",
+  //   "BS Customs Administration",
+  //   "BS Entrepreneurship",
+  //   "Doctor of Technology",
+  //   "Master of Technology",
+  //   "Bachelor of Industrial Technology (BIT 4 – years)",
+  //   "BS Nursing",
+  //   "BS Nutrition & Dietetics",
+  // ];
+  const [programList, setProgramList] = React.useState([]);
+  const [filteredPrograms, setFilteredPrograms] = React.useState([]);
+
+  // const theme = useTheme();
+  // const handleChange = (event) => {
+  //   const {
+  //     target: { value },
+  //   } = event;
+  //   setPersonName(
+  //     // On autofill we get a stringified value.
+  //     typeof value === "string" ? value.split(",") : value
+  //   );
+  // };
   const vertical = "bottom";
   const horizontal = "right";
   const [alertMessage, setAlertMessage] = React.useState({
@@ -250,7 +224,10 @@ const Students = ({ DataToGet }) => {
     setRowsPerPage(parseInt(event.target.value, 5));
     setPage(0);
   };
-
+  const [isDepartmentLoading, setIsDepartmentLoading] = React.useState(false);
+  const [isProgramLoading, setIsProgramLoading] = React.useState(false);
+  const [isViolationLoading, setIsViolationLoading] = React.useState(false);
+  const [isFetchingDone, setIsFetchingDone] = React.useState(false);
   const [searchFilterModal, setSearchFilterModal] = React.useState(false);
   const [updateStudentViolationModal, setUpdateStudentViolationModal] =
     React.useState(false);
@@ -259,26 +236,16 @@ const Students = ({ DataToGet }) => {
   const [messageStudentModal, setMessageStudentModal] = React.useState(false);
 
   useEffect(() => {
-    fetchViolationData();
-    fetchData("/user/paginated");
-    fetchDepartments();
-
+    fetchAllData();
+    fetchPrograms().then(() => {
+      fetchDepartments();
+    });
     setCurrentUserType(localStorage.getItem("userType"));
-    // if (DataToGet == "ADMIN") {
-    //   fetchData("/user/paginated");
-    // } else if (DataToGet == "PROGRAM HEAD") {
-    //   fetchData("/department_head/paginated");
-    //   console.log("Data to get: ", DataToGet);
-    // } else if (DataToGet == "DEAN") {
-    //   fetchData("/dean/paginated");
-    //   console.log("Data to get: ", DataToGet);
-    // }
+
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
-  const handleClick = (event) => {
-    setAnchorEl(event.currentTarget);
-  };
+
   const handleClose = () => {
-    setAnchorEl(null);
     setViewModal(false);
     setSearchFilterModal(false);
     // setMessageStudentModal(false);
@@ -299,7 +266,6 @@ const Students = ({ DataToGet }) => {
     setMessageStudentModal(false);
   };
   const handleViewViolationModal = (person) => {
-    setAnchorEl(null);
     // console.log(person);
     // setTargetStudent(person);
     fetchUser(person);
@@ -307,28 +273,43 @@ const Students = ({ DataToGet }) => {
     setSearchFilterModal(false);
   };
   const handleUpdateViolationModal = (person) => {
-    setAnchorEl(null);
     setUpdateStudentViolationModal(true);
     // setTargetStudent(person);
     console.log("Person: ", person);
-    setTargetStudent((prev) => ({
-      _id: person._id,
+    const completedViolationList = person.violations.map((violation) => {
+      const values = violationList.find((vio) => vio.id == violation);
+      return values;
+    });
+
+    const selectedDepartment = departments.find(
+      (department) =>
+        department.name === person.year_and_department.split(" - ")[1]
+    );
+
+    if (selectedDepartment) {
+      const programsToAddFilter = programList.filter(
+        (program) => program.department_id === selectedDepartment._id
+      );
+      setFilteredPrograms(programsToAddFilter);
+    }
+    setTargetStudent({
+      ...targetStudent,
+      id: person.id,
       email: person.email,
-      course: person.course ? person.course : "BS Information Technology",
+      course: person.course ? person.course : filteredPrograms[0].name,
       term: person.term ? person.term : "First Semester",
-      department: person.year_and_department.split(" - ")[1],
-      year: person.year_and_department.split(" - ")[0],
-      violations: person.violations,
+      department: person.year_and_department.split(" - ")[1]
+        ? person.year_and_department.split(" - ")[1]
+        : departments[0].name,
+      year: person.year_and_department.split(" - ")[0]
+        ? person.year_and_department.split(" - ")[0]
+        : "1st year",
+      violations: completedViolationList,
       fullname: person.fullname,
       userid: person.userid,
-    }));
+    });
   };
 
-  const handleDeleteViolationModal = (person) => {
-    setDeleteStudentViolationModal(true);
-    setTargetStudent(person);
-    setAnchorEl(null);
-  };
   const handleSearch = (e) => {
     e.preventDefault();
     console.log(searchFilter);
@@ -394,83 +375,127 @@ const Students = ({ DataToGet }) => {
         setIsLoading(false);
       });
   };
-  const fetchData = async (API_URI_TO_FETCH) => {
-    setIsFetchingData(true);
-    axios
-      .get("user/paginated/student", {
-        params: {
-          skip: 0,
-          limit: 100,
-        },
-        headers: {
-          "Content-Type": "application/json",
-        },
-      })
-      .then((response) => {
-        if (response.data.status == "success") {
-          setPage(0);
-          setIsFetchingData(false);
-          setFetchingDataError("");
-          setRows(response.data.data);
-          if (response.data.data.length == 0) {
-            setAlertMessage({
-              open: true,
-              title: "No Data",
-              message: "No student data found.",
-              variant: "info",
-            });
+
+  const fetchAllData = async () => {
+    try {
+      // Set loading states
+      // setIsDepartmentLoading(true);
+      setIsLoading(true);
+      setIsViolationLoading(true);
+      setIsFetchingDone(true);
+
+      const violationResponse = await axios.get("/violation", {
+        params: { skip: 0, limit: 100 },
+      });
+      if (violationResponse.data.status === "success") {
+        setViolationList(violationResponse.data.data);
+      }
+
+      const studentResponse = await axios.get("/student", {
+        params: { skip: 0, limit: 100 },
+      });
+      if (studentResponse.data.status === "success") {
+        const completedDataWithViolationName = studentResponse.data.data.map(
+          (student) => {
+            const updatedViolations = student.violations.map((violation) =>
+              violationResponse.data.data.find((vio) => vio.id === violation)
+            );
+            return {
+              ...student,
+              violations: updatedViolations.filter((vio) => vio !== undefined),
+            };
           }
-        } else {
-          console.log("Failed to fetch data");
-          // setIsFetchingData(false);
-          // setFetchingDataError("Failed");
+        );
+        setRows([...completedDataWithViolationName]); // Ensure rerender
+        if (studentResponse.data.data.length === 0) {
+          setAlertMessage({
+            open: true,
+            title: "No Data",
+            message: "No student data found.",
+            variant: "info",
+          });
         }
-      })
-      .catch((error) => {
-        console.error("There was an error fetching the data!", error);
-        setIsFetchingData(false);
-        setFetchingDataError("Failed");
-        setAlertMessage({
-          open: true,
-          title: error.title,
-          message: error.message,
-          variant: "info",
-        });
+      } else {
+        console.error("Failed to fetch students");
+      }
+    } catch (error) {
+      console.error("Error fetching data:", error);
+      setAlertMessage({
+        open: true,
+        title: "Error",
+        message: error.message,
+        variant: "error",
       });
-    setIsFetchingData(false);
+    } finally {
+      // Reset loading states
+      setIsLoading(false);
+      setIsFetchingDone(false);
+      setIsViolationLoading(false);
+    }
   };
-  const fetchViolationData = async () => {
-    axios
-      .get(
-        "https://student-discipline-api-fmm2.onrender.com/violation/paginated",
-        {
-          params: {
-            skip: 0,
-            limit: 100,
-          },
-          headers: {
-            "Content-Type": "application/json",
-          },
-        }
-      )
-      .then((response) => {
-        if (response.data.success === true) {
-          // console.log("Violation data fetched successfully");
-          setViolationList(response.data.total);
-        } else {
-          console.log("Failed to fetch data");
-        }
-      })
-      .catch((error) => {
-        console.error("There was an error fetching the data!", error);
+  const fetchDepartments = async (FetchedProgramData) => {
+    setIsDepartmentLoading(true);
+    try {
+      const response = await axios.get("/department", {
+        params: { skip: 0, limit: 100 },
+        headers: { "Content-Type": "application/json" },
       });
+
+      if (response.data.status === "success") {
+        console.log("Department fetched successfully");
+        const fetchedDepartments = response.data.data;
+        setDepartments(fetchedDepartments);
+
+        // Default to the first department if none is selected
+        if (!targetStudent.department) {
+          const firstDepartment = fetchedDepartments[0];
+          const programs = FetchedProgramData.filter(
+            (program) => program.department_id === firstDepartment._id
+          );
+
+          // setTargetStudent({
+          //   ...targetStudent,
+          //   department: firstDepartment.name,
+          //   course: programs.length > 0 ? programs[0].name : "",
+          // });
+          setFilteredPrograms(programs);
+        }
+      } else {
+        console.log("Failed to fetch data");
+      }
+    } catch (error) {
+      console.error("There was an error fetching the data!", error);
+    }
+    setIsDepartmentLoading(false);
   };
-  const fetchDepartments = async () => {
+  const fetchPrograms = async () => {
+    setIsProgramLoading(true);
+    try {
+      const response = await axios.get("/progams", {
+        params: { skip: 0, limit: 100 },
+        headers: { "Content-Type": "application/json" },
+      });
+
+      if (response.data.status === "success") {
+        console.log("Program List fetched successfully");
+        setProgramList(response.data.data);
+        fetchDepartments(response.data.data);
+      } else {
+        console.log("Failed to fetch data");
+      }
+    } catch (error) {
+      console.error("There was an error fetching the data!", error);
+    }
+    setIsProgramLoading(false);
+  };
+  const fetchUser = async (person) => {
     axios
-      .get("/department", {
+      .get(`student`, {
         params: {
-          skip: 0,
+          userid: person.userid,
           limit: 100,
+          skip: 0,
+          id: undefined,
         },
         headers: {
           "Content-Type": "application/json",
@@ -478,10 +503,30 @@ const Students = ({ DataToGet }) => {
       })
       .then((response) => {
         if (response.data.status === "success") {
-          console.log("Data fetched successfully");
-          setDepartments(response.data.data);
-        } else {
-          console.log("Failed to fetch data");
+          const violationsArray = Array.isArray(
+            response.data.data[0].violations
+          )
+            ? response.data.data[0].violations
+            : [];
+
+          const completedViolationList = violationsArray
+            .map((violation) =>
+              violationList.find((vio) => vio.id === String(violation))
+            )
+            .filter((violation) => violation !== undefined);
+
+          setTargetStudent({
+            ...targetStudent,
+            fullname: response.data.data[0].fullname,
+            userid: response.data.data[0].userid,
+            violations: completedViolationList,
+            year_and_department: response.data.data[0].year_and_department,
+            section: response.data.data[0].section,
+            email: response.data.data[0].email,
+            course: response.data.data[0].course,
+            term: response.data.data[0].term,
+          });
+          console.log("Fetched User: ", response.data);
         }
       })
       .catch((error) => {
@@ -494,41 +539,10 @@ const Students = ({ DataToGet }) => {
         });
       });
   };
-  const fetchUser = async (person) => {
-    axios
-      .get(`/user/${person.userid}`, {
-        headers: {
-          "Content-Type": "application/json",
-        },
-      })
-      .then((response) => {
-        setTargetStudent({
-          fullname: response.data.fullname,
-          userid: response.data.userid,
-          violations:
-            response.data.violations.length > 0 ? response.data.violations : [],
-          year_and_department: response.data.year_and_department,
-          section: response.data.section,
-          email: response.data.email,
-          course: response.data.course,
-          term: response.data.term,
-        });
-      })
-      .catch((error) => {
-        console.error("There was an error fetching the data!", error);
-        setAlertMessage({
-          open: true,
-          title: error.title,
-          message: error.message,
-          variant: "info",
-        });
-      });
-  };
+
   const [selectedViolation, setSelectedViolation] = React.useState({
     name: "",
-    _id: "",
-    date: "",
-    description: "",
+    id: "",
   });
 
   const handleDeleteViolation = (index) => {
@@ -540,41 +554,38 @@ const Students = ({ DataToGet }) => {
   const handleAddViolation = () => {
     // if (selectedViolation && !targetStudent.violations.some(v => v.name === selectedViolation.name)) {
     if (
-      selectedViolation._id.length > 0 &&
-      !targetStudent.violations.some((v) => v.name === selectedViolation.name)
+      selectedViolation.id.length > 0 &&
+      !targetStudent.violations.some((v) => v === selectedViolation.id)
     ) {
-      setSelectedViolation({
-        ...selectedViolation,
-        date: new Date().getTime(),
-      });
       console.log("Selected Violations: ", selectedViolation);
       const updatedViolations = [
         ...targetStudent.violations,
         selectedViolation,
       ];
       setTargetStudent({ ...targetStudent, violations: updatedViolations });
-      setSelectedViolation({ name: "", _id: "", date: "", description: "" });
-      console.log("Updated Violations: ", targetStudent.violations);
+      setSelectedViolation({ name: "", id: "" });
     }
   };
   const transformedViolations = targetStudent.violations.map((violation) => ({
     ...violation,
-    $oid: violation._id,
-    _id: undefined, // Remove the _id field
+    $oid: violation.id,
+    id: undefined, // Remove the _id field
+    name: undefined,
   }));
+  const transformViolationToArray = () => {
+    return targetStudent.violations.map((violation) => violation.id);
+  };
   const handleUpdateViolation = () => {
     // console.log('Updating violation...');
-    console.log("Current student violation: ", targetStudent);
+
+    console.log("Current student info: ", targetStudent);
     setIsLoading(true);
 
     if (
       targetStudent.violations.length === 0 ||
-      targetStudent.department == "" ||
       targetStudent.year == "" ||
-      targetStudent.course == "" ||
       targetStudent.term == "" ||
-      targetStudent.term == null ||
-      targetStudent.course == null
+      targetStudent.term == null
     ) {
       console.log("No violation to update");
       setAlertMessage({
@@ -587,17 +598,28 @@ const Students = ({ DataToGet }) => {
       return;
     }
     console.log("Student to update: ", targetStudent);
+    const PayloadYear = targetStudent.year ? targetStudent.year : "1st Year";
+    const PayloadDepartment = targetStudent.department
+      ? targetStudent.department
+      : departments[0].name;
+    const PayloadCourse = targetStudent.course
+      ? targetStudent.course
+      : programList[0].name;
+    // console.log("Transformed Violation: ", transformViolationToArray());
+    // return;
     axios
       .put(
-        `/user/update/student/${targetStudent.userid}`,
+        `/student`,
         {
-          year_and_department:
-            targetStudent.year + " - " + targetStudent.department,
-          course: targetStudent.course
-            ? targetStudent.course
-            : "BS Information Technology",
+          id: targetStudent.id,
+          srcode: targetStudent.userid,
+          userid: targetStudent.userid,
+          email: targetStudent.email,
+          fullname: targetStudent.fullname,
+          course: PayloadCourse,
           term: targetStudent.term ? targetStudent.term : "First Semester",
-          violations: transformedViolations,
+          year_and_department: PayloadYear + " - " + PayloadDepartment,
+          violations: transformViolationToArray(),
         },
         {
           headers: {
@@ -642,6 +664,25 @@ const Students = ({ DataToGet }) => {
       });
   };
 
+  const handleDepartmentChange = (e) => {
+    const selectedDepartmentName = e.target.value;
+    const selectedDepartment = departments.find(
+      (department) => department.name === selectedDepartmentName
+    );
+    console.log("Selected Department: ", selectedDepartment);
+    if (selectedDepartment) {
+      const programs = programList.filter(
+        (program) => program.department_id === selectedDepartment._id
+      );
+      setTargetStudent({
+        ...targetStudent,
+        department: selectedDepartment.name,
+        course: programs.length > 0 ? programs[0].name : "",
+      });
+      setFilteredPrograms(programs);
+    }
+  };
+
   return (
     <>
       <Container
@@ -663,6 +704,13 @@ const Students = ({ DataToGet }) => {
           >
             Filter
           </button> */}
+            <Button
+              className="bg-red-500 p-2 rounded-sm text-red hover:bg-red-100"
+              onClick={() => setMessageStudentModal(true)}
+              color="error"
+            >
+              <AddAlertIcon color="error" /> Alert
+            </Button>
           </div>
           <StyledToolbar variant="dense" disableGutters>
             <TableContainer component={Paper}>
@@ -672,69 +720,62 @@ const Students = ({ DataToGet }) => {
                     <th className="py-5 px-4 border-b">Name</th>
                     <th className="py-5 px-4 border-b">Violation</th>
                     <th className="py-5 px-4 border-b">Department and Year</th>
-                    <th className="py-5 px-4 border-b text-center">Date</th>
+
                     <th className="py-5 px-4 border-b text-center sticky">
                       Actions
                     </th>
                   </TableRow>
                 </TableHead>
                 <TableBody>
-                  {(rowsPerPage > 0
-                    ? rows.slice(
-                        page * rowsPerPage,
-                        page * rowsPerPage + rowsPerPage
-                      )
-                    : rows
-                  ).map((student, index) => (
-                    <tr key={index} className="hover:bg-gray-50">
-                      {/* <td className="py-2 px-4 border-b">
-                                            {student.userid}
-                                        </td> */}
-                      <td className="py-5 px-4 border-b">{student.fullname}</td>
-                      <td className="py-5 px-4 border-b">
-                        {student.violations.length > 0
-                          ? student.violations[0].name
-                          : ""}
-                      </td>
-                      <td className="py-5 px-4 border-b">
-                        {student.year_and_department}
-                      </td>
-                      <td className="py-5 px-4 border-b flex-shrink-1 text-center">
-                        {student.violations.length > 0
-                          ? formatDate(
-                              new Date(parseInt(student.violations[0].date)),
-                              "MMMM DD, YYYY - hh:mm A"
-                            )
-                          : ""}
-                      </td>
-                      <td className="border-b flex justify-center sticky">
-                        <Tooltip title="View Student">
-                          <Button
-                            className="rounded-sm text-white hover:bg-red-100 hover:text-red-700"
-                            onClick={() => handleViewViolationModal(student)}
-                            color="error"
-                          >
-                            <RemoveRedEyeIcon color="error" />
-                          </Button>
-                        </Tooltip>
-                        {CurrentUserType == "ADMIN" ||
-                        localStorage.getItem("userType") == "ADMIN" ? (
-                          <Tooltip title="Edit Student">
+                  {isFetchingDone || isLoading || isViolationLoading ? (
+                    <TableRow colSpan="5">Loading...</TableRow>
+                  ) : (
+                    (rowsPerPage > 0
+                      ? rows.slice(
+                          page * rowsPerPage,
+                          page * rowsPerPage + rowsPerPage
+                        )
+                      : rows
+                    ).map((student, index) => (
+                      <tr key={index} className="hover:bg-gray-50">
+                        <td className="py-5 px-4 border-b">
+                          {student.fullname}
+                        </td>
+                        <td className="py-5 px-4 border-b">
+                          {student.violations.map((vio) => vio.name).join(", ")}
+                        </td>
+                        <td className="py-5 px-4 border-b">
+                          {student.year_and_department}
+                        </td>
+
+                        <td className="border-b flex justify-center sticky">
+                          <Tooltip title="View Student">
                             <Button
                               className="rounded-sm text-white hover:bg-red-100 hover:text-red-700"
-                              onClick={() =>
-                                handleUpdateViolationModal(student)
-                              }
+                              onClick={() => handleViewViolationModal(student)}
                               color="error"
                             >
-                              <EditIcon color="error" />
+                              <RemoveRedEyeIcon color="error" />
                             </Button>
                           </Tooltip>
-                        ) : (
-                          ""
-                        )}
+                          {CurrentUserType == "ADMIN" ||
+                          localStorage.getItem("userType") == "ADMIN" ? (
+                            <Tooltip title="Edit Student">
+                              <Button
+                                className="rounded-sm text-white hover:bg-red-100 hover:text-red-700"
+                                onClick={() =>
+                                  handleUpdateViolationModal(student)
+                                }
+                                color="error"
+                              >
+                                <EditIcon color="error" />
+                              </Button>
+                            </Tooltip>
+                          ) : (
+                            ""
+                          )}
 
-                        {/* <Tooltip title="Delete Student">
+                          {/* <Tooltip title="Delete Student">
                         <Button
                           className="rounded-sm text-white hover:bg-red-600 hover:text-white"
                           onClick={() => handleDeleteViolationModal(student)}
@@ -742,9 +783,10 @@ const Students = ({ DataToGet }) => {
                           <DeleteIcon />
                         </Button>
                       </Tooltip> */}
-                      </td>
-                    </tr>
-                  ))}
+                        </td>
+                      </tr>
+                    ))
+                  )}
                   {isFetchingData && (
                     <TableRow style={{ height: 53 * emptyRows }}>
                       <TableCell colSpan={6}>Loading...</TableCell>
@@ -787,13 +829,6 @@ const Students = ({ DataToGet }) => {
                 Student Violation History
               </h2>
               <div className="gap-x-2">
-                <Button
-                  className="bg-red-500 p-2 rounded-sm text-red hover:bg-red-100"
-                  onClick={() => setMessageStudentModal(true)}
-                  color="error"
-                >
-                  <AddAlertIcon color="error" /> Alert
-                </Button>
                 <Button
                   className=" p-2 rounded-sm hover:bg-red-200 "
                   onClick={handleClose}
@@ -971,144 +1006,145 @@ const Students = ({ DataToGet }) => {
         >
           <DialogTitle>Edit Violation</DialogTitle>
           <DialogContent>
-            <div>
-              <h3>Current Violations</h3>
-              <ul>
-                {targetStudent.violations.map((violation, index) => (
-                  <li
-                    key={index}
-                    className="my-2 rounded-sm flex justify-between text-black border-2 border-solid border-red-500 "
-                  >
-                    <label className="p-2">{violation.name} </label>
-                    <Button
-                      onClick={() => handleDeleteViolation(index)}
-                      className="hover:border-1 hover:border-solid hover:border-red-500 hover:border- hover:text-white rounded-none"
+            {isDepartmentLoading || isProgramLoading ? (
+              <>Loading...</>
+            ) : (
+              <>
+                <div>
+                  <h3>Current Violations</h3>
+                  <ul>
+                    {targetStudent.violations.map((violation, index) => (
+                      <li
+                        key={index}
+                        className="my-2 rounded-sm flex justify-between text-black border-2 border-solid border-red-500 "
+                      >
+                        <label className="p-2">
+                          {/* {violationList.find((vio) => vio.id == violation)?.name ||
+                        "Violation not found"} */}
+                          {violation.name}
+                        </label>
+                        <Button
+                          onClick={() => handleDeleteViolation(index)}
+                          className="hover:border-1 hover:border-solid hover:border-red-500 hover:border- hover:text-white rounded-none"
+                        >
+                          <DeleteOutlineIcon color="error" />
+                        </Button>
+                      </li>
+                    ))}
+                  </ul>
+                </div>
+                <div className="my-5 w-full">
+                  <h3 className="mb-3">Add Violation</h3>
+                  <div className="flex ">
+                    <select
+                      className="w-full border rounded  flex-1"
+                      value={selectedViolation.name}
+                      onChange={(e) => {
+                        const selectedName = e.target.value;
+                        const violation = violationList.find(
+                          (v) => v.name === selectedName
+                        );
+                        setSelectedViolation({
+                          name: violation.name,
+                          id: violation.id,
+                        });
+                      }}
                     >
-                      <DeleteOutlineIcon color="error" />
+                      <option value="">Select Violation</option>
+                      {violationList.map((violation, index) => (
+                        <option key={index} value={violation.name}>
+                          {violation.name}
+                        </option>
+                      ))}
+                    </select>
+                    <Button onClick={handleAddViolation} color="error">
+                      <AddIcon color="error" /> Add
                     </Button>
-                  </li>
-                ))}
-              </ul>
-            </div>
-            <div className="my-5 w-full">
-              <h3 className="mb-3">Add Violation</h3>
-              <div className="flex ">
-                <select
-                  className="w-full border rounded  flex-1"
-                  value={selectedViolation.name}
-                  onChange={(e) => {
-                    const selectedName = e.target.value;
-                    const violation = violationList.find(
-                      (v) => v.name === selectedName
-                    );
-                    setSelectedViolation({
-                      name: violation.name,
-                      _id: violation._id,
-                      date: violation.date,
-                      description: violation.description,
-                    });
-                  }}
-                >
-                  <option value="">Select Violation</option>
-                  {violationList.map((violation, index) => (
-                    <option key={index} value={violation.name}>
-                      {violation.name}
-                    </option>
-                  ))}
-                </select>
-                <Button onClick={handleAddViolation} color="error">
-                  <AddIcon color="error" /> Add
-                </Button>
-              </div>
-              <div className="my-2">
-                <label htmlFor="course">Course</label>
-                <select
-                  id="course"
-                  name="course"
-                  className="w-full border rounded  flex-1 my-2"
-                  value={targetStudent.course}
-                  onChange={(e) => {
-                    setTargetStudent({
-                      ...targetStudent,
-                      course: e.target.value,
-                    });
-                    console.log("Course: ", e.target.value);
-                  }}
-                >
-                  {coursesList.map((course) => (
-                    <option key={course} value={course}>
-                      {course}
-                    </option>
-                  ))}
-                </select>
-              </div>
-              <div className="my-2">
-                <label htmlFor="term">Term</label>
-                <select
-                  id="term"
-                  name="term"
-                  className="w-full border rounded  flex-1 my-2"
-                  value={targetStudent.term}
-                  onChange={(e) => {
-                    setTargetStudent({
-                      ...targetStudent,
-                      term: e.target.value,
-                    });
-                    console.log("School Term: ", e.target.value);
-                  }}
-                >
-                  {schoolTermList.map((term) => (
-                    <option key={term} value={term}>
-                      {term}
-                    </option>
-                  ))}
-                </select>
-              </div>
-              <div className="my-2">
-                <label htmlFor="department">Department</label>
-                <select
-                  id="department"
-                  name="department"
-                  className="w-full border rounded  flex-1 my-2"
-                  value={targetStudent.department}
-                  onChange={(e) => {
-                    setTargetStudent({
-                      ...targetStudent,
-                      department: e.target.value,
-                    });
-                    console.log("Department: ", e.target.value);
-                  }}
-                >
-                  {departments.map((department) => (
-                    <option key={department.name} value={department.name}>
-                      {department.name}
-                    </option>
-                  ))}
-                </select>
-              </div>
-              <div className="my-2">
-                <label htmlFor="year">School Year</label>
-                <select
-                  id="year"
-                  name="year"
-                  className="w-full border rounded  flex-1 my-2"
-                  value={targetStudent.year}
-                  onChange={(e) => {
-                    setTargetStudent({
-                      ...targetStudent,
-                      year: e.target.value,
-                    });
-                    console.log("Year: ", e.target.value);
-                  }}
-                >
-                  {yearList.map((year) => (
-                    <option key={year} value={year}>
-                      {year}
-                    </option>
-                  ))}
-                </select>
-              </div>
-              {/* <TextField
+                  </div>
+
+                  <div className="my-2">
+                    <label htmlFor="term">Term</label>
+                    <select
+                      id="term"
+                      name="term"
+                      className="w-full border rounded  flex-1 my-2"
+                      value={targetStudent.term}
+                      onChange={(e) => {
+                        setTargetStudent({
+                          ...targetStudent,
+                          term: e.target.value,
+                        });
+                        console.log("School Term: ", e.target.value);
+                      }}
+                    >
+                      {schoolTermList.map((term) => (
+                        <option key={term} value={term}>
+                          {term}
+                        </option>
+                      ))}
+                    </select>
+                  </div>
+                  <div className="my-2">
+                    <label htmlFor="department">Department</label>
+                    <select
+                      id="department"
+                      name="department"
+                      className="w-full border rounded  flex-1 my-2"
+                      value={targetStudent.department}
+                      onChange={handleDepartmentChange}
+                    >
+                      {departments.map((department) => (
+                        <option key={department.name} value={department.name}>
+                          {department.name}
+                        </option>
+                      ))}
+                    </select>
+                  </div>
+                  <div className="my-2">
+                    <label htmlFor="course">Course</label>
+                    <select
+                      id="course"
+                      name="course"
+                      className="w-full border rounded  flex-1 my-2"
+                      value={targetStudent.course}
+                      onChange={(e) => {
+                        setTargetStudent({
+                          ...targetStudent,
+                          course: e.target.value,
+                        });
+                        console.log("Course: ", e.target.value);
+                      }}
+                    >
+                      {filteredPrograms.map((program) => (
+                        <option key={program.name} value={program.name}>
+                          {program.name}
+                        </option>
+                      ))}
+                    </select>
+                  </div>
+                  <div className="my-2">
+                    <label htmlFor="year">School Year</label>
+                    <select
+                      id="year"
+                      name="year"
+                      className="w-full border rounded  flex-1 my-2"
+                      value={targetStudent.year}
+                      onChange={(e) => {
+                        setTargetStudent({
+                          ...targetStudent,
+                          year: e.target.value,
+                        });
+                        console.log("Year: ", e.target.value);
+                      }}
+                    >
+                      {yearList.map((year) => (
+                        <option key={year} value={year}>
+                          {year}
+                        </option>
+                      ))}
+                    </select>
+                  </div>
+                  {/* <TextField
                 margin="dense"
                 className="my-5 py-5"
                 label="Year"
@@ -1129,7 +1165,9 @@ const Students = ({ DataToGet }) => {
                 }}
                 fullWidth
               /> */}
-            </div>
+                </div>
+              </>
+            )}
           </DialogContent>
           <DialogActions>
             <Button
