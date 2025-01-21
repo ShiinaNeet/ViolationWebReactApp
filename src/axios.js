@@ -3,8 +3,10 @@ import axios from "axios";
 window.axios = axios;
 // Change to the URL of your backend
 // Get in Backend URI from the .env file
+// window.axios.defaults.baseURL =
+//   "https://student-discipline-api-fmm2.onrender.com";
 window.axios.defaults.baseURL =
-  "https://student-discipline-api-fmm2.onrender.com";
+  "https://fastapi-student-discipline-api.onrender.com";
 window.axios.defaults.headers.common["X-Requested-With"] = "XMLHttpRequest";
 axios.defaults.headers.common["Access-Control-Allow-Origin"] = "*";
 window.axios.defaults.headers.common["Access-Control-Allow-Origin"] = "*";
