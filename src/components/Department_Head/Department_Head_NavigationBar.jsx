@@ -30,7 +30,7 @@ const StyledToolbar = styled(Toolbar)(({ theme }) => ({
   backdropFilter: "blur(24px)",
   border: "1px solid ",
   borderColor: (theme.vars || theme).palette.divider,
-  backgroundColor: "white",
+  backgroundColor: "red",
   boxShadow: `0px 4px 6px ${alpha(red[500], 0.9)}`,
   padding: "8px 12px",
 }));
@@ -111,7 +111,7 @@ const Department_Head_NavigationBar = () => {
               alt="React Logo"
               className="h-fit mx-2 flex justify-center self-center "
             />
-            <h1 className="text-red-500">
+            <h1 className="text-white-500">
               {" "}
               Batangas State University Disciplinary Management
             </h1>
@@ -132,35 +132,35 @@ const Department_Head_NavigationBar = () => {
               alignItems: "center",
             }}
           >
-            <Button variant="text" color="error" size="small">
+            <Button variant="text" color="white" size="small">
               <Link
-                className=" hover:bg-red-100 hover:rounded-md hover:cursor-pointer"
+                className=" hover:bg-red-100 hover:text-red-600 hover:rounded-md hover:cursor-pointer p-2"
                 to="/department-head/home"
               >
-                {userType == "PROGRAM HEAD" ? "Program Head" : "Dean"}
+                {userType}
               </Link>
             </Button>
-            <Button variant="text" color="error" size="small">
+            <Button variant="text" color="white" size="small">
               <Link
-                className=" hover:bg-red-100 hover:rounded-md hover:cursor-pointer"
+                className=" hover:bg-red-100 hover:text-red-600 hover:rounded-md hover:cursor-pointer p-2"
                 to="/department-head/graph"
               >
                 Graphs
               </Link>
             </Button>
-            <Button variant="text" color="error" size="small">
+            <Button variant="text" color="white" size="small">
               <Link
-                className=" hover:bg-red-100 hover:rounded-md hover:cursor-pointer"
+                className=" hover:bg-red-100 hover:text-red-600 hover:rounded-md hover:cursor-pointer p-2"
                 to="/department-head/Notification"
               >
                 Notification
               </Link>
             </Button>
             {isAuthenticated && (
-              <Button variant="text" color="error" size="small">
+              <Button variant="text" color="white" size="small">
                 {" "}
                 <Link
-                  className=" hover:bg-red-100 hover:rounded-md hover:cursor-pointer"
+                  className=" hover:bg-red-100 hover:text-red-600 hover:rounded-md hover:cursor-pointer p-2"
                   onClick={logout}
                 >
                   Logout

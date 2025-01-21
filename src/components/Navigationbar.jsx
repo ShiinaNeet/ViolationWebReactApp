@@ -28,8 +28,8 @@ const StyledToolbar = styled(Toolbar)(({ theme }) => ({
   borderRadius: `calc(${theme.shape.borderRadius}px + 8px)`,
   backdropFilter: "blur(24px)",
   border: "1px solid",
-  borderColor: "white",
-  backgroundColor: "white",
+  borderColor: "red",
+  backgroundColor: "red",
   boxShadow: `0px 4px 6px ${alpha(red[500], 0.9)}`,
   padding: "8px 12px",
 }));
@@ -117,7 +117,7 @@ const Navigationbar = () => {
               alt="React Logo"
               className="h-fit mx-2 flex justify-center self-center "
             />
-            <h1 className="text-red-500">
+            <h1 className="text-white-500">
               {" "}
               Batangas State University Disciplinary Management
             </h1>
@@ -138,53 +138,53 @@ const Navigationbar = () => {
               alignItems: "center",
             }}
           >
-            <Button variant="text" color="error" size="small">
+            <Button variant="text" color="white" size="medium">
               <Link
-                className=" hover:bg-red-100 hover:rounded-md hover:cursor-pointer"
+                className=" hover:bg-red-100 hover:text-red-600 hover:rounded-md hover:cursor-pointer p-2"
                 to="/students"
               >
                 Home
               </Link>
             </Button>
-            <Button variant="text" color="error" size="small">
+            <Button variant="text" color="white" size="small">
               <Link
-                className=" hover:bg-red-100 hover:rounded-md hover:cursor-pointer"
+                className=" hover:bg-red-100 hover:text-red-600 hover:rounded-md hover:cursor-pointer p-2"
                 to="/Violations"
               >
                 Violation
               </Link>
             </Button>
-            <Button variant="text" color="error" size="small">
+            <Button variant="text" color="white" size="small">
               <Link
-                className=" hover:bg-red-100 hover:rounded-md hover:cursor-pointer"
+                className=" hover:bg-red-100 hover:text-red-600 hover:rounded-md hover:cursor-pointer p-2"
                 to="/Users"
               >
                 Users
               </Link>
             </Button>
-            <Button variant="text" color="error" size="small">
+            {/* <Button variant="text" color="white" size="small">
               {" "}
               <Link
-                className=" hover:bg-red-100 hover:rounded-md hover:cursor-pointer"
+                className=" hover:bg-red-100 hover:text-red-600 hover:rounded-md hover:cursor-pointer p-2"
                 to="/Chart"
               >
                 Charts
               </Link>
-            </Button>
-            <Button variant="text" color="error" size="small">
+            </Button> */}
+            <Button variant="text" color="white" size="small">
               {" "}
               <Link
-                className=" hover:bg-red-100 hover:rounded-md hover:cursor-pointer"
+                className=" hover:bg-red-100 hover:text-red-600 hover:rounded-md hover:cursor-pointer p-2"
                 to="/Notification"
               >
                 Notification
               </Link>
             </Button>{" "}
             {isAuthenticated && (
-              <Button variant="text" color="error" size="small">
+              <Button variant="text" color="white" size="small">
                 {" "}
                 <Link
-                  className=" hover:bg-red-100 hover:rounded-md hover:cursor-pointer"
+                  className=" hover:bg-red-100 hover:text-red-600 hover:rounded-md hover:cursor-pointer p-2"
                   onClick={logout}
                 >
                   Logout
@@ -221,31 +221,28 @@ const Navigationbar = () => {
                   </IconButton>
                 </Box>
 
+                <Link onClick={toggleDrawer(false)} to="/students">
+                  <MenuItem>Students </MenuItem>
+                </Link>
                 <Link onClick={toggleDrawer(false)} to="/Violations">
                   <MenuItem>Violation </MenuItem>
                 </Link>
-
                 <Link onClick={toggleDrawer(false)} to="/Users">
                   <MenuItem>User </MenuItem>
                 </Link>
-
-                <Link onClick={toggleDrawer(false)} to="/Chart">
+                {/* <Link onClick={toggleDrawer(false)} to="/Chart">
                   <MenuItem>Charts </MenuItem>
-                </Link>
-
+                </Link> */}
                 <Link onClick={toggleDrawer(false)} to="/Notification">
                   <MenuItem>Notifications </MenuItem>
                 </Link>
-
                 <Divider sx={{ my: 3 }} />
-
                 {isAuthenticated && (
                   <Link onClick={logout}>
                     {" "}
                     <MenuItem>Logout </MenuItem>
                   </Link>
                 )}
-
                 {localStorage.getItem("accessToken") === null &&
                   window.location.replace("/login")}
               </Box>
