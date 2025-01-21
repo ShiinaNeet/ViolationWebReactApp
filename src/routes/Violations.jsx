@@ -343,7 +343,7 @@ export default function Violations() {
 
   const fetchData = async () => {
     axios
-      .get("/violation/paginated", {
+      .get("/violation", {
         params: {
           skip: 0,
           limit: 100,
@@ -353,9 +353,9 @@ export default function Violations() {
         },
       })
       .then((response) => {
-        if (response.data.success === true) {
+        if (response.data.status === "success") {
           console.log("Data fetched successfully");
-          setRows(response.data.total);
+          setRows(response.data.data);
         } else {
           console.log("Failed to fetch data");
         }
@@ -370,46 +370,6 @@ export default function Violations() {
         });
       });
   };
-
-  const searchFunction = async () => {
-    if (search === "") {
-      return;
-    }
-    console.log(search);
-    // axios.get('https://student-discipline-api-fmm2.onrender.com/violation/search', {
-    //     params: {
-    //     query: search
-    //     },
-    //     headers: {
-    //     'Content-Type': 'application/json',
-    //     }
-    // })
-    // .then((response) => {
-    //     if(response.data.success === true){
-    //         console.log("Searched data fetched successfully!");
-    //         setRows(response.data.data);
-    //     }
-    //     else{
-    //         console.log("Failed to fetch search data");
-    //     }
-    // })
-    // .catch((error) => {
-    //     console.error('There was an error searching the data!', error);
-    // });
-  };
-
-  const debounce = (func, delay) => {
-    let debounceTimer;
-    return function (...args) {
-      clearTimeout(debounceTimer);
-      debounceTimer = setTimeout(() => {
-        // console.log('Debounced function called with args:', args);
-        func.apply(this, args);
-      }, delay);
-    };
-  };
-
-  const debouncedSearchFunction = debounce(searchFunction, 300);
 
   return (
     <Container
@@ -427,7 +387,7 @@ export default function Violations() {
           <h1 className="md:text-3xl text-2xl flex items-center">
             Violation List
           </h1>
-          <Tooltip title="Create Violation">
+          {/* <Tooltip title="Create Violation">
             <Button
               color="error"
               onClick={() => handleCreateOpen()}
@@ -435,40 +395,15 @@ export default function Violations() {
             >
               <AddIcon /> Create Violation
             </Button>
-          </Tooltip>
+          </Tooltip> */}
         </div>
-        {/* <div className="flex">
-        <TextField
-          className=""
-          autoFocus
-          label="Search by Violation name"
-          placeholder="Ex. Cheating"
-          id="standard-required"
-          variant="standard"
-          type="text"
-          fullWidth
-          value={search}
-          onChange={(e) => {
-            setSearch(e.target.value);
-            debouncedSearchFunction(e.target.value);
-          }}
-        />
-        <Button
-          className="rounded-sm text-white bg-blue-600 text-center  hover:bg-blue-750 hover:text-black"
-          onClick={() => searchFunction()}
-        >
-          Search
-        </Button>
-      </div> */}
         <StyledToolbar variant="dense" disableGutters>
           <TableContainer component={Paper} className="">
-            <Table sx={{ minWidth: 500 }}>
+            <Table sx={{ minWidth: 400 }}>
               <TableHead>
                 <TableRow>
                   <th className="py-5 px-4 font-bold ">Name</th>
-                  <th className="py-5 px-4 font-bold">Description</th>
-                  <th className="py-5 px-4 font-bold">Date</th>
-                  <th className="py-5 px-4 font-bold text-center">Actions</th>
+                  {/* <th className="py-5 px-4 font-bold text-center">Actions</th> */}
                 </TableRow>
               </TableHead>
               <TableBody>
@@ -480,41 +415,14 @@ export default function Violations() {
                   : rows
                 ).map((row) => (
                   <TableRow key={row._id}>
-                    <TableCell component="th" scope="row">
+                    <TableCell scope="row">
                       <Tooltip title={row.name} arrow>
-                        <div
-                          style={{
-                            whiteSpace: "nowrap",
-                            overflow: "hidden",
-                            textOverflow: "ellipsis",
-                            maxWidth: "250px",
-                          }}
-                        >
+                        <div className="flex flex-wrap break-words whitespace-normal">
                           {row.name}
                         </div>
                       </Tooltip>
                     </TableCell>
-                    <TableCell>
-                      <Tooltip title={row.description} arrow>
-                        <div
-                          style={{
-                            whiteSpace: "nowrap",
-                            overflow: "hidden",
-                            textOverflow: "ellipsis",
-                            maxWidth: "350px",
-                          }}
-                        >
-                          {row.description.length > 0 ? row.description : "N/A"}
-                        </div>
-                      </Tooltip>
-                    </TableCell>
-                    <TableCell>
-                      {formatDate(
-                        new Date(parseInt(row.date)),
-                        "MMMM DD, YYYY"
-                      )}
-                    </TableCell>
-                    <TableCell className="flex justify-center" align="center">
+                    {/* <TableCell className="flex justify-center" align="center">
                       <Tooltip title="Edit">
                         <Button
                           className="rounded-sm text-white hover:bg-red-100 hover:text-blue"
@@ -534,7 +442,7 @@ export default function Violations() {
                           <DeleteIcon color="error" />
                         </Button>
                       </Tooltip>
-                    </TableCell>
+                    </TableCell> */}
                   </TableRow>
                 ))}
                 {rows.length == 0 && (
@@ -578,21 +486,6 @@ export default function Violations() {
                     setCurrentRow({
                       ...currentRow,
                       name: e.target.value,
-                    })
-                  }
-                />
-                <TextField
-                  color="error"
-                  margin="dense"
-                  label="Description"
-                  type="text"
-                  fullWidth
-                  required={true}
-                  value={currentRow.description}
-                  onChange={(e) =>
-                    setCurrentRow({
-                      ...currentRow,
-                      description: e.target.value,
                     })
                   }
                 />
