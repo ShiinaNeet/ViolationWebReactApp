@@ -107,7 +107,7 @@ body {
   line-height: 1;
   font-family: "Roboto", sans-serif;
   background-color: rgba(255, 255, 255, 0.521);
-  background-image: url("/bsu_image.jpg");
+  /* background-image: url("/bsu_image.jpg"); */
   -webkit-backdrop-filter: blur(10px);
   backdrop-filter: blur(10px);
   background-repeat: no-repeat;
