@@ -10,7 +10,10 @@ const ProtectedRoute = ({ element }) => {
       return <Navigate to="/violations" replace />;
     } else if (userType.toLowerCase() === "dean") {
       return <Navigate to="/dean" replace />;
-    } else if (userType.toLowerCase() === "program head") {
+    } else if (
+      userType.toLowerCase() === "program head" ||
+      userType.toLowerCase() === "professor"
+    ) {
       return <Navigate to="/department-head/home" replace />;
     } else {
       return <Navigate to="/students" replace />;
