@@ -55,17 +55,21 @@ function CreateNotificationModal({ closeModal, sendAlert }) {
     const formattedValue = formatToMicroseconds(Notification.set_when);
 
     axios
-      .post("/notification", Notification.sent_to, {
-        params: {
+      .post(
+        "/notification",
+        {
           subject: Notification.subject,
           body: Notification.body,
           category: Notification.category,
-          set_when: formattedValue,
+          send_at: formattedValue,
+          recepients: Notification.sent_to,
         },
-        headers: {
-          "Content-Type": "application/json",
-        },
-      })
+        {
+          headers: {
+            "Content-Type": "application/json",
+          },
+        }
+      )
       .then((response) => {
         if (response.status === 200 && response.data.status === "success") {
           console.log("Notification sent successfully");

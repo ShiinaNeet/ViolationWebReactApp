@@ -105,9 +105,8 @@ const Navigationbar = () => {
         backgroundImage: "none",
         mt: "calc(var(--template-frame-height, 0px) + 28px)",
       }}
-      fullWidth
     >
-      <Container fullWidth>
+      <Container>
         <StyledToolbar variant="dense" disableGutters>
           <Box
             sx={{ flexGrow: 1, display: "flex", alignItems: "center", px: 0 }}

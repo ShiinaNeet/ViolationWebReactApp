@@ -3,6 +3,7 @@ import { alpha, Box, Container } from "@mui/material";
 import { BarChart } from "@mui/x-charts/BarChart";
 import axios from "axios";
 import { red } from "@mui/material/colors";
+import { isElement } from "react-dom/test-utils";
 
 export default function BarChartHead() {
   const [data, setData] = useState([]);
@@ -79,8 +80,14 @@ export default function BarChartHead() {
                 },
               ]}
             />
+          ) : loading == false && (data.length === 0 || data == []) ? (
+            <div className="flex items-center justify-center h-40">
+              <p>No data to display.</p>
+            </div>
           ) : (
-            <p>Loading...</p>
+            <div className="flex items-center justify-center h-40">
+              <p>Loading...</p>
+            </div>
           )}
         </Box>
       </div>

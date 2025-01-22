@@ -227,6 +227,8 @@ const Students = () => {
   const [isDepartmentLoading, setIsDepartmentLoading] = React.useState(false);
   const [isProgramLoading, setIsProgramLoading] = React.useState(false);
   const [isViolationLoading, setIsViolationLoading] = React.useState(false);
+  const [isUpdateModalLoading, setIsUpdateModalLoading] = React.useState(false);
+  const [isviewModalLoading, setIsViewModalLoading] = React.useState(false);
   const [isFetchingDone, setIsFetchingDone] = React.useState(false);
   const [searchFilterModal, setSearchFilterModal] = React.useState(false);
   const [updateStudentViolationModal, setUpdateStudentViolationModal] =
@@ -237,9 +239,10 @@ const Students = () => {
 
   useEffect(() => {
     fetchAllData();
-    fetchPrograms().then(() => {
-      fetchDepartments();
-    });
+    // fetchPrograms().then(() => {
+    //   fetchDepartments();
+    // });
+    fetchPrograms();
     setCurrentUserType(localStorage.getItem("userType"));
 
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -268,18 +271,20 @@ const Students = () => {
   const handleViewViolationModal = (person) => {
     // console.log(person);
     // setTargetStudent(person);
-    fetchUser(person);
+    setIsViewModalLoading(true);
     setViewModal(true);
+    fetchUser(person);
+
     setSearchFilterModal(false);
   };
   const handleUpdateViolationModal = (person) => {
     setUpdateStudentViolationModal(true);
-    // setTargetStudent(person);
+
     console.log("Person: ", person);
-    const completedViolationList = person.violations.map((violation) => {
-      const values = violationList.find((vio) => vio.id == violation);
-      return values;
-    });
+    // const completedViolationList = person.violations.map((violation) => {
+    //   const values = violationList.find((vio) => vio.id == violation);
+    //   return values;
+    // });
 
     const selectedDepartment = departments.find(
       (department) =>
@@ -293,7 +298,6 @@ const Students = () => {
       setFilteredPrograms(programsToAddFilter);
     }
     setTargetStudent({
-      ...targetStudent,
       id: person.id,
       email: person.email,
       course: person.course ? person.course : filteredPrograms[0].name,
@@ -304,10 +308,12 @@ const Students = () => {
       year: person.year_and_department.split(" - ")[0]
         ? person.year_and_department.split(" - ")[0]
         : "1st year",
-      violations: completedViolationList,
+      violations: person.violations,
       fullname: person.fullname,
       userid: person.userid,
     });
+    setIsUpdateModalLoading(true);
+    setIsUpdateModalLoading(false);
   };
 
   const handleSearch = (e) => {
@@ -342,7 +348,7 @@ const Students = () => {
         setErrorMessages([]);
         if (response.data.status === "success") {
           console.log("Saved");
-          fetchData();
+
           setAlertMessage({
             open: true,
             title: "Success",
@@ -449,16 +455,17 @@ const Students = () => {
         // Default to the first department if none is selected
         if (!targetStudent.department) {
           const firstDepartment = fetchedDepartments[0];
-          const programs = FetchedProgramData.filter(
-            (program) => program.department_id === firstDepartment._id
-          );
-
+          if (FetchedProgramData.length > 0) {
+            const programs = FetchedProgramData.filter(
+              (program) => program.department_id === firstDepartment._id
+            );
+            setFilteredPrograms(programs);
+          }
           // setTargetStudent({
           //   ...targetStudent,
           //   department: firstDepartment.name,
           //   course: programs.length > 0 ? programs[0].name : "",
           // });
-          setFilteredPrograms(programs);
         }
       } else {
         console.log("Failed to fetch data");
@@ -514,7 +521,9 @@ const Students = () => {
               violationList.find((vio) => vio.id === String(violation))
             )
             .filter((violation) => violation !== undefined);
-
+          const completeCourseData = programList.find(
+            (program) => program.id === response.data.data[0].course
+          );
           setTargetStudent({
             ...targetStudent,
             fullname: response.data.data[0].fullname,
@@ -523,9 +532,10 @@ const Students = () => {
             year_and_department: response.data.data[0].year_and_department,
             section: response.data.data[0].section,
             email: response.data.data[0].email,
-            course: response.data.data[0].course,
+            course: completeCourseData,
             term: response.data.data[0].term,
           });
+
           console.log("Fetched User: ", response.data);
         }
       })
@@ -537,6 +547,9 @@ const Students = () => {
           message: error.message,
           variant: "info",
         });
+      })
+      .finally(() => {
+        setIsViewModalLoading(false);
       });
   };
 
@@ -555,7 +568,7 @@ const Students = () => {
     // if (selectedViolation && !targetStudent.violations.some(v => v.name === selectedViolation.name)) {
     if (
       selectedViolation.id.length > 0 &&
-      !targetStudent.violations.some((v) => v === selectedViolation.id)
+      !targetStudent.violations.some((v) => v.id === selectedViolation.id)
     ) {
       console.log("Selected Violations: ", selectedViolation);
       const updatedViolations = [
@@ -566,12 +579,12 @@ const Students = () => {
       setSelectedViolation({ name: "", id: "" });
     }
   };
-  const transformedViolations = targetStudent.violations.map((violation) => ({
-    ...violation,
-    $oid: violation.id,
-    id: undefined, // Remove the _id field
-    name: undefined,
-  }));
+  // const transformedViolations = targetStudent.violations.map((violation) => ({
+  //   ...violation,
+  //   $oid: violation.id,
+  //   id: undefined, // Remove the _id field
+  //   name: undefined,
+  // }));
   const transformViolationToArray = () => {
     return targetStudent.violations.map((violation) => violation.id);
   };
@@ -631,7 +644,6 @@ const Students = () => {
         setErrorMessages([]);
         if (response.data.status === "success") {
           console.log("Saved");
-          fetchData();
           setAlertMessage({
             open: true,
             title: "Success",
@@ -704,13 +716,13 @@ const Students = () => {
           >
             Filter
           </button> */}
-            <Button
+            {/* <Button
               className="bg-red-500 p-2 rounded-sm text-red hover:bg-red-100"
               onClick={() => setMessageStudentModal(true)}
               color="error"
             >
               <AddAlertIcon color="error" /> Alert
-            </Button>
+            </Button> */}
           </div>
           <StyledToolbar variant="dense" disableGutters>
             <TableContainer component={Paper}>
@@ -720,15 +732,16 @@ const Students = () => {
                     <th className="py-5 px-4 border-b">Name</th>
                     <th className="py-5 px-4 border-b">Violation</th>
                     <th className="py-5 px-4 border-b">Department and Year</th>
-
-                    <th className="py-5 px-4 border-b text-center sticky">
-                      Actions
-                    </th>
+                    <th className="py-5 px-4 border-b text-center ">Actions</th>
                   </TableRow>
                 </TableHead>
                 <TableBody>
                   {isFetchingDone || isLoading || isViolationLoading ? (
-                    <TableRow colSpan="5">Loading...</TableRow>
+                    <TableRow>
+                      <TableCell colSpan={5} align="center">
+                        Loading...
+                      </TableCell>
+                    </TableRow>
                   ) : (
                     (rowsPerPage > 0
                       ? rows.slice(
@@ -774,15 +787,6 @@ const Students = () => {
                           ) : (
                             ""
                           )}
-
-                          {/* <Tooltip title="Delete Student">
-                        <Button
-                          className="rounded-sm text-white hover:bg-red-600 hover:text-white"
-                          onClick={() => handleDeleteViolationModal(student)}
-                        >
-                          <DeleteIcon />
-                        </Button>
-                      </Tooltip> */}
                         </td>
                       </tr>
                     ))
@@ -885,7 +889,9 @@ const Students = () => {
               <TextField
                 id="standard-read-only-input"
                 label="Course"
-                value={targetStudent.course ? targetStudent.course : "No Data"}
+                value={
+                  targetStudent.course ? targetStudent.course.name : "No Data"
+                }
                 variant="standard"
                 slotProps={{
                   input: {
@@ -1006,7 +1012,8 @@ const Students = () => {
         >
           <DialogTitle>Edit Violation</DialogTitle>
           <DialogContent>
-            {isDepartmentLoading || isProgramLoading ? (
+            {/* {isDepartmentLoading || isProgramLoading || isViolationLoading ? ( */}
+            {isUpdateModalLoading ? (
               <>Loading...</>
             ) : (
               <>
@@ -1018,11 +1025,7 @@ const Students = () => {
                         key={index}
                         className="my-2 rounded-sm flex justify-between text-black border-2 border-solid border-red-500 "
                       >
-                        <label className="p-2">
-                          {/* {violationList.find((vio) => vio.id == violation)?.name ||
-                        "Violation not found"} */}
-                          {violation.name}
-                        </label>
+                        <label className="p-2">{violation.name}</label>
                         <Button
                           onClick={() => handleDeleteViolation(index)}
                           className="hover:border-1 hover:border-solid hover:border-red-500 hover:border- hover:text-white rounded-none"
@@ -1144,27 +1147,6 @@ const Students = () => {
                       ))}
                     </select>
                   </div>
-                  {/* <TextField
-                margin="dense"
-                className="my-5 py-5"
-                label="Year"
-                type="text"
-                color="error"
-                variant="standard"
-                value={targetStudent.year}
-                onChange={(e) =>
-                  setTargetStudent({
-                    ...targetStudent,
-                    year: e.target.value,
-                  })
-                }
-                slotProps={{
-                  inputLabel: {
-                    shrink: true,
-                  },
-                }}
-                fullWidth
-              /> */}
                 </div>
               </>
             )}

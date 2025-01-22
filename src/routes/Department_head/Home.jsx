@@ -6,9 +6,9 @@ export default function Home() {
     <>
       <Container
         sx={{
-          display: "flex",
-          flexDirection: "column",
-          alignItems: "center",
+          // display: "flex",
+          // flexDirection: "column",
+          // alignItems: "center",
           pt: { xs: 10, sm: 15 },
           pb: { xs: 8, sm: 12 },
           height: "100vh",

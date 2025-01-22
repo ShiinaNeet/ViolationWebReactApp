@@ -49,48 +49,6 @@ const Department_Head_NavigationBar = () => {
     setOpen(newOpen);
   };
   return (
-    // <nav className="h-[100px] w-screen bg-red-500 px-2 md:justify-between flex justify-center text-white sticky shadow-md">
-    //   <div className="md:flex px-2 hidden">
-    //     <img
-    //       src={reactsvg}
-    //       alt="React Logo"
-    //       className="h-fit mx-2 flex justify-center self-center"
-    //     />
-    //     <label className="flex justify-center self-center">
-    //       Batangas State University Disciplinary Management
-    //     </label>
-    //   </div>
-    //   <div className="h-[100px] flex gap-x-5 items-center flex-wrap py-1 px-5">
-    //     <Link
-    //       className="p-2 hover:bg-red-700 hover:rounded-sm hover:cursor-pointer"
-    //       to="/department-head/home"
-    //     >
-    //       Home
-    //     </Link>
-    //     <Link
-    //       className="p-5 hover:bg-red-700 hover:rounded-md hover:cursor-pointer"
-    //       to="/department-head/Notification"
-    //     >
-    //       Notification
-    //     </Link>
-    //     <Link
-    //       className="p-2 hover:bg-red-700 hover:rounded-sm hover:cursor-pointer"
-    //       to="/department-head/graph"
-    //     >
-    //       Graphs
-    //     </Link>
-    //     {isAuthenticated && (
-    //       <Link
-    //         className="p-2 hover:bg-red-700 hover:rounded-sm hover:cursor-pointer"
-    //         onClick={logout}
-    //       >
-    //         Logout
-    //       </Link>
-    //     )}
-    //     {localStorage.getItem("accessToken") === null &&
-    //       window.location.replace("/login")}
-    //   </div>
-    // </nav>
     <AppBar
       position="fixed"
       enableColorOnDark
