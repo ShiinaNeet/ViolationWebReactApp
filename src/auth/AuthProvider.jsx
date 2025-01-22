@@ -55,6 +55,10 @@ export const AuthProvider = ({ children }) => {
 
   useEffect(() => {
     const accessToken = localStorage.getItem("accessToken");
+    const userType = localStorage.getItem("userType");
+    if (userType) {
+      setUserType(userType);
+    }
     if (accessToken) {
       setIsAuthenticated(true);
     }
