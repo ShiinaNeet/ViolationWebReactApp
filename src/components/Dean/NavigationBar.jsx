@@ -1,25 +1,23 @@
-import React from "react";
 import reactsvg from "@src/assets/react.svg";
 import { Link } from "react-router-dom";
 import { useAuth } from "../../auth/AuthProvider";
-
-import MenuIcon from "@mui/icons-material/Menu";
-import CloseRoundedIcon from "@mui/icons-material/CloseRounded";
+import React from "react";
 import {
   alpha,
-  styled,
-  Toolbar,
   AppBar,
   Box,
   Button,
   Container,
   IconButton,
+  styled,
+  Toolbar,
   Drawer,
   MenuItem,
   Divider,
 } from "@mui/material";
+import MenuIcon from "@mui/icons-material/Menu";
+import CloseRoundedIcon from "@mui/icons-material/CloseRounded";
 import { red } from "@mui/material/colors";
-import { Directions } from "@mui/icons-material";
 
 const StyledToolbar = styled(Toolbar)(({ theme }) => ({
   display: "flex",
@@ -28,24 +26,18 @@ const StyledToolbar = styled(Toolbar)(({ theme }) => ({
   flexShrink: 0,
   borderRadius: `calc(${theme.shape.borderRadius}px + 8px)`,
   backdropFilter: "blur(24px)",
-  border: "1px solid ",
+  border: "1px solid",
   borderColor: (theme.vars || theme).palette.divider,
   backgroundColor: "red",
   boxShadow: `0px 4px 6px ${alpha(red[500], 0.9)}`,
   padding: "8px 12px",
 }));
 
-const Department_Head_NavigationBar = () => {
-  const { logout, isAuthenticated, userType } = useAuth();
+const NavigationBar = () => {
+  const { logout, isAuthenticated } = useAuth();
   const [open, setOpen] = React.useState(false);
 
   const toggleDrawer = (newOpen) => () => {
-    if (
-      event.type === "keydown" &&
-      (event.key === "Tab" || event.key === "Shift")
-    ) {
-      return;
-    }
     setOpen(newOpen);
   };
   return (
@@ -93,25 +85,25 @@ const Department_Head_NavigationBar = () => {
             <Button variant="text" color="white" size="small">
               <Link
                 className=" hover:bg-red-100 hover:text-red-600 hover:rounded-md hover:cursor-pointer p-2"
-                to="/department-head/home"
+                to="/dean/home"
               >
-                {userType}
+                HOME
               </Link>
             </Button>
             <Button variant="text" color="white" size="small">
               <Link
                 className=" hover:bg-red-100 hover:text-red-600 hover:rounded-md hover:cursor-pointer p-2"
-                to="/department-head/graph"
+                to="/dean/students"
               >
-                Graphs
+                Students
               </Link>
             </Button>
             <Button variant="text" color="white" size="small">
               <Link
                 className=" hover:bg-red-100 hover:text-red-600 hover:rounded-md hover:cursor-pointer p-2"
-                to="/department-head/Notification"
+                to="/dean/Notification"
               >
-                Notification
+                Notifications
               </Link>
             </Button>
             {isAuthenticated && (
@@ -138,7 +130,9 @@ const Department_Head_NavigationBar = () => {
               open={open}
               onClose={toggleDrawer(false)}
               PaperProps={{
-                sx: { top: "var(--template-frame-height, 0px)" },
+                sx: {
+                  top: "var(--template-frame-height, 0px)",
+                },
               }}
             >
               <Box sx={{ p: 2, backgroundColor: "background.default" }}>
@@ -152,16 +146,20 @@ const Department_Head_NavigationBar = () => {
                     <CloseRoundedIcon />
                   </IconButton>
                 </Box>
-                <Link to="/department-head/home">
-                  <MenuItem>Program Head</MenuItem>
+
+                <Link to="/dean/home">
+                  <MenuItem>Dean </MenuItem>
                 </Link>
-                <Link to="/department-head/graph">
-                  <MenuItem>Graph </MenuItem>
+
+                <Link to="/dean/students">
+                  <MenuItem>Students </MenuItem>
                 </Link>
-                <Link to="/department-head/Notification">
+
+                <Link to="/dean/Notification">
                   <MenuItem>Notifications </MenuItem>
                 </Link>
                 <Divider sx={{ my: 3 }} />
+
                 {isAuthenticated && (
                   <Link onClick={logout}>
                     <MenuItem>Logout </MenuItem>
@@ -179,4 +177,4 @@ const Department_Head_NavigationBar = () => {
   );
 };
 
-export default Department_Head_NavigationBar;
+export default NavigationBar;

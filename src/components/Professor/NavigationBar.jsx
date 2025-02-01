@@ -1,22 +1,23 @@
+import React from "react";
 import reactsvg from "@src/assets/react.svg";
 import { Link } from "react-router-dom";
 import { useAuth } from "../../auth/AuthProvider";
-import React from "react";
+
+import MenuIcon from "@mui/icons-material/Menu";
+import CloseRoundedIcon from "@mui/icons-material/CloseRounded";
 import {
   alpha,
+  styled,
+  Toolbar,
   AppBar,
   Box,
   Button,
   Container,
   IconButton,
-  styled,
-  Toolbar,
   Drawer,
   MenuItem,
   Divider,
 } from "@mui/material";
-import MenuIcon from "@mui/icons-material/Menu";
-import CloseRoundedIcon from "@mui/icons-material/CloseRounded";
 import { red } from "@mui/material/colors";
 
 const StyledToolbar = styled(Toolbar)(({ theme }) => ({
@@ -26,63 +27,27 @@ const StyledToolbar = styled(Toolbar)(({ theme }) => ({
   flexShrink: 0,
   borderRadius: `calc(${theme.shape.borderRadius}px + 8px)`,
   backdropFilter: "blur(24px)",
-  border: "1px solid",
+  border: "1px solid ",
   borderColor: (theme.vars || theme).palette.divider,
   backgroundColor: "red",
   boxShadow: `0px 4px 6px ${alpha(red[500], 0.9)}`,
   padding: "8px 12px",
 }));
 
-const Dean_NavigationBar = () => {
+const Department_Head_NavigationBar = () => {
   const { logout, isAuthenticated, userType } = useAuth();
   const [open, setOpen] = React.useState(false);
 
   const toggleDrawer = (newOpen) => () => {
+    if (
+      event.type === "keydown" &&
+      (event.key === "Tab" || event.key === "Shift")
+    ) {
+      return;
+    }
     setOpen(newOpen);
   };
   return (
-    // <nav className="h-[100px] w-screen bg-red-500 px-2 md:justify-between flex justify-center text-white sticky shadow-md">
-    //   <div className="md:flex px-2 hidden">
-    //     <img
-    //       src={reactsvg}
-    //       alt="React Logo"
-    //       className="h-fit mx-2 flex justify-center self-center"
-    //     />
-    //     <label className="flex justify-center self-center">
-    //       Batangas State University Disciplinary Management
-    //     </label>
-    //   </div>
-    //   <div className="h-[100px] flex gap-x-5 items-center flex-wrap py-1 px-5">
-    //     <Link
-    //       className="p-2 hover:bg-red-700 hover:rounded-md hover:cursor-pointer"
-    //       to="/dean/home"
-    //     >
-    //       {userType == "PROGRAM HEAD" ? "Program Head" : "Dean"}
-    //     </Link>
-    //     <Link
-    //       className="p-2 hover:bg-red-700 hover:rounded-md hover:cursor-pointer"
-    //       to="/dean/students"
-    //     >
-    //       Students
-    //     </Link>
-    //     <Link
-    //       className="p-5 hover:bg-red-700 hover:rounded-md hover:cursor-pointer"
-    //       to="/dean/Notification"
-    //     >
-    //       Notification
-    //     </Link>
-    //     {isAuthenticated && (
-    //       <Link
-    //         className="p-2 hover:bg-red-700 hover:rounded-md hover:cursor-pointer"
-    //         onClick={logout}
-    //       >
-    //         Logout
-    //       </Link>
-    //     )}
-    //     {localStorage.getItem("accessToken") === null &&
-    //       window.location.replace("/login")}
-    //   </div>
-    // </nav>
     <AppBar
       position="fixed"
       enableColorOnDark
@@ -127,25 +92,25 @@ const Dean_NavigationBar = () => {
             <Button variant="text" color="white" size="small">
               <Link
                 className=" hover:bg-red-100 hover:text-red-600 hover:rounded-md hover:cursor-pointer p-2"
-                to="/dean/home"
+                to="/professor/home"
               >
-                HOME
+                {userType}
               </Link>
             </Button>
             <Button variant="text" color="white" size="small">
               <Link
                 className=" hover:bg-red-100 hover:text-red-600 hover:rounded-md hover:cursor-pointer p-2"
-                to="/dean/students"
+                to="/professor/graph"
               >
-                Students
+                Graphs
               </Link>
             </Button>
             <Button variant="text" color="white" size="small">
               <Link
                 className=" hover:bg-red-100 hover:text-red-600 hover:rounded-md hover:cursor-pointer p-2"
-                to="/dean/Notification"
+                to="/professor/Notification"
               >
-                Notifications
+                Notification
               </Link>
             </Button>
             {isAuthenticated && (
@@ -172,9 +137,7 @@ const Dean_NavigationBar = () => {
               open={open}
               onClose={toggleDrawer(false)}
               PaperProps={{
-                sx: {
-                  top: "var(--template-frame-height, 0px)",
-                },
+                sx: { top: "var(--template-frame-height, 0px)" },
               }}
             >
               <Box sx={{ p: 2, backgroundColor: "background.default" }}>
@@ -188,20 +151,16 @@ const Dean_NavigationBar = () => {
                     <CloseRoundedIcon />
                   </IconButton>
                 </Box>
-
-                <Link to="/dean/home">
-                  <MenuItem>Dean </MenuItem>
+                <Link to="/department-head/home">
+                  <MenuItem>Program Head</MenuItem>
                 </Link>
-
-                <Link to="/dean/students">
-                  <MenuItem>Students </MenuItem>
+                <Link to="/department-head/graph">
+                  <MenuItem>Graph </MenuItem>
                 </Link>
-
-                <Link to="/dean/Notification">
+                <Link to="/department-head/Notification">
                   <MenuItem>Notifications </MenuItem>
                 </Link>
                 <Divider sx={{ my: 3 }} />
-
                 {isAuthenticated && (
                   <Link onClick={logout}>
                     <MenuItem>Logout </MenuItem>
@@ -219,4 +178,4 @@ const Dean_NavigationBar = () => {
   );
 };
 
-export default Dean_NavigationBar;
+export default Department_Head_NavigationBar;
