@@ -1,4 +1,3 @@
-import React from "react";
 import { Navigate, useLocation } from "react-router-dom";
 import { useAuth } from "./AuthProvider";
 
@@ -10,10 +9,9 @@ const ProtectedRoute = ({ element }) => {
       return <Navigate to="/violations" replace />;
     } else if (userType.toLowerCase() === "dean") {
       return <Navigate to="/dean" replace />;
-    } else if (
-      userType.toLowerCase() === "program head" ||
-      userType.toLowerCase() === "professor"
-    ) {
+    } else if (userType.toLowerCase() === "professor") {
+      return <Navigate to="/professor/home" replace />;
+    } else if (userType.toLowerCase() === "program head") {
       return <Navigate to="/department-head/home" replace />;
     } else {
       return <Navigate to="/students" replace />;
