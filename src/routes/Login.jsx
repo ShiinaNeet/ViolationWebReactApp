@@ -59,10 +59,9 @@ const Login = () => {
         navigate("/violations");
       } else if (responseData == userType.dean) {
         navigate("/dean/home");
-      } else if (
-        responseData == userType.department_head ||
-        responseData == userType.professor
-      ) {
+      } else if (responseData == userType.professor) {
+        navigate("/professor/home");
+      } else if (responseData == userType.department_head) {
         navigate("/department-head/home");
       } else {
         setAlertMessage({
@@ -98,7 +97,7 @@ const Login = () => {
         className="flex flex-col bg-slate-100 sm:w-2/3 w-5/6 p-3 rounded-md gap-y-5 border-2 border-red-100 border-solid shadow-sm shadow-red-400"
       >
         <h1 className="text-2xl text-center font-extrabold">
-          Welcome back! Let's keep our campus safe and compliant.
+          Welcome back! Let&apos;s keep our campus safe and compliant.
         </h1>
         <TextField
           id="outlined-basic"

@@ -7,13 +7,17 @@ import { createBrowserRouter, RouterProvider } from "react-router-dom";
 import Layout from "./layout";
 import DeanLayout from "./Dean_layout";
 import DepartmentHeadLayout from "./DepartmentHead_layout";
+import ProfessorLayout from "./Professor_layout";
 
 //Dean Layout
 import Dean_Home from "./routes/Dean/Home";
 
 //Department head Layout
 import DepartmentHead_Home from "./routes/Department_head/Home";
-import ViolationBarChart from "./components/Department_Head/BarChartHead";
+import ViolationBarChart from "./components/Department_Head/BarChart";
+
+//Professor Layout
+import Professor_Home from "./routes/Professor/Home";
 
 import Notification from "./routes/Notification";
 import Students from "./routes/Students";
@@ -86,6 +90,24 @@ const router = createBrowserRouter([
       {
         path: "home",
         element: <ProtectedRoute element={<DepartmentHead_Home />} />,
+      },
+      {
+        path: "graph",
+        element: <ProtectedRoute element={<ViolationBarChart />} />,
+      },
+      {
+        path: "notification",
+        element: <ProtectedRoute element={<Notification />} />,
+      },
+    ],
+  },
+  {
+    path: "/professor",
+    element: <ProtectedRoute element={<ProfessorLayout />} />,
+    children: [
+      {
+        path: "home",
+        element: <ProtectedRoute element={<Professor_Home />} />,
       },
       {
         path: "graph",
