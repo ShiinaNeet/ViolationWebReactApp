@@ -4,17 +4,11 @@ import {
   AlertTitle,
   alpha,
   Button,
-  Chip,
-  Container,
   Dialog,
   DialogActions,
   DialogContent,
   DialogTitle,
-  FormControl,
-  InputLabel,
-  MenuItem,
   Paper,
-  Select,
   Snackbar,
   styled,
   Table,
@@ -59,11 +53,6 @@ export default function NotificationList() {
   const [selectedNotification, setSelectedNotification] = useState(null);
   const [isLoading, setIsLoading] = useState(false);
   const [filter, setFilter] = useState("All");
-  const [notificationQueryParams, setNotificationQueryParams] = React.useState({
-    search: null,
-    sort: "date-asc",
-    sent: null,
-  });
   const [alertMessage, setAlertMessage] = React.useState({
     open: false,
     title: "",
@@ -174,10 +163,12 @@ export default function NotificationList() {
         setIsDeleteModalOpen(false);
       });
   };
+  const truncateText = (text, maxLength) =>
+    text.length > maxLength ? text.slice(0, maxLength) + "..." : text;
   return (
     <div className="">
       <div className="flex flex-row justify-between   my-2">
-        <h1 className="text-3xl py-3">Student Violations</h1>
+        <h1 className="text-3xl py-3">Notifications</h1>
       </div>
       {isLoading ? (
         <p>Loading...</p>
@@ -260,28 +251,18 @@ export default function NotificationList() {
                           <p> {idx + 1}.</p>
                         </TableCell>
                         <TableCell className="px-4 py-2 text-sm text-gray-800 md:text-lg font-semibold font-sans w-1/4 border ">
-                          <p className="font-semibold">{notif.subject}</p>
+                          <p className="font-semibold">
+                            {truncateText(notif.subject, 50)}
+                          </p>
                         </TableCell>
-                        <TableCell className="px-4 py-2 text-sm text-gray-800 max-w-20 overflow-hidden white-space-nowrap text-overflow-ellipsis border">
+                        <TableCell className="px-4 py-2 text-sm text-gray-800 w-1/4 overflow-hidden  border">
                           <p className="font-thin">
-                            <strong className="font-semibold">
-                              {notif.category}
+                            <strong className="font-semibold text-">
+                              {truncateText(notif.category, 20)}
                             </strong>{" "}
-                            - {notif.body}
-                          </p>{" "}
+                            - {truncateText(notif.body, 50)}
+                          </p>
                         </TableCell>
-                        {/* <TableCell
-                            className="w-[10px] sm:w-[20px] md:w-[30px] lg:w-[40px] xl:w-[50px] 2xl:w-[60px] border text-center"
-                            align="center"
-                          >
-                            <Chip
-                              label={notif.sent_at ? "Sent" : "Queued"}
-                              // color={notif.is_sent ? "secondary" : "error"}
-                              variant="outlined"
-                              size="small"
-                              className="w-full"
-                            />
-                          </TableCell> */}
                         <TableCell
                           className="px-4 py-2 text-sm text-gray-800 w-1/4 "
                           align="center"

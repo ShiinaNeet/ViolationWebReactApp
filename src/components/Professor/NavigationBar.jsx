@@ -97,7 +97,7 @@ const Department_Head_NavigationBar = () => {
                 {userType}
               </Link>
             </Button>
-            <Button variant="text" color="white" size="small">
+            {/* <Button variant="text" color="white" size="small">
               <Link
                 className=" hover:bg-red-100 hover:text-red-600 hover:rounded-md hover:cursor-pointer p-2"
                 to="/professor/graph"
@@ -112,7 +112,7 @@ const Department_Head_NavigationBar = () => {
               >
                 Notification
               </Link>
-            </Button>
+            </Button> */}
             {isAuthenticated && (
               <Button variant="text" color="white" size="small">
                 {" "}
@@ -154,12 +154,12 @@ const Department_Head_NavigationBar = () => {
                 <Link to="/department-head/home">
                   <MenuItem>Program Head</MenuItem>
                 </Link>
-                <Link to="/department-head/graph">
+                {/* <Link to="/department-head/graph">
                   <MenuItem>Graph </MenuItem>
                 </Link>
                 <Link to="/department-head/Notification">
                   <MenuItem>Notifications </MenuItem>
-                </Link>
+                </Link> */}
                 <Divider sx={{ my: 3 }} />
                 {isAuthenticated && (
                   <Link onClick={logout}>

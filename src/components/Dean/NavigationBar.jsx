@@ -101,6 +101,14 @@ const NavigationBar = () => {
             <Button variant="text" color="white" size="small">
               <Link
                 className=" hover:bg-red-100 hover:text-red-600 hover:rounded-md hover:cursor-pointer p-2"
+                to="/dean/departments"
+              >
+                Departments
+              </Link>
+            </Button>
+            <Button variant="text" color="white" size="small">
+              <Link
+                className=" hover:bg-red-100 hover:text-red-600 hover:rounded-md hover:cursor-pointer p-2"
                 to="/dean/Notification"
               >
                 Notifications
@@ -153,6 +161,10 @@ const NavigationBar = () => {
 
                 <Link to="/dean/students">
                   <MenuItem>Students </MenuItem>
+                </Link>
+
+                <Link to="/dean/departments">
+                  <MenuItem>Departments </MenuItem>
                 </Link>
 
                 <Link to="/dean/Notification">

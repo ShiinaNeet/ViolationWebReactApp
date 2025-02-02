@@ -16,7 +16,6 @@ import KeyboardArrowLeft from "@mui/icons-material/KeyboardArrowLeft";
 import KeyboardArrowRight from "@mui/icons-material/KeyboardArrowRight";
 import LastPageIcon from "@mui/icons-material/LastPage";
 import { TableHead } from "@mui/material";
-import axios from "axios";
 import formatDate from "../utils/moment";
 
 function TablePaginationActions(props) {
@@ -88,6 +87,17 @@ TablePaginationActions.propTypes = {
   rowsPerPage: PropTypes.number.isRequired,
 };
 
+StudentViolationList.propTypes = {
+  student: PropTypes.shape({
+    violations: PropTypes.arrayOf(
+      PropTypes.shape({
+        code: PropTypes.string.isRequired,
+        date: PropTypes.string.isRequired,
+      })
+    ),
+  }).isRequired,
+};
+
 export default function StudentViolationList(props) {
   const { student } = props;
   const [page, setPage] = React.useState(0);
@@ -108,6 +118,7 @@ export default function StudentViolationList(props) {
 
   React.useEffect(() => {
     if (student && Array.isArray(student.violations)) {
+      console.log("Student Violation List component: ", student);
       setData(student.violations);
     } else {
       setData([]);
@@ -123,7 +134,7 @@ export default function StudentViolationList(props) {
             <TableHead>
               <TableRow>
                 <TableCell>Name</TableCell>
-                {/* <TableCell>Date</TableCell> */}
+                <TableCell align="center">Date</TableCell>
               </TableRow>
             </TableHead>
             <TableBody>
@@ -131,13 +142,13 @@ export default function StudentViolationList(props) {
                 .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
                 .map((row, index) => (
                   <TableRow key={index}>
-                    <TableCell>{row.name}</TableCell>
-                    {/* <TableCell>
-                                            {formatDate(
-                                                new Date(parseInt(row.date)),
-                                                "MMMM DD, YYYY - hh:mm A"
-                                            )}
-                                        </TableCell> */}
+                    <TableCell>{row.code}</TableCell>
+                    <TableCell align="center">
+                      {formatDate(
+                        row.date_committed,
+                        "MMMM DD, YYYY - hh:mm A"
+                      )}
+                    </TableCell>
                   </TableRow>
                 ))}
               {emptyRows > 0 && (
