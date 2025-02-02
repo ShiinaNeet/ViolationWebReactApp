@@ -11,7 +11,7 @@ import ProfessorLayout from "./Professor_layout";
 
 //Dean Layout
 import Dean_Home from "./routes/Dean/Home";
-
+import Dean_Department from "./components/Dean/DepartmentTable";
 //Department head Layout
 import DepartmentHead_Home from "./routes/Department_head/Home";
 import ViolationBarChart from "./components/Department_Head/BarChart";
@@ -78,6 +78,10 @@ const router = createBrowserRouter([
         element: <ProtectedRoute element={<Students />} />,
       },
       {
+        path: "departments",
+        element: <ProtectedRoute element={<Dean_Department />} />,
+      },
+      {
         path: "notification",
         element: <ProtectedRoute element={<Notification />} />,
       },
@@ -109,14 +113,14 @@ const router = createBrowserRouter([
         path: "home",
         element: <ProtectedRoute element={<Professor_Home />} />,
       },
-      {
-        path: "graph",
-        element: <ProtectedRoute element={<ViolationBarChart />} />,
-      },
-      {
-        path: "notification",
-        element: <ProtectedRoute element={<Notification />} />,
-      },
+      // {
+      //   path: "graph",
+      //   element: <ProtectedRoute element={<ViolationBarChart />} />,
+      // },
+      // {
+      //   path: "notification",
+      //   element: <ProtectedRoute element={<Notification />} />,
+      // },
     ],
   },
   {
