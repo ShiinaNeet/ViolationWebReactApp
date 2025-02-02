@@ -1,9 +1,7 @@
-import React, { useState, useEffect } from "react";
-import { alpha, Box, Container } from "@mui/material";
+import { useState, useEffect } from "react";
+import { Box, Container } from "@mui/material";
 import { BarChart } from "@mui/x-charts/BarChart";
 import axios from "axios";
-import { red } from "@mui/material/colors";
-import { isElement } from "react-dom/test-utils";
 
 export default function BarChartHead() {
   const [data, setData] = useState([]);
@@ -21,13 +19,39 @@ export default function BarChartHead() {
       if (response.status === 200) {
         console.log("Data fetched successfully");
 
-        const pieChartData = response.data.flatMap((department) =>
-          department.programs.map((program) => ({
-            name: program.program_name,
-            value: program.total_violations,
-          }))
-        );
-        setData(pieChartData);
+        // Flatten and aggregate violations
+        const violationsMap = new Map();
+
+        response.data.forEach((department) => {
+          department.programs.forEach((program) => {
+            program.violations.forEach((violation) => {
+              const key = violation.name;
+              if (violationsMap.has(key)) {
+                violationsMap.set(
+                  key,
+                  violationsMap.get(key) + violation.count
+                );
+              } else {
+                violationsMap.set(key, violation.count);
+              }
+            });
+          });
+        });
+
+        // Convert Map to an array for chart
+        const chartData = Array.from(violationsMap, ([name, value]) => ({
+          name,
+          value,
+        }));
+
+        setData(chartData);
+        // const pieChartData = response.data.flatMap((department) =>
+        //   department.programs.map((program) => ({
+        //     name: program.program_name,
+        //     value: program.total_violations,
+        //   }))
+        // );
+        // setData(pieChartData);
       } else {
         console.log("Failed to fetch data");
       }
