@@ -4,7 +4,7 @@ import axios from "axios";
 import RestartAltIcon from "@mui/icons-material/RestartAlt";
 import { valueFormatter } from "../utils/ChartData";
 import { StyledEngineProvider } from "@mui/material/styles";
-import BarChartHead from "../components/Department_Head/BarChartHead";
+import BarChartHead from "../components/Department_Head/BarChart";
 import { Container } from "@mui/material";
 
 export default function Chart() {
