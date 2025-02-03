@@ -15,7 +15,7 @@ Website: [Student-Violations-Website](https://react.shiinaneet.site/)
 
 - **Frontend**: React (Vite)
 - **UI Framework**: Material UI
-- **Charts**: (Specify the chart library used, e.g., Chart.js, Recharts)
+- **Charts**: Material UI X
 - **Deployment**: (Nginx - Ubuntu)
 
 ## Prerequisites
@@ -50,7 +50,7 @@ Follow these steps to set up the project locally:
 
 ## Screenshots
 
-Add screenshots of your app here:
+This is outdated. You can request them in Issues.
 
 1. **Student with Violation List**  
     ![Student with Violation List](https://github.com/user-attachments/assets/39acb72e-8403-42c0-995a-bcd072fa47d3)
