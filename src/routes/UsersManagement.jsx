@@ -14,7 +14,6 @@ import FirstPageIcon from "@mui/icons-material/FirstPage";
 import KeyboardArrowLeft from "@mui/icons-material/KeyboardArrowLeft";
 import KeyboardArrowRight from "@mui/icons-material/KeyboardArrowRight";
 import LastPageIcon from "@mui/icons-material/LastPage";
-
 import AddIcon from "@mui/icons-material/Add";
 import Button from "@mui/material/Button";
 import Dialog from "@mui/material/Dialog";
@@ -38,6 +37,7 @@ import {
   Toolbar,
 } from "@mui/material";
 import axios from "axios";
+import "../animations.css";
 import { red } from "@mui/material/colors";
 
 function TablePaginationActions(props) {
@@ -143,6 +143,7 @@ export default function UserManagement() {
 
   const handleCreateOpen = () => {
     setOpenCreate(true);
+    // fetchDepartmentData();
   };
 
   const handleClose = () => {
@@ -372,11 +373,15 @@ export default function UserManagement() {
   //     });
   // };
 
+  // React.useEffect(() => {
+  //   fetchData(page * rowsPerPage, rowsPerPage);
+  // }, [page, rowsPerPage]);
   React.useEffect(() => {
-    fetchData(page * rowsPerPage, rowsPerPage);
-  }, [page, rowsPerPage]);
+    fetchData();
+  }, []);
 
-  const fetchData = async () => {
+  const fetchData = () => {
+    setIsLoading(true);
     axios
       .get("admin", {
         params: {
@@ -391,6 +396,7 @@ export default function UserManagement() {
         if (response.data.status === "success") {
           console.log("Data fetched successfully");
           setRows(response.data.data);
+          fetchDepartmentData();
         } else {
           console.log("Failed to fetch data");
           setAlertMessage({
@@ -410,6 +416,9 @@ export default function UserManagement() {
           variant: "error",
         });
       });
+  };
+
+  const fetchDepartmentData = async () => {
     axios
       .get("/department", {
         params: {
@@ -422,10 +431,8 @@ export default function UserManagement() {
       })
       .then((response) => {
         if (response.data.status === "success") {
-          console.log("Department Data fetched successfully");
           setDepartmentData(response.data.data);
         } else {
-          console.log("Failed to fetch data");
           setAlertMessage({
             open: true,
             title: "No Data",
@@ -443,6 +450,7 @@ export default function UserManagement() {
           variant: "error",
         });
       });
+    setIsLoading(false);
   };
 
   const addMultipleDepartment = (event) => {
@@ -469,6 +477,7 @@ export default function UserManagement() {
       : alpha(theme.palette.background.default, 0.4),
     boxShadow: `0px 4px 6px ${alpha(red[500], 0.9)}`,
   }));
+
   return (
     <Container
       sx={{
@@ -493,99 +502,87 @@ export default function UserManagement() {
             </Button>
           </Tooltip>
         </div>
-        {/* <div className="flex">
-        <TextField
-          className=""
-          autoFocus
-          label="Search by Name"
-          placeholder="Ex. John Doe"
-          id="standard-required"
-          variant="standard"
-          type="text"
-          fullWidth
-          value={search}
-          onChange={(e) => {
-            setSearch(e.target.value);
-            debouncedSearchFunction(e.target.value);
-          }}
-        />
-        <Button
-          className="rounded-sm text-white bg-blue-600 text-center  hover:bg-blue-750 hover:text-black"
-          onClick={() => searchFunction()}
-        >
-          Search
-        </Button>
-      </div> */}
         <StyledToolbar variant="dense" disableGutters>
           <TableContainer component={Paper} className="">
             <Table sx={{ minWidth: 500 }}>
-              <TableHead>
-                <TableRow>
-                  <th className="py-5 px-4 font-bold ">Name</th>
-                  <th className="py-5 px-4 font-bold ">Username</th>
-                  <th className="py-5 px-4 font-bold">Email address</th>
-                  <th className="py-5 px-4 font-bold text-center">Category</th>
-                  {/* <th className="py-5 px-4 font-bold text-center">Actions</th> */}
-                </TableRow>
-              </TableHead>
-              <TableBody>
-                {(rowsPerPage > 0
-                  ? rows.slice(
-                      page * rowsPerPage,
-                      page * rowsPerPage + rowsPerPage
-                    )
-                  : rows
-                ).map((row) => (
-                  <TableRow key={row._id}>
-                    <TableCell component="th" scope="row">
-                      {row.first_name && row.last_name
-                        ? row.first_name + " " + row.last_name
-                        : "No name attached"}
-                    </TableCell>
-                    <TableCell>
-                      {row.username ? row.username : "No username"}
-                    </TableCell>
-                    <TableCell>
-                      {row.email ? row.email : "No email address attached"}
-                    </TableCell>
-                    <TableCell align="center">
-                      <Button
-                        className={`p-2 rounded-sm text-center
+              {isLoading == false && rows.length == 0 ? (
+                <div className="flex justify-center items-center">
+                  <h1>Loading...</h1>
+                </div>
+              ) : (
+                <>
+                  <TableHead>
+                    <TableRow>
+                      <th className="py-5 px-4 font-bold ">Name</th>
+                      <th className="py-5 px-4 font-bold ">Username</th>
+                      <th className="py-5 px-4 font-bold">Email address</th>
+                      <th className="py-5 px-4 font-bold text-center">
+                        Category
+                      </th>
+                      {/* <th className="py-5 px-4 font-bold text-center">Actions</th> */}
+                    </TableRow>
+                  </TableHead>
+                  <TableBody>
+                    {isLoading ? (
+                      <TableRow>
+                        <TableCell colSpan={5} align="center">
+                          Loading...
+                        </TableCell>
+                      </TableRow>
+                    ) : rows.length === 0 ? (
+                      <TableRow style={{ height: 53 * emptyRows }}>
+                        <TableCell colSpan={6} align="center">
+                          No student...
+                        </TableCell>
+                      </TableRow>
+                    ) : (
+                      (rowsPerPage > 0
+                        ? rows.slice(
+                            page * rowsPerPage,
+                            page * rowsPerPage + rowsPerPage
+                          )
+                        : rows
+                      ).map((row) => (
+                        <TableRow
+                          key={row.id}
+                          className="slide-in-down-visible"
+                        >
+                          <TableCell component="th" scope="row">
+                            {row.first_name && row.last_name
+                              ? row.first_name + " " + row.last_name
+                              : "No name attached"}
+                          </TableCell>
+                          <TableCell>
+                            {row.username ? row.username : "No username"}
+                          </TableCell>
+                          <TableCell>
+                            {row.email
+                              ? row.email
+                              : "No email address attached"}
+                          </TableCell>
+                          <TableCell align="center">
+                            <Button
+                              className={`p-2 rounded-sm text-center
                       ${row.type === "ADMIN" ? "primary" : "secondary"}`}
-                        color={row.type === "ADMIN" ? "primary" : "secondary"}
-                      >
-                        {row.type ? row.type : "No type attached"}{" "}
-                      </Button>
-                    </TableCell>
-                    {/* <td className="flex justify-center">
-                    <Tooltip title="Edit">
-                      <Button
-                        className=" p-2 rounded-sm text-white hover:bg-yellow-600 hover:text-white"
-                        onClick={() => handleOpen(row)}
-                      >
-                        <EditIcon />
-                      </Button>
-                    </Tooltip>
-                    <Tooltip title="Delete">
-                      <Button
-                        className=" p-2 rounded-sm text-white hover:bg-red-600 hover:text-white"
-                        onClick={() => {
-                          setCurrentRow({ ...row });
-                          setopenDelete(true);
-                        }}
-                      >
-                        <DeleteIcon />
-                      </Button>
-                    </Tooltip>
-                  </td> */}
-                  </TableRow>
-                ))}
+                              color={
+                                row.type === "ADMIN" ? "primary" : "secondary"
+                              }
+                            >
+                              {row.type ? row.type : "No type attached"}{" "}
+                            </Button>
+                          </TableCell>
+                        </TableRow>
+                      ))
+                    )}
+                    {/* 
                 {rows.length == 0 && (
                   <TableRow style={{ height: 53 * emptyRows }}>
                     <TableCell colSpan={6}>Loading....</TableCell>
                   </TableRow>
-                )}
-              </TableBody>
+                )} */}
+                  </TableBody>
+                </>
+              )}
               <TableFooter>
                 <TableRow>
                   <TablePagination
@@ -752,9 +749,11 @@ export default function UserManagement() {
           </TableContainer>
         </StyledToolbar>
         <Dialog open={openCreate} onClose={handleClose}>
-          <DialogTitle>Create User</DialogTitle>
+          <DialogTitle className="slide-in-down-visible">
+            Create User
+          </DialogTitle>
           <DialogContent>
-            <form>
+            <form className="slide-in-down-visible">
               <TextField
                 autoFocus
                 color="error"
@@ -945,11 +944,20 @@ export default function UserManagement() {
               )}
             </form>
           </DialogContent>
-          <DialogActions>
-            <Button onClick={handleSave} color="error" disabled={isLoading}>
+          <DialogActions sx={{ overflow: "hidden" }}>
+            <Button
+              onClick={handleSave}
+              color="error"
+              disabled={isLoading}
+              className="slide-in-from-bottom"
+            >
               {isLoading ? "Saving...." : "Create"}
             </Button>
-            <Button onClick={handleClose} color="error">
+            <Button
+              onClick={handleClose}
+              color="error"
+              className="slide-in-from-bottom"
+            >
               Cancel
             </Button>
           </DialogActions>
