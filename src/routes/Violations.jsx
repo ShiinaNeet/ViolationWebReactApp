@@ -425,7 +425,7 @@ export default function Violations() {
                     )
                   : rows
                 ).map((row) => (
-                  <TableRow key={row.id}>
+                  <TableRow key={row.id} className="slide-in-down-visible">
                     <TableCell scope="row">
                       <Tooltip title={row.section} arrow>
                         <div className="flex flex-wrap break-words whitespace-normal justify-start">

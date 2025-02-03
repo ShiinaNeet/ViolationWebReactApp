@@ -177,7 +177,7 @@ export default function NotificationList() {
           <TableContainer component={Paper} className="">
             <Table sx={{ minWidth: 500 }} aria-label="simple table">
               <TableHead sx={{ padding: "10px" }}>
-                <TableRow>
+                <TableRow className="slide-in-down-visible">
                   <TableCell onClick={() => fetchNotifications()} size="small">
                     <div className="hover:bg-red-100 py-2 px-3 rounded-sm flex items-start w-fit">
                       <ReplayIcon color="error" fontSize="small" />
@@ -244,7 +244,7 @@ export default function NotificationList() {
                       // >
                       <TableRow
                         key={idx}
-                        className=" border-gray-200 w-full border-separate hover:bg-gray-100 hover:cursor-pointer"
+                        className=" border-gray-200 w-full border-separate hover:bg-gray-100 hover:cursor-pointer slide-in-down-visible"
                         sx={{ paddingY: 2 }} // Increase vertical padding
                       >
                         <TableCell className="w-[10px] sm:w-[20px] md:w-[30px] lg:w-[40px] xl:w-[50px] 2xl:w-[60px] border text-center">

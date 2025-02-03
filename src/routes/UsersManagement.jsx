@@ -143,7 +143,6 @@ export default function UserManagement() {
 
   const handleCreateOpen = () => {
     setOpenCreate(true);
-    // fetchDepartmentData();
   };
 
   const handleClose = () => {
@@ -266,112 +265,6 @@ export default function UserManagement() {
         });
       });
   };
-  // const handleUpdate = async () => {
-  //   setIsLoading(true);
-  //   if (
-  //     currentRow.first_name === "" ||
-  //     currentRow.last_name === "" ||
-  //     currentRow.email === "" ||
-  //     currentRow.type === ""
-  //   ) {
-  //     setAlertMessage({ open: true, title: "Error", variant: "error" });
-  //     setErrorMessages(["Please fill in all fields"]);
-  //     setIsLoading(false);
-  //     return;
-  //   }
-
-  //   axios
-  //     .put(
-  //       `/admin/user/update?user_id=${currentRow._id}`,
-  //       {
-  //         first_name: currentRow.first_name,
-  //         last_name: currentRow.last_name,
-  //         email: currentRow.email,
-  //         type: currentRow.type,
-  //       },
-  //       {
-  //         headers: {
-  //           "Content-Type": "application/json",
-  //         },
-  //       }
-  //     )
-  //     .then((response) => {
-  //       setErrorMessages([]);
-  //       if (response.data.success === true) {
-  //         console.log("Saved");
-  //         fetchData(page * rowsPerPage, rowsPerPage);
-  //         setAlertMessage({
-  //           open: true,
-  //           title: "Success",
-  //           message: "User has been Updated successfully",
-  //           variant: "info",
-  //         });
-  //         setIsLoading(false);
-  //         handleClose();
-  //       } else {
-  //         console.log("Failed to Update");
-  //         setAlertMessage({
-  //           open: true,
-  //           title: "Failed",
-  //           message: response.data.message,
-  //           variant: "info",
-  //         });
-  //       }
-  //     })
-  //     .catch((e) => {
-  //       console.log("Error Occurred: ", e);
-  //       setErrorMessages([]);
-  //       setAlertMessage({
-  //         open: true,
-  //         title: "Error Occurred!",
-  //         message: "Please try again later.",
-  //         variant: "error",
-  //       });
-  //     });
-  //   setIsLoading(false);
-  // };
-  // const handleDelete = async (_id, name) => {
-  //   setIsLoading(false);
-  //   if (_id === "") {
-  //     setAlertMessage({ open: true, title: "Error", variant: "error" });
-  //     setErrorMessages(["User ID is missing. Please try again!"]);
-  //     return;
-  //   }
-  //   axios
-  //     .delete(`/admin/user/delete/${_id}`, {
-  //       headers: {
-  //         "Content-Type": "application/json",
-  //       },
-  //     })
-  //     .then((response) => {
-  //       setErrorMessages([]);
-  //       if (response.data.status === "success") {
-  //         setAlertMessage({
-  //           open: true,
-  //           title: "Success",
-  //           message: "User has been Deleted successfully",
-  //           variant: "warning",
-  //         });
-  //         console.log("Deleted");
-  //         fetchData(page * rowsPerPage, rowsPerPage);
-  //         handleClose();
-  //       } else {
-  //         console.log("Failed to Delete. Please Try again later");
-  //       }
-  //       setIsLoading(false);
-  //     })
-  //     .catch((e) => {
-  //       console.log("Error Occurred: ", e);
-  //       setErrorMessages([]);
-  //       setAlertMessage({
-  //         open: true,
-  //         title: "Error Occurred!",
-  //         message: "Please try again later.",
-  //         variant: "error",
-  //       });
-  //       setIsLoading(false);
-  //     });
-  // };
 
   // React.useEffect(() => {
   //   fetchData(page * rowsPerPage, rowsPerPage);
@@ -380,77 +273,53 @@ export default function UserManagement() {
     fetchData();
   }, []);
 
-  const fetchData = () => {
-    setIsLoading(true);
-    axios
-      .get("admin", {
-        params: {
-          skip: 0,
-          limit: 100,
-        },
-        headers: {
-          "Content-Type": "application/json",
-        },
-      })
-      .then((response) => {
-        if (response.data.status === "success") {
-          console.log("Data fetched successfully");
-          setRows(response.data.data);
-          fetchDepartmentData();
-        } else {
-          console.log("Failed to fetch data");
-          setAlertMessage({
-            open: true,
-            title: "No Data",
-            message: "No data available",
-            variant: "info",
-          });
-        }
-      })
-      .catch((error) => {
-        console.error("There was an error fetching the data!", error);
-        setAlertMessage({
-          open: true,
-          title: error.title,
-          message: error.message,
-          variant: "error",
-        });
-      });
-  };
+  const fetchData = async () => {
+    try {
+      setIsLoading(true);
 
-  const fetchDepartmentData = async () => {
-    axios
-      .get("/department", {
-        params: {
-          skip: 0,
-          limit: 100,
-        },
-        headers: {
-          "Content-Type": "application/json",
-        },
-      })
-      .then((response) => {
-        if (response.data.status === "success") {
-          setDepartmentData(response.data.data);
-        } else {
-          setAlertMessage({
-            open: true,
-            title: "No Data",
-            message: "No data available",
-            variant: "info",
-          });
-        }
-      })
-      .catch((error) => {
-        console.error("There was an error fetching the data!", error);
+      const [dataResponse, departmentResponse] = await Promise.all([
+        axios.get("admin", {
+          params: { skip: 0, limit: 100 },
+          headers: { "Content-Type": "application/json" },
+        }),
+        axios.get("/department", {
+          params: { skip: 0, limit: 100 },
+          headers: { "Content-Type": "application/json" },
+        }),
+      ]);
+
+      if (dataResponse.data.status === "success") {
+        setRows(dataResponse.data.data);
+      } else {
         setAlertMessage({
           open: true,
-          title: error.title,
-          message: error.message,
-          variant: "error",
+          title: "No Data",
+          message: "No data available",
+          variant: "info",
         });
+      }
+
+      if (departmentResponse.data.status === "success") {
+        setDepartmentData(departmentResponse.data.data);
+      } else {
+        setAlertMessage({
+          open: true,
+          title: "No Data",
+          message: "No department data available",
+          variant: "info",
+        });
+      }
+    } catch (error) {
+      console.error("There was an error fetching the data!", error);
+      setAlertMessage({
+        open: true,
+        title: error.title,
+        message: error.message,
+        variant: "error",
       });
-    setIsLoading(false);
+    } finally {
+      setIsLoading(false);
+    }
   };
 
   const addMultipleDepartment = (event) => {
@@ -574,12 +443,6 @@ export default function UserManagement() {
                         </TableRow>
                       ))
                     )}
-                    {/* 
-                {rows.length == 0 && (
-                  <TableRow style={{ height: 53 * emptyRows }}>
-                    <TableCell colSpan={6}>Loading....</TableCell>
-                  </TableRow>
-                )} */}
                   </TableBody>
                 </>
               )}
@@ -597,155 +460,6 @@ export default function UserManagement() {
                 </TableRow>
               </TableFooter>
             </Table>
-            {/* <Dialog open={open} onClose={handleClose}>
-            <DialogTitle>Edit User Information</DialogTitle>
-            <DialogContent>
-              <TextField
-                autoFocus
-                margin="dense"
-                label="First Name"
-                type="text"
-                fullWidth
-                value={currentRow.first_name}
-                required={true}
-                onChange={(e) =>
-                  setCurrentRow({
-                    ...currentRow,
-                    first_name: e.target.value,
-                  })
-                }
-              />
-              <TextField
-                autoFocus
-                margin="dense"
-                label="last Name"
-                type="text"
-                fullWidth
-                value={currentRow.last_name}
-                required={true}
-                onChange={(e) =>
-                  setCurrentRow({
-                    ...currentRow,
-                    last_name: e.target.value,
-                  })
-                }
-              />
-              <TextField
-                autoFocus
-                margin="dense"
-                label="Email Address"
-                type="text"
-                fullWidth
-                value={currentRow.email}
-                required={true}
-                onChange={(e) =>
-                  setCurrentRow({
-                    ...currentRow,
-                    email: e.target.value,
-                  })
-                }
-              />
-              <FormControl fullWidth>
-                <InputLabel id="demo-simple-select-label">Type</InputLabel>
-                <Select
-                  labelId="demo-simple-select-label"
-                  id="demo-simple-select"
-                  value={currentRow.type}
-                  label="Type"
-                  onChange={(e) =>
-                    setCurrentRow({ ...currentRow, type: e.target.value })
-                  }
-                >
-                  <MenuItem value={"ADMIN"}>Admin</MenuItem>
-                  <MenuItem value={"SECURITY"}>Security Guard</MenuItem>
-                </Select>
-              </FormControl>
-            </DialogContent>
-            <DialogActions>
-              <Button
-                onClick={handleUpdate}
-                color="primary"
-                disabled={isLoading}
-              >
-                {isLoading ? "Saving...." : "Save"}
-              </Button>
-              <Button onClick={handleClose} color="primary">
-                Cancel
-              </Button>
-            </DialogActions>
-          </Dialog> */}
-
-            {/* <Dialog open={openDelete} onClose={handleClose}>
-            <DialogTitle>Delete User?</DialogTitle>
-            <DialogContent>
-              <TextField
-                id="outlined-read-only-input"
-                slotProps={{
-                  input: {
-                    readOnly: true,
-                  },
-                }}
-                margin="dense"
-                label="First Name"
-                fullWidth
-                defaultValue={currentRow.first_name}
-                readOnly={true}
-              />
-              <TextField
-                id="outlined-read-only-input"
-                slotProps={{
-                  input: {
-                    readOnly: true,
-                  },
-                }}
-                margin="dense"
-                label="Last Name"
-                type="text"
-                fullWidth
-                defaultValue={currentRow.last_name}
-                readOnly
-              />
-              <TextField
-                id="outlined-read-only-input"
-                slotProps={{
-                  input: {
-                    readOnly: true,
-                  },
-                }}
-                margin="dense"
-                label="Email Address"
-                type="text"
-                fullWidth
-                defaultValue={currentRow.email}
-                readOnly
-              />
-              <TextField
-                id="outlined-read-only-input"
-                slotProps={{
-                  input: {
-                    readOnly: true,
-                  },
-                }}
-                margin="dense"
-                label="Type"
-                type="text"
-                fullWidth
-                defaultValue={currentRow.type}
-                readOnly
-              />
-            </DialogContent>
-            <DialogActions>
-              <Button
-                onClick={() => handleDelete(currentRow._id, currentRow.name)}
-                color="primary"
-              >
-                Delete
-              </Button>
-              <Button onClick={handleClose} color="primary">
-                Cancel
-              </Button>
-            </DialogActions>
-          </Dialog> */}
           </TableContainer>
         </StyledToolbar>
         <Dialog open={openCreate} onClose={handleClose}>

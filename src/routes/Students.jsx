@@ -26,6 +26,7 @@ import Tooltip from "@mui/material/Tooltip";
 import FilterAltRoundedIcon from "@mui/icons-material/FilterAltRounded";
 import Box from "@mui/material/Box";
 import { alpha } from "@mui/material/styles";
+import "../animations.css";
 import {
   Alert,
   AlertTitle,
@@ -1024,6 +1025,14 @@ const Students = () => {
   };
   const truncateText = (text, maxLength) =>
     text?.length > maxLength ? text.slice(0, maxLength) + "..." : text;
+  React.useEffect(() => {
+    const listItems = document.querySelectorAll(".slide-in-down-visible");
+    listItems.forEach((item, index) => {
+      setTimeout(() => {
+        item.classList.add("slide-in-visible");
+      }, index * 69);
+    });
+  }, [rows]);
   return (
     <>
       <Container
@@ -1095,7 +1104,10 @@ const Students = () => {
                         )
                       : rows
                     ).map((student, index) => (
-                      <tr key={index} className="hover:bg-gray-50">
+                      <tr
+                        key={index}
+                        className="hover:bg-gray-50 slide-in-down-visible"
+                      >
                         <td className="py-5 px-4 border-b">
                           {student.fullname}
                         </td>
@@ -1290,68 +1302,68 @@ const Students = () => {
           onClose={handleClose}
           fullWidth={true}
           maxWidth="sm"
+          sx={{ overflowX: "hidden", overflowY: "hidden" }}
         >
-          <DialogTitle>Filter Student Violations</DialogTitle>
-          <DialogContent fullWidth>
-            <div className="flex flex-col gap-y-1">
-              <FormControl fullWidth margin="dense">
-                <InputLabel id="demo-simple-select-helper-label" color="error">
-                  Violation Category
-                </InputLabel>
-                <Select
-                  labelId="demo-simple-select-helper-label"
-                  id="demo-simple-select-helper"
-                  label="Violation Category"
-                  fullWidth
-                  color="error"
-                  value={searchFilter.category}
-                  onChange={(e) =>
-                    setSearchFilter({
-                      ...searchFilter,
-                      category: e.target.value,
-                    })
-                  }
-                  inputProps={{ "aria-label": "Without label" }}
-                >
-                  <MenuItem value=""> All </MenuItem>
-                  {searchViolationCategory.map((category, index) => (
-                    <MenuItem key={index} value={category}>
-                      {category}
-                    </MenuItem>
-                  ))}
-                </Select>
-              </FormControl>
-              <FormControl fullWidth margin="dense">
-                {/* <InputLabel id="demo-simple-select-helper-label" color="error">
-                  User ID
-                </InputLabel> */}
-                <TextField
-                  id="outlined-basic"
-                  label="User ID"
-                  variant="outlined"
-                  value={searchFilter.userid}
-                  onChange={(e) =>
-                    setSearchFilter({
-                      ...searchFilter,
-                      userid: e.target.value,
-                    })
-                  }
-                  inputProps={{ "aria-label": "Without label" }}
-                  fullWidth
-                  color="error"
-                />
-              </FormControl>
-            </div>
+          <DialogTitle>
+            <h1 className="slide-in-down-visible">Filter Student Violations</h1>
+          </DialogTitle>
+          <DialogContent
+            fullWidth
+            sx={{ overflowX: "hidden", overflowY: "hidden" }}
+          >
+            <FormControl fullWidth margin="dense">
+              <label className="slide-in-visible mb-1">
+                Violation Category
+              </label>
+              <Select
+                className="slide-in-from-right font-medium"
+                fullWidth
+                color="error"
+                value={searchFilter.category}
+                onChange={(e) =>
+                  setSearchFilter({
+                    ...searchFilter,
+                    category: e.target.value,
+                  })
+                }
+                inputProps={{ "aria-label": "Without label" }}
+              >
+                <MenuItem value=""> All </MenuItem>
+                {searchViolationCategory.map((category, index) => (
+                  <MenuItem key={index} value={category}>
+                    {category}
+                  </MenuItem>
+                ))}
+              </Select>
+            </FormControl>
+            <FormControl fullWidth margin="dense">
+              <label className="slide-in-visible mb-1 font-medium">
+                User ID
+              </label>
+              <TextField
+                className="slide-in-from-right"
+                fullWidth
+                color="error"
+                value={searchFilter.userid}
+                onChange={(e) =>
+                  setSearchFilter({
+                    ...searchFilter,
+                    userid: e.target.value,
+                  })
+                }
+                inputProps={{ "aria-label": "Without label" }}
+              />
+            </FormControl>
           </DialogContent>
-          <DialogActions>
+          <DialogActions sx={{ overflowX: "hidden", overflowY: "hidden" }}>
             <Button
               onClick={handleSearch}
-              className="flex w-full sm:w-1/2 justify-center"
+              className="flex w-full sm:w-1/2 justify-center slide-in-visible"
             >
               Search
             </Button>
             <Button
-              className="flex w-full sm:w-1/2 justify-center"
+              className="flex w-full sm:w-1/2 justify-center slide-in-from-right"
               onClick={() => setSearchFilterModal(false)}
             >
               Close
@@ -1366,12 +1378,18 @@ const Students = () => {
           fullWidth={true}
           maxWidth="sm"
         >
-          <DialogTitle>
-            <div className="flex justify-start">
-              Create new Student Violation
+          <DialogTitle sx={{ overflowX: "hidden", overflowY: "hidden" }}>
+            <div className="flex justify-start ">
+              <h1 className="slide-in-down-visible">
+                Create new Student Violation
+              </h1>
             </div>
-            <div className="absolute top-5 right-3">
-              <Button onClick={handleOpenQRScanner} color="error">
+            <div className="absolute top-5 right-3 w-fit overflow-x-hidden">
+              <Button
+                onClick={handleOpenQRScanner}
+                color="error"
+                className="slide-in-from-right"
+              >
                 <QrCode2Icon color="error" fontSize="large" />
                 QR Scanner
               </Button>
@@ -1386,7 +1404,7 @@ const Students = () => {
             ) : (
               <>
                 <div>
-                  <h3>Current Violations</h3>
+                  <h3 className="slide-in-visible">Current Violations</h3>
                   <ul>
                     {createStudent.violations.map((violation, index) => (
                       <li
@@ -1406,11 +1424,11 @@ const Students = () => {
                     ))}
                   </ul>
                 </div>
-                <div className="my-5 w-full">
-                  <h3 className="mb-3">Add Violation</h3>
+                <div className="my-5 overflow-x-hidden">
+                  <h3 className="mb-3 slide-in-down-visible">Add Violation</h3>
                   <div className="flex ">
                     <select
-                      className="w-full rounded border"
+                      className="w-full rounded border slide-in-visible"
                       value={selectedViolation.code}
                       onChange={(e) => {
                         const selectedCode = e.target.value;
@@ -1437,18 +1455,18 @@ const Students = () => {
                         ))
                       )}
                     </select>
-                    <div>
-                      <Button
-                        onClick={() => handleAddViolation("create")}
-                        color="error"
-                        className="w-1/4"
-                      >
-                        <AddIcon color="error" /> Add
-                      </Button>
-                    </div>
+
+                    <Button
+                      onClick={() => handleAddViolation("create")}
+                      color="error"
+                      className="w-1/4 slide-in-from-right"
+                    >
+                      <AddIcon color="error" /> Add
+                    </Button>
                   </div>
                   <div className="flex flex-col mt-2">
                     <TextField
+                      className="slide-in-visible"
                       margin="dense"
                       variant="outlined"
                       id="outlined-basic"
@@ -1465,6 +1483,7 @@ const Students = () => {
                       }
                     />
                     <TextField
+                      className="slide-in-visible"
                       margin="dense"
                       id="outlined-basic"
                       label="Student Number"
@@ -1481,6 +1500,7 @@ const Students = () => {
                       }
                     />
                     <TextField
+                      className="slide-in-visible"
                       margin="dense"
                       id="outlined-basic"
                       label="Full Name"
@@ -1497,6 +1517,7 @@ const Students = () => {
                       }
                     />
                     <TextField
+                      className="slide-in-visible"
                       margin="dense"
                       id="outlined-basic"
                       label="Email Address (School Email Preferred)"
@@ -1513,7 +1534,7 @@ const Students = () => {
                       }
                     />
                   </div>
-                  <div className="my-2">
+                  <div className="my-2 slide-in-visible">
                     <FormControl fullWidth>
                       <InputLabel id="demo-simple-select-helper-label">
                         Term
@@ -1542,29 +1563,7 @@ const Students = () => {
                       </Select>
                     </FormControl>
                   </div>
-                  {/* <div className="my-2">
-                    <label htmlFor="term">Term</label>
-                    <select
-                      id="term"
-                      name="term"
-                      className="w-full border rounded  flex-1 my-2"
-                      value={targetStudent.term}
-                      onChange={(e) => {
-                        setTargetStudent({
-                          ...targetStudent,
-                          term: e.target.value,
-                        });
-                        console.log("School Term: ", e.target.value);
-                      }}
-                    >
-                      {schoolTermList.map((term) => (
-                        <option key={term} value={term}>
-                          {term}
-                        </option>
-                      ))}
-                    </select>
-                  </div> */}
-                  <div className="my-2">
+                  <div className="my-2 slide-in-visible">
                     <FormControl fullWidth>
                       <InputLabel id="demo-simple-select-helper-label">
                         Department
@@ -1590,7 +1589,7 @@ const Students = () => {
                       </Select>
                     </FormControl>
                   </div>
-                  <div className="my-2">
+                  <div className="my-2 slide-in-visible">
                     <FormControl fullWidth>
                       <InputLabel id="demo-simple-select-helper-label">
                         Course
@@ -1619,12 +1618,13 @@ const Students = () => {
                       </Select>
                     </FormControl>
                   </div>
-                  <div className="my-2">
+                  <div className="my-2 ">
                     <FormControl fullWidth>
                       <InputLabel id="demo-simple-select-helper-label">
                         School Year
                       </InputLabel>
                       <Select
+                        className="slide-in-visible"
                         labelId="demo-simple-select-helper-label"
                         id="demo-simple-select-helper"
                         label="School Year"
@@ -1652,22 +1652,29 @@ const Students = () => {
               </>
             )}
           </DialogContent>
-          <DialogActions>
+          <DialogActions sx={{ overflowX: "hidden", overflowY: "hidden" }}>
             {isQrScannerOpen ? (
-              <Button className="text-center" onClick={closeQrScanner}>
+              <Button
+                className="text-center slide-in-from-bottom"
+                onClick={closeQrScanner}
+              >
                 Close Scanner
               </Button>
             ) : (
               <>
                 <Button
-                  className="bg-red-500"
+                  className="bg-red-500 slide-in-from-bottom"
                   onClick={handeSaveStudent}
                   disabled={isLoading}
                   color="error"
                 >
                   {isLoading ? "Saving Student Violation" : "Save violation"}
                 </Button>
-                <Button onClick={handleClose} color="error">
+                <Button
+                  onClick={handleClose}
+                  color="error"
+                  className="slide-in-from-bottom"
+                >
                   Cancel
                 </Button>
               </>
