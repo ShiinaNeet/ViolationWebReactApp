@@ -161,15 +161,14 @@ const Navigationbar = () => {
                 Users
               </Link>
             </Button>
-            {/* <Button variant="text" color="white" size="small">
-              {" "}
+            <Button variant="text" color="white" size="small">
               <Link
                 className=" hover:bg-red-100 hover:text-red-600 hover:rounded-md hover:cursor-pointer p-2"
                 to="/Chart"
               >
                 Charts
               </Link>
-            </Button> */}
+            </Button>
             <Button variant="text" color="white" size="small">
               {" "}
               <Link

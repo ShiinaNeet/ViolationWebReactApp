@@ -93,10 +93,10 @@ export default function Chart() {
         }}
       >
         <BarChartHead />
-        <div className="w-full flex-col pb-5 px-10 my-3">
+        {/* <div className="w-full flex-col pb-5 px-10 my-20">
           <div className="w-full p-5 overflow-visible group h-full bg-white rounded-md my-4 ">
             <div className="flex justify-between">
-              <h1 className="text-lg font-bold">Monthly</h1>
+              <h1 className="text-lg font-bold">Department name here</h1>
               <button
                 onClick={fetchData}
                 className="group-hover:block hidden text-cyan-600 hover:bg-cyan-100 p-2 rounded-md"
@@ -135,46 +135,7 @@ export default function Chart() {
               </StyledEngineProvider>
             )}
           </div>
-          <div className="w-full p-5 overflow-visible group h-full bg-white rounded-md">
-            <div className="flex justify-between">
-              <h1 className="text-lg font-bold">Overall</h1>
-              <button
-                onClick={fetchData}
-                className="group-hover:block hidden text-cyan-600 hover:bg-cyan-100 p-2 rounded-md"
-              >
-                <RestartAltIcon />
-                Reload
-              </button>
-            </div>
-            {loading ? (
-              <p>Loading...</p>
-            ) : (
-              <PieChart
-                series={[
-                  {
-                    data: data,
-                    highlightScope: {
-                      fade: "global",
-                      highlight: "item",
-                    },
-                    faded: {
-                      innerRadius: 30,
-                      additionalRadius: -30,
-                      color: "gray",
-                    },
-                    valueFormatter,
-                    arcLabelMinAngle: 20,
-                    arcLabelRadius: 90,
-                  },
-                ]}
-                slotProps={{
-                  legend: legendProps,
-                }}
-                height={screenWidth < 1000 ? 600 : 500}
-              />
-            )}
-          </div>
-        </div>
+        </div> */}
       </Container>
     </>
   );

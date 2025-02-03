@@ -18,17 +18,23 @@ import Dialog from "@mui/material/Dialog";
 import DialogActions from "@mui/material/DialogActions";
 import DialogContent from "@mui/material/DialogContent";
 import DialogTitle from "@mui/material/DialogTitle";
-import AddAlertIcon from "@mui/icons-material/AddAlert";
+import QrCode2Icon from "@mui/icons-material/QrCode2";
 import CloseIcon from "@mui/icons-material/Close";
 import RemoveRedEyeIcon from "@mui/icons-material/RemoveRedEye";
 import EditIcon from "@mui/icons-material/Edit";
 import Tooltip from "@mui/material/Tooltip";
+import FilterAltRoundedIcon from "@mui/icons-material/FilterAltRounded";
 import Box from "@mui/material/Box";
 import { alpha } from "@mui/material/styles";
 import {
   Alert,
   AlertTitle,
+  Chip,
   Container,
+  FormControl,
+  InputLabel,
+  MenuItem,
+  Select,
   Snackbar,
   TableHead,
   Toolbar,
@@ -42,7 +48,7 @@ import DeleteOutlineIcon from "@mui/icons-material/DeleteOutline";
 import AddIcon from "@mui/icons-material/Add";
 import { red } from "@mui/material/colors";
 import axios from "axios";
-
+import QRScanner from "../components/QRScanner";
 function TablePaginationActions(props) {
   const { count, page, rowsPerPage, onPageChange } = props;
 
@@ -121,8 +127,9 @@ const Students = () => {
   // const { userType } = useAuth();
   const [CurrentUserType, setCurrentUserType] = React.useState({});
   const [isLoading, setIsLoading] = React.useState(false);
-  const [isFetchingData, setIsFetchingData] = React.useState(false);
   const [ViewModal, setViewModal] = React.useState(false);
+  const [CreateStudentViolationModal, setCreateStudentViolationModal] =
+    React.useState(false);
   const [targetStudent, setTargetStudent] = React.useState({
     id: "",
     userid: 0,
@@ -134,12 +141,22 @@ const Students = () => {
     course: "",
     term: "First Semester",
   });
+  const [createStudent, setCreateStudent] = React.useState({
+    srcode: "",
+    userid: 0,
+    email: "",
+    fullname: "",
+    course: "",
+    term: "First Semester",
+    year: "1st year",
+    department: "",
+    violations: [],
+  });
   const [violationList, setViolationList] = React.useState([]);
   const [departments, setDepartments] = React.useState([]);
   const [searchFilter, setSearchFilter] = React.useState({
-    name: "",
-    violation: "",
-    department: "",
+    category: "",
+    userid: "",
   });
   const yearList = ["1st year", "2nd year", "3rd year", "4th year", "5th year"];
 
@@ -151,6 +168,7 @@ const Students = () => {
     "Fifth Semester",
     "Summer Term",
   ];
+  const searchViolationCategory = ["academic_dishonesty", "major", "minor"];
   // const coursesList = [
   //   "BS Information Technology",
   //   "BS Computer Science",
@@ -224,6 +242,12 @@ const Students = () => {
     setRowsPerPage(parseInt(event.target.value, 5));
     setPage(0);
   };
+  const [createProps, setCreateProps] = React.useState({
+    isLoading: false,
+    errorMessage: "",
+    successMessage: "",
+  });
+  const [isQrScannerOpen, setIsQrScannerOpen] = React.useState(false);
   const [isDepartmentLoading, setIsDepartmentLoading] = React.useState(false);
   const [isProgramLoading, setIsProgramLoading] = React.useState(false);
   const [isViolationLoading, setIsViolationLoading] = React.useState(false);
@@ -251,6 +275,8 @@ const Students = () => {
   const handleClose = () => {
     setViewModal(false);
     setSearchFilterModal(false);
+    setCreateStudentViolationModal(false);
+    setIsQrScannerOpen(false);
     // setMessageStudentModal(false);
     setDeleteStudentViolationModal(false);
     setUpdateStudentViolationModal(false);
@@ -264,27 +290,39 @@ const Students = () => {
       userid: 0,
       email: "",
     });
+    setCreateStudent({
+      srcode: "",
+      userid: 0,
+      email: "",
+      fullname: "",
+      course: "",
+      term: "First Semester",
+      year: "1st year",
+      department: "",
+      violations: [],
+    });
   };
   const handleSendMessageModalClose = () => {
     setMessageStudentModal(false);
   };
   const handleViewViolationModal = (person) => {
-    // console.log(person);
+    console.log(person);
     // setTargetStudent(person);
     setIsViewModalLoading(true);
     setViewModal(true);
-    fetchUser(person);
+    const completeCourseData = programList.find(
+      (program) => program.id === person.course
+    );
+
+    // fetchUser(person);
+    setTargetStudent({ ...person, course: completeCourseData });
 
     setSearchFilterModal(false);
   };
   const handleUpdateViolationModal = (person) => {
     setUpdateStudentViolationModal(true);
 
-    console.log("Person: ", person);
-    // const completedViolationList = person.violations.map((violation) => {
-    //   const values = violationList.find((vio) => vio.id == violation);
-    //   return values;
-    // });
+    console.log("Person to update: ", person);
 
     const selectedDepartment = departments.find(
       (department) =>
@@ -316,10 +354,13 @@ const Students = () => {
     setIsUpdateModalLoading(false);
   };
 
-  const handleSearch = (e) => {
-    e.preventDefault();
+  const handleSearch = () => {
     console.log(searchFilter);
     console.log("Searching...");
+    if (searchFilter.userid == "" || searchFilter.userid == null) {
+      setSearchFilter({ ...searchFilter, userid: "" });
+    }
+    fetchAllData();
   };
   const handleDelete = async () => {
     setIsLoading(true);
@@ -394,25 +435,43 @@ const Students = () => {
         params: { skip: 0, limit: 100 },
       });
       if (violationResponse.data.status === "success") {
-        setViolationList(violationResponse.data.data);
+        const violationList = violationResponse.data.data;
+        setViolationList(violationList);
+        console.log("Violation List in FetchALlFunction: ", violationList);
       }
 
+      const violationMap = new Map();
+      violationList.forEach((violationGroup) => {
+        violationGroup.violations.forEach((vio) => {
+          violationMap.set(vio.code, vio.description);
+        });
+      });
+
       const studentResponse = await axios.get("/student", {
-        params: { skip: 0, limit: 100 },
+        params: {
+          skip: 0,
+          limit: 100,
+          userid: searchFilter.userid || undefined,
+          violation_category: searchFilter.category || undefined,
+        },
       });
       if (studentResponse.data.status === "success") {
+        console.log("Student fetched successfully", studentResponse.data.data);
+
         const completedDataWithViolationName = studentResponse.data.data.map(
           (student) => {
-            const updatedViolations = student.violations.map((violation) =>
-              violationResponse.data.data.find((vio) => vio.id === violation)
-            );
-            return {
-              ...student,
-              violations: updatedViolations.filter((vio) => vio !== undefined),
-            };
+            const updatedViolations = student.violations.map((violation) => ({
+              ...violation,
+              description:
+                violationMap.get(violation.code) || "Unknown Violation",
+            }));
+
+            console.log("Updated Violations:", updatedViolations);
+            return { ...student, violations: updatedViolations };
           }
         );
-        setRows([...completedDataWithViolationName]); // Ensure rerender
+
+        setRows(completedDataWithViolationName);
         if (studentResponse.data.data.length === 0) {
           setAlertMessage({
             open: true,
@@ -437,6 +496,7 @@ const Students = () => {
       setIsLoading(false);
       setIsFetchingDone(false);
       setIsViolationLoading(false);
+      console.log(rows);
     }
   };
   const fetchDepartments = async (FetchedProgramData) => {
@@ -552,31 +612,155 @@ const Students = () => {
         setIsViewModalLoading(false);
       });
   };
+  const fetchIfExisitingUser = async (userid) => {
+    axios
+      .get(`student`, {
+        params: {
+          userid: userid,
+          limit: 100,
+          skip: 0,
+          id: undefined,
+        },
+        headers: {
+          "Content-Type": "application/json",
+        },
+      })
+      .then((response) => {
+        if (response.data.status === "success") {
+          const violationsArray = Array.isArray(
+            response.data.data[0].violations
+          )
+            ? response.data.data[0].violations
+            : [];
 
-  const [selectedViolation, setSelectedViolation] = React.useState({
-    name: "",
-    id: "",
-  });
+          const completedViolationList = violationsArray
+            .map((violation) =>
+              violationList.find((vio) => vio.id === String(violation))
+            )
+            .filter((violation) => violation !== undefined);
+          const completeCourseData = programList.find(
+            (program) => program.id === response.data.data[0].course
+          );
+          const selectedDepartment = departments.find(
+            (department) =>
+              department.name ===
+              response.data.data[0].year_and_department.split(" - ")[1]
+          );
 
-  const handleDeleteViolation = (index) => {
-    const updatedViolations = [...targetStudent.violations];
-    updatedViolations.splice(index, 1);
-    setTargetStudent({ ...targetStudent, violations: updatedViolations });
+          if (selectedDepartment) {
+            const programsToAddFilter = programList.filter(
+              (program) => program.department_id === selectedDepartment._id
+            );
+            setFilteredPrograms(programsToAddFilter);
+          }
+          setCreateStudent({
+            ...createStudent,
+            fullname: response.data.data[0].fullname,
+            userid: response.data.data[0].userid,
+            violations: completedViolationList,
+            // year_and_department: response.data.data[0].year_and_department,
+            year: response.data.data[0].year_and_department.split(" - ")[0],
+            department:
+              response.data.data[0].year_and_department.split(" - ")[1],
+            srcode: response.data.data[0].srcode,
+            email: response.data.data[0].email,
+            course: completeCourseData.name,
+            term: response.data.data[0].term,
+          });
+
+          console.log("Fetched User: ", response.data);
+        }
+      })
+      .catch((error) => {
+        console.error("There was an error fetching the data!", error);
+        setAlertMessage({
+          open: true,
+          title: error.title,
+          message: error.message,
+          variant: "info",
+        });
+      })
+      .finally(() => {
+        setIsQrScannerOpen(false);
+      });
   };
 
-  const handleAddViolation = () => {
-    // if (selectedViolation && !targetStudent.violations.some(v => v.name === selectedViolation.name)) {
-    if (
-      selectedViolation.id.length > 0 &&
-      !targetStudent.violations.some((v) => v.id === selectedViolation.id)
-    ) {
-      console.log("Selected Violations: ", selectedViolation);
-      const updatedViolations = [
-        ...targetStudent.violations,
-        selectedViolation,
-      ];
+  const fetchDecodedQRCode = async (data) => {
+    axios
+      .get(`/decode_qr`, {
+        params: {
+          token: data,
+        },
+        headers: {
+          "Content-Type": "application/json",
+        },
+      })
+      .then((response) => {
+        if (
+          response.data.data.userid &&
+          response.data.data.srcode &&
+          response.data.data.userid.length > 0 &&
+          response.data.data.srcode.length > 0
+        ) {
+          fetchIfExisitingUser(response.data.data.userid);
+        } else {
+          console.log("Unable to decode QR Code");
+          setAlertMessage({
+            open: true,
+            title: "Error occured!",
+            message: "Unable to decode QR Code! Please try again later!",
+            variant: "info",
+          });
+        }
+      })
+      .catch((error) => {
+        console.warn("Error Occurred fetching QR Code: ", error);
+      });
+  };
+
+  const [selectedViolation, setSelectedViolation] = React.useState({
+    code: "",
+    description: "",
+  });
+
+  const handleDeleteViolation = (index, type) => {
+    if (type === "update") {
+      const updatedViolations = [...targetStudent.violations];
+      updatedViolations.splice(index, 1);
       setTargetStudent({ ...targetStudent, violations: updatedViolations });
-      setSelectedViolation({ name: "", id: "" });
+    } else if (type === "create") {
+      const updatedViolations = [...createStudent.violations];
+      updatedViolations.splice(index, 1);
+      setCreateStudent({ ...createStudent, violations: updatedViolations });
+    }
+  };
+  const handleAddViolation = (type) => {
+    if (selectedViolation.code.length === 0) {
+      console.warn("No violation selected");
+      return;
+    }
+    if (type === "create") {
+      if (
+        !createStudent.violations.some((v) => v.code === selectedViolation.code)
+      ) {
+        console.log("Selected Violations: ", selectedViolation);
+        setCreateStudent({
+          ...createStudent,
+          violations: [...createStudent.violations, selectedViolation],
+        });
+        setSelectedViolation({ code: "", description: "" });
+      }
+    } else if (type === "update") {
+      if (
+        !targetStudent.violations.some((v) => v.code === selectedViolation.code)
+      ) {
+        console.log("Selected Violations: ", selectedViolation);
+        setTargetStudent({
+          ...targetStudent,
+          violations: [...targetStudent.violations, selectedViolation],
+        });
+        setSelectedViolation({ code: "", description: "" });
+      }
     }
   };
   // const transformedViolations = targetStudent.violations.map((violation) => ({
@@ -586,12 +770,19 @@ const Students = () => {
   //   name: undefined,
   // }));
   const transformViolationToArray = () => {
-    return targetStudent.violations.map((violation) => violation.id);
+    return targetStudent.violations.map((violation) => {
+      return {
+        code: violation.code,
+        description: violation.description,
+        date_committed: new Date().toISOString(),
+      };
+    });
   };
   const handleUpdateViolation = () => {
     // console.log('Updating violation...');
 
     console.log("Current student info: ", targetStudent);
+
     setIsLoading(true);
 
     if (
@@ -625,10 +816,6 @@ const Students = () => {
         `/student`,
         {
           id: targetStudent.id,
-          srcode: targetStudent.userid,
-          userid: targetStudent.userid,
-          email: targetStudent.email,
-          fullname: targetStudent.fullname,
           course: PayloadCourse,
           term: targetStudent.term ? targetStudent.term : "First Semester",
           year_and_department: PayloadYear + " - " + PayloadDepartment,
@@ -675,7 +862,111 @@ const Students = () => {
         setIsLoading(false);
       });
   };
+  const handeSaveStudent = () => {
+    console.log("Creating student...");
+    console.log("Current student info: ", createStudent);
+    setIsLoading(true);
 
+    if (
+      createStudent.srcode == "" ||
+      createStudent.userid == "" ||
+      createStudent.violations.length == 0 ||
+      createStudent.department == "" ||
+      createStudent.department == undefined ||
+      createStudent.year == undefined ||
+      createStudent.year == "" ||
+      createStudent.course == "" ||
+      createStudent.course == undefined ||
+      createStudent.term == "" ||
+      createStudent.term == undefined ||
+      createStudent.email == "" ||
+      createStudent.email == undefined ||
+      createStudent.fullname == "" ||
+      createStudent.fullname == undefined
+    ) {
+      console.log("Invalid student information. Please fill all fields");
+      setAlertMessage({
+        open: true,
+        title: "Error occured!",
+        message: "All fields are required!",
+        variant: "info",
+      });
+      setIsLoading(false);
+      return;
+    }
+    console.log("Student to create: ", createStudent);
+    const PayloadYear = createStudent.year ? createStudent.year : "1st Year";
+    const PayloadDepartment = createStudent.department
+      ? createStudent.department
+      : departments[0].name;
+    const PayloadCourse = createStudent.course
+      ? createStudent.course
+      : programList[0].name;
+    //Need to transform course name into id
+    const courseToSave = programList.find(
+      (program) => program.name === PayloadCourse
+    )?.id;
+    const violationsToSave = createStudent.violations.map((violation) => {
+      return {
+        code: violation.code,
+        // description: violation.description,
+        date_committed: new Date().toISOString(),
+      };
+    });
+    axios
+      .post(
+        `/student`,
+        {
+          srcode: String(createStudent.srcode),
+          userid: String(createStudent.userid),
+          email: createStudent.email,
+          fullname: createStudent.fullname,
+          course: courseToSave,
+          term: targetStudent.term ? targetStudent.term : "First Semester",
+          year_and_department: PayloadYear + " - " + PayloadDepartment,
+          violations: violationsToSave,
+        },
+        {
+          headers: {
+            "Content-Type": "application/json",
+          },
+        }
+      )
+      .then((response) => {
+        setErrorMessages([]);
+        if (response.data.status === "success") {
+          console.log("Saved");
+          setAlertMessage({
+            open: true,
+            title: "Success",
+            message: "Student Violation was created successfully!",
+            variant: "info",
+          });
+          setCreateStudentViolationModal(false);
+        } else {
+          console.log("Failed to create student violation");
+          setAlertMessage({
+            open: true,
+            title: "Failed",
+            message: response.data.description,
+            variant: "info",
+          });
+        }
+      })
+      .catch((e) => {
+        console.log("Error Occurred: ", e);
+        setErrorMessages([]);
+        setAlertMessage({
+          open: true,
+          title: "Error Occurred!",
+          message: "Please try again later.",
+          variant: "error",
+        });
+      })
+      .finally(() => {
+        setIsLoading(false);
+      });
+  };
   const handleDepartmentChange = (e) => {
     const selectedDepartmentName = e.target.value;
     const selectedDepartment = departments.find(
@@ -694,7 +985,45 @@ const Students = () => {
       setFilteredPrograms(programs);
     }
   };
+  const handleDepartmentChangeInCreateStudent = (e) => {
+    const selectedDepartmentName = e.target.value;
+    const selectedDepartment = departments.find(
+      (department) => department.name === selectedDepartmentName
+    );
+    console.log("Selected Department: ", selectedDepartment);
+    if (selectedDepartment) {
+      const programs = programList.filter(
+        (program) => program.department_id === selectedDepartment._id
+      );
+      setCreateStudent({
+        ...createStudent,
+        department: selectedDepartment.name,
+        course: programs.length > 0 ? programs[0].name : "",
+      });
+      setFilteredPrograms(programs);
+    }
+  };
+  const handleOpenQRScanner = () => {
+    setIsQrScannerOpen(true);
+  };
+  const handleDatafromQRScanner = (data) => {
+    console.log("Data from QR Scanner: ", data);
+    fetchDecodedQRCode(data);
 
+    // setCreateStudent({ ...createStudent, srcode: data });
+  };
+  const closeQrScanner = () => {
+    setIsQrScannerOpen(false);
+    // navigator.mediaDevices
+    //   .getUserMedia({ video: true })
+    //   .then((stream) => {
+    //     stream.getTracks().forEach((track) => track.stop());
+    //     console.log("Camera forcefully closed.");
+    //   })
+    //   .catch((error) => console.error("Error accessing media devices:", error));
+  };
+  const truncateText = (text, maxLength) =>
+    text?.length > maxLength ? text.slice(0, maxLength) + "..." : text;
   return (
     <>
       <Container
@@ -708,21 +1037,31 @@ const Students = () => {
         }}
       >
         <div className="w-full mx-auto h-full">
-          <div className="flex flex-row justify-between h-fit bg-white p-2 rounded-md shadow-md my-2">
+          <div className="flex flex-row justify-between h-fit rounded-md my-2">
             <h1 className="text-3xl py-3">Student Violations</h1>
-            {/* <button
-            className="bg-red-500 my-2 p-2 rounded-sm text-white hover:bg-red-600"
-            onClick={() => setSearchFilterModal(true)}
-          >
-            Filter
-          </button> */}
-            {/* <Button
-              className="bg-red-500 p-2 rounded-sm text-red hover:bg-red-100"
-              onClick={() => setMessageStudentModal(true)}
-              color="error"
-            >
-              <AddAlertIcon color="error" /> Alert
-            </Button> */}
+            <div className="flex items-center">
+              {/* <Button
+                className="bg-red-500 p-2 rounded-sm text-red hover:bg-red-100"
+                onClick={() => setMessageStudentModal(true)}
+                color="error"
+              >
+                <AddAlertIcon color="error" /> Alert
+              </Button> */}
+              <Button
+                className="bg-red-500 p-2 rounded-sm text-red "
+                onClick={() => setCreateStudentViolationModal(true)}
+                color="error"
+              >
+                Add Violation
+              </Button>
+              <Button
+                className=" my-2 p-2 rounded-sm text-red"
+                onClick={() => setSearchFilterModal(true)}
+                color="error"
+              >
+                <FilterAltRoundedIcon color="error" /> Filter
+              </Button>
+            </div>
           </div>
           <StyledToolbar variant="dense" disableGutters>
             <TableContainer component={Paper}>
@@ -742,6 +1081,12 @@ const Students = () => {
                         Loading...
                       </TableCell>
                     </TableRow>
+                  ) : rows.length === 0 ? (
+                    <TableRow style={{ height: 53 * emptyRows }}>
+                      <TableCell colSpan={6} align="center">
+                        No student...
+                      </TableCell>
+                    </TableRow>
                   ) : (
                     (rowsPerPage > 0
                       ? rows.slice(
@@ -755,7 +1100,19 @@ const Students = () => {
                           {student.fullname}
                         </td>
                         <td className="py-5 px-4 border-b">
-                          {student.violations.map((vio) => vio.name).join(", ")}
+                          {student.violations.slice(0, 2).map((violation) => {
+                            return (
+                              <Chip
+                                key={violation.code}
+                                label={violation.code}
+                                variant="outlined"
+                                color="primary"
+                                margin="dense"
+                                size="medium"
+                                sx={{ mr: 0.5, mb: 0.5, p: 0.5 }}
+                              />
+                            );
+                          })}
                         </td>
                         <td className="py-5 px-4 border-b">
                           {student.year_and_department}
@@ -790,16 +1147,6 @@ const Students = () => {
                         </td>
                       </tr>
                     ))
-                  )}
-                  {isFetchingData && (
-                    <TableRow style={{ height: 53 * emptyRows }}>
-                      <TableCell colSpan={6}>Loading...</TableCell>
-                    </TableRow>
-                  )}
-                  {isFetchingData && rows.length == 0 && (
-                    <TableRow style={{ height: 53 * emptyRows }}>
-                      <TableCell colSpan={6}>No data</TableCell>
-                    </TableRow>
                   )}
                 </TableBody>
                 <TableFooter>
@@ -875,7 +1222,7 @@ const Students = () => {
                 value={
                   targetStudent.year_and_department
                     ? targetStudent.year_and_department.includes(" - ")
-                      ? targetStudent.year_and_department.split(" - ")[0]
+                      ? targetStudent.year_and_department.split(" - ")[1]
                       : "Incorrect Format"
                     : "No Data"
                 }
@@ -916,7 +1263,7 @@ const Students = () => {
                 value={
                   targetStudent.year_and_department
                     ? targetStudent.year_and_department.includes(" - ")
-                      ? targetStudent.year_and_department.split(" - ")[1]
+                      ? targetStudent.year_and_department.split(" - ")[0]
                       : "Incorrect Format"
                     : "No Data"
                 }
@@ -944,52 +1291,61 @@ const Students = () => {
           fullWidth={true}
           maxWidth="sm"
         >
-          <DialogTitle>Search</DialogTitle>
-          <DialogContent className=" flex ">
-            <form onSubmit={handleSearch} className="w-full">
-              <div className="flex flex-col gap-y-1">
-                <TextField
-                  id="standard-required"
-                  label="Student Name"
-                  value={searchFilter.name}
-                  onChange={(e) =>
-                    setSearchFilter({ ...searchFilter, name: e.target.value })
-                  }
-                  variant="standard"
+          <DialogTitle>Filter Student Violations</DialogTitle>
+          <DialogContent fullWidth>
+            <div className="flex flex-col gap-y-1">
+              <FormControl fullWidth margin="dense">
+                <InputLabel id="demo-simple-select-helper-label" color="error">
+                  Violation Category
+                </InputLabel>
+                <Select
+                  labelId="demo-simple-select-helper-label"
+                  id="demo-simple-select-helper"
+                  label="Violation Category"
                   fullWidth
-                />
-                <TextField
-                  id="standard-required"
-                  label="Violation"
-                  value={searchFilter.violation}
+                  color="error"
+                  value={searchFilter.category}
                   onChange={(e) =>
                     setSearchFilter({
                       ...searchFilter,
-                      violation: e.target.value,
+                      category: e.target.value,
                     })
                   }
-                  variant="standard"
-                  fullWidth
-                />
+                  inputProps={{ "aria-label": "Without label" }}
+                >
+                  <MenuItem value=""> All </MenuItem>
+                  {searchViolationCategory.map((category, index) => (
+                    <MenuItem key={index} value={category}>
+                      {category}
+                    </MenuItem>
+                  ))}
+                </Select>
+              </FormControl>
+              <FormControl fullWidth margin="dense">
+                {/* <InputLabel id="demo-simple-select-helper-label" color="error">
+                  User ID
+                </InputLabel> */}
                 <TextField
-                  id="standard-required"
-                  label="Department"
-                  value={searchFilter.department}
+                  id="outlined-basic"
+                  label="User ID"
+                  variant="outlined"
+                  value={searchFilter.userid}
                   onChange={(e) =>
                     setSearchFilter({
                       ...searchFilter,
-                      department: e.target.value,
+                      userid: e.target.value,
                     })
                   }
-                  variant="standard"
+                  inputProps={{ "aria-label": "Without label" }}
                   fullWidth
+                  color="error"
                 />
-              </div>
-            </form>
+              </FormControl>
+            </div>
           </DialogContent>
           <DialogActions>
             <Button
-              type="submit"
+              onClick={handleSearch}
               className="flex w-full sm:w-1/2 justify-center"
             >
               Search
@@ -1000,6 +1356,322 @@ const Students = () => {
             >
               Close
             </Button>
+          </DialogActions>
+        </Dialog>
+      )}
+      {CreateStudentViolationModal && (
+        <Dialog
+          open={CreateStudentViolationModal}
+          // onClose={handleClose}
+          fullWidth={true}
+          maxWidth="sm"
+        >
+          <DialogTitle>
+            <div className="flex justify-start">
+              Create new Student Violation
+            </div>
+            <div className="absolute top-5 right-3">
+              <Button onClick={handleOpenQRScanner} color="error">
+                <QrCode2Icon color="error" fontSize="large" />
+                QR Scanner
+              </Button>
+            </div>
+          </DialogTitle>
+          <DialogContent>
+            {isQrScannerOpen ? (
+              <QRScanner
+                fetchQrData={handleDatafromQRScanner}
+                onClose={closeQrScanner}
+              />
+            ) : (
+              <>
+                <div>
+                  <h3>Current Violations</h3>
+                  <ul>
+                    {createStudent.violations.map((violation, index) => (
+                      <li
+                        key={index}
+                        className="my-2 rounded-sm flex justify-between text-black border-2 border-solid border-red-500"
+                      >
+                        <label className="p-2">
+                          {truncateText(violation.code, 50)}
+                        </label>
+                        <Button
+                          onClick={() => handleDeleteViolation(index, "create")}
+                          className="hover:border-1 hover:border-solid hover:border-red-500 hover:border- hover:text-white rounded-none"
+                        >
+                          <DeleteOutlineIcon color="error" />
+                        </Button>
+                      </li>
+                    ))}
+                  </ul>
+                </div>
+                <div className="my-5 w-full">
+                  <h3 className="mb-3">Add Violation</h3>
+                  <div className="flex ">
+                    <select
+                      className="w-full rounded border"
+                      value={selectedViolation.code}
+                      onChange={(e) => {
+                        const selectedCode = e.target.value;
+                        const foundViolation = violationList
+                          .flatMap((violation) => violation.violations)
+                          .find((v) => v.code === selectedCode);
+                        if (foundViolation) {
+                          setSelectedViolation({
+                            code: foundViolation.code,
+                            description: foundViolation.description,
+                          });
+                        }
+                      }}
+                    >
+                      <option value="">Pick atleast 1 option...</option>
+                      {violationList.flatMap((violation) =>
+                        violation.violations.map((v, index) => (
+                          <option
+                            key={`${violation.id}-${index}`}
+                            value={v.code}
+                          >
+                            {v.code}
+                          </option>
+                        ))
+                      )}
+                    </select>
+                    <div>
+                      <Button
+                        onClick={() => handleAddViolation("create")}
+                        color="error"
+                        className="w-1/4"
+                      >
+                        <AddIcon color="error" /> Add
+                      </Button>
+                    </div>
+                  </div>
+                  <div className="flex flex-col mt-2">
+                    <TextField
+                      margin="dense"
+                      variant="outlined"
+                      id="outlined-basic"
+                      label="Student Id"
+                      color="error"
+                      fullWidth
+                      required={true}
+                      value={createStudent.userid}
+                      onChange={(e) =>
+                        setCreateStudent({
+                          ...createStudent,
+                          userid: e.target.value,
+                        })
+                      }
+                    />
+                    <TextField
+                      margin="dense"
+                      id="outlined-basic"
+                      label="Student Number"
+                      variant="outlined"
+                      color="error"
+                      fullWidth
+                      required={true}
+                      value={createStudent.srcode}
+                      onChange={(e) =>
+                        setCreateStudent({
+                          ...createStudent,
+                          srcode: e.target.value,
+                        })
+                      }
+                    />
+                    <TextField
+                      margin="dense"
+                      id="outlined-basic"
+                      label="Full Name"
+                      variant="outlined"
+                      color="error"
+                      fullWidth
+                      required={true}
+                      value={createStudent.fullname}
+                      onChange={(e) =>
+                        setCreateStudent({
+                          ...createStudent,
+                          fullname: e.target.value,
+                        })
+                      }
+                    />
+                    <TextField
+                      margin="dense"
+                      id="outlined-basic"
+                      label="Email Address (School Email Preferred)"
+                      variant="outlined"
+                      color="error"
+                      fullWidth
+                      required={true}
+                      value={createStudent.email}
+                      onChange={(e) =>
+                        setCreateStudent({
+                          ...createStudent,
+                          email: e.target.value,
+                        })
+                      }
+                    />
+                  </div>
+                  <div className="my-2">
+                    <FormControl fullWidth>
+                      <InputLabel id="demo-simple-select-helper-label">
+                        Term
+                      </InputLabel>
+                      <Select
+                        labelId="demo-simple-select-helper-label"
+                        id="demo-simple-select-helper"
+                        label="Term"
+                        margin="dense"
+                        fullWidth
+                        value={createStudent.term}
+                        onChange={(e) => {
+                          setCreateStudent({
+                            ...createStudent,
+                            term: e.target.value,
+                          });
+                          console.log("School Term: ", e.target.value);
+                        }}
+                        inputProps={{ "aria-label": "Without label" }}
+                      >
+                        {schoolTermList.map((term) => (
+                          <MenuItem key={term} value={term}>
+                            {term}
+                          </MenuItem>
+                        ))}
+                      </Select>
+                    </FormControl>
+                  </div>
+                  {/* <div className="my-2">
+                    <label htmlFor="term">Term</label>
+                    <select
+                      id="term"
+                      name="term"
+                      className="w-full border rounded  flex-1 my-2"
+                      value={targetStudent.term}
+                      onChange={(e) => {
+                        setTargetStudent({
+                          ...targetStudent,
+                          term: e.target.value,
+                        });
+                        console.log("School Term: ", e.target.value);
+                      }}
+                    >
+                      {schoolTermList.map((term) => (
+                        <option key={term} value={term}>
+                          {term}
+                        </option>
+                      ))}
+                    </select>
+                  </div> */}
+                  <div className="my-2">
+                    <FormControl fullWidth>
+                      <InputLabel id="demo-simple-select-helper-label">
+                        Department
+                      </InputLabel>
+                      <Select
+                        labelId="demo-simple-select-helper-label"
+                        id="demo-simple-select-helper"
+                        label="Department"
+                        margin="dense"
+                        fullWidth
+                        value={createStudent.department}
+                        onChange={handleDepartmentChangeInCreateStudent}
+                        inputProps={{ "aria-label": "Without label" }}
+                      >
+                        {departments.map((department) => (
+                          <MenuItem
+                            key={department.name}
+                            value={department.name}
+                          >
+                            {department.name}
+                          </MenuItem>
+                        ))}
+                      </Select>
+                    </FormControl>
+                  </div>
+                  <div className="my-2">
+                    <FormControl fullWidth>
+                      <InputLabel id="demo-simple-select-helper-label">
+                        Course
+                      </InputLabel>
+                      <Select
+                        labelId="demo-simple-select-helper-label"
+                        id="demo-simple-select-helper"
+                        label="Course"
+                        margin="dense"
+                        fullWidth
+                        value={createStudent.course}
+                        onChange={(e) => {
+                          setCreateStudent({
+                            ...createStudent,
+                            course: e.target.value,
+                          });
+                          console.log("Course: ", e.target.value);
+                        }}
+                        inputProps={{ "aria-label": "Without label" }}
+                      >
+                        {filteredPrograms.map((program) => (
+                          <MenuItem key={program.name} value={program.name}>
+                            {program.name}
+                          </MenuItem>
+                        ))}
+                      </Select>
+                    </FormControl>
+                  </div>
+                  <div className="my-2">
+                    <FormControl fullWidth>
+                      <InputLabel id="demo-simple-select-helper-label">
+                        School Year
+                      </InputLabel>
+                      <Select
+                        labelId="demo-simple-select-helper-label"
+                        id="demo-simple-select-helper"
+                        label="School Year"
+                        margin="dense"
+                        fullWidth
+                        value={createStudent.year}
+                        onChange={(e) => {
+                          setCreateStudent({
+                            ...createStudent,
+                            year: e.target.value,
+                          });
+                          console.log("Year: ", e.target.value);
+                        }}
+                        inputProps={{ "aria-label": "Without label" }}
+                      >
+                        {yearList.map((year) => (
+                          <MenuItem key={year} value={year}>
+                            {year}
+                          </MenuItem>
+                        ))}
+                      </Select>
+                    </FormControl>
+                  </div>
+                </div>
+              </>
+            )}
+          </DialogContent>
+          <DialogActions>
+            {isQrScannerOpen ? (
+              <Button className="text-center" onClick={closeQrScanner}>
+                Close Scanner
+              </Button>
+            ) : (
+              <>
+                <Button
+                  className="bg-red-500"
+                  onClick={handeSaveStudent}
+                  disabled={isLoading}
+                  color="error"
+                >
+                  {isLoading ? "Saving Student Violation" : "Save violation"}
+                </Button>
+                <Button onClick={handleClose} color="error">
+                  Cancel
+                </Button>
+              </>
+            )}
           </DialogActions>
         </Dialog>
       )}
@@ -1025,9 +1697,11 @@ const Students = () => {
                         key={index}
                         className="my-2 rounded-sm flex justify-between text-black border-2 border-solid border-red-500 "
                       >
-                        <label className="p-2">{violation.name}</label>
+                        <label className="p-2">
+                          {truncateText(violation.code, 50)}
+                        </label>
                         <Button
-                          onClick={() => handleDeleteViolation(index)}
+                          onClick={() => handleDeleteViolation(index, "update")}
                           className="hover:border-1 hover:border-solid hover:border-red-500 hover:border- hover:text-white rounded-none"
                         >
                           <DeleteOutlineIcon color="error" />
@@ -1041,26 +1715,40 @@ const Students = () => {
                   <div className="flex ">
                     <select
                       className="w-full border rounded  flex-1"
-                      value={selectedViolation.name}
+                      value={selectedViolation.code}
                       onChange={(e) => {
-                        const selectedName = e.target.value;
-                        const violation = violationList.find(
-                          (v) => v.name === selectedName
+                        const selectedCode = e.target.value;
+                        const foundViolation = violationList
+                          .flatMap((violation) => violation.violations)
+                          .find((v) => v.code === selectedCode);
+                        console.log(
+                          "Selected Violation in select: ",
+                          foundViolation
                         );
-                        setSelectedViolation({
-                          name: violation.name,
-                          id: violation.id,
-                        });
+                        if (foundViolation) {
+                          setSelectedViolation({
+                            code: foundViolation.code,
+                            description: foundViolation.description,
+                          });
+                        }
                       }}
                     >
                       <option value="">Select Violation</option>
-                      {violationList.map((violation, index) => (
-                        <option key={index} value={violation.name}>
-                          {violation.name}
-                        </option>
-                      ))}
+                      {violationList.flatMap((violation) =>
+                        violation.violations.map((v, index) => (
+                          <option
+                            key={`${violation.id}-${index}`}
+                            value={v.code}
+                          >
+                            {v.code}
+                          </option>
+                        ))
+                      )}
                     </select>
-                    <Button onClick={handleAddViolation} color="error">
+                    <Button
+                      onClick={() => handleAddViolation("update")}
+                      color="error"
+                    >
                       <AddIcon color="error" /> Add
                     </Button>
                   </div>

@@ -1,4 +1,5 @@
 import React, { useEffect } from "react";
+import PropTypes from "prop-types";
 import DialogTitle from "@mui/material/DialogTitle";
 import Dialog from "@mui/material/Dialog";
 import Button from "@mui/material/Button";
@@ -19,6 +20,9 @@ import {
 import { useTheme } from "@mui/material/styles";
 import axios from "axios";
 
+const ITEM_HEIGHT = 48;
+const ITEM_PADDING_TOP = 8;
+
 function getStyles(name, personName, theme) {
   return {
     fontWeight: personName.includes(name)
@@ -26,8 +30,14 @@ function getStyles(name, personName, theme) {
       : theme.typography.fontWeightRegular,
   };
 }
-const ITEM_HEIGHT = 48;
-const ITEM_PADDING_TOP = 8;
+AlertMessageStudent.PropTypes = {
+  open: PropTypes.bool.isRequired,
+  handleClose: PropTypes.func.isRequired,
+  data: PropTypes.shape({
+    email: PropTypes.string,
+    fullName: PropTypes.string,
+  }),
+};
 const MenuProps = {
   PaperProps: {
     style: {
@@ -36,18 +46,17 @@ const MenuProps = {
     },
   },
 };
-
 export default function AlertMessageStudent({ open, handleClose, data }) {
   const theme = useTheme();
   const [message, setMessage] = React.useState({
+    subject: "",
     body: "",
-    fullName: "",
-    violationName: [],
-    email: "",
-    userid: "",
-    date: formatDate(new Date(), "MMMM D, YYYY"),
+    category: "",
+    recipients: [],
+    send_at: formatDate(new Date(), "MMMM D, YYYY"),
     error: false,
   });
+
   const [isLoading, setIsLoading] = React.useState(false);
   const [violations, setViolations] = React.useState([]);
   const [alertMessage, setAlertMessage] = React.useState({
@@ -89,11 +98,13 @@ export default function AlertMessageStudent({ open, handleClose, data }) {
     // setAlertMessage({open:true, title: 'Success', message: 'Email was sent succesfully!', variant: 'success'});
     await axios
       .post(
-        "/email/send/violation",
+        "notification",
         {
-          userid: data.userid,
-          message: message.body,
-          violation_name: handleViolation(),
+          subject: message.subject,
+          body: message.body,
+          category: message.category,
+          recipients: message.recipients,
+          send_at: message.send_at,
         },
         {
           headers: {
@@ -133,18 +144,25 @@ export default function AlertMessageStudent({ open, handleClose, data }) {
         });
       });
   };
-
   useEffect(() => {
-    if (data) {
-      setMessage({
-        ...message,
-        fullName: data.fullname,
-        userid: data.userid,
-        email: data.email ? data.email : "",
+    fetchViolations();
+  }, []);
+
+  const fetchViolations = async () => {
+    const violationResponse = await axios.get("/violation", {
+      params: { skip: 0, limit: 100 },
+    });
+    if (violationResponse.data.status === "success") {
+      setViolations(violationResponse.data.data);
+    } else {
+      setAlertMessage({
+        open: true,
+        title: "Error Occured!",
+        message: "Failed to fetch violations. Please try again later.",
+        variant: "error",
       });
-      setViolations(data.violations);
     }
-  }, [data]);
+  };
   const handleChange = (event) => {
     const {
       target: { value },
@@ -159,15 +177,19 @@ export default function AlertMessageStudent({ open, handleClose, data }) {
     <div className="w-full mx-0">
       <Dialog open={open} onClose={handleClose} fullWidth={true} maxWidth="sm">
         <div className="p-2 text-2xl">
-          <label className="font-bold">Dear {message.fullName},</label>
+          <label className="font-bold">
+            Alert Students with Email Notifications
+          </label>
           <br />
           {/* <label htmlFor="" className='my-5 text-base'> <strong className='font-bold'>Violation: </strong> {message.violations}</label> */}
-          <InputLabel id="demo-multiple-name-label">Violation:</InputLabel>
+          <InputLabel id="demo-multiple-name-label">Categories:</InputLabel>
           <Select
             color="error"
             labelId="demo-multiple-name-label"
             id="demo-multiple-name"
-            value={message.violationName}
+            value={
+              Array.isArray(message.violationName) ? message.violationName : []
+            }
             error={message.error && message.violationName.length === 0}
             onChange={handleChange}
             className="w-full text-black"
@@ -179,7 +201,7 @@ export default function AlertMessageStudent({ open, handleClose, data }) {
               <MenuItem
                 key={index}
                 value={violation}
-                style={getStyles(violation, message.violationName, theme)}
+                style={getStyles(violation, message.recipients, theme)}
               >
                 {violation.name}
               </MenuItem>
@@ -189,10 +211,10 @@ export default function AlertMessageStudent({ open, handleClose, data }) {
         <div className="p-2 flex flex-col gap-y-3">
           <TextField
             id="standard-multiline-static"
-            label="Email Address"
+            label="Subject"
             variant="standard"
             fullWidth
-            readOnly={true}
+            required
             error={message.error}
             helperText={message.error ? "Email Address is required" : ""}
             value={message.email}
@@ -202,7 +224,7 @@ export default function AlertMessageStudent({ open, handleClose, data }) {
           <TextField
             autoFocus
             id="standard-multiline-static"
-            label="Message"
+            label="Message Body"
             color="error"
             multiline
             rows={6}
