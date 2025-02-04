@@ -632,7 +632,7 @@ const Students = () => {
       })
       .then((response) => {
         if (response.data.status === "success") {
-          if (response.data.data.length == 0) {
+          if (response.data.data.length != 0) {
             setCreateStudent({
               ...createStudent,
               userid: decodedPotentialUser.userid,
@@ -647,6 +647,15 @@ const Students = () => {
               variant: "info",
             });
 
+            return;
+          }
+          if (response.data.data.length == 0) {
+            setCreateStudent({
+              ...createStudent,
+              userid: decodedPotentialUser.userid,
+              srcode: decodedPotentialUser.srcode,
+              fullname: decodedPotentialUser.fullname,
+            });
             return;
           }
           const violationsArray = Array.isArray(
