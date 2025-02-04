@@ -351,8 +351,10 @@ const Students = () => {
       fullname: person.fullname,
       userid: person.userid,
     });
-    setIsUpdateModalLoading(true);
     setIsUpdateModalLoading(false);
+    // setTimeout(() => {
+    //   setIsUpdateModalLoading(false);
+    // }, 300);
   };
 
   const handleSearch = () => {
@@ -1033,6 +1035,21 @@ const Students = () => {
       }, index * 69);
     });
   }, [rows]);
+  const listRef = React.useRef(null);
+  useEffect(() => {
+    // Wait a short time to ensure the list has rendered
+    setTimeout(() => {
+      if (listRef.current) {
+        const listItems = listRef.current.querySelectorAll(".update-modal");
+
+        listItems.forEach((item, index) => {
+          setTimeout(() => {
+            item.classList.add("slide-in-visible");
+          }, index * 100); // Slightly increased delay for better visibility
+        });
+      }
+    }, 1); // Short delay to ensure DOM updates before effect runs
+  }, [targetStudent.violations]);
   return (
     <>
       <Container
@@ -1185,114 +1202,114 @@ const Students = () => {
           onClose={handleClose}
           fullWidth={true}
           maxWidth="sm"
+          sx={{ overflowX: "hidden", overflowY: "hidden" }}
         >
-          <div className="px-2 flex-wrap">
-            <div className="flex flex-col justify-center items-center md:flex-row sm:justify-between sm:items-center sm:w-full gap-x-5">
-              <h2 className="py-3 sm:text-2xl sm:font-bold text-center font-semibold">
-                Student Violation History
-              </h2>
-              <div className="gap-x-2">
-                <Button
-                  className=" p-2 rounded-sm hover:bg-red-200 "
-                  onClick={handleClose}
-                  color="error"
-                >
-                  <CloseIcon /> Close
-                </Button>
-              </div>
+          <div className="overflow-hidden flex flex-col px-2 justify-center items-center md:flex-row sm:justify-between sm:items-center sm:w-full gap-x-5">
+            <h2 className="py-3 sm:text-2xl sm:font-bold text-center font-semibold slide-in-visible ">
+              Student Violation History
+            </h2>
+            <div className="gap-x-2">
+              <Button
+                className=" p-2 rounded-sm hover:bg-red-200 slide-in-from-right"
+                onClick={handleClose}
+                color="error"
+              >
+                <CloseIcon /> Close
+              </Button>
             </div>
-            <div className="flex flex-col gap-y-2">
-              <TextField
-                id="standard-read-only-input"
-                label="Full Name"
-                value={targetStudent.fullname}
-                variant="standard"
-                slotProps={{
-                  input: {
-                    readOnly: true,
-                  },
-                }}
-              />
-              <TextField
-                id="standard-read-only-input"
-                label="Email Address"
-                value={
-                  targetStudent.email && targetStudent.email.length > 0
-                    ? targetStudent.email
-                    : "No Email Address"
-                }
-                variant="standard"
-                slotProps={{
-                  input: {
-                    readOnly: true,
-                  },
-                }}
-              />
-              <TextField
-                id="standard-read-only-input"
-                label="Department"
-                value={
-                  targetStudent.year_and_department
-                    ? targetStudent.year_and_department.includes(" - ")
-                      ? targetStudent.year_and_department.split(" - ")[1]
-                      : "Incorrect Format"
-                    : "No Data"
-                }
-                variant="standard"
-                slotProps={{
-                  input: {
-                    readOnly: true,
-                  },
-                }}
-              />
-              <TextField
-                id="standard-read-only-input"
-                label="Course"
-                value={
-                  targetStudent.course ? targetStudent.course.name : "No Data"
-                }
-                variant="standard"
-                slotProps={{
-                  input: {
-                    readOnly: true,
-                  },
-                }}
-              />
-              <TextField
-                id="standard-read-only-input"
-                label="Term"
-                value={targetStudent.term ? targetStudent.term : "No Data"}
-                variant="standard"
-                slotProps={{
-                  input: {
-                    readOnly: true,
-                  },
-                }}
-              />
-              <TextField
-                id="standard-read-only-input"
-                label="Year"
-                value={
-                  targetStudent.year_and_department
-                    ? targetStudent.year_and_department.includes(" - ")
-                      ? targetStudent.year_and_department.split(" - ")[0]
-                      : "Incorrect Format"
-                    : "No Data"
-                }
-                variant="standard"
-                slotProps={{
-                  input: {
-                    readOnly: true,
-                  },
-                }}
-              />
-            </div>
-            <div id="Violation list">
-              <h2 className="py-3 text-base font-bold text-left">
-                Violation Records
-              </h2>
-              <StudentViolationList student={targetStudent} />
-            </div>
+          </div>
+          <div className="flex flex-col px-2 gap-y-2 slide-in-down-visible overflow-hidden">
+            <TextField
+              id="standard-read-only-input"
+              label="Full Name"
+              value={targetStudent.fullname}
+              variant="standard"
+              slotProps={{
+                input: {
+                  readOnly: true,
+                },
+              }}
+            />
+            <TextField
+              className="slide-in-down-visible"
+              id="standard-read-only-input"
+              label="Email Address"
+              value={
+                targetStudent.email && targetStudent.email.length > 0
+                  ? targetStudent.email
+                  : "No Email Address"
+              }
+              variant="standard"
+              slotProps={{
+                input: {
+                  readOnly: true,
+                },
+              }}
+            />
+            <TextField
+              id="standard-read-only-input"
+              label="Department"
+              value={
+                targetStudent.year_and_department
+                  ? targetStudent.year_and_department.includes(" - ")
+                    ? targetStudent.year_and_department.split(" - ")[1]
+                    : "Incorrect Format"
+                  : "No Data"
+              }
+              variant="standard"
+              slotProps={{
+                input: {
+                  readOnly: true,
+                },
+              }}
+            />
+            <TextField
+              id="standard-read-only-input"
+              label="Course"
+              value={
+                targetStudent.course ? targetStudent.course.name : "No Data"
+              }
+              variant="standard"
+              slotProps={{
+                input: {
+                  readOnly: true,
+                },
+              }}
+            />
+            <TextField
+              id="standard-read-only-input"
+              label="Term"
+              value={targetStudent.term ? targetStudent.term : "No Data"}
+              variant="standard"
+              slotProps={{
+                input: {
+                  readOnly: true,
+                },
+              }}
+            />
+            <TextField
+              id="standard-read-only-input"
+              label="Year"
+              value={
+                targetStudent.year_and_department
+                  ? targetStudent.year_and_department.includes(" - ")
+                    ? targetStudent.year_and_department.split(" - ")[0]
+                    : "Incorrect Format"
+                  : "No Data"
+              }
+              variant="standard"
+              slotProps={{
+                input: {
+                  readOnly: true,
+                },
+              }}
+            />
+          </div>
+          <div id="Violation list" className="px-2">
+            <h2 className="py-3 text-base font-bold text-left slide-in-visible">
+              Violation Records
+            </h2>
+            <StudentViolationList student={targetStudent} />
           </div>
         </Dialog>
       )}
@@ -1304,13 +1321,10 @@ const Students = () => {
           maxWidth="sm"
           sx={{ overflowX: "hidden", overflowY: "hidden" }}
         >
-          <DialogTitle>
+          <DialogTitle sx={{ overflowX: "hidden", overflowY: "hidden" }}>
             <h1 className="slide-in-down-visible">Filter Student Violations</h1>
           </DialogTitle>
-          <DialogContent
-            fullWidth
-            sx={{ overflowX: "hidden", overflowY: "hidden" }}
-          >
+          <DialogContent sx={{ overflowX: "hidden", overflowY: "hidden" }}>
             <FormControl fullWidth margin="dense">
               <label className="slide-in-visible mb-1">
                 Violation Category
@@ -1689,7 +1703,9 @@ const Students = () => {
           fullWidth={true}
           maxWidth="sm"
         >
-          <DialogTitle>Edit Violation</DialogTitle>
+          <DialogTitle>
+            <h1 className="slide-in-down-visible">Edit Violation</h1>
+          </DialogTitle>
           <DialogContent>
             {/* {isDepartmentLoading || isProgramLoading || isViolationLoading ? ( */}
             {isUpdateModalLoading ? (
@@ -1697,12 +1713,12 @@ const Students = () => {
             ) : (
               <>
                 <div>
-                  <h3>Current Violations</h3>
-                  <ul>
+                  <h3 className="slide-in-visible">Current Violations</h3>
+                  <ul ref={listRef} key={targetStudent.id}>
                     {targetStudent.violations.map((violation, index) => (
                       <li
-                        key={index}
-                        className="my-2 rounded-sm flex justify-between text-black border-2 border-solid border-red-500 "
+                        key={targetStudent.id + index}
+                        className="update-modal my-2 rounded-sm flex justify-between text-black border-2 border-solid border-red-500 "
                       >
                         <label className="p-2">
                           {truncateText(violation.code, 50)}
@@ -1717,11 +1733,11 @@ const Students = () => {
                     ))}
                   </ul>
                 </div>
-                <div className="my-5 w-full">
+                <div className="my-5 w-full slide-in-visible">
                   <h3 className="mb-3">Add Violation</h3>
                   <div className="flex ">
                     <select
-                      className="w-full border rounded  flex-1"
+                      className="w-full border rounded  flex-1 slide-in-down-visible"
                       value={selectedViolation.code}
                       onChange={(e) => {
                         const selectedCode = e.target.value;
@@ -1755,6 +1771,7 @@ const Students = () => {
                     <Button
                       onClick={() => handleAddViolation("update")}
                       color="error"
+                      className="slide-in-from-right"
                     >
                       <AddIcon color="error" /> Add
                     </Button>
@@ -1846,16 +1863,20 @@ const Students = () => {
               </>
             )}
           </DialogContent>
-          <DialogActions>
+          <DialogActions sx={{ overflowX: "hidden", overflowY: "hidden" }}>
             <Button
-              className="bg-red-500"
+              className="slide-in-from-bottom"
               onClick={handleUpdateViolation}
               disabled={isLoading}
               color="error"
             >
               {isLoading ? "Updating Student" : "Update Student"}
             </Button>
-            <Button onClick={handleClose} color="error">
+            <Button
+              onClick={handleClose}
+              color="error"
+              className="slide-in-from-bottom"
+            >
               Cancel
             </Button>
           </DialogActions>

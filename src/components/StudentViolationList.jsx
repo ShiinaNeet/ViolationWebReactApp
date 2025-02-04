@@ -17,7 +17,7 @@ import KeyboardArrowRight from "@mui/icons-material/KeyboardArrowRight";
 import LastPageIcon from "@mui/icons-material/LastPage";
 import { TableHead } from "@mui/material";
 import formatDate from "../utils/moment";
-
+import "../animations.css";
 function TablePaginationActions(props) {
   const theme = useTheme();
   const { count, page, rowsPerPage, onPageChange } = props;
@@ -125,14 +125,21 @@ export default function StudentViolationList(props) {
     }
     return () => setData([]);
   }, [student]);
-
+  React.useEffect(() => {
+    const listItems = document.querySelectorAll(".slide-in");
+    listItems.forEach((item, index) => {
+      setTimeout(() => {
+        item.classList.add("slide-in-down-visible");
+      }, index * 250);
+    });
+  }, [data]);
   return (
     <Box>
       <Paper>
         <TableContainer>
           <Table size="small">
             <TableHead>
-              <TableRow>
+              <TableRow className="slide-in-down-visible">
                 <TableCell>Name</TableCell>
                 <TableCell align="center">Date</TableCell>
               </TableRow>
@@ -141,7 +148,7 @@ export default function StudentViolationList(props) {
               {data
                 .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
                 .map((row, index) => (
-                  <TableRow key={index}>
+                  <TableRow key={index} className="slide-in">
                     <TableCell>{row.code}</TableCell>
                     <TableCell align="center">
                       {formatDate(

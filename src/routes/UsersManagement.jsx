@@ -375,9 +375,11 @@ export default function UserManagement() {
           <TableContainer component={Paper} className="">
             <Table sx={{ minWidth: 500 }}>
               {isLoading == false && rows.length == 0 ? (
-                <div className="flex justify-center items-center">
-                  <h1>Loading...</h1>
-                </div>
+                <TableBody>
+                  <TableRow className="flex justify-center items-center">
+                    <TableCell>Loading...</TableCell>
+                  </TableRow>
+                </TableBody>
               ) : (
                 <>
                   <TableHead>
