@@ -1097,6 +1097,7 @@ const Students = () => {
                     <th className="py-5 px-4 border-b">Name</th>
                     <th className="py-5 px-4 border-b">Violation</th>
                     <th className="py-5 px-4 border-b">Department and Year</th>
+                    <th className="py-5 px-4 border-b text-center">Date</th>
                     <th className="py-5 px-4 border-b text-center ">Actions</th>
                   </TableRow>
                 </TableHead>
@@ -1144,9 +1145,19 @@ const Students = () => {
                           })}
                         </td>
                         <td className="py-5 px-4 border-b">
-                          {student.year_and_department}
+                          {student.year_and_department
+                            ? `${student.year_and_department.split(" - ")[1]} -
+                              ${student.year_and_department.split(" - ")[0]}`
+                            : "No Data"}
                         </td>
-
+                        <td className="py-5 px-4 border-b">
+                          {student.violations
+                            ? formatDate(
+                                student.violations[0].date_committed,
+                                "MMMM DD, YYYY - hh:mm A"
+                              )
+                            : "No Data"}
+                        </td>
                         <td className="border-b flex justify-center sticky">
                           <Tooltip title="View Student">
                             <Button
