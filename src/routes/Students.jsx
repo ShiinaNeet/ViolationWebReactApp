@@ -1,4 +1,4 @@
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import Button from "@mui/material/Button";
 import PropTypes from "prop-types";
 import Table from "@mui/material/Table";
@@ -34,6 +34,7 @@ import {
   Container,
   FormControl,
   InputLabel,
+  ListSubheader,
   MenuItem,
   Select,
   Snackbar,
@@ -307,10 +308,11 @@ const Students = () => {
     setMessageStudentModal(false);
   };
   const handleViewViolationModal = (person) => {
-    console.log(person);
+    console.log("View Person", person);
     // setTargetStudent(person);
     setIsViewModalLoading(true);
     setViewModal(true);
+
     const completeCourseData = programList.find(
       (program) => program.id === person.course
     );
@@ -615,7 +617,7 @@ const Students = () => {
         setIsViewModalLoading(false);
       });
   };
-  const fetchIfExisitingUser = async (userid) => {
+  const fetchIfExisitingUser = async (userid, decodedPotentialUser) => {
     axios
       .get(`student`, {
         params: {
@@ -630,6 +632,23 @@ const Students = () => {
       })
       .then((response) => {
         if (response.data.status === "success") {
+          if (response.data.data.length == 0) {
+            setCreateStudent({
+              ...createStudent,
+              userid: decodedPotentialUser.userid,
+              srcode: decodedPotentialUser.srcode,
+              fullname: decodedPotentialUser.fullname,
+            });
+            setAlertMessage({
+              open: true,
+              title: "Information",
+              message:
+                "User already exists! Please go find the user in the list!",
+              variant: "info",
+            });
+
+            return;
+          }
           const violationsArray = Array.isArray(
             response.data.data[0].violations
           )
@@ -638,12 +657,13 @@ const Students = () => {
 
           const completedViolationList = violationsArray
             .map((violation) =>
-              violationList.find((vio) => vio.id === String(violation))
+              violationList.find((vio) => vio.code === String(violation))
             )
             .filter((violation) => violation !== undefined);
           const completeCourseData = programList.find(
             (program) => program.id === response.data.data[0].course
           );
+          console.log("Fetched User CompleteCourseData: ", completeCourseData);
           const selectedDepartment = departments.find(
             (department) =>
               department.name ===
@@ -667,7 +687,7 @@ const Students = () => {
               response.data.data[0].year_and_department.split(" - ")[1],
             srcode: response.data.data[0].srcode,
             email: response.data.data[0].email,
-            course: completeCourseData.name,
+            course: completeCourseData,
             term: response.data.data[0].term,
           });
 
@@ -687,7 +707,11 @@ const Students = () => {
         setIsQrScannerOpen(false);
       });
   };
-
+  const [qrData, setQrData] = React.useState({
+    fullname: "",
+    srcode: "",
+    userid: "",
+  });
   const fetchDecodedQRCode = async (data) => {
     axios
       .get(`/decode_qr`, {
@@ -705,7 +729,12 @@ const Students = () => {
           response.data.data.userid.length > 0 &&
           response.data.data.srcode.length > 0
         ) {
-          fetchIfExisitingUser(response.data.data.userid);
+          setQrData({
+            srcode: response.data.data.srcode,
+            userid: response.data.data.userid,
+            fullname: response.data.data.fullname,
+          });
+          fetchIfExisitingUser(response.data.data.userid, response.data.data);
         } else {
           console.log("Unable to decode QR Code");
           setAlertMessage({
@@ -777,7 +806,9 @@ const Students = () => {
       return {
         code: violation.code,
         description: violation.description,
-        date_committed: new Date().toISOString(),
+        date_committed: violation.date_committed
+          ? violation.date_committed
+          : new Date().toISOString(),
       };
     });
   };
@@ -812,6 +843,15 @@ const Students = () => {
     const PayloadCourse = targetStudent.course
       ? targetStudent.course
       : programList[0].name;
+
+    var courseToAdd = programList.find(
+      (program) => program.name === PayloadCourse
+    );
+    if (!courseToAdd) {
+      console.warn("No course found");
+      courseToAdd = programList[0];
+    }
+    console.log("Course Name: ", courseToAdd);
     // console.log("Transformed Violation: ", transformViolationToArray());
     // return;
     axios
@@ -819,7 +859,7 @@ const Students = () => {
         `/student`,
         {
           id: targetStudent.id,
-          course: PayloadCourse,
+          course: courseToAdd.id,
           term: targetStudent.term ? targetStudent.term : "First Semester",
           year_and_department: PayloadYear + " - " + PayloadDepartment,
           violations: transformViolationToArray(),
@@ -844,34 +884,36 @@ const Students = () => {
           setUpdateStudentViolationModal(false);
         } else {
           console.log("Failed to Update");
-          setAlertMessage({
-            open: true,
-            title: "Failed",
-            message: response.data.description,
-            variant: "info",
-          });
+          // setAlertMessage({
+          //   open: true,
+          //   title: "Failed",
+          //   message: response.data.description,
+          //   variant: "info",
+          // });
           setIsLoading(false);
+          setUpdateStudentViolationModal(false);
         }
       })
       .catch((e) => {
         console.log("Error Occurred: ", e);
         setErrorMessages([]);
-        setAlertMessage({
-          open: true,
-          title: "Error Occurred!",
-          message: "Please try again later.",
-          variant: "error",
-        });
+        // setAlertMessage({
+        //   open: true,
+        //   title: "Error Occurred!",
+        //   message: "Please try again later.",
+        //   variant: "error",
+        // });
+        setUpdateStudentViolationModal(false);
         setIsLoading(false);
       });
   };
   const handeSaveStudent = () => {
     console.log("Creating student...");
     console.log("Current student info: ", createStudent);
+    console.log("Current student violation: ", createStudent.violations);
     setIsLoading(true);
 
     if (
-      createStudent.srcode == "" ||
       createStudent.userid == "" ||
       createStudent.violations.length == 0 ||
       createStudent.department == "" ||
@@ -920,7 +962,7 @@ const Students = () => {
       .post(
         `/student`,
         {
-          srcode: String(createStudent.srcode),
+          srcode: String(createStudent.userid),
           userid: String(createStudent.userid),
           email: createStudent.email,
           fullname: createStudent.fullname,
@@ -1050,6 +1092,24 @@ const Students = () => {
       }
     }, 1); // Short delay to ensure DOM updates before effect runs
   }, [targetStudent.violations]);
+  // const [selectedCode, setSelectedCode] = React.useState("");
+  // const [expandedCategory, setExpandedCategory] = React.useState(null);
+
+  // const handleCategoryClick = (category) => {
+  //   console.log(`Toggling category: ${category}`); // Debugging log
+  //   setExpandedCategory((prevCategory) =>
+  //     prevCategory === category ? null : category
+  //   );
+  // };
+  const [selectedCode, setSelectedCode] = useState("");
+  const [isSelectViolationComponentOpen, setIsSelectViolationComponentOpen] =
+    useState(false);
+  const handleCategoryClick = (event) => {
+    setSelectedCode(event.target.value);
+  };
+  const handleCloseMenu = () => {
+    setIsSelectViolationComponentOpen(false);
+  };
   return (
     <>
       <Container
@@ -1274,6 +1334,7 @@ const Students = () => {
                 },
               }}
             />
+            {console.log("Course: ", targetStudent.course)}
             <TextField
               id="standard-read-only-input"
               label="Course"
@@ -1333,7 +1394,9 @@ const Students = () => {
           sx={{ overflowX: "hidden", overflowY: "hidden" }}
         >
           <DialogTitle sx={{ overflowX: "hidden", overflowY: "hidden" }}>
-            <h1 className="slide-in-down-visible">Filter Student Violations</h1>
+            <label className="slide-in-down-visible">
+              Filter Student Violations
+            </label>
           </DialogTitle>
           <DialogContent sx={{ overflowX: "hidden", overflowY: "hidden" }}>
             <FormControl fullWidth margin="dense">
@@ -1452,7 +1515,7 @@ const Students = () => {
                 <div className="my-5 overflow-x-hidden">
                   <h3 className="mb-3 slide-in-down-visible">Add Violation</h3>
                   <div className="flex ">
-                    <select
+                    {/* <select
                       className="w-full rounded border slide-in-visible"
                       value={selectedViolation.code}
                       onChange={(e) => {
@@ -1479,8 +1542,94 @@ const Students = () => {
                           </option>
                         ))
                       )}
-                    </select>
+                    </select> */}
+                    <Select
+                      className="slide-in-visible w-3/4"
+                      size="small"
+                      value={selectedViolation.code}
+                      onChange={(e) => {
+                        const selectedCode = e.target.value;
+                        const foundViolation = violationList
+                          .flatMap((category) => category.violations)
+                          .find((v) => v.code === selectedCode);
 
+                        if (foundViolation) {
+                          console.log("Found violation", foundViolation);
+                          setSelectedViolation({
+                            code: foundViolation.code,
+                            description: foundViolation.description,
+                          });
+                        }
+                      }}
+                      open={isSelectViolationComponentOpen}
+                      onOpen={() => setIsSelectViolationComponentOpen(true)}
+                      onClose={() => setIsSelectViolationComponentOpen(false)}
+                      MenuProps={{
+                        PaperProps: {
+                          style: {
+                            maxHeight: "80%", // You can adjust this height for scrollable behavior
+                          },
+                        },
+                      }}
+                    >
+                      <div
+                        style={{
+                          position: "sticky",
+                          top: 5,
+                          zIndex: 1001, // Ensure the button is above other content
+                          width: "100%", // Ensure div spans the entire width
+                          paddingRight: "10px", // Some padding to avoid the button sticking too close to the edge
+                        }}
+                      >
+                        <MenuItem
+                          sx={{
+                            position: "absolute",
+                            top: 0,
+                            right: 0,
+                            padding: 0,
+                          }}
+                        >
+                          <Button
+                            // fullWidth
+                            variant="text"
+                            className="bg-red-100 flex self-end "
+                            onClick={handleCloseMenu}
+                            color="error"
+                          >
+                            <CloseIcon />
+                            <label htmlFor="">close</label>
+                          </Button>
+                        </MenuItem>
+                      </div>
+
+                      {violationList.flatMap((group, groupIdx) => [
+                        <ListSubheader
+                          key={`category-${groupIdx}`}
+                          sx={{ color: "red", fontWeight: "bold" }}
+                        >
+                          {group.category.toUpperCase()}
+                        </ListSubheader>,
+                        ...group.violations.map((violation, violationIdx) => (
+                          <MenuItem
+                            key={`violation-${groupIdx}-${violationIdx}`}
+                            value={violation.code}
+                            sx={{
+                              textTransform: "capitalize",
+                              whiteSpace: "normal",
+                              wordWrap: "break-word",
+                              mb: 1,
+                            }}
+                          >
+                            {group.set ? (
+                              <Button>{group.set.toUpperCase()}</Button>
+                            ) : (
+                              <Button></Button>
+                            )}
+                            {violation.code} - {violation.description}
+                          </MenuItem>
+                        )),
+                      ])}
+                    </Select>
                     <Button
                       onClick={() => handleAddViolation("create")}
                       color="error"
@@ -1490,7 +1639,7 @@ const Students = () => {
                     </Button>
                   </div>
                   <div className="flex flex-col mt-2">
-                    <TextField
+                    {/* <TextField
                       className="slide-in-visible"
                       margin="dense"
                       variant="outlined"
@@ -1506,7 +1655,7 @@ const Students = () => {
                           userid: e.target.value,
                         })
                       }
-                    />
+                    /> */}
                     <TextField
                       className="slide-in-visible"
                       margin="dense"
@@ -1516,11 +1665,11 @@ const Students = () => {
                       color="error"
                       fullWidth
                       required={true}
-                      value={createStudent.srcode}
+                      value={createStudent.userid}
                       onChange={(e) =>
                         setCreateStudent({
                           ...createStudent,
-                          srcode: e.target.value,
+                          userid: e.target.value,
                         })
                       }
                     />
@@ -1682,6 +1831,7 @@ const Students = () => {
               <Button
                 className="text-center slide-in-from-bottom"
                 onClick={closeQrScanner}
+                color="error"
               >
                 Close Scanner
               </Button>
@@ -1747,7 +1897,7 @@ const Students = () => {
                 <div className="my-5 w-full slide-in-visible">
                   <h3 className="mb-3">Add Violation</h3>
                   <div className="flex ">
-                    <select
+                    {/* <select
                       className="w-full border rounded  flex-1 slide-in-down-visible"
                       value={selectedViolation.code}
                       onChange={(e) => {
@@ -1778,11 +1928,98 @@ const Students = () => {
                           </option>
                         ))
                       )}
-                    </select>
+                    </select> */}
+                    <Select
+                      className="slide-in-visible w-3/4"
+                      size="small"
+                      value={selectedViolation.code}
+                      onChange={(e) => {
+                        const selectedCode = e.target.value;
+                        const foundViolation = violationList
+                          .flatMap((category) => category.violations)
+                          .find((v) => v.code === selectedCode);
+
+                        if (foundViolation) {
+                          console.log("Found violation", foundViolation);
+                          setSelectedViolation({
+                            code: foundViolation.code,
+                            description: foundViolation.description,
+                          });
+                        }
+                      }}
+                      open={isSelectViolationComponentOpen}
+                      onOpen={() => setIsSelectViolationComponentOpen(true)}
+                      onClose={() => setIsSelectViolationComponentOpen(false)}
+                      MenuProps={{
+                        PaperProps: {
+                          style: {
+                            maxHeight: "80%", // You can adjust this height for scrollable behavior
+                          },
+                        },
+                      }}
+                    >
+                      <div
+                        style={{
+                          position: "sticky",
+                          top: 5,
+                          zIndex: 1001, // Ensure the button is above other content
+                          width: "100%", // Ensure div spans the entire width
+                          paddingRight: "10px", // Some padding to avoid the button sticking too close to the edge
+                        }}
+                      >
+                        <MenuItem
+                          sx={{
+                            position: "absolute",
+                            top: 0,
+                            right: 0,
+                            padding: 0,
+                          }}
+                        >
+                          <Button
+                            // fullWidth
+                            variant="text"
+                            className="bg-red-100 flex self-end "
+                            onClick={handleCloseMenu}
+                            color="error"
+                          >
+                            <CloseIcon />
+                            <label htmlFor="">close</label>
+                          </Button>
+                        </MenuItem>
+                      </div>
+
+                      {violationList.flatMap((group, groupIdx) => [
+                        <ListSubheader
+                          key={`category-${groupIdx}`}
+                          sx={{ color: "red", fontWeight: "bold" }}
+                        >
+                          {group.category.toUpperCase()}
+                        </ListSubheader>,
+                        ...group.violations.map((violation, violationIdx) => (
+                          <MenuItem
+                            key={`violation-${groupIdx}-${violationIdx}`}
+                            value={violation.code}
+                            sx={{
+                              textTransform: "capitalize",
+                              whiteSpace: "normal",
+                              wordWrap: "break-word",
+                              mb: 1,
+                            }}
+                          >
+                            {group.set ? (
+                              <Button>{group.set.toUpperCase()}</Button>
+                            ) : (
+                              <Button></Button>
+                            )}
+                            {violation.code} - {violation.description}
+                          </MenuItem>
+                        )),
+                      ])}
+                    </Select>
                     <Button
                       onClick={() => handleAddViolation("update")}
                       color="error"
-                      className="slide-in-from-right"
+                      className="slide-in-from-right w-1/4"
                     >
                       <AddIcon color="error" /> Add
                     </Button>

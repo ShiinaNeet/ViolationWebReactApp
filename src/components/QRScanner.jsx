@@ -50,24 +50,23 @@ function QRScanner({ fetchQrData, onClose }) {
     // Cleanup on component unmount
     return () => {
       if (isScanning) {
-        qrCodeScanner
-          .stop() // Stop scanning only if it's running
-          .then(() => {
-            qrCodeScanner.clear(); // Clear camera resources
-            navigator.mediaDevices
-              .getUserMedia({ video: true })
-              .then((stream) => {
-                stream.getTracks().forEach((track) => {
-                  track.stop(); // Stop each active track
-                  console.log("Camera stopped:", track);
-                });
-              })
-              .catch((error) => console.error("Error stopping camera:", error));
-          })
-          .catch((error) => {
-            console.error("Error stopping scanner:", error);
-          });
-
+        // qrCodeScanner
+        //   .stop() // Stop scanning only if it's running
+        //   .then(() => {
+        //     qrCodeScanner.clear(); // Clear camera resources
+        //     navigator.mediaDevices
+        //       .getUserMedia({ video: true })
+        //       .then((stream) => {
+        //         stream.getTracks().forEach((track) => {
+        //           track.stop(); // Stop each active track
+        //           console.log("Camera stopped:", track);
+        //         });
+        //       })
+        //       .catch((error) => console.error("Error stopping camera:", error));
+        //   })
+        //   .catch((error) => {
+        //     console.error("Error stopping scanner:", error);
+        //   });
         // navigator.mediaDevices.enumerateDevices().then((devices) => {
         //   devices
         //     .filter((device) => device.kind === "videoinput") // Find active cameras
