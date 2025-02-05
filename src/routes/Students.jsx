@@ -32,6 +32,7 @@ import {
   AlertTitle,
   Chip,
   Container,
+  DialogContentText,
   FormControl,
   InputLabel,
   ListSubheader,
@@ -639,14 +640,17 @@ const Students = () => {
               srcode: decodedPotentialUser.srcode,
               fullname: decodedPotentialUser.fullname,
             });
-            setAlertMessage({
-              open: true,
-              title: "Information",
-              message:
-                "User already exists! Please go find the user in the list!",
-              variant: "info",
-            });
-
+            console.log("User Fetched To Update Modal: ", response.data.data);
+            setCreateStudentViolationModal(false);
+            handleUpdateViolationModal(response.data.data[0]);
+            // setAlertMessage({
+            //   open: true,
+            //   title: "Information",
+            //   message:
+            //     "User already exists! Please go find the user in the list!",
+            //   variant: "info",
+            // });
+            // Open Modal here
             return;
           }
           if (response.data.data.length == 0) {
@@ -1119,6 +1123,7 @@ const Students = () => {
   const handleCloseMenu = () => {
     setIsSelectViolationComponentOpen(false);
   };
+  const [scroll, setScroll] = React.useState("paper");
   return (
     <>
       <Container
@@ -1280,118 +1285,140 @@ const Students = () => {
         <Dialog
           open={ViewModal}
           onClose={handleClose}
-          fullWidth={true}
-          maxWidth="sm"
-          sx={{ overflowX: "hidden", overflowY: "hidden" }}
+          // Optionally, you can still adjust the overall Dialog container
+          sx={{
+            padding: 2,
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "center",
+            maxHeight: "90vh",
+            height: { xs: "100vh", sm: "90vh" },
+            maxWidth: "100vw",
+            minWidth: "100vw",
+          }}
         >
-          <div className="overflow-hidden flex flex-col px-2 justify-center items-center md:flex-row sm:justify-between sm:items-center sm:w-full gap-x-5">
-            <h2 className="py-3 sm:text-2xl sm:font-bold text-center font-semibold slide-in-visible ">
-              Student Violation History
-            </h2>
-            <div className="gap-x-2">
-              <Button
-                className=" p-2 rounded-sm hover:bg-red-200 slide-in-from-right"
-                onClick={handleClose}
-                color="error"
-              >
-                <CloseIcon /> Close
-              </Button>
+          <DialogContent
+            sx={{
+              padding: 2,
+              width: "100%",
+              // maxHeight: "90vh",
+              // height: { xs: "100vh", sm: "90vh" },
+              marginX: { md: "10px", lg: "auto" },
+            }}
+          >
+            <div className=" flex flex-col justify-center items-center md:flex-row sm:justify-between sm:items-center sm:w-full gap-x-5">
+              <h2 className="py-1 sm:text-2xl sm:font-bold text-center font-semibold slide-in-visible ">
+                Student Violation History
+              </h2>
+              <div className="gap-x-2">
+                <Button
+                  className=" p-2 rounded-sm hover:bg-red-200 slide-in-from-right"
+                  onClick={handleClose}
+                  color="error"
+                >
+                  <CloseIcon /> Close
+                </Button>
+              </div>
             </div>
-          </div>
-          <div className="flex flex-col px-2 gap-y-2 slide-in-down-visible overflow-hidden">
-            <TextField
-              id="standard-read-only-input"
-              label="Full Name"
-              value={targetStudent.fullname}
-              variant="standard"
-              slotProps={{
-                input: {
-                  readOnly: true,
-                },
-              }}
-            />
-            <TextField
-              className="slide-in-down-visible"
-              id="standard-read-only-input"
-              label="Email Address"
-              value={
-                targetStudent.email && targetStudent.email.length > 0
-                  ? targetStudent.email
-                  : "No Email Address"
-              }
-              variant="standard"
-              slotProps={{
-                input: {
-                  readOnly: true,
-                },
-              }}
-            />
-            <TextField
-              id="standard-read-only-input"
-              label="Department"
-              value={
-                targetStudent.year_and_department
-                  ? targetStudent.year_and_department.includes(" - ")
-                    ? targetStudent.year_and_department.split(" - ")[1]
-                    : "Incorrect Format"
-                  : "No Data"
-              }
-              variant="standard"
-              slotProps={{
-                input: {
-                  readOnly: true,
-                },
-              }}
-            />
-            {console.log("Course: ", targetStudent.course)}
-            <TextField
-              id="standard-read-only-input"
-              label="Course"
-              value={
-                targetStudent.course ? targetStudent.course.name : "No Data"
-              }
-              variant="standard"
-              slotProps={{
-                input: {
-                  readOnly: true,
-                },
-              }}
-            />
-            <TextField
-              id="standard-read-only-input"
-              label="Term"
-              value={targetStudent.term ? targetStudent.term : "No Data"}
-              variant="standard"
-              slotProps={{
-                input: {
-                  readOnly: true,
-                },
-              }}
-            />
-            <TextField
-              id="standard-read-only-input"
-              label="Year"
-              value={
-                targetStudent.year_and_department
-                  ? targetStudent.year_and_department.includes(" - ")
-                    ? targetStudent.year_and_department.split(" - ")[0]
-                    : "Incorrect Format"
-                  : "No Data"
-              }
-              variant="standard"
-              slotProps={{
-                input: {
-                  readOnly: true,
-                },
-              }}
-            />
-          </div>
-          <div id="Violation list" className="px-2">
-            <h2 className="py-3 text-base font-bold text-left slide-in-visible">
-              Violation Records
-            </h2>
-            <StudentViolationList student={targetStudent} />
-          </div>
+            <div className="flex flex-col gap-y-2 slide-in-down-visible overflow-hidden">
+              <TextField
+                id="standard-read-only-input"
+                label="Full Name"
+                value={targetStudent.fullname}
+                variant="standard"
+                slotProps={{
+                  input: {
+                    readOnly: true,
+                  },
+                }}
+              />
+              <TextField
+                className="slide-in-down-visible"
+                id="standard-read-only-input"
+                label="Email Address"
+                value={
+                  targetStudent.email && targetStudent.email.length > 0
+                    ? targetStudent.email
+                    : "No Email Address"
+                }
+                variant="standard"
+                slotProps={{
+                  input: {
+                    readOnly: true,
+                  },
+                }}
+              />
+              <TextField
+                id="standard-read-only-input"
+                label="Department"
+                value={
+                  targetStudent.year_and_department
+                    ? targetStudent.year_and_department.includes(" - ")
+                      ? targetStudent.year_and_department.split(" - ")[1]
+                      : "Incorrect Format"
+                    : "No Data"
+                }
+                variant="standard"
+                slotProps={{
+                  input: {
+                    readOnly: true,
+                  },
+                }}
+              />
+              {console.log("Course: ", targetStudent.course)}
+              <TextField
+                id="standard-read-only-input"
+                label="Course"
+                value={
+                  targetStudent.course ? targetStudent.course.name : "No Data"
+                }
+                variant="standard"
+                slotProps={{
+                  input: {
+                    readOnly: true,
+                  },
+                }}
+              />
+              <TextField
+                id="standard-read-only-input"
+                label="Term"
+                value={targetStudent.term ? targetStudent.term : "No Data"}
+                variant="standard"
+                slotProps={{
+                  input: {
+                    readOnly: true,
+                  },
+                }}
+              />
+              <TextField
+                id="standard-read-only-input"
+                label="Year"
+                value={
+                  targetStudent.year_and_department
+                    ? targetStudent.year_and_department.includes(" - ")
+                      ? targetStudent.year_and_department.split(" - ")[0]
+                      : "Incorrect Format"
+                    : "No Data"
+                }
+                variant="standard"
+                slotProps={{
+                  input: {
+                    readOnly: true,
+                  },
+                }}
+              />
+            </div>
+            <div
+              id="Violation list"
+              className="px-2"
+              style={{ overflowX: "hidden" }}
+            >
+              <h2 className="py-3 text-base font-bold text-left slide-in-visible">
+                Violation Records
+              </h2>
+              <StudentViolationList student={targetStudent} />
+            </div>
+          </DialogContent>
         </Dialog>
       )}
       {searchFilterModal && (
@@ -1400,7 +1427,16 @@ const Students = () => {
           onClose={handleClose}
           fullWidth={true}
           maxWidth="sm"
-          sx={{ overflowX: "hidden", overflowY: "hidden" }}
+          sx={{
+            maxWidth: "95vw",
+            maxHeight: "90vh",
+            width: "50vw",
+            height: { xs: "100vh", sm: "90vh" },
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "center",
+            marginX: { md: "10px", lg: "auto" },
+          }}
         >
           <DialogTitle sx={{ overflowX: "hidden", overflowY: "hidden" }}>
             <label className="slide-in-down-visible">
@@ -1473,15 +1509,28 @@ const Students = () => {
           open={CreateStudentViolationModal}
           // onClose={handleClose}
           fullWidth={true}
-          maxWidth="sm"
+          maxWidth="false"
+          // fullScreen
+
+          // scroll={scroll}
+          sx={{
+            // maxWidth: "95vw",
+            maxHeight: "90vh",
+            // width: "60vw",
+            height: "90vh",
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "center",
+            marginX: { md: "10px", lg: "auto" },
+          }}
         >
           <DialogTitle sx={{ overflowX: "hidden", overflowY: "hidden" }}>
             <div className="flex justify-start ">
-              <h1 className="slide-in-down-visible">
+              <h1 className="slide-in-down-visible ">
                 Create new Student Violation
               </h1>
             </div>
-            <div className="absolute top-5 right-3 w-fit overflow-x-hidden">
+            <div className="sm:absolute sm:top-5 sm:right-3 w-fit overflow-x-hidden flex">
               <Button
                 onClick={handleOpenQRScanner}
                 color="error"
@@ -1492,7 +1541,15 @@ const Students = () => {
               </Button>
             </div>
           </DialogTitle>
-          <DialogContent>
+          <DialogContent
+            sx={{
+              overflowY: "scroll", // Enable scrolling for long content
+              // Enable vertical scrolling when needed
+              marginBottom: "20px",
+              minWidth: "70vw",
+              maxWidth: "90vw",
+            }}
+          >
             {isQrScannerOpen ? (
               <QRScanner
                 fetchQrData={handleDatafromQRScanner}
@@ -1521,7 +1578,7 @@ const Students = () => {
                     ))}
                   </ul>
                 </div>
-                <div className="my-5 overflow-x-hidden">
+                <div className="mt-5 ">
                   <h3 className="mb-3 slide-in-down-visible">Add Violation</h3>
                   <div className="flex ">
                     {/* <select
@@ -1576,7 +1633,7 @@ const Students = () => {
                       MenuProps={{
                         PaperProps: {
                           style: {
-                            maxHeight: "80%", // You can adjust this height for scrollable behavior
+                            maxHeight: "80vh",
                           },
                         },
                       }}
@@ -1835,7 +1892,18 @@ const Students = () => {
               </>
             )}
           </DialogContent>
-          <DialogActions sx={{ overflowX: "hidden", overflowY: "hidden" }}>
+          <DialogActions
+            sx={{
+              position: "absolute", // Make actions always visible at the bottom
+              bottom: 0,
+              left: 0,
+              right: 0,
+              backgroundColor: "white", // Ensure the buttons are clearly visible
+              zIndex: 10,
+              borderTop: "1px solid #ccc", // Optional visual separation
+            }}
+            dividers={scroll === "paper"}
+          >
             {isQrScannerOpen ? (
               <Button
                 className="text-center slide-in-from-bottom"
@@ -1865,18 +1933,64 @@ const Students = () => {
             )}
           </DialogActions>
         </Dialog>
+        //         <Dialog
+        //           open={open}
+        //           onClose={handleClose}
+        //           scroll={scroll}
+        //           aria-labelledby="scroll-dialog-title"
+        //           aria-describedby="scroll-dialog-description"
+        //         >
+        //           <DialogTitle id="scroll-dialog-title">Subscribe</DialogTitle>
+        //           <DialogContent dividers={scroll === "paper"}>
+        //             <DialogContentText
+        //               id="scroll-dialog-description"
+        //               // ref={descriptionElementRef}
+        //               tabIndex={-1}
+        //             >
+        //               {[...new Array(50)]
+        //                 .map(
+        //                   () => `Cras mattis consectetur purus sit amet fermentum.
+        // Cras justo odio, dapibus ac facilisis in, egestas eget quam.
+        // Morbi leo risus, porta ac consectetur ac, vestibulum at eros.
+        // Praesent commodo cursus magna, vel scelerisque nisl consectetur et.`
+        //                 )
+        //                 .join("\n")}
+        //             </DialogContentText>
+        //           </DialogContent>
+        //           <DialogActions>
+        //             <Button onClick={handleClose}>Cancel</Button>
+        //             <Button onClick={handleClose}>Subscribe</Button>
+        //           </DialogActions>
+        //         </Dialog>
       )}
       {updateStudentViolationModal && (
         <Dialog
           open={updateStudentViolationModal}
           onClose={handleClose}
-          fullWidth={true}
-          maxWidth="sm"
+          fullWidth
+          maxWidth="false"
+          sx={{
+            // maxWidth: "100vw",
+            maxHeight: "90vh",
+            // width: "100vw",
+            height: "90vh",
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "center",
+            marginX: { md: "10px", lg: "auto" },
+          }}
         >
-          <DialogTitle>
+          <DialogTitle sx={{ overflowX: "hidden", overflowY: "hidden" }}>
             <h1 className="slide-in-down-visible">Edit Violation</h1>
           </DialogTitle>
-          <DialogContent>
+          <DialogContent
+            sx={{
+              overflowY: "scroll",
+              marginBottom: "60px",
+              minWidth: "70vw",
+              maxWidth: "95vw",
+            }}
+          >
             {/* {isDepartmentLoading || isProgramLoading || isViolationLoading ? ( */}
             {isUpdateModalLoading ? (
               <>Loading...</>
@@ -1962,7 +2076,7 @@ const Students = () => {
                       MenuProps={{
                         PaperProps: {
                           style: {
-                            maxHeight: "80%", // You can adjust this height for scrollable behavior
+                            maxHeight: "95vh", // You can adjust this height for scrollable behavior
                           },
                         },
                       }}
@@ -2120,7 +2234,18 @@ const Students = () => {
               </>
             )}
           </DialogContent>
-          <DialogActions sx={{ overflowX: "hidden", overflowY: "hidden" }}>
+          <DialogActions
+            sx={{
+              position: "absolute", // Make actions always visible at the bottom
+              bottom: 0,
+              left: 0,
+              right: 0,
+              backgroundColor: "white", // Ensure the buttons are clearly visible
+              zIndex: 10,
+              borderTop: "1px solid #ccc", // Optional visual separation
+            }}
+            dividers={scroll === "paper"}
+          >
             <Button
               className="slide-in-from-bottom"
               onClick={handleUpdateViolation}

@@ -434,10 +434,19 @@ export default function Violations() {
                       </Tooltip>
                     </TableCell>
                     <TableCell align="center">
-                      <Tooltip title={row.category} arrow>
+                      <Tooltip
+                        title={
+                          row.category.charAt(0).toUpperCase() +
+                          row.category.slice(1)
+                        }
+                        arrow
+                      >
                         <div className="flex flex-wrap break-words whitespace-normal justify-center">
                           <Chip
-                            label={row.category}
+                            label={
+                              row.category.charAt(0).toUpperCase() +
+                              row.category.slice(1)
+                            }
                             color={
                               row.category === "major" ? "primary" : "error"
                             }
@@ -605,9 +614,32 @@ export default function Violations() {
                 </Button>
               </DialogActions>
             </Dialog> */}
-            <Dialog open={open} onClose={() => setOpen(false)}>
+            <Dialog
+              open={open}
+              onClose={() => setOpen(false)}
+              fullWidth="true"
+              maxWidth="false"
+              sx={{
+                // maxWidth: "95vw",
+                maxHeight: "90vh",
+                // width: "60vw",
+                height: "90vh",
+                display: "flex",
+                alignItems: "center",
+                justifyContent: "center",
+                marginX: { md: "10px", lg: "auto" },
+              }}
+            >
               <DialogTitle>Violation Details</DialogTitle>
-              <DialogContent>
+              <DialogContent
+                sx={{
+                  overflowY: "scroll", // Enable scrolling for long content
+                  // Enable vertical scrolling when needed
+                  marginBottom: "10px",
+                  minWidth: "70vw",
+                  maxWidth: "90vw",
+                }}
+              >
                 <TextField
                   autoFocus
                   color="error"
@@ -615,9 +647,11 @@ export default function Violations() {
                   label="Category"
                   type="text"
                   fullWidth
+                  className="capitalize"
                   value={
                     rowDataToView.category.length > 0
-                      ? rowDataToView.category
+                      ? rowDataToView.category.charAt(0).toUpperCase() +
+                        rowDataToView.category.slice(1)
                       : "No data"
                   }
                   sx={{ cursor: "none" }}
@@ -676,7 +710,10 @@ export default function Violations() {
                         ([key, value], idx) => (
                           <ListItemButton key={key}>
                             <ListItemText
-                              primary={`${idx + 1}. ${key}: ${value}`}
+                              primary={`${idx + 1}. ${
+                                key.replace(/_/g, " ").charAt(0).toUpperCase() +
+                                key.replace(/_/g, " ").slice(1)
+                              }: ${value}`}
                             />
                           </ListItemButton>
                         )
