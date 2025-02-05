@@ -1426,12 +1426,12 @@ const Students = () => {
           open={searchFilterModal}
           onClose={handleClose}
           fullWidth={true}
-          maxWidth="sm"
+          maxWidth="false"
           sx={{
-            maxWidth: "95vw",
+            // maxWidth: "95vw",
             maxHeight: "90vh",
-            width: "50vw",
-            height: { xs: "100vh", sm: "90vh" },
+            // width: "60vw",
+            height: "90vh",
             display: "flex",
             alignItems: "center",
             justifyContent: "center",
