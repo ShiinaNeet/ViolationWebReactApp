@@ -161,6 +161,7 @@ const Students = () => {
     category: "",
     userid: "",
   });
+  const [users, setUsers] = React.useState([]);
   const yearList = ["1st year", "2nd year", "3rd year", "4th year", "5th year"];
 
   const schoolTermList = [
@@ -270,6 +271,7 @@ const Students = () => {
     //   fetchDepartments();
     // });
     fetchPrograms();
+    fetchUsers();
     setCurrentUserType(localStorage.getItem("userType"));
 
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -561,62 +563,22 @@ const Students = () => {
     }
     setIsProgramLoading(false);
   };
-  const fetchUser = async (person) => {
-    axios
-      .get(`student`, {
-        params: {
-          userid: person.userid,
-          limit: 100,
-          skip: 0,
-          id: undefined,
-        },
-        headers: {
-          "Content-Type": "application/json",
-        },
-      })
-      .then((response) => {
-        if (response.data.status === "success") {
-          const violationsArray = Array.isArray(
-            response.data.data[0].violations
-          )
-            ? response.data.data[0].violations
-            : [];
-
-          const completedViolationList = violationsArray
-            .map((violation) =>
-              violationList.find((vio) => vio.id === String(violation))
-            )
-            .filter((violation) => violation !== undefined);
-          const completeCourseData = programList.find(
-            (program) => program.id === response.data.data[0].course
-          );
-          setTargetStudent({
-            ...targetStudent,
-            fullname: response.data.data[0].fullname,
-            userid: response.data.data[0].userid,
-            violations: completedViolationList,
-            year_and_department: response.data.data[0].year_and_department,
-            section: response.data.data[0].section,
-            email: response.data.data[0].email,
-            course: completeCourseData,
-            term: response.data.data[0].term,
-          });
-
-          console.log("Fetched User: ", response.data);
-        }
-      })
-      .catch((error) => {
-        console.error("There was an error fetching the data!", error);
-        setAlertMessage({
-          open: true,
-          title: error.title,
-          message: error.message,
-          variant: "info",
-        });
-      })
-      .finally(() => {
-        setIsViewModalLoading(false);
+  const fetchUsers = async () => {
+    try {
+      const response = await axios.get("/admin", {
+        params: { skip: 0, limit: 100 },
+        headers: { "Content-Type": "application/json" },
       });
+
+      if (response.data.status === "success") {
+        console.log("Program List fetched successfully");
+        setUsers(response.data.data);
+      } else {
+        console.log("Failed to fetch data");
+      }
+    } catch (error) {
+      console.error("There was an error fetching the data!", error);
+    }
   };
   const fetchIfExisitingUser = async (userid, decodedPotentialUser) => {
     axios
@@ -808,12 +770,6 @@ const Students = () => {
       }
     }
   };
-  // const transformedViolations = targetStudent.violations.map((violation) => ({
-  //   ...violation,
-  //   $oid: violation.id,
-  //   id: undefined, // Remove the _id field
-  //   name: undefined,
-  // }));
   const transformViolationToArray = () => {
     return targetStudent.violations.map((violation) => {
       return {
@@ -1285,7 +1241,6 @@ const Students = () => {
         <Dialog
           open={ViewModal}
           onClose={handleClose}
-          // Optionally, you can still adjust the overall Dialog container
           sx={{
             padding: 2,
             display: "flex",
@@ -1293,14 +1248,16 @@ const Students = () => {
             justifyContent: "center",
             maxHeight: "90vh",
             height: { xs: "100vh", sm: "90vh" },
+
             maxWidth: "100vw",
-            minWidth: "100vw",
+            minWidth: "70vw",
           }}
         >
           <DialogContent
             sx={{
               padding: 2,
-              width: "100%",
+              // width: "100%",
+              // height: "100%",
               // maxHeight: "90vh",
               // height: { xs: "100vh", sm: "90vh" },
               marginX: { md: "10px", lg: "auto" },
@@ -1416,7 +1373,7 @@ const Students = () => {
               <h2 className="py-3 text-base font-bold text-left slide-in-visible">
                 Violation Records
               </h2>
-              <StudentViolationList student={targetStudent} />
+              <StudentViolationList student={targetStudent} users={users} />
             </div>
           </DialogContent>
         </Dialog>
@@ -1507,16 +1464,10 @@ const Students = () => {
       {CreateStudentViolationModal && (
         <Dialog
           open={CreateStudentViolationModal}
-          // onClose={handleClose}
           fullWidth={true}
           maxWidth="false"
-          // fullScreen
-
-          // scroll={scroll}
           sx={{
-            // maxWidth: "95vw",
             maxHeight: "90vh",
-            // width: "60vw",
             height: "90vh",
             display: "flex",
             alignItems: "center",
@@ -1543,9 +1494,9 @@ const Students = () => {
           </DialogTitle>
           <DialogContent
             sx={{
-              overflowY: "scroll", // Enable scrolling for long content
-              // Enable vertical scrolling when needed
+              overflowY: "scroll",
               marginBottom: "20px",
+
               minWidth: "70vw",
               maxWidth: "90vw",
             }}
@@ -1705,23 +1656,6 @@ const Students = () => {
                     </Button>
                   </div>
                   <div className="flex flex-col mt-2">
-                    {/* <TextField
-                      className="slide-in-visible"
-                      margin="dense"
-                      variant="outlined"
-                      id="outlined-basic"
-                      label="Student Id"
-                      color="error"
-                      fullWidth
-                      required={true}
-                      value={createStudent.userid}
-                      onChange={(e) =>
-                        setCreateStudent({
-                          ...createStudent,
-                          userid: e.target.value,
-                        })
-                      }
-                    /> */}
                     <TextField
                       className="slide-in-visible"
                       margin="dense"
@@ -1756,6 +1690,40 @@ const Students = () => {
                         })
                       }
                     />
+                    {/* <TextField
+                      className="slide-in-visible"
+                      margin="dense"
+                      id="outlined-basic"
+                      label="First Name"
+                      variant="outlined"
+                      color="error"
+                      fullWidth
+                      required={true}
+                      value={createStudent.first_name}
+                      onChange={(e) =>
+                        setCreateStudent({
+                          ...createStudent,
+                          first_name: e.target.value,
+                        })
+                      }
+                    />
+                    <TextField
+                      className="slide-in-visible"
+                      margin="dense"
+                      id="outlined-basic"
+                      label="Last Name"
+                      variant="outlined"
+                      color="error"
+                      fullWidth
+                      required={true}
+                      value={createStudent.last_name}
+                      onChange={(e) =>
+                        setCreateStudent({
+                          ...createStudent,
+                          last_name: e.target.value,
+                        })
+                      }
+                    /> */}
                     <TextField
                       className="slide-in-visible"
                       margin="dense"
@@ -1858,7 +1826,7 @@ const Students = () => {
                       </Select>
                     </FormControl>
                   </div>
-                  <div className="my-2 ">
+                  <div className="my-2 mb-5">
                     <FormControl fullWidth>
                       <InputLabel id="demo-simple-select-helper-label">
                         School Year

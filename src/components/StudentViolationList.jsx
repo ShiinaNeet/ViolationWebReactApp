@@ -96,10 +96,11 @@ StudentViolationList.propTypes = {
       })
     ),
   }).isRequired,
+  users: PropTypes.isRequired,
 };
 
 export default function StudentViolationList(props) {
-  const { student } = props;
+  const { student, users } = props;
   const [page, setPage] = React.useState(0);
   const [rowsPerPage, setRowsPerPage] = React.useState(5);
   const [data, setData] = React.useState([]);
@@ -132,7 +133,7 @@ export default function StudentViolationList(props) {
         item.classList.add("slide-in-down-visible");
       }, index * 250);
     });
-  }, [data]);
+  }, [data, page]);
   return (
     <Box>
       <Paper>
@@ -142,6 +143,7 @@ export default function StudentViolationList(props) {
               <TableRow className="slide-in-down-visible">
                 <TableCell>Name</TableCell>
                 <TableCell align="center">Date</TableCell>
+                <TableCell align="center">Reported By</TableCell>
               </TableRow>
             </TableHead>
             <TableBody>
@@ -155,6 +157,23 @@ export default function StudentViolationList(props) {
                         row.date_committed,
                         "MMMM DD, YYYY - hh:mm A"
                       )}
+                    </TableCell>
+                    {console.log(users)}
+                    <TableCell>
+                      {(() => {
+                        const user = users.find(
+                          (user) => user.id === row.reported_by
+                        );
+                        if (user) {
+                          const capitalize = (str) =>
+                            str.charAt(0).toUpperCase() +
+                            str.slice(1).toLowerCase();
+                          return `${capitalize(user.first_name)} ${capitalize(
+                            user.last_name
+                          )}`;
+                        }
+                        return "User not found";
+                      })()}
                     </TableCell>
                   </TableRow>
                 ))}
