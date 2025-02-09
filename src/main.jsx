@@ -8,7 +8,7 @@ import Layout from "./layout";
 import DeanLayout from "./Dean_layout";
 import DepartmentHeadLayout from "./DepartmentHead_layout";
 import ProfessorLayout from "./Professor_layout";
-
+import CoordinatorLayout from "./Coordinator_layout";
 //Dean Layout
 import Dean_Home from "./routes/Dean/Home";
 import Dean_Department from "./components/Dean/DepartmentTable";
@@ -19,6 +19,9 @@ import ViolationBarChart from "./components/Department_Head/BarChart";
 //Professor Layout
 import Professor_Home from "./routes/Professor/Home";
 
+//Coordinator Layout
+import Coordinator_Home from "./routes/Coordinator/Home";
+
 import Notification from "./routes/Notification";
 import Students from "./routes/Students";
 import Violations from "./routes/Violations";
@@ -26,6 +29,7 @@ import Chart from "./routes/Chart";
 import Login from "./routes/Login";
 import Unauthorized from "./routes/Unauthorized";
 import UsersManagement from "./routes/UsersManagement";
+import Reports from "./routes/Reports";
 
 import { setupAxiosInterceptors } from "./axios";
 import ProtectedRoute from "./auth/ProtectedRoute";
@@ -58,6 +62,10 @@ const router = createBrowserRouter([
       {
         path: "chart",
         element: <ProtectedRoute element={<Chart />} />,
+      },
+      {
+        path: "reports",
+        element: <ProtectedRoute element={<Reports />} />,
       },
       {
         path: "/notification",
@@ -121,6 +129,24 @@ const router = createBrowserRouter([
       //   path: "notification",
       //   element: <ProtectedRoute element={<Notification />} />,
       // },
+    ],
+  },
+  {
+    path: "/coordinator",
+    element: <ProtectedRoute element={<CoordinatorLayout />} />,
+    children: [
+      {
+        path: "home",
+        element: <ProtectedRoute element={<Coordinator_Home />} />,
+      },
+      {
+        path: "students",
+        element: <ProtectedRoute element={<Students />} />,
+      },
+      {
+        path: "notification",
+        element: <ProtectedRoute element={<Notification />} />,
+      },
     ],
   },
   {

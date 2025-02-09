@@ -32,7 +32,6 @@ import {
   AlertTitle,
   Chip,
   Container,
-  DialogContentText,
   FormControl,
   InputLabel,
   ListSubheader,
@@ -49,7 +48,6 @@ import AlertMessageStudent from "../components/AlertMessageStudent";
 import formatDate from "../utils/moment";
 import DeleteOutlineIcon from "@mui/icons-material/DeleteOutline";
 import AddIcon from "@mui/icons-material/Add";
-import { red } from "@mui/material/colors";
 import axios from "axios";
 import QRScanner from "../components/QRScanner";
 function TablePaginationActions(props) {
@@ -124,7 +122,7 @@ const StyledToolbar = styled(Toolbar)(({ theme }) => ({
   backgroundColor: theme.vars
     ? `rgba(${theme.vars.palette.background.defaultChannel} / 0.4)`
     : alpha(theme.palette.background.default, 0.4),
-  boxShadow: `0px 4px 6px ${alpha(red[500], 0.9)}`,
+  boxShadow: `0px 10px 6px rgba(0, 0, 0, 0.1)`,
 }));
 const Students = () => {
   // const { userType } = useAuth();
@@ -163,58 +161,19 @@ const Students = () => {
   });
   const [users, setUsers] = React.useState([]);
   const yearList = ["1st year", "2nd year", "3rd year", "4th year", "5th year"];
-
-  const schoolTermList = [
-    "First Semester",
-    "Second Semester",
-    "Third Semester",
-    "Fourth Semester",
-    "Fifth Semester",
-    "Summer Term",
-  ];
-  const searchViolationCategory = ["academic_dishonesty", "major", "minor"];
-  // const coursesList = [
-  //   "BS Information Technology",
-  //   "BS Computer Science",
-  //   "Doctor of Business Administration (DBA)",
-  //   "Master of Public Administration (MPA) (Thesis/Non-Thesis program)",
-  //   "Master of Business Administration (MBA) (Thesis/Non-Thesis program)",
-  //   "BS Accountancy",
-  //   "BS Accounting Management",
-  //   "BS Applied Economics",
-  //   "BS Business Administration Major in: Business Economics",
-  //   "BS Business Administration Major in: Financial Management",
-  //   "BS Business Administration Major in: Human Resource Development Management",
-  //   "BS Business Administration Major in: Marketing Management",
-  //   "BS Business Administration Major in: Operations Management",
-  //   "Associate in Accounting",
-  //   "Associate in Management",
-  //   "BS Hotel and Restaurant Management",
-  //   "BS Tourism Management",
-  //   "Associate in Hotel and Restaurant Management",
-  //   "Associate in Tourism Management",
-  //   "BA Public Administration",
-  //   "BS Customs Administration",
-  //   "BS Entrepreneurship",
-  //   "Doctor of Technology",
-  //   "Master of Technology",
-  //   "Bachelor of Industrial Technology (BIT 4 – years)",
-  //   "BS Nursing",
-  //   "BS Nutrition & Dietetics",
+  // const schoolTermList = [
+  //   "First Semester",
+  //   "Second Semester",
+  //   "Third Semester",
+  //   "Fourth Semester",
+  //   "Fifth Semester",
+  //   "Summer Term",
   // ];
+  const [schoolTermList, setSchoolTermList] = React.useState([]);
+  const searchViolationCategory = ["academic_dishonesty", "major", "minor"];
   const [programList, setProgramList] = React.useState([]);
   const [filteredPrograms, setFilteredPrograms] = React.useState([]);
 
-  // const theme = useTheme();
-  // const handleChange = (event) => {
-  //   const {
-  //     target: { value },
-  //   } = event;
-  //   setPersonName(
-  //     // On autofill we get a stringified value.
-  //     typeof value === "string" ? value.split(",") : value
-  //   );
-  // };
   const vertical = "bottom";
   const horizontal = "right";
   const [alertMessage, setAlertMessage] = React.useState({
@@ -246,11 +205,6 @@ const Students = () => {
     setRowsPerPage(parseInt(event.target.value, 5));
     setPage(0);
   };
-  const [createProps, setCreateProps] = React.useState({
-    isLoading: false,
-    errorMessage: "",
-    successMessage: "",
-  });
   const [isQrScannerOpen, setIsQrScannerOpen] = React.useState(false);
   const [isDepartmentLoading, setIsDepartmentLoading] = React.useState(false);
   const [isProgramLoading, setIsProgramLoading] = React.useState(false);
@@ -438,7 +392,12 @@ const Students = () => {
       setIsLoading(true);
       setIsViolationLoading(true);
       setIsFetchingDone(true);
-
+      const schoolTermResponse = await axios.get("/term", {
+        params: { skip: 0, limit: 100 },
+      });
+      if (schoolTermResponse.data.status === "success") {
+        setSchoolTermList(schoolTermResponse.data.data);
+      }
       const violationResponse = await axios.get("/violation", {
         params: { skip: 0, limit: 100 },
       });
@@ -821,8 +780,42 @@ const Students = () => {
       courseToAdd = programList[0];
     }
     console.log("Course Name: ", courseToAdd);
-    // console.log("Transformed Violation: ", transformViolationToArray());
-    // return;
+
+    const termToUpdate = schoolTermList.find(
+      (term) => term.name === targetStudent.term
+    );
+    if (!termToUpdate) {
+      setAlertMessage({
+        open: true,
+        title: "Error occured!",
+        message: "Invalid term selected!",
+        variant: "info",
+      });
+      setIsLoading(false);
+      return;
+    }
+    const transformViolationToArray = targetStudent.violations.map(
+      (violation) => {
+        return {
+          code: violation.code,
+          description: violation.description,
+          date_committed: violation.date_committed
+            ? violation.date_committed
+            : new Date().toISOString(),
+          sem_committed: targetStudent.sem_committed
+            ? targetStudent.sem_committed
+            : termToUpdate.number,
+        };
+      }
+    );
+    console.log("Term to update: ", termToUpdate);
+    console.log("Creating student...");
+    console.log("Current Target student info: ", targetStudent);
+    console.log(
+      "Current target student violation: ",
+      transformViolationToArray
+    );
+
     axios
       .put(
         `/student`,
@@ -831,7 +824,7 @@ const Students = () => {
           course: courseToAdd.id,
           term: targetStudent.term ? targetStudent.term : "First Semester",
           year_and_department: PayloadYear + " - " + PayloadDepartment,
-          violations: transformViolationToArray(),
+          violations: transformViolationToArray,
         },
         {
           headers: {
@@ -877,9 +870,9 @@ const Students = () => {
       });
   };
   const handeSaveStudent = () => {
-    console.log("Creating student...");
-    console.log("Current student info: ", createStudent);
-    console.log("Current student violation: ", createStudent.violations);
+    // console.log("Creating student...");
+    // console.log("Current student info: ", createStudent);
+    // console.log("Current student violation: ", createStudent.violations);
     setIsLoading(true);
 
     if (
@@ -920,13 +913,33 @@ const Students = () => {
     const courseToSave = programList.find(
       (program) => program.name === PayloadCourse
     )?.id;
+    const termToSave = schoolTermList.find(
+      (term) => term.name === createStudent.term
+    );
+    if (!termToSave) {
+      setAlertMessage({
+        open: true,
+        title: "Error occured!",
+        message: "Invalid term selected!",
+        variant: "info",
+      });
+      setIsLoading(false);
+      return;
+    }
     const violationsToSave = createStudent.violations.map((violation) => {
       return {
         code: violation.code,
         // description: violation.description,
         date_committed: new Date().toISOString(),
+        sem_committed: termToSave.number,
       };
     });
+
+    console.error("Term to save: ", termToSave);
+    console.log("Creating student...");
+    console.log("Current student info: ", createStudent);
+    console.log("Current student violation: ", violationsToSave);
+    return;
     axios
       .post(
         `/student`,
@@ -936,7 +949,7 @@ const Students = () => {
           email: createStudent.email,
           fullname: createStudent.fullname,
           course: courseToSave,
-          term: targetStudent.term ? targetStudent.term : "First Semester",
+          term: createStudent.term,
           year_and_department: PayloadYear + " - " + PayloadDepartment,
           violations: violationsToSave,
         },
@@ -1764,8 +1777,8 @@ const Students = () => {
                         inputProps={{ "aria-label": "Without label" }}
                       >
                         {schoolTermList.map((term) => (
-                          <MenuItem key={term} value={term}>
-                            {term}
+                          <MenuItem key={term.number} value={term.name}>
+                            {term.name}
                           </MenuItem>
                         ))}
                       </Select>
@@ -1949,7 +1962,7 @@ const Students = () => {
           }}
         >
           <DialogTitle sx={{ overflowX: "hidden", overflowY: "hidden" }}>
-            <h1 className="slide-in-down-visible">Edit Violation</h1>
+            <label className="slide-in-down-visible">Edit Violation</label>
           </DialogTitle>
           <DialogContent
             sx={{
@@ -2132,8 +2145,8 @@ const Students = () => {
                       }}
                     >
                       {schoolTermList.map((term) => (
-                        <option key={term} value={term}>
-                          {term}
+                        <option key={term.number} value={term.name}>
+                          {term.name}
                         </option>
                       ))}
                     </select>

@@ -39,7 +39,7 @@ const StyledToolbar = styled(Toolbar)(({ theme }) => ({
   backgroundColor: theme.vars
     ? `rgba(${theme.vars.palette.background.defaultChannel} / 0.4)`
     : alpha(theme.palette.background.default, 0.4),
-  boxShadow: `0px 4px 6px ${alpha(red[500], 0.9)}`,
+  boxShadow: `0px 10px 6px rgba(0, 0, 0, 0.1)`,
 }));
 
 export default function NotificationList() {

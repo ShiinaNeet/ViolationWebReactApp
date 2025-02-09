@@ -158,7 +158,6 @@ export default function StudentViolationList(props) {
                         "MMMM DD, YYYY - hh:mm A"
                       )}
                     </TableCell>
-                    {console.log(users)}
                     <TableCell>
                       {(() => {
                         const user = users.find(

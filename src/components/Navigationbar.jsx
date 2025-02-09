@@ -164,6 +164,14 @@ const Navigationbar = () => {
             <Button variant="text" color="white" size="small">
               <Link
                 className=" hover:bg-red-100 hover:text-red-600 hover:rounded-md hover:cursor-pointer p-2"
+                to="/Reports"
+              >
+                Reports
+              </Link>
+            </Button>
+            <Button variant="text" color="white" size="small">
+              <Link
+                className=" hover:bg-red-100 hover:text-red-600 hover:rounded-md hover:cursor-pointer p-2"
                 to="/Chart"
               >
                 Charts
@@ -231,6 +239,9 @@ const Navigationbar = () => {
                 {/* <Link onClick={toggleDrawer(false)} to="/Chart">
                   <MenuItem>Charts </MenuItem>
                 </Link> */}
+                <Link onClick={toggleDrawer(false)} to="/Users">
+                  <MenuItem>Report </MenuItem>
+                </Link>
                 <Link onClick={toggleDrawer(false)} to="/Notification">
                   <MenuItem>Notifications </MenuItem>
                 </Link>
