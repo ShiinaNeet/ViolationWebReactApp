@@ -8,7 +8,7 @@ import Layout from "./layout";
 import DeanLayout from "./Dean_layout";
 import DepartmentHeadLayout from "./DepartmentHead_layout";
 import ProfessorLayout from "./Professor_layout";
-import CoordinatorLayout from "./Coordinator_layout";
+import CoordinatorLayout from "./Coordinator_Layout";
 //Dean Layout
 import Dean_Home from "./routes/Dean/Home";
 import Dean_Department from "./components/Dean/DepartmentTable";
