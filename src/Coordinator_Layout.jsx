@@ -1,11 +1,11 @@
 import { Outlet } from "react-router-dom";
 import Navigationbar from "./components/Coordinator/NavigationBar";
 
-const DeanLayout = () => (
+const Coordinator_layout = () => (
   <div className="overflow-x-scroll:hidden">
     <Navigationbar />
     <Outlet />
   </div>
 );
 
-export default DeanLayout;
+export default Coordinator_layout;
