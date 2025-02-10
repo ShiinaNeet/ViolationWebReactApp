@@ -167,6 +167,9 @@ const Login = () => {
                   variant="outlined"
                   color="error"
                   margin="none"
+                  onChange={(event) =>
+                    setAccount({ ...account, name: event.target.value })
+                  }
                 />
               </motion.div>
               <motion.div
@@ -183,6 +186,9 @@ const Login = () => {
                   color="error"
                   className="mb-6"
                   margin="normal"
+                  onChange={(event) =>
+                    setAccount({ ...account, password: event.target.value })
+                  }
                 />
               </motion.div>
               <motion.div
