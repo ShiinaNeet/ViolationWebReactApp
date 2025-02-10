@@ -75,3 +75,32 @@
   transform: translateY(10px);
   transition: opacity 0.5s ease-out, transform 0.5s ease-out;
 }
+@keyframes slide-in {
+  from {
+    opacity: 0;
+    transform: translateX(-150px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+@keyframes slide-out {
+  from {
+    opacity: 0;
+    transform: translateX(0);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(150px);
+  }
+}
+
+.animate-slide-in {
+  animation: slide-in 0.5s ease-out;
+}
+
+.animate-slide-out {
+  animation: slide-out 0.5s ease-in forwards;
+}

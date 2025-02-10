@@ -164,18 +164,3 @@ table {
 .MuiMenu-list {
   border: 1px solid #ddd;
 }
-
-@keyframes slide-in {
-  from {
-    opacity: 0;
-    transform: translateX(-150px);
-  }
-  to {
-    transform: translateX(0);
-    opacity: 1;
-  }
-}
-
-.animate-slide-in {
-  animation: slide-in 0.75s ease-out;
-}
