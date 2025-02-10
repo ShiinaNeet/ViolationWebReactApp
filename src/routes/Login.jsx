@@ -127,7 +127,7 @@ const Login = () => {
     "Request-For-Non-Wearing-Of-Uniform",
   ];
   return (
-    <div className="flex flex-col items-center justify-center h-screen w-full bg-gradient-to-br p-4">
+    <div className="flex flex-col items-center justify-center h-screen w-full bg-gradient-to-br p-4 overflow-hidden">
       <AnimatePresence mode="wait">
         <motion.div
           key={activeForm}
@@ -136,7 +136,7 @@ const Login = () => {
           animate="visible"
           exit="exit"
           transition={{ duration: 0.5 }}
-          className="sm:w-2/3 w-5/6 p-6 rounded-xl border border-gray-200 bg-white/80 backdrop-blur-md shadow-huge"
+          className="sm:w-[450px] md:w-[550px] w-full- p-6 rounded-xl border border-gray-200 bg-white/80 backdrop-blur-md shadow-huge"
         >
           {activeForm === "login" ? (
             <div className="flex flex-col gap-y-2">
