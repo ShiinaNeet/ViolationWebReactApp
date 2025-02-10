@@ -617,7 +617,6 @@ export default function Violations() {
             <Dialog
               open={open}
               onClose={() => setOpen(false)}
-              fullWidth="true"
               maxWidth="false"
               sx={{
                 // maxWidth: "95vw",
