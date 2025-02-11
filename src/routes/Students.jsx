@@ -934,7 +934,7 @@ const Students = () => {
         sem_committed: termToSave.number,
       };
     });
-
+    console.log("Course Name: ", courseToSave);
     console.error("Term to save: ", termToSave);
     console.log("Creating student...");
     console.log("Current student info: ", createStudent);
