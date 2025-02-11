@@ -50,6 +50,7 @@ import DeleteOutlineIcon from "@mui/icons-material/DeleteOutline";
 import AddIcon from "@mui/icons-material/Add";
 import axios from "axios";
 import QRScanner from "../components/QRScanner";
+
 function TablePaginationActions(props) {
   const { count, page, rowsPerPage, onPageChange } = props;
 
@@ -161,14 +162,6 @@ const Students = () => {
   });
   const [users, setUsers] = React.useState([]);
   const yearList = ["1st year", "2nd year", "3rd year", "4th year", "5th year"];
-  // const schoolTermList = [
-  //   "First Semester",
-  //   "Second Semester",
-  //   "Third Semester",
-  //   "Fourth Semester",
-  //   "Fifth Semester",
-  //   "Summer Term",
-  // ];
   const [schoolTermList, setSchoolTermList] = React.useState([]);
   const searchViolationCategory = ["academic_dishonesty", "major", "minor"];
   const [programList, setProgramList] = React.useState([]);
@@ -199,7 +192,6 @@ const Students = () => {
   const handleChangePage = (event, newPage) => {
     setPage(newPage);
   };
-
   const handleChangeRowsPerPage = (event) => {
     console.log("Rows per page: ", event.target.value);
     setRowsPerPage(parseInt(event.target.value, 5));
@@ -218,18 +210,6 @@ const Students = () => {
   const [deleteStudentViolationModal, setDeleteStudentViolationModal] =
     React.useState(false);
   const [messageStudentModal, setMessageStudentModal] = React.useState(false);
-
-  useEffect(() => {
-    fetchAllData();
-    // fetchPrograms().then(() => {
-    //   fetchDepartments();
-    // });
-    fetchPrograms();
-    fetchUsers();
-    setCurrentUserType(localStorage.getItem("userType"));
-
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
 
   const handleClose = () => {
     setViewModal(false);
@@ -729,17 +709,6 @@ const Students = () => {
       }
     }
   };
-  const transformViolationToArray = () => {
-    return targetStudent.violations.map((violation) => {
-      return {
-        code: violation.code,
-        description: violation.description,
-        date_committed: violation.date_committed
-          ? violation.date_committed
-          : new Date().toISOString(),
-      };
-    });
-  };
   const handleUpdateViolation = () => {
     // console.log('Updating violation...');
 
@@ -1041,58 +1010,47 @@ const Students = () => {
   };
   const closeQrScanner = () => {
     setIsQrScannerOpen(false);
-    // navigator.mediaDevices
-    //   .getUserMedia({ video: true })
-    //   .then((stream) => {
-    //     stream.getTracks().forEach((track) => track.stop());
-    //     console.log("Camera forcefully closed.");
-    //   })
-    //   .catch((error) => console.error("Error accessing media devices:", error));
   };
   const truncateText = (text, maxLength) =>
     text?.length > maxLength ? text.slice(0, maxLength) + "..." : text;
+
   React.useEffect(() => {
-    const listItems = document.querySelectorAll(".slide-in-down-visible");
+    fetchAllData();
+    fetchPrograms();
+    fetchUsers();
+    setCurrentUserType(localStorage.getItem("userType"));
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+  React.useEffect(() => {
+    const listItems = document.querySelectorAll(".slide-in-down");
     listItems.forEach((item, index) => {
       setTimeout(() => {
-        item.classList.add("slide-in-visible");
+        item.classList.add("slide-in-down-visible");
       }, index * 69);
     });
   }, [rows]);
   const listRef = React.useRef(null);
-  useEffect(() => {
-    // Wait a short time to ensure the list has rendered
+  React.useEffect(() => {
     setTimeout(() => {
       if (listRef.current) {
         const listItems = listRef.current.querySelectorAll(".update-modal");
 
         listItems.forEach((item, index) => {
           setTimeout(() => {
-            item.classList.add("slide-in-visible");
-          }, index * 100); // Slightly increased delay for better visibility
+            item.classList.add("slide-in-down-visible");
+          }, index * 100);
         });
       }
-    }, 1); // Short delay to ensure DOM updates before effect runs
+    }, 1);
   }, [targetStudent.violations]);
-  // const [selectedCode, setSelectedCode] = React.useState("");
-  // const [expandedCategory, setExpandedCategory] = React.useState(null);
 
-  // const handleCategoryClick = (category) => {
-  //   console.log(`Toggling category: ${category}`); // Debugging log
-  //   setExpandedCategory((prevCategory) =>
-  //     prevCategory === category ? null : category
-  //   );
-  // };
-  const [selectedCode, setSelectedCode] = useState("");
   const [isSelectViolationComponentOpen, setIsSelectViolationComponentOpen] =
     useState(false);
-  const handleCategoryClick = (event) => {
-    setSelectedCode(event.target.value);
-  };
+
   const handleCloseMenu = () => {
     setIsSelectViolationComponentOpen(false);
   };
-  const [scroll, setScroll] = React.useState("paper");
+  const [scroll] = React.useState("paper");
   return (
     <>
       <Container
@@ -1274,6 +1232,7 @@ const Students = () => {
               // maxHeight: "90vh",
               // height: { xs: "100vh", sm: "90vh" },
               marginX: { md: "10px", lg: "auto" },
+              overflowX: "hidden",
             }}
           >
             <div className=" flex flex-col justify-center items-center md:flex-row sm:justify-between sm:items-center sm:w-full gap-x-5">
@@ -1486,6 +1445,7 @@ const Students = () => {
             alignItems: "center",
             justifyContent: "center",
             marginX: { md: "10px", lg: "auto" },
+            overflow: "hidden",
           }}
         >
           <DialogTitle sx={{ overflowX: "hidden", overflowY: "hidden" }}>
@@ -1507,11 +1467,11 @@ const Students = () => {
           </DialogTitle>
           <DialogContent
             sx={{
-              overflowY: "scroll",
+              overflowY: "auto",
               marginBottom: "20px",
-
               minWidth: "70vw",
               maxWidth: "90vw",
+              maxHeight: "80vh",
             }}
           >
             {isQrScannerOpen ? (
@@ -1875,13 +1835,14 @@ const Students = () => {
           </DialogContent>
           <DialogActions
             sx={{
-              position: "absolute", // Make actions always visible at the bottom
+              position: "absolute",
               bottom: 0,
               left: 0,
               right: 0,
-              backgroundColor: "white", // Ensure the buttons are clearly visible
+              backgroundColor: "white",
               zIndex: 10,
-              borderTop: "1px solid #ccc", // Optional visual separation
+              borderTop: "1px solid #ccc",
+              overflowY: "hidden",
             }}
             dividers={scroll === "paper"}
           >
@@ -1951,14 +1912,13 @@ const Students = () => {
           fullWidth
           maxWidth="false"
           sx={{
-            // maxWidth: "100vw",
             maxHeight: "90vh",
-            // width: "100vw",
             height: "90vh",
             display: "flex",
             alignItems: "center",
             justifyContent: "center",
             marginX: { md: "10px", lg: "auto" },
+            overflow: "hidden",
           }}
         >
           <DialogTitle sx={{ overflowX: "hidden", overflowY: "hidden" }}>
@@ -1966,10 +1926,11 @@ const Students = () => {
           </DialogTitle>
           <DialogContent
             sx={{
-              overflowY: "scroll",
+              overflowY: "auto",
               marginBottom: "60px",
               minWidth: "70vw",
               maxWidth: "95vw",
+              maxHeight: "80vh",
             }}
           >
             {/* {isDepartmentLoading || isProgramLoading || isViolationLoading ? ( */}
@@ -1978,7 +1939,7 @@ const Students = () => {
             ) : (
               <>
                 <div>
-                  <h3 className="slide-in-visible">Current Violations</h3>
+                  <h3 className="slide-in-visible ">Current Violations</h3>
                   <ul ref={listRef} key={targetStudent.id}>
                     {targetStudent.violations.map((violation, index) => (
                       <li
@@ -2217,15 +2178,15 @@ const Students = () => {
           </DialogContent>
           <DialogActions
             sx={{
-              position: "absolute", // Make actions always visible at the bottom
+              position: "absolute",
               bottom: 0,
               left: 0,
               right: 0,
-              backgroundColor: "white", // Ensure the buttons are clearly visible
+              backgroundColor: "white",
               zIndex: 10,
-              borderTop: "1px solid #ccc", // Optional visual separation
+              borderTop: "1px solid #ccc",
+              overflowY: "hidden",
             }}
-            dividers={scroll === "paper"}
           >
             <Button
               className="slide-in-from-bottom"

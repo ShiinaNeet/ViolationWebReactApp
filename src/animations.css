@@ -1,23 +1,25 @@
 @keyframes slideIn {
   from {
     transform: translateX(-25px);
-
+    overflow: hidden;
     opacity: 0;
+    max-height: 0;
   }
   to {
     transform: translateX(0);
     opacity: 1;
+    overflow: visible;
+    max-height: 100vh;
   }
-}
-
-.slide-in {
-  opacity: 0;
 }
 
 .slide-in-visible {
   animation: slideIn 0.5s linear forwards;
+  overflow: hidden;
 }
-
+.slide-in {
+  opacity: 0;
+}
 @keyframes slideInDown {
   from {
     opacity: 0;
@@ -31,9 +33,11 @@
 
 .slide-in-down {
   opacity: 0;
+  visibility: hidden;
 }
 
 .slide-in-down-visible {
+  visibility: visible;
   animation: slideInDown 0.5s ease-out forwards;
 }
 .slide-in-down-visible::before {
