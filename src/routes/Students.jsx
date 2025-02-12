@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useState } from "react";
 import Button from "@mui/material/Button";
 import PropTypes from "prop-types";
 import Table from "@mui/material/Table";
@@ -147,7 +147,9 @@ const Students = () => {
     srcode: "",
     userid: 0,
     email: "",
-    fullname: "",
+    firstName: "",
+    middleName: "",
+    lastName: "",
     course: "",
     term: "First Semester",
     year: "1st year",
@@ -198,11 +200,8 @@ const Students = () => {
     setPage(0);
   };
   const [isQrScannerOpen, setIsQrScannerOpen] = React.useState(false);
-  const [isDepartmentLoading, setIsDepartmentLoading] = React.useState(false);
-  const [isProgramLoading, setIsProgramLoading] = React.useState(false);
   const [isViolationLoading, setIsViolationLoading] = React.useState(false);
   const [isUpdateModalLoading, setIsUpdateModalLoading] = React.useState(false);
-  const [isviewModalLoading, setIsViewModalLoading] = React.useState(false);
   const [isFetchingDone, setIsFetchingDone] = React.useState(false);
   const [searchFilterModal, setSearchFilterModal] = React.useState(false);
   const [updateStudentViolationModal, setUpdateStudentViolationModal] =
@@ -233,7 +232,9 @@ const Students = () => {
       srcode: "",
       userid: 0,
       email: "",
-      fullname: "",
+      firstName: "",
+      middleName: "",
+      lastName: "",
       course: "",
       term: "First Semester",
       year: "1st year",
@@ -247,7 +248,7 @@ const Students = () => {
   const handleViewViolationModal = (person) => {
     console.log("View Person", person);
     // setTargetStudent(person);
-    setIsViewModalLoading(true);
+
     setViewModal(true);
 
     const completeCourseData = programList.find(
@@ -447,7 +448,6 @@ const Students = () => {
     }
   };
   const fetchDepartments = async (FetchedProgramData) => {
-    setIsDepartmentLoading(true);
     try {
       const response = await axios.get("/department", {
         params: { skip: 0, limit: 100 },
@@ -480,10 +480,8 @@ const Students = () => {
     } catch (error) {
       console.error("There was an error fetching the data!", error);
     }
-    setIsDepartmentLoading(false);
   };
   const fetchPrograms = async () => {
-    setIsProgramLoading(true);
     try {
       const response = await axios.get("/progams", {
         params: { skip: 0, limit: 100 },
@@ -500,7 +498,6 @@ const Students = () => {
     } catch (error) {
       console.error("There was an error fetching the data!", error);
     }
-    setIsProgramLoading(false);
   };
   const fetchUsers = async () => {
     try {
@@ -621,11 +618,7 @@ const Students = () => {
         setIsQrScannerOpen(false);
       });
   };
-  const [qrData, setQrData] = React.useState({
-    fullname: "",
-    srcode: "",
-    userid: "",
-  });
+
   const fetchDecodedQRCode = async (data) => {
     axios
       .get(`/decode_qr`, {
@@ -643,11 +636,6 @@ const Students = () => {
           response.data.data.userid.length > 0 &&
           response.data.data.srcode.length > 0
         ) {
-          setQrData({
-            srcode: response.data.data.srcode,
-            userid: response.data.data.userid,
-            fullname: response.data.data.fullname,
-          });
           fetchIfExisitingUser(response.data.data.userid, response.data.data);
         } else {
           console.log("Unable to decode QR Code");
@@ -857,8 +845,12 @@ const Students = () => {
       createStudent.term == undefined ||
       createStudent.email == "" ||
       createStudent.email == undefined ||
-      createStudent.fullname == "" ||
-      createStudent.fullname == undefined
+      createStudent.firstName == "" ||
+      createStudent.firstName == undefined ||
+      createStudent.middleName == "" ||
+      createStudent.middleName == undefined ||
+      createStudent.lastName == "" ||
+      createStudent.lastName == undefined
     ) {
       console.log("Invalid student information. Please fill all fields");
       setAlertMessage({
@@ -903,12 +895,20 @@ const Students = () => {
         sem_committed: termToSave.number,
       };
     });
+    const fullName = [
+      createStudent.firstName,
+      createStudent.middleName,
+      createStudent.lastName,
+    ]
+      .filter(Boolean)
+      .join(" ");
     console.log("Course Name: ", courseToSave);
     console.error("Term to save: ", termToSave);
     console.log("Creating student...");
     console.log("Current student info: ", createStudent);
     console.log("Current student violation: ", violationsToSave);
-    return;
+    console.log("Full name: ", fullName);
+
     axios
       .post(
         `/student`,
@@ -916,7 +916,7 @@ const Students = () => {
           srcode: String(createStudent.userid),
           userid: String(createStudent.userid),
           email: createStudent.email,
-          fullname: createStudent.fullname,
+          fullname: fullName,
           course: courseToSave,
           term: createStudent.term,
           year_and_department: PayloadYear + " - " + PayloadDepartment,
@@ -1050,7 +1050,6 @@ const Students = () => {
   const handleCloseMenu = () => {
     setIsSelectViolationComponentOpen(false);
   };
-  const [scroll] = React.useState("paper");
   return (
     <>
       <Container
@@ -1065,7 +1064,7 @@ const Students = () => {
       >
         <div className="w-full mx-auto h-full">
           <div className="flex flex-row justify-between h-fit rounded-md my-2">
-            <h1 className="text-3xl py-3">Student Violations</h1>
+            <h1 className="text-2xl py-3 text-red-600">Student Violations</h1>
             <div className="flex items-center">
               {/* <Button
                 className="bg-red-500 p-2 rounded-sm text-red hover:bg-red-100"
@@ -1094,7 +1093,7 @@ const Students = () => {
             <TableContainer component={Paper}>
               <Table sx={{ minWidth: 500 }}>
                 <TableHead>
-                  <TableRow className="text-left px-4">
+                  <TableRow className="text-left px-4 text-sm font-bold">
                     <th className="py-5 px-4 border-b">Name</th>
                     <th className="py-5 px-4 border-b">Violation</th>
                     <th className="py-5 px-4 border-b">Department and Year</th>
@@ -1650,33 +1649,33 @@ const Students = () => {
                       className="slide-in-visible"
                       margin="dense"
                       id="outlined-basic"
-                      label="Full Name"
-                      variant="outlined"
-                      color="error"
-                      fullWidth
-                      required={true}
-                      value={createStudent.fullname}
-                      onChange={(e) =>
-                        setCreateStudent({
-                          ...createStudent,
-                          fullname: e.target.value,
-                        })
-                      }
-                    />
-                    {/* <TextField
-                      className="slide-in-visible"
-                      margin="dense"
-                      id="outlined-basic"
                       label="First Name"
                       variant="outlined"
                       color="error"
                       fullWidth
                       required={true}
-                      value={createStudent.first_name}
+                      value={createStudent.firstName}
                       onChange={(e) =>
                         setCreateStudent({
                           ...createStudent,
-                          first_name: e.target.value,
+                          firstName: e.target.value,
+                        })
+                      }
+                    />
+                    <TextField
+                      className="slide-in-visible"
+                      margin="dense"
+                      id="outlined-basic"
+                      label="Middle Name"
+                      variant="outlined"
+                      color="error"
+                      fullWidth
+                      required={true}
+                      value={createStudent.middleName}
+                      onChange={(e) =>
+                        setCreateStudent({
+                          ...createStudent,
+                          middleName: e.target.value,
                         })
                       }
                     />
@@ -1689,14 +1688,14 @@ const Students = () => {
                       color="error"
                       fullWidth
                       required={true}
-                      value={createStudent.last_name}
+                      value={createStudent.lastName}
                       onChange={(e) =>
                         setCreateStudent({
                           ...createStudent,
-                          last_name: e.target.value,
+                          lastName: e.target.value,
                         })
                       }
-                    /> */}
+                    />
                     <TextField
                       className="slide-in-visible"
                       margin="dense"
@@ -1844,7 +1843,6 @@ const Students = () => {
               borderTop: "1px solid #ccc",
               overflowY: "hidden",
             }}
-            dividers={scroll === "paper"}
           >
             {isQrScannerOpen ? (
               <Button
@@ -1875,35 +1873,6 @@ const Students = () => {
             )}
           </DialogActions>
         </Dialog>
-        //         <Dialog
-        //           open={open}
-        //           onClose={handleClose}
-        //           scroll={scroll}
-        //           aria-labelledby="scroll-dialog-title"
-        //           aria-describedby="scroll-dialog-description"
-        //         >
-        //           <DialogTitle id="scroll-dialog-title">Subscribe</DialogTitle>
-        //           <DialogContent dividers={scroll === "paper"}>
-        //             <DialogContentText
-        //               id="scroll-dialog-description"
-        //               // ref={descriptionElementRef}
-        //               tabIndex={-1}
-        //             >
-        //               {[...new Array(50)]
-        //                 .map(
-        //                   () => `Cras mattis consectetur purus sit amet fermentum.
-        // Cras justo odio, dapibus ac facilisis in, egestas eget quam.
-        // Morbi leo risus, porta ac consectetur ac, vestibulum at eros.
-        // Praesent commodo cursus magna, vel scelerisque nisl consectetur et.`
-        //                 )
-        //                 .join("\n")}
-        //             </DialogContentText>
-        //           </DialogContent>
-        //           <DialogActions>
-        //             <Button onClick={handleClose}>Cancel</Button>
-        //             <Button onClick={handleClose}>Subscribe</Button>
-        //           </DialogActions>
-        //         </Dialog>
       )}
       {updateStudentViolationModal && (
         <Dialog

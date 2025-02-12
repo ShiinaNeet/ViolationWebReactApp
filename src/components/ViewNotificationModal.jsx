@@ -15,10 +15,13 @@ function ViewNotificationModal({ closeModal, notificationData }) {
           margin="dense"
           id="standard-multiline-static"
           label="Subject"
-          variant="filled"
-          color="error"
+          variant="standard"
+          color="black"
           fullWidth
-          value={notificationData.subject}
+          value={
+            notificationData.subject.charAt(0).toUpperCase() +
+            notificationData.subject.slice(1)
+          }
           readOnly
         />
         <TextField
@@ -26,29 +29,36 @@ function ViewNotificationModal({ closeModal, notificationData }) {
           margin="dense"
           id="standard-multiline-static"
           label="Category"
-          color="error"
-          variant="filled"
-          multiline
-          rows={2}
+          color="black"
+          variant="standard"
           fullWidth
-          value={notificationData.category}
+          value={
+            notificationData.category
+              ? notificationData.category.charAt(0).toUpperCase() +
+                notificationData.category.slice(1)
+              : "N/A"
+          }
           readOnly
+          sx={{}}
         />
         <TextField
           focused
           margin="dense"
           id="standard-multiline-static"
           label="Body"
-          color="error"
-          variant="filled"
+          color="black"
+          variant="standard"
           multiline
           rows={4}
           fullWidth
-          value={notificationData.body}
+          value={
+            notificationData.body.charAt(0).toUpperCase() +
+            notificationData.body.slice(1)
+          }
           readOnly
         />
         {notificationData.is_sent == false && (
-          <p className="text-red-500 text-sm">Message in Queue</p>
+          <p className="text-red-500 text-lg">Message in Queue</p>
         )}
         {notificationData.is_sent == true &&
           notificationData.sent_to.length > 0 && (
@@ -57,7 +67,7 @@ function ViewNotificationModal({ closeModal, notificationData }) {
               {notificationData.sent_to.map((user, index) => (
                 <strong
                   key={index}
-                  className="text-sm text-red-500 cursor-pointer"
+                  className="text-lg text-red-500 cursor-pointer"
                 >
                   {user +
                     (index < notificationData.sent_to.length - 1 ? ", " : "")}
@@ -65,11 +75,9 @@ function ViewNotificationModal({ closeModal, notificationData }) {
               ))}
             </p>
           )}
-        <p className="text-right w-full text-red-400 text-sm">
-          {formattedDate}
-        </p>
+        <p className="text-right w-full  text-md my-1">{formattedDate}</p>
 
-        <Button onClick={closeModal} color="error" fullWidth>
+        <Button onClick={closeModal} color="black" fullWidth>
           Cancel
         </Button>
       </div>

@@ -355,24 +355,31 @@ export default function Reports() {
       }}
     >
       <div className="w-full h-full mx-auto ">
-        <div className="flex flex-col md:flex-row justify-between gap-x-2 text-sm md:text-md bg-white my-2 rounded-md px-1 py-5">
-          <h1 className="md:text-3xl text-2xl flex items-center">
+        <div className="flex flex-col md:flex-row justify-between gap-x-2 text-sm md:text-md bg-white my-2 rounded-md">
+          <h1 className="text-2xl text-red-600 py-3 flex items-center">
             Reports List
           </h1>
-          <Button onClick={() => setSearchFilterModal(true)}>Filter</Button>
+          <Button onClick={() => setSearchFilterModal(true)} color="error">
+            Filter
+          </Button>
         </div>
-
         <StyledToolbar variant="dense" disableGutters>
           <TableContainer component={Paper} className="">
             <Table sx={{ minWidth: 400 }}>
               <TableHead>
                 <TableRow>
-                  <TableCell>Student</TableCell>
-                  <TableCell>Department</TableCell>
-                  <TableCell>Program</TableCell>
-                  <TableCell>Violation Details</TableCell>
-                  <TableCell>Minor Offenses</TableCell>
-                  <TableCell>Major Offenses</TableCell>
+                  <TableCell sx={{ fontWeight: "bold" }}>Student</TableCell>
+                  <TableCell sx={{ fontWeight: "bold" }}>Department</TableCell>
+                  <TableCell sx={{ fontWeight: "bold" }}>Program</TableCell>
+                  <TableCell sx={{ fontWeight: "bold" }}>
+                    Violation Details
+                  </TableCell>
+                  <TableCell sx={{ fontWeight: "bold" }}>
+                    Minor Offenses
+                  </TableCell>
+                  <TableCell sx={{ fontWeight: "bold" }}>
+                    Major Offenses
+                  </TableCell>
                 </TableRow>
               </TableHead>
               <TableBody>
@@ -460,12 +467,14 @@ export default function Reports() {
               <Button
                 onClick={fetchData}
                 className="flex w-full sm:w-1/2 justify-center slide-in-visible"
+                color="error"
               >
                 Search
               </Button>
               <Button
                 className="flex w-full sm:w-1/2 justify-center slide-in-from-right"
                 onClick={() => setSearchFilterModal(false)}
+                color="error"
               >
                 Close
               </Button>

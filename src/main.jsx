@@ -28,7 +28,7 @@ import Violations from "./routes/Violations";
 import Chart from "./routes/Chart";
 import Login from "./routes/Login";
 import Unauthorized from "./routes/Unauthorized";
-import UsersManagement from "./routes/UsersManagement";
+import Users from "./routes/Users";
 import Reports from "./routes/Reports";
 
 import { setupAxiosInterceptors } from "./axios";
@@ -57,7 +57,7 @@ const router = createBrowserRouter([
       },
       {
         path: "users",
-        element: <ProtectedRoute element={<UsersManagement />} />,
+        element: <ProtectedRoute element={<Users />} />,
       },
       {
         path: "chart",
@@ -121,14 +121,6 @@ const router = createBrowserRouter([
         path: "home",
         element: <ProtectedRoute element={<Professor_Home />} />,
       },
-      // {
-      //   path: "graph",
-      //   element: <ProtectedRoute element={<ViolationBarChart />} />,
-      // },
-      // {
-      //   path: "notification",
-      //   element: <ProtectedRoute element={<Notification />} />,
-      // },
     ],
   },
   {

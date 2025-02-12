@@ -119,15 +119,6 @@ export default function Violations() {
   const [rowsPerPage, setRowsPerPage] = React.useState(6);
   const [rows, setRows] = React.useState([]);
   const [open, setOpen] = React.useState(false);
-  const [openCreate, setOpenCreate] = React.useState(false);
-  const [openDelete, setopenDelete] = React.useState(false);
-  const [currentRow, setCurrentRow] = React.useState({
-    _id: "",
-    name: "",
-    description: "",
-    date: "",
-  });
-  const [search, setSearch] = React.useState("");
   const [violations, setViolations] = React.useState({
     name: "",
     description: "",
@@ -391,8 +382,8 @@ export default function Violations() {
       }}
     >
       <div className="w-full h-full mx-auto ">
-        <div className="flex flex-col md:flex-row justify-between gap-x-2 text-sm md:text-md bg-white my-2 rounded-md px-1 py-5">
-          <h1 className="md:text-3xl text-2xl flex items-center">
+        <div className="flex flex-col md:flex-row justify-between gap-x-2 text-sm md:text-md bg-white my-2 rounded-md py-3">
+          <h1 className="text-2xl text-red-600 flex items-center">
             Violation List
           </h1>
           {/* <Tooltip title="Create Violation">
@@ -409,7 +400,7 @@ export default function Violations() {
           <TableContainer component={Paper} className="">
             <Table sx={{ minWidth: 400 }}>
               <TableHead>
-                <TableRow>
+                <TableRow className="text-sm font-bold">
                   <th className="py-5 px-4 font-bold ">Section</th>
                   <th className="py-5 px-4 font-bold text-center w-1/3 ">
                     Category
@@ -451,7 +442,7 @@ export default function Violations() {
                               row.category === "major" ? "primary" : "error"
                             }
                             sx={{ width: "50%" }}
-                            variant="outlined"
+                            variant="filled"
                           />
                         </div>
                       </Tooltip>
@@ -488,132 +479,6 @@ export default function Violations() {
                 </TableRow>
               </TableFooter>
             </Table>
-            {/* <Dialog
-              open={open}
-              onClose={handleClose}
-              fullWidth="true"
-              maxWidth="md"
-            >
-              <DialogTitle>Edit Violation</DialogTitle>
-              <DialogContent>
-                <TextField
-                  autoFocus
-                  color="error"
-                  margin="dense"
-                  label="Violation Name"
-                  type="text"
-                  fullWidth
-                  value={currentRow.name}
-                  required={true}
-                  onChange={(e) =>
-                    setCurrentRow({
-                      ...currentRow,
-                      name: e.target.value,
-                    })
-                  }
-                />
-              </DialogContent>
-              <DialogActions>
-                <Button
-                  onClick={handleUpdate}
-                  color="error"
-                  disabled={isLoading}
-                >
-                  {isLoading ? "Saving...." : "Save"}
-                </Button>
-                <Button onClick={handleClose} color="error">
-                  Cancel
-                </Button>
-              </DialogActions>
-            </Dialog>
-            <Dialog
-              open={openCreate}
-              onClose={handleClose}
-              fullWidth="true"
-              maxWidth="md"
-            >
-              <DialogTitle>Create Violation</DialogTitle>
-              <DialogContent>
-                <TextField
-                  autoFocus
-                  color="error"
-                  margin="dense"
-                  label="Violation Name"
-                  type="text"
-                  fullWidth
-                  value={violations.name}
-                  onChange={(e) =>
-                    setViolations({
-                      ...violations,
-                      name: e.target.value,
-                    })
-                  }
-                />
-                <TextField
-                  color="error"
-                  margin="dense"
-                  label="Description"
-                  type="text"
-                  fullWidth
-                  value={violations.description}
-                  onChange={(e) =>
-                    setViolations({
-                      ...violations,
-                      description: e.target.value,
-                    })
-                  }
-                />
-              </DialogContent>
-              <DialogActions>
-                <Button onClick={handleSave} color="error" disabled={isLoading}>
-                  {isLoading ? "Saving...." : "Save"}
-                </Button>
-                <Button onClick={handleClose} color="error">
-                  Cancel
-                </Button>
-              </DialogActions>
-            </Dialog>
-            <Dialog open={openDelete} onClose={handleClose}>
-              <DialogTitle>Delete Violation?</DialogTitle>
-              <DialogContent>
-                <TextField
-                  autoFocus
-                  color="error"
-                  margin="dense"
-                  label="Violation Name"
-                  type="text"
-                  fullWidth
-                  value={currentRow.name}
-                  readOnly
-                />
-                <TextField
-                  color="error"
-                  margin="dense"
-                  label="Date Updated"
-                  type="text"
-                  fullWidth
-                  value={formatDate(
-                    new Date(parseInt(currentRow.date)),
-                    "MMMM DD, YYYY"
-                  )}
-                  readOnly
-                  InputLabelProps={{
-                    shrink: true,
-                  }}
-                />
-              </DialogContent>
-              <DialogActions>
-                <Button
-                  onClick={() => handleDelete(currentRow._id, currentRow.name)}
-                  color="error"
-                >
-                  Delete
-                </Button>
-                <Button onClick={handleClose} color="error">
-                  Cancel
-                </Button>
-              </DialogActions>
-            </Dialog> */}
             <Dialog
               open={open}
               onClose={() => setOpen(false)}

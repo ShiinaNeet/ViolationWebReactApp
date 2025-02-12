@@ -14,7 +14,6 @@ import FirstPageIcon from "@mui/icons-material/FirstPage";
 import KeyboardArrowLeft from "@mui/icons-material/KeyboardArrowLeft";
 import KeyboardArrowRight from "@mui/icons-material/KeyboardArrowRight";
 import LastPageIcon from "@mui/icons-material/LastPage";
-import AddIcon from "@mui/icons-material/Add";
 import Button from "@mui/material/Button";
 import Dialog from "@mui/material/Dialog";
 import DialogActions from "@mui/material/DialogActions";
@@ -27,7 +26,6 @@ import {
   AlertTitle,
   alpha,
   Container,
-  FormControl,
   InputLabel,
   MenuItem,
   Select,
@@ -38,7 +36,7 @@ import {
 } from "@mui/material";
 import axios from "axios";
 import "../animations.css";
-import { motion, AnimatePresence } from "framer-motion";
+import { motion } from "framer-motion";
 
 function TablePaginationActions(props) {
   const { count, page, rowsPerPage, onPageChange } = props;
@@ -100,12 +98,11 @@ TablePaginationActions.propTypes = {
   rowsPerPage: PropTypes.number.isRequired,
 };
 
-export default function UserManagement() {
+export default function Users() {
   const [page, setPage] = React.useState(0);
   const [rowsPerPage, setRowsPerPage] = React.useState(5);
   const [rows, setRows] = React.useState([]);
   const [openCreate, setOpenCreate] = React.useState(false);
-
   const [departmentData, setDepartmentData] = React.useState([]);
   const [user, setUser] = React.useState({
     first_name: "",
@@ -124,35 +121,85 @@ export default function UserManagement() {
     variant: "",
   });
   const [errorMessages, setErrorMessages] = React.useState([]);
+  const hasAnimated = React.useRef(false);
   const vertical = "bottom";
   const horizontal = "right";
   const emptyRows =
     page > 0 ? Math.max(0, (1 + page) * rowsPerPage - rows.length) : 0;
-  const [isLoading, setIsLoading] = React.useState(false);
+  const [isLoading, setIsLoading] = React.useState(true);
+
   const handleChangePage = (event, newPage) => {
     setPage(newPage);
-    // fetchData(newPage * rowsPerPage, rowsPerPage);
   };
-
   const handleChangeRowsPerPage = (event) => {
     const newRowsPerPage = parseInt(event.target.value, 6);
     setRowsPerPage(newRowsPerPage);
     setPage(0);
-    // fetchData(0, newRowsPerPage);
   };
+  React.useEffect(() => {
+    const fetchData = async () => {
+      try {
+        // setIsLoading(true);
+        console.log("Fetching data...");
+        const [dataResponse, departmentResponse] = await Promise.all([
+          axios.get("admin", {
+            params: { skip: 0, limit: 100 },
+            headers: { "Content-Type": "application/json" },
+          }),
+          axios.get("/department", {
+            params: { skip: 0, limit: 100 },
+            headers: { "Content-Type": "application/json" },
+          }),
+        ]);
 
+        if (dataResponse.data.status === "success") {
+          setRows(dataResponse.data.data);
+        } else {
+          setAlertMessage({
+            open: true,
+            title: "No Data",
+            message: "No data available",
+            variant: "info",
+          });
+        }
+
+        if (departmentResponse.data.status === "success") {
+          setDepartmentData(departmentResponse.data.data);
+        } else {
+          setAlertMessage({
+            open: true,
+            title: "No Data",
+            message: "No department data available",
+            variant: "info",
+          });
+        }
+      } catch (error) {
+        console.error("There was an error fetching the data!", error);
+        setAlertMessage({
+          open: true,
+          title: error.title,
+          message: error.message || "An error occurred",
+          variant: "error",
+        });
+      } finally {
+        setIsLoading(false);
+        hasAnimated.current = true;
+      }
+    };
+    fetchData();
+  }, []);
   const handleClose = () => {
     setOpenCreate(false);
 
-    // setUser({
-    //   first_name: "",
-    //   last_name: "",
-    //   email: "",
-    //   type: "",
-    //   password: "",
-    //   assigned_department: "",
-    //   assigned_departments: [],
-    // });
+    setUser({
+      first_name: "",
+      last_name: "",
+      email: "",
+      type: "",
+      password: "",
+      assigned_department: "",
+      assigned_departments: [],
+    });
   };
   const handleAlertClose = (event, reason) => {
     if (reason === "clickaway") {
@@ -161,7 +208,6 @@ export default function UserManagement() {
 
     setAlertMessage({ open: false });
   };
-
   const handleSave = async () => {
     setIsLoading(false);
     if (
@@ -235,7 +281,7 @@ export default function UserManagement() {
             message: "User has been created successfully",
             variant: "success",
           });
-          fetchData(page * rowsPerPage, rowsPerPage);
+          // fetchData(page * rowsPerPage, rowsPerPage);
           setIsLoading(false);
           handleClose();
         } else {
@@ -260,67 +306,6 @@ export default function UserManagement() {
           variant: "error",
         });
       });
-  };
-
-  React.useEffect(() => {
-    fetchData();
-  }, []);
-
-  React.useEffect(() => {
-    const listItems = document.querySelectorAll(".slide-in-down");
-    listItems.forEach((item, index) => {
-      setTimeout(() => {
-        item.classList.add("slide-in-down-visible");
-      }, index * 2000);
-    });
-  }, [rows]);
-  const fetchData = async () => {
-    try {
-      setIsLoading(true);
-      console.log("Fetching data...");
-      const [dataResponse, departmentResponse] = await Promise.all([
-        axios.get("admin", {
-          params: { skip: 0, limit: 100 },
-          headers: { "Content-Type": "application/json" },
-        }),
-        axios.get("/department", {
-          params: { skip: 0, limit: 100 },
-          headers: { "Content-Type": "application/json" },
-        }),
-      ]);
-
-      if (dataResponse.data.status === "success") {
-        setRows(dataResponse.data.data);
-      } else {
-        setAlertMessage({
-          open: true,
-          title: "No Data",
-          message: "No data available",
-          variant: "info",
-        });
-      }
-
-      if (departmentResponse.data.status === "success") {
-        setDepartmentData(departmentResponse.data.data);
-      } else {
-        setAlertMessage({
-          open: true,
-          title: "No Data",
-          message: "No department data available",
-          variant: "info",
-        });
-      }
-    } catch (error) {
-      console.error("There was an error fetching the data!", error);
-      setAlertMessage({
-        open: true,
-        title: error.title,
-        message: error.message,
-        variant: "error",
-      });
-    } finally {
-      setIsLoading(false);
-    }
   };
 
   const addMultipleDepartment = (event) => {
@@ -354,11 +339,12 @@ export default function UserManagement() {
       y: 0,
       transition: {
         delay: index * 0.1,
-        duration: 0.4,
-        ease: "easeOut",
+        duration: 0.5,
+        // ease: "easeOut",
       },
     }),
   };
+
   return (
     <>
       <Container
@@ -372,8 +358,8 @@ export default function UserManagement() {
         }}
       >
         <div className="w-full h-full mx-auto">
-          <div className="flex flex-col md:flex-row justify-between gap-x-2 text-sm md:text-md bg-white my-2 rounded-md px-1 py-5">
-            <h1 className="md:text-3xl text-2xl flex items-center">
+          <div className="flex flex-col md:flex-row justify-between gap-x-2 text-sm md:text-md bg-white my-2 rounded-md">
+            <h1 className="text-2xl text-red-600 flex items-center py-3">
               Users List
             </h1>
             <Tooltip title="Create User">
@@ -389,6 +375,16 @@ export default function UserManagement() {
           <StyledToolbar variant="dense" disableGutters>
             <TableContainer component={Paper} className="">
               <Table sx={{ minWidth: 500 }}>
+                <TableHead>
+                  <TableRow className="text-sm font-bold">
+                    <th className="py-5 px-4 font-bold ">Name</th>
+                    <th className="py-5 px-4 font-bold ">Username</th>
+                    <th className="py-5 px-4 font-bold">Email address</th>
+                    <th className="py-5 px-4 font-bold text-center">
+                      Category
+                    </th>
+                  </TableRow>
+                </TableHead>
                 {isLoading == false && rows.length == 0 ? (
                   <TableBody>
                     <TableRow className="flex justify-center items-center">
@@ -396,75 +392,63 @@ export default function UserManagement() {
                     </TableRow>
                   </TableBody>
                 ) : (
-                  <>
-                    <TableHead>
+                  <TableBody>
+                    {isLoading ? (
                       <TableRow>
-                        <th className="py-5 px-4 font-bold ">Name</th>
-                        <th className="py-5 px-4 font-bold ">Username</th>
-                        <th className="py-5 px-4 font-bold">Email address</th>
-                        <th className="py-5 px-4 font-bold text-center">
-                          Category
-                        </th>
+                        <TableCell colSpan={5} align="center">
+                          Loading...
+                        </TableCell>
                       </TableRow>
-                    </TableHead>
-                    <TableBody>
-                      {isLoading ? (
-                        <TableRow>
-                          <TableCell colSpan={5} align="center">
-                            Loading...
+                    ) : rows.length === 0 ? (
+                      <TableRow style={{ height: 53 * emptyRows }}>
+                        <TableCell colSpan={6} align="center">
+                          No student...
+                        </TableCell>
+                      </TableRow>
+                    ) : (
+                      (rowsPerPage > 0
+                        ? rows.slice(
+                            page * rowsPerPage,
+                            page * rowsPerPage + rowsPerPage
+                          )
+                        : rows
+                      ).map((row, index) => (
+                        <motion.tr
+                          key={index}
+                          variants={rowVariants}
+                          initial={hasAnimated.current ? false : "hidden"}
+                          animate={hasAnimated.current ? false : "visible"}
+                          custom={index}
+                        >
+                          <TableCell component="th" scope="row">
+                            {row.first_name && row.last_name
+                              ? row.first_name + " " + row.last_name
+                              : "No name attached"}
                           </TableCell>
-                        </TableRow>
-                      ) : rows.length === 0 ? (
-                        <TableRow style={{ height: 53 * emptyRows }}>
-                          <TableCell colSpan={6} align="center">
-                            No student...
+                          <TableCell>
+                            {row.username ? row.username : "No username"}
                           </TableCell>
-                        </TableRow>
-                      ) : (
-                        (rowsPerPage > 0
-                          ? rows.slice(
-                              page * rowsPerPage,
-                              page * rowsPerPage + rowsPerPage
-                            )
-                          : rows
-                        ).map((row, index) => (
-                          <motion.tr
-                            key={index}
-                            variants={rowVariants}
-                            initial="hidden"
-                            animate="visible"
-                            custom={index}
-                          >
-                            <TableCell component="th" scope="row">
-                              {row.first_name && row.last_name
-                                ? row.first_name + " " + row.last_name
-                                : "No name attached"}
-                            </TableCell>
-                            <TableCell>
-                              {row.username ? row.username : "No username"}
-                            </TableCell>
-                            <TableCell>
-                              {row.email
-                                ? row.email
-                                : "No email address attached"}
-                            </TableCell>
-                            <TableCell align="center">
-                              <Button
-                                className={`p-2 rounded-sm text-center ${
-                                  row.type === "ADMIN" ? "primary" : "secondary"
-                                }`}
-                                color={
-                                  row.type === "ADMIN" ? "primary" : "secondary"
-                                }
-                              >
-                                {row.type ? row.type : "No type attached"}{" "}
-                              </Button>
-                            </TableCell>
-                          </motion.tr>
-                        ))
-                      )}
-                    </TableBody>
-                  </>
+                          <TableCell>
+                            {row.email
+                              ? row.email
+                              : "No email address attached"}
+                          </TableCell>
+                          <TableCell align="center">
+                            <Button
+                              className={`p-2 rounded-sm text-center ${
+                                row.type === "ADMIN" ? "primary" : "secondary"
+                              }`}
+                              color={
+                                row.type === "ADMIN" ? "primary" : "secondary"
+                              }
+                            >
+                              {row.type ? row.type : "No type attached"}{" "}
+                            </Button>
+                          </TableCell>
+                        </motion.tr>
+                      ))
+                    )}
+                  </TableBody>
                 )}
                 <TableFooter>
                   <TableRow>
@@ -488,7 +472,7 @@ export default function UserManagement() {
         key="create-user-modal"
         initial={{ opacity: 0, scale: 0.9 }}
         animate={{ opacity: 1, scale: 1 }}
-        // exit={{ opacity: 0, scale: 0.9 }}
+        exit={{ opacity: 0, scale: 0.9 }}
         transition={{ duration: 0.3 }}
       >
         <Dialog

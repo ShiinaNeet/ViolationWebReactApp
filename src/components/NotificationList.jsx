@@ -167,8 +167,8 @@ export default function NotificationList() {
     text.length > maxLength ? text.slice(0, maxLength) + "..." : text;
   return (
     <div className="">
-      <div className="flex flex-row justify-between   my-2">
-        <h1 className="text-3xl py-3">Notifications</h1>
+      <div className="flex flex-row justify-between my-2">
+        <h1 className="text-2xl text-red-600 py-3">Notifications</h1>
       </div>
       {isLoading ? (
         <p>Loading...</p>
@@ -179,60 +179,36 @@ export default function NotificationList() {
               <TableHead sx={{ padding: "10px" }}>
                 <TableRow className="slide-in-down-visible">
                   <TableCell onClick={() => fetchNotifications()} size="small">
-                    <div className="hover:bg-red-100 py-2 px-3 rounded-sm flex items-start w-fit">
-                      <ReplayIcon color="error" fontSize="small" />
+                    <div className="hover:bg-gray-200 hover:rounded-md py-2 px-3 rounded-sm flex items-start w-fit">
+                      <ReplayIcon fontSize="small" />
                     </div>
                   </TableCell>
                   <TableCell size="small">
-                    <Button
-                      onClick={() => setIsCreateModalOpen(true)}
-                      color="error"
-                    >
-                      Compose
-                    </Button>
+                    <div className="hover:bg-gray-200 hover:rounded-md rounded-sm flex items-start w-fit">
+                      <Button
+                        onClick={() => setIsCreateModalOpen(true)}
+                        color="black"
+                        sx={{ fontWeight: "bold", fontSize: "auto" }}
+                      >
+                        Compose
+                      </Button>
+                    </div>
                   </TableCell>
                   <TableCell size="small"></TableCell>
                   <TableCell
-                    size="medium"
+                    size="large"
                     align="center"
-                    sx={{ color: "red", textSizeAdjust: "auto" }}
+                    sx={{ textSizeAdjust: "auto", fontWeight: "bold" }}
                   >
                     Status
                   </TableCell>
                   <TableCell
-                    size="small"
+                    size="large"
                     align="center"
-                    sx={{ color: "red", textSizeAdjust: "auto" }}
+                    sx={{ textSizeAdjust: "auto", fontWeight: "bold" }}
                   >
                     Action
                   </TableCell>
-                  {/* <TableCell size="medium" align="center" padding="normal">
-                    <FormControl
-                      sx={{ minWidth: 120 }}
-                      error
-                      className="text-red-500"
-                    >
-                      <InputLabel id="demo-simple-select-standard-label">
-                        Filter
-                      </InputLabel>
-                      <Select
-                        size="small"
-                        value={filter}
-                        onChange={handleFilterChange}
-                        fullWidth
-                        color="error"
-                        label="Filter"
-                        labelId="demo-simple-select-standard-label"
-                        id="demo-simple-select-standard"
-                      >
-                        <MenuItem value="All">
-                          <em>All</em>
-                        </MenuItem>
-                        <MenuItem value="Sent">Sent</MenuItem>
-                        <MenuItem value="Queued">Queued</MenuItem>
-                      </Select>
-                    </FormControl>
-                  </TableCell> */}
                 </TableRow>
               </TableHead>
               <TableBody>
