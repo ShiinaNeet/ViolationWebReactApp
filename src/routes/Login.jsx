@@ -16,6 +16,7 @@ import {
 import "../animations.css";
 import { Download } from "@mui/icons-material";
 import { motion, AnimatePresence } from "framer-motion";
+import DocumentList from "../components/DocumentList";
 
 const Login = () => {
   const { login, setUserType } = useAuth();
@@ -30,7 +31,6 @@ const Login = () => {
     message: "",
     variant: "",
   });
-  const [errorMessages, setErrorMessages] = React.useState([]);
   const [isLoading, setIsLoading] = React.useState(false);
   const [account, setAccount] = React.useState({ name: "", password: "" });
   const userType = {
@@ -41,8 +41,6 @@ const Login = () => {
   };
 
   const [activeForm, setActiveForm] = React.useState("login");
-  const [isAnimating, setIsAnimating] = React.useState(false);
-  const formRef = useRef(null); // Ref for the form element
 
   const handleLogin = async (event) => {
     event.preventDefault(); // Prevent default form submission behavior
@@ -61,22 +59,23 @@ const Login = () => {
       const responseData = await login(account.name, account.password);
       setIsLoading(false);
       //If there is time, use switch case instead of if else
-      if (responseData == userType.admin) {
-        navigate("/violations");
-      } else if (responseData == userType.dean) {
-        navigate("/dean/home");
-      } else if (responseData == userType.professor) {
-        navigate("/professor/home");
-      } else if (responseData == userType.department_head) {
-        navigate("/department-head/home");
-      } else {
-        setAlertMessage({
-          open: true,
-          title: "Error",
-          message: "Invalid login credentials",
-          variant: "error",
-        });
-      }
+      // if (responseData == userType.admin) {
+      //   navigate("/violations");
+      // } else if (responseData == userType.dean) {
+      //   navigate("/dean/home");
+      // } else if (responseData == userType.professor) {
+      //   navigate("/professor/home");
+      // } else if (responseData == userType.department_head) {
+      //   navigate("/department-head/home");
+      // } else {
+      //   setAlertMessage({
+      //     open: true,
+      //     title: "Error",
+      //     message: "Invalid login credentials",
+      //     variant: "error",
+      //   });
+      // }
+      navigate("/coordinator/home");
     } catch (error) {
       setAlertMessage({
         open: true,
@@ -91,18 +90,7 @@ const Login = () => {
   const handleSwitchForm = (nextForm) => {
     setActiveForm(nextForm);
   };
-  const listVariants = {
-    hidden: { opacity: 0 },
-    visible: {
-      opacity: 1,
-      transition: { staggerChildren: 0.1 }, // Each child appears every 100ms
-    },
-  };
 
-  const itemVariants = {
-    hidden: { opacity: 0, y: 30 },
-    visible: { opacity: 1, y: 0, transition: { duration: 0.5 } },
-  };
   const formVariants = {
     hidden: { opacity: 0, y: 50 },
     visible: { opacity: 1, y: 0 },
@@ -117,15 +105,7 @@ const Login = () => {
     hidden: { opacity: 0, y: 20 },
     visible: { opacity: 1, y: 0, transition: { duration: 0.5, delay: 0.5 } },
   };
-  const documents = [
-    "Student-Incident-Report",
-    "Formal-Complaint-Letter",
-    "Call-Slip",
-    "Notice-Of-Case-Dismissal",
-    "Written-Warning-For-Violation-Of-Norms-Conduct",
-    "Letter-Of-Suspension",
-    "Request-For-Non-Wearing-Of-Uniform",
-  ];
+
   return (
     <div className="flex flex-col items-center justify-center h-screen w-full bg-gradient-to-br p-4 overflow-hidden">
       <AnimatePresence mode="wait">
@@ -239,57 +219,16 @@ const Login = () => {
             </div>
           ) : (
             <>
-              <Typography
-                variant="h4"
-                className="text-center font-bold text-gray-800 mb-10"
+              <DocumentList />
+              <Button
+                fullWidth
+                variant="outlined"
+                color="error"
+                onClick={() => handleSwitchForm("login")}
+                className="mt-4 my-2"
               >
-                📄 Request File
-              </Typography>
-              <motion.div
-                variants={listVariants}
-                initial="hidden"
-                animate="visible"
-                className="grid gap-4 mb-5"
-              >
-                {documents.map((filename, index) => (
-                  <motion.div key={index} variants={itemVariants}>
-                    <Card className="shadow-md transition-transform transform hover:scale-105">
-                      <CardContent className="flex items-center justify-between">
-                        <Typography
-                          variant="body1"
-                          className="text-gray-700 font-semibold"
-                        >
-                          {filename.replace(/-/g, " ")}
-                        </Typography>
-                        <Tooltip title="Download File" arrow>
-                          <a
-                            href={`/documents/${filename}.docx`}
-                            download
-                            target="_blank"
-                          >
-                            <Button
-                              variant="contained"
-                              color="error"
-                              startIcon={<Download />}
-                            >
-                              Download
-                            </Button>
-                          </a>
-                        </Tooltip>
-                      </CardContent>
-                    </Card>
-                  </motion.div>
-                ))}
-                <Button
-                  fullWidth
-                  variant="outlined"
-                  color="error"
-                  onClick={() => handleSwitchForm("login")}
-                  className="mt-4 my-2"
-                >
-                  Back to Login
-                </Button>
-              </motion.div>
+                Back to Login
+              </Button>
             </>
           )}
         </motion.div>

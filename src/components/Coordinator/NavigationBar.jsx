@@ -75,6 +75,14 @@ const NavigationBar = () => {
             <Button variant="text" color="white" size="small">
               <Link
                 className=" hover:bg-red-100 hover:text-red-600 hover:rounded-md hover:cursor-pointer p-2"
+                to="/coordinator/home"
+              >
+                Home
+              </Link>
+            </Button>
+            <Button variant="text" color="white" size="small">
+              <Link
+                className=" hover:bg-red-100 hover:text-red-600 hover:rounded-md hover:cursor-pointer p-2"
                 to="/coordinator/students"
               >
                 Students
