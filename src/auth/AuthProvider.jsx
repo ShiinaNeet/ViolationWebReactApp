@@ -4,7 +4,6 @@ import React, {
   useContext,
   useState,
   useEffect,
-  useCallback,
 } from "react";
 import { setupAxiosInterceptors } from "../axios";
 
@@ -30,6 +29,8 @@ export const AuthProvider = ({ children }) => {
       if (response.data.status === "success") {
         localStorage.setItem("accessToken", response.data.access_token);
         localStorage.setItem("userType", response.data.account_type);
+        // const coordinatorType = "OSD_COORDINATOR";
+        // localStorage.setItem("userType", coordinatorType);
         const authTokens = {
           accessToken: localStorage.getItem("accessToken"),
         };
@@ -37,6 +38,8 @@ export const AuthProvider = ({ children }) => {
         setIsAuthenticated(true);
         setUserType(response.data.account_type);
         return response.data.account_type;
+        // setUserType(coordinatorType);
+        // return coordinatorType;
       } else {
         console.log("Failed to login: ", response.data.message);
         return false;
@@ -63,41 +66,7 @@ export const AuthProvider = ({ children }) => {
       setIsAuthenticated(true);
     }
   }, []);
-  // const GetUserInfo = async (username) => {
-  //   try {
-  //     const response = await axios.post(
-  //       "/auth/info",
-  //       {
-  //         username: name,
-  //         password: password,
-  //       },
-  //       {
-  //         headers: {
-  //           "Content-Type": "application/json",
-  //         },
-  //       }
-  //     );
-  //     if (response.data.status === "success") {
-  //       localStorage.setItem("accessToken", response.data.access_token);
-  //       localStorage.setItem("userType", response.data.account_type);
-  //       localStorage.setItem("userid", response.data.userid);
-  //       bruh this is sad.
-  //       const authTokens = {
-  //         accessToken: localStorage.getItem("accessToken"),
-  //       };
-  //       setupAxiosInterceptors(authTokens);
-  //       setIsAuthenticated(true);
-  //       setUserType(response.data.account_type);
-  //       return response.data.account_type;
-  //     } else {
-  //       console.log("Failed to login: ", response.data.message);
-  //       return false;
-  //     }
-  //   } catch (error) {
-  //     console.error("There was an error logging in!", error);
-  //     return false;
-  //   }
-  // };
+ 
   return (
     <AuthContext.Provider
       value={{ isAuthenticated, userType, setUserType, login, logout }}

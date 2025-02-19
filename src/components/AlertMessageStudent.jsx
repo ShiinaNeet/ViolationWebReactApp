@@ -1,64 +1,29 @@
-import React, { useEffect } from "react";
-import PropTypes from "prop-types";
-import DialogTitle from "@mui/material/DialogTitle";
-import Dialog from "@mui/material/Dialog";
+import React from "react";
 import Button from "@mui/material/Button";
 import TextField from "@mui/material/TextField";
-import DialogContent from "@mui/material/DialogContent";
-import DialogActions from "@mui/material/DialogActions";
 import SendIcon from "@mui/icons-material/Send";
-import formatDate from "../utils/moment";
 import {
   Alert,
   AlertTitle,
-  InputLabel,
-  MenuItem,
-  OutlinedInput,
-  Select,
   Snackbar,
 } from "@mui/material";
-import { useTheme } from "@mui/material/styles";
 import axios from "axios";
+import { useDropzone } from "react-dropzone";
+import { motion } from "framer-motion";
+import { AnimatePresence } from "framer-motion";
 
-const ITEM_HEIGHT = 48;
-const ITEM_PADDING_TOP = 8;
+import "../animations.css";
 
-function getStyles(name, personName, theme) {
-  return {
-    fontWeight: personName.includes(name)
-      ? theme.typography.fontWeightMedium
-      : theme.typography.fontWeightRegular,
-  };
-}
-AlertMessageStudent.PropTypes = {
-  open: PropTypes.bool.isRequired,
-  handleClose: PropTypes.func.isRequired,
-  data: PropTypes.shape({
-    email: PropTypes.string,
-    fullName: PropTypes.string,
-  }),
-};
-const MenuProps = {
-  PaperProps: {
-    style: {
-      maxHeight: ITEM_HEIGHT * 4.5 + ITEM_PADDING_TOP,
-      width: 250,
-    },
-  },
-};
-export default function AlertMessageStudent({ open, handleClose, data }) {
-  const theme = useTheme();
+export default function AlertMessageStudent() {
   const [message, setMessage] = React.useState({
     subject: "",
     body: "",
-    category: "",
-    recipients: [],
-    send_at: formatDate(new Date(), "MMMM D, YYYY"),
+    files: [],
+    recipients: [""],
     error: false,
   });
 
   const [isLoading, setIsLoading] = React.useState(false);
-  const [violations, setViolations] = React.useState([]);
   const [alertMessage, setAlertMessage] = React.useState({
     open: false,
     title: "",
@@ -74,17 +39,23 @@ export default function AlertMessageStudent({ open, handleClose, data }) {
 
     setAlertMessage({ open: false });
   };
-  const handleViolation = () => {
-    let violationsname = "";
-    message.violationName.forEach((element) => {
-      violationsname += element.name + ", ";
-    });
-    return violationsname;
+  const handleRecipientChange = (index, value) => {
+    const newRecipients = [...message.recipients];
+    newRecipients[index] = value;
+    setMessage({ ...message, recipients: newRecipients });
   };
+  const addRecipientField = () => {
+    setMessage((prevState) => ({
+      ...prevState,
+      recipients: [...prevState.recipients, ""],
+    }));
+  };
+
   const sendMessage = async () => {
     setIsLoading(true);
+    console.log("Message: ", message);
     // if(message.body === '' || message.violationName.length === 0 || message.email === '') {
-    if (message.body === "" || message.violationName.length === 0) {
+    if (message.body === "" || message.files.length === 0 || message.recipients.length === 0 || message.subject === "") {
       setMessage({ ...message, error: true });
       setAlertMessage({
         open: true,
@@ -95,132 +66,109 @@ export default function AlertMessageStudent({ open, handleClose, data }) {
       setIsLoading(false);
       return;
     }
-    // setAlertMessage({open:true, title: 'Success', message: 'Email was sent succesfully!', variant: 'success'});
-    await axios
-      .post(
-        "notification",
-        {
+
+    const formData = new FormData();
+    message.files.forEach(file => {
+      formData.append('attachment', file);
+    });
+    message.recipients.forEach(recipient => {
+      formData.append('recipient', recipient);
+    });
+
+    await axios.post(
+      "form/send",
+      formData,
+      {
+        headers: {
+          "Content-Type": "multipart/form-data",
+        },
+        params: {
           subject: message.subject,
           body: message.body,
-          category: message.category,
-          recipients: message.recipients,
-          send_at: message.send_at,
         },
-        {
-          headers: {
-            "Content-Type": "application/json",
-          },
-        }
-      )
-      .then((response) => {
-        if (response.data.status === "success") {
-          console.log("Email was sent succesfully!");
-          setAlertMessage({
-            open: true,
-            title: "Success",
-            message: "Email was sent succesfully!",
-            variant: "success",
-          });
-          setIsLoading(false);
-        } else {
-          console.log("Failed to send email: ", response.data.message);
-          setAlertMessage({
-            open: true,
-            title: "Error Occured!",
-            message: response.data.message,
-            variant: "error",
-          });
-          setIsLoading(false);
-        }
-      })
-      .catch((e) => {
-        console.log("Error Occurred: ", e);
+    })
+    .then((response) => {
+      if (response.data.status === "success") {
+        console.log("Email was sent succesfully!");
+        setAlertMessage({
+          open: true,
+          title: "Success",
+          message: "Email was sent succesfully!",
+          variant: "success",
+        });
         setIsLoading(false);
+      } else {
+        console.log("Failed to send email: ", response.data.message);
         setAlertMessage({
           open: true,
           title: "Error Occured!",
-          message: "Please try again later.",
+          message: response.data.message,
           variant: "error",
         });
-      });
-  };
-  useEffect(() => {
-    fetchViolations();
-  }, []);
-
-  const fetchViolations = async () => {
-    const violationResponse = await axios.get("/violation", {
-      params: { skip: 0, limit: 100 },
-    });
-    if (violationResponse.data.status === "success") {
-      setViolations(violationResponse.data.data);
-    } else {
+        setIsLoading(false);
+      }
+    })
+    .catch((e) => {
+      console.log("Error Occurred: ", e);
+      setIsLoading(false);
       setAlertMessage({
         open: true,
         title: "Error Occured!",
-        message: "Failed to fetch violations. Please try again later.",
+        message: "Please try again later.",
         variant: "error",
       });
-    }
-  };
-  const handleChange = (event) => {
-    const {
-      target: { value },
-    } = event;
-    setMessage({
-      ...message,
-      violationName: typeof value === "string" ? value.split(",") : value,
     });
-    // console.log(message.violationName);
   };
+  const onDrop = (acceptedFiles) => {
+    const filteredFiles = acceptedFiles.filter(file =>
+      ["application/pdf", "video/mp4", "application/vnd.openxmlformats-officedocument.wordprocessingml.document", "application/msword", "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet", "application/vnd.ms-excel"].includes(file.type)
+    );
+    setMessage((prevState) => ({
+      ...prevState,
+      files: [...prevState.files, ...filteredFiles],
+    }));
+  };
+
+  const onRemoveItem = (index) => {
+    const newFiles = message.files.filter((file, i) => i !== index);
+    setMessage((prevState) => ({
+      ...prevState,
+      files: newFiles,
+    }));
+  };
+
+  const { getRootProps, getInputProps } = useDropzone({ onDrop });
+  const itemVariants = {
+    hidden: { opacity: 0, y: 30 },
+    visible: { opacity: 1, y: 0, transition: { duration: 0.5 } },
+  };
+
   return (
-    <div className="w-full mx-0">
-      <Dialog open={open} onClose={handleClose} fullWidth={true} maxWidth="sm">
-        <div className="p-2 text-2xl">
-          <label className="font-bold">
-            Alert Students with Email Notifications
-          </label>
-          <br />
-          {/* <label htmlFor="" className='my-5 text-base'> <strong className='font-bold'>Violation: </strong> {message.violations}</label> */}
-          <InputLabel id="demo-multiple-name-label">Categories:</InputLabel>
-          <Select
-            color="error"
-            labelId="demo-multiple-name-label"
-            id="demo-multiple-name"
-            value={
-              Array.isArray(message.violationName) ? message.violationName : []
-            }
-            error={message.error && message.violationName.length === 0}
-            onChange={handleChange}
-            className="w-full text-black"
-            // input={<OutlinedInput label="Name" />}
-            multiple
-            MenuProps={MenuProps}
-          >
-            {violations.map((violation, index) => (
-              <MenuItem
-                key={index}
-                value={violation}
-                style={getStyles(violation, message.recipients, theme)}
-              >
-                {violation.name}
-              </MenuItem>
-            ))}
-          </Select>
+    <div className="w-full mx-0 h-screen">
+      <div>
+        <div className="text-2xl py-3">
+          <motion.div variants={itemVariants} initial="hidden" animate="visible">
+            <label className="font-bold">Send Email</label>
+            <br />
+          </motion.div>
         </div>
-        <div className="p-2 flex flex-col gap-y-3">
+        <div className="flex flex-col gap-y-3">
+          <motion.div variants={itemVariants} initial="hidden" animate="visible">
           <TextField
+            autoFocus
             id="standard-multiline-static"
             label="Subject"
-            variant="standard"
-            fullWidth
-            required
-            error={message.error}
-            helperText={message.error ? "Email Address is required" : ""}
-            value={message.email}
-            className="cursor-none"
             color="error"
+            multiline
+            rows={2}
+            variant="outlined"
+            fullWidth
+            required={true}
+            value={message.subject}
+            onChange={(e) => setMessage({ ...message, subject: e.target.value })}
           />
+          </motion.div>
+          <motion.div variants={itemVariants} initial="hidden" animate="visible">
           <TextField
             autoFocus
             id="standard-multiline-static"
@@ -228,46 +176,81 @@ export default function AlertMessageStudent({ open, handleClose, data }) {
             color="error"
             multiline
             rows={6}
-            variant="standard"
+            variant="outlined"
             fullWidth
             required={true}
-            error={message.error}
-            helperText={message.error ? "Message is required" : ""}
             value={message.body}
             onChange={(e) => setMessage({ ...message, body: e.target.value })}
           />
-          <label htmlFor="" className="flex justify-start text-base ">
-            {message.date}
-          </label>
+          </motion.div>
+          <div className="flex flex-col gap-y-3 md:flex-row md:gap-x-1">
+            {/* <div className="md:w-3/4 flex flex-col gap-y-2"> */}
+              <motion.div className="md:w-3/4 flex flex-col gap-y-2" variants={itemVariants} initial="hidden" animate="visible">
+                {message.recipients.map((recipient, index) => (
+                  <TextField
+                    key={index}
+                    id={`recipient-${index}`}
+                    label={`Email Address ${index + 1}`}
+                    variant="outlined"
+                    fullWidth
+                    required
+                    value={recipient}
+                    size="small"
+                    onChange={(e) => handleRecipientChange(index, e.target.value)}
+                    color="error"
+                  />
+                ))}
+              </motion.div>
+            {/* </div> */}
+            <motion.div className="h-full w-full md:w-1/4 flex items-center justify-center" variants={itemVariants} initial="hidden" animate="visible">
+              <Button
+                variant="outlined"
+                onClick={addRecipientField}
+                color="error"
+                className="w-full h-full"
+              >
+                Add More User
+              </Button>
+            </motion.div>
+          </div>
+          <motion.div variants={itemVariants} initial="hidden" animate="visible">
+            <div {...getRootProps({ className: "dropzone" })} className="border-solid border rounded-sm border-gray-400 p-4 text-center">
+                <input {...getInputProps()} />
+                <p>Drag & drop some files here, or click to select files</p>
+                <em>(Only PDF, MP4, DOCX, Word, and Excel files will be accepted)</em>
+              </div>
+            <div>
+              {message.files.map((file, index) => (
+                <div key={index} className="flex w-full h-fit whitespace-pre">
+                  <label className="py-2">{file.name +  "  "}</label> 
+                  <label className="py-2 px-2 rounded-sm text-blue-500 hover:bg-blue-100" onClick={()=>onRemoveItem(index)} >Remove</label>
+                </div>
+              ))}
+            </div>
+          </motion.div>
         </div>
-        <div className="p-2 flex justify-end gap-x-2">
-          <Button
-            variant="contained"
-            endIcon={<SendIcon />}
-            onClick={sendMessage}
-            size="small"
-            disabled={isLoading}
-            color="error"
-          >
-            {isLoading ? "Sending..." : "Send"}
-          </Button>
-          <Button onClick={handleClose} color="error" size="large">
-            Cancel
-          </Button>
-        </div>
-      </Dialog>
+      </div>
+      <div className="my-2 flex justify-end">
+        <Button
+          variant="contained"
+          endIcon={<SendIcon />}
+          onClick={sendMessage}
+          size="medium"
+          disabled={isLoading}
+          color="error"
+        >
+          {isLoading ? "Sending..." : "Send"}
+        </Button>
+      </div>
       <Snackbar
         open={alertMessage.open}
         autoHideDuration={3000}
         onClose={handleAlertClose}
         anchorOrigin={{ vertical, horizontal }}
         key={vertical + horizontal}
+        className="snackbar-bottom"
       >
-        <Alert
-          onClose={handleAlertClose}
-          severity={alertMessage.variant}
-          sx={{ width: "100%" }}
-        >
+        <Alert onClose={handleAlertClose} severity={alertMessage.variant} sx={{ width: "100%" }}>
           <AlertTitle>{alertMessage.title}</AlertTitle>
           {alertMessage.message}
         </Alert>

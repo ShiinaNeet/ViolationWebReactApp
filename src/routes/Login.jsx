@@ -38,6 +38,7 @@ const Login = () => {
     department_head: "PROGRAM HEAD",
     dean: "DEAN",
     professor: "PROFESSOR",
+    coordinator: "OSD_COORDINATOR"
   };
 
   const [activeForm, setActiveForm] = React.useState("login");
@@ -58,24 +59,25 @@ const Login = () => {
     try {
       const responseData = await login(account.name, account.password);
       setIsLoading(false);
-      //If there is time, use switch case instead of if else
-      // if (responseData == userType.admin) {
-      //   navigate("/violations");
-      // } else if (responseData == userType.dean) {
-      //   navigate("/dean/home");
-      // } else if (responseData == userType.professor) {
-      //   navigate("/professor/home");
-      // } else if (responseData == userType.department_head) {
-      //   navigate("/department-head/home");
-      // } else {
-      //   setAlertMessage({
-      //     open: true,
-      //     title: "Error",
-      //     message: "Invalid login credentials",
-      //     variant: "error",
-      //   });
-      // }
-      navigate("/coordinator/home");
+      // If there is time, use switch case instead of if else
+      if (responseData == userType.admin) {
+        navigate("/violations");
+      } else if (responseData == userType.dean) {
+        navigate("/dean/home");
+      } else if (responseData == userType.professor) {
+        navigate("/professor/home");
+      } else if (responseData == userType.department_head) {
+        navigate("/department-head/home");
+      } else if (responseData == userType.coordinator) {
+        navigate("/coordinator/home");
+      }else {
+        setAlertMessage({
+          open: true,
+          title: "Error",
+          message: "Invalid login credentials",
+          variant: "error",
+        });
+      }
     } catch (error) {
       setAlertMessage({
         open: true,
