@@ -237,7 +237,16 @@ export default function Users() {
       if (department) {
         departmentToAssign = [department];
       }
-    } else if (user.type === "DEAN") {
+    } 
+    else if (user.type === "OSD_COORDINATOR") {
+      const department = departmentData.find(
+        (department) => department.name === user.assigned_department
+      );
+      if (department) {
+        departmentToAssign = [department];
+      }
+    } 
+     else if (user.type === "DEAN") {
       departmentToAssign = departmentData.filter((department) =>
         user.assigned_departments.includes(department.name)
       );
@@ -580,8 +589,9 @@ export default function Users() {
               <MenuItem value={"PROGRAM HEAD"}>Program Head</MenuItem>
               <MenuItem value={"DEAN"}>Dean</MenuItem>
               <MenuItem value={"PROFESSOR"}>Professor</MenuItem>
+              <MenuItem value={"OSD_COORDINATOR"}>OSD Coordinator</MenuItem>
             </Select>
-            {user.type === "PROGRAM HEAD" && (
+            {user.type === "PROGRAM HEAD" || user.type === "OSD_COORDINATOR" && (
               <>
                 <InputLabel id="demo-simple-select-label" color="error">
                   Assign a Department
