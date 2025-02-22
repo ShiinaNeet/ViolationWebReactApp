@@ -50,7 +50,9 @@ import DeleteOutlineIcon from "@mui/icons-material/DeleteOutline";
 import AddIcon from "@mui/icons-material/Add";
 import axios from "axios";
 import QRScanner from "../components/QRScanner";
-
+import NoticeCaseDismissal from "../components/forms/NoticeCaseDismissalForm";
+import CallSlipForm from "../components/forms/CallSlipForm";
+import LetterOfSuspension from "../components/forms/LetterOfSuspension";
 function TablePaginationActions(props) {
   const { count, page, rowsPerPage, onPageChange } = props;
 
@@ -209,7 +211,9 @@ const Students = () => {
   const [deleteStudentViolationModal, setDeleteStudentViolationModal] =
     React.useState(false);
   const [messageStudentModal, setMessageStudentModal] = React.useState(false);
-
+  const [formModal, setFormModal] = React.useState(false);
+  const [callSlipFormModal, setCallSlipFormModal] = React.useState(false);
+  const [noticeCaseDismissalFormModal, setNoticeCaseDismissalFormModal] = React.useState(false);
   const handleClose = () => {
     setViewModal(false);
     setSearchFilterModal(false);
@@ -218,6 +222,8 @@ const Students = () => {
     // setMessageStudentModal(false);
     setDeleteStudentViolationModal(false);
     setUpdateStudentViolationModal(false);
+    setCallSlipFormModal(false);
+    setFormModal(false);
     setTargetStudent({
       fullname: "",
       violations: [],
@@ -1050,6 +1056,15 @@ const Students = () => {
   const handleCloseMenu = () => {
     setIsSelectViolationComponentOpen(false);
   };
+  const setAlertFunction = (isOpen, message, title) => {
+    setAlertMessage({
+      open: isOpen,
+      title: title,
+      message: message,
+      variant: "info",
+    });
+  }
+  const [activeForm, setActiveForm] = useState(null);
   return (
     <>
       <Container
@@ -1168,6 +1183,39 @@ const Students = () => {
                               <RemoveRedEyeIcon color="error" />
                             </Button>
                           </Tooltip>
+                          <Tooltip title="Forms">
+                            <Button
+                              className="rounded-sm text-white hover:bg-red-100 hover:text-red-700"
+                              // onClick={() => {
+                              //   const programData = programList.find((program) => program.id === student.course).name;
+                              //   if (programData) {
+                              //     setTargetStudent({
+                              //       ...student,
+                              //       course: programData
+                              //     });
+                              //     setCallSlipFormModal(true);
+                              //   } else {
+                              //     console.error('Program not found for student course:', student.course);
+                              //   }
+                              // }}
+                              onClick={() => {
+                                setFormModal(true);
+                                const programData = programList.find((program) => program.id === student.course).name;
+                                if (programData) {
+                                  setTargetStudent({
+                                    ...student,
+                                    course: programData
+                                  });
+                                  setCallSlipFormModal(true);
+                                } else {
+                                  console.error('Program not found for student course:', student.course);
+                                }
+                              }}
+                              color="error"
+                            >
+                             Forms
+                            </Button>
+                          </Tooltip>
                           {CurrentUserType == "ADMIN" ||
                           localStorage.getItem("userType") == "ADMIN" ? (
                             <Tooltip title="Edit Student">
@@ -1207,6 +1255,62 @@ const Students = () => {
           </StyledToolbar>
         </div>
       </Container>
+      {formModal && (
+        <Dialog
+        open={formModal}
+        onClose={handleClose}
+        sx={{
+          padding: 2,
+          display: "flex",
+          alignItems: "center",
+          justifyContent: "center",
+          maxHeight: "90vh",
+          height: { xs: "100vh", sm: "90vh" },
+          maxWidth: "100vw",
+          minWidth: "70vw",
+        }}
+        >
+        <DialogTitle>
+          <label className="slide-in-down-visible">
+            {activeForm ? (
+              activeForm === "callSlip" ? "Call Slip Form" :
+              activeForm === "noticeCaseDismissal" ? "Notice of Case Dismissal" :
+              activeForm === "letterOfSuspension" ? "Letter of Suspension" : ""
+            ) : (
+              "Select a Form"
+            )}
+          </label>
+        </DialogTitle>
+        <DialogContent>
+          {!activeForm && (
+            <div style={{ display: "flex", flexDirection: "column", gap: "10px" }} >
+              <Button onClick={() => setActiveForm("callSlip")} >Call Slip</Button>
+              <Button onClick={() => setActiveForm("noticeCaseDismissal")}>Notice of Case Dismissal</Button>
+              <Button onClick={() => setActiveForm("letterOfSuspension")}>Letter of Suspension</Button>
+            </div>
+          )}
+
+          {/* Render the selected form */}
+          {activeForm === "callSlip" && (
+            <CallSlipForm studentDataToPass={targetStudent} alertMessageFunction={setAlertFunction} />
+          )}
+          {activeForm === "noticeCaseDismissal" && (
+            <NoticeCaseDismissal studentDataToPass={targetStudent} alertMessageFunction={setAlertFunction} />
+          )}
+          {activeForm === "letterOfSuspension" && (
+            <LetterOfSuspension studentDataToPass={targetStudent} alertMessageFunction={setAlertFunction} violationData={violationList} />
+          )}
+          
+        </DialogContent>
+        <DialogActions>
+          {activeForm && (
+            <Button style={{ marginTop: "10px" }} onClick={() => setActiveForm(null)}>
+              Back to Selection
+            </Button>
+          )}
+        </DialogActions>
+        </Dialog>
+      )}
       {ViewModal && (
         <Dialog
           open={ViewModal}
@@ -2239,6 +2343,7 @@ const Students = () => {
         onClose={handleAlertClose}
         anchorOrigin={{ vertical, horizontal }}
         key={vertical + horizontal}
+        className="snackbar-bottom"
       >
         <Alert
           onClose={handleAlertClose}
