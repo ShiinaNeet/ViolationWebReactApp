@@ -1,4 +1,3 @@
-/* eslint-disable react/prop-types */
 import { useEffect, useState } from "react";
 import {
   TextField,
@@ -127,55 +126,7 @@ const LetterOfSuspension = ({
   const [studentData, setStudentData] = useState([]);
 
   useEffect(() => {
-    console.warn("Student Data to Pass:", studentDataToPass);
-    console.warn("Violation Data:", violationData);
-
-    setStudentData([
-      {
-        id: "67a1b2c3780b24d06f628590",
-        srcode: "21-12345",
-        userid: "21-12345",
-        email: "student1@email.com",
-        fullname: "GARCIA, JOHN D.",
-        course: "Information Technology",
-        term: "First Semester",
-        year_and_department: "2nd year - CICS",
-        type: "STUDENT",
-        violations: [
-          {
-            code: "12.1.2",
-            date_committed: "2025-02-06T10:00:00.000Z",
-            sem_committed: "652a1b9f1c4a1a001c4a1ba0",
-            reported_by: "6728b20d48c4d4c422da5c59",
-            description: "Unknown Violation",
-          },
-          {
-            code: "12.1.7",
-            date_committed: "2025-02-08T12:30:00.000Z",
-            sem_committed: "652a1b9f1c4a1a001c4a1ba0",
-            reported_by: "6728b20d48c4d4c422da5c59",
-            description: "Unknown Violation",
-          },
-          {
-            code: "12.1.13",
-            date_committed: "2025-02-10T14:15:00.000Z",
-            sem_committed: "652a1b9f1c4a1a001c4a1ba0",
-            reported_by: "6728b20d48c4d4c422da5c59",
-            description: "Unknown Violation",
-          },
-        ],
-        violation_summary: {
-          categories: [
-            {
-              category: "minor",
-              count: 3,
-            },
-          ],
-          total_violations: 3,
-        },
-      },
-    ]);
-
+    setStudentData([studentDataToPass]);
     // if (studentDataToPass && studentDataToPass.violations.length > 0) {
     //     const defaultViolationCode = studentDataToPass.violations[0].code;
     //     setSelectedViolation(defaultViolationCode);
