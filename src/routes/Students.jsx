@@ -53,6 +53,8 @@ import QRScanner from "../components/QRScanner";
 import NoticeCaseDismissal from "../components/forms/NoticeCaseDismissalForm";
 import CallSlipForm from "../components/forms/CallSlipForm";
 import LetterOfSuspension from "../components/forms/LetterOfSuspension";
+import StudentIncidentReport from "../components/forms/StudentIncidentReport";
+import WarningViolationOfNormsAndConduct from "../components/forms/WarningViolationOfNormsAndConduct";
 function TablePaginationActions(props) {
   const { count, page, rowsPerPage, onPageChange } = props;
 
@@ -212,8 +214,7 @@ const Students = () => {
     React.useState(false);
   const [messageStudentModal, setMessageStudentModal] = React.useState(false);
   const [formModal, setFormModal] = React.useState(false);
-  const [callSlipFormModal, setCallSlipFormModal] = React.useState(false);
-  const [noticeCaseDismissalFormModal, setNoticeCaseDismissalFormModal] = React.useState(false);
+
   const handleClose = () => {
     setViewModal(false);
     setSearchFilterModal(false);
@@ -222,7 +223,6 @@ const Students = () => {
     // setMessageStudentModal(false);
     setDeleteStudentViolationModal(false);
     setUpdateStudentViolationModal(false);
-    setCallSlipFormModal(false);
     setFormModal(false);
     setTargetStudent({
       fullname: "",
@@ -1063,7 +1063,7 @@ const Students = () => {
       message: message,
       variant: "info",
     });
-  }
+  };
   const [activeForm, setActiveForm] = useState(null);
   return (
     <>
@@ -1200,20 +1200,24 @@ const Students = () => {
                               // }}
                               onClick={() => {
                                 setFormModal(true);
-                                const programData = programList.find((program) => program.id === student.course).name;
+                                const programData = programList.find(
+                                  (program) => program.id === student.course
+                                ).name;
                                 if (programData) {
                                   setTargetStudent({
                                     ...student,
-                                    course: programData
+                                    course: programData,
                                   });
-                                  setCallSlipFormModal(true);
                                 } else {
-                                  console.error('Program not found for student course:', student.course);
+                                  console.error(
+                                    "Program not found for student course:",
+                                    student.course
+                                  );
                                 }
                               }}
                               color="error"
                             >
-                             Forms
+                              Forms
                             </Button>
                           </Tooltip>
                           {CurrentUserType == "ADMIN" ||
@@ -1257,58 +1261,132 @@ const Students = () => {
       </Container>
       {formModal && (
         <Dialog
-        open={formModal}
-        onClose={handleClose}
-        sx={{
-          padding: 2,
-          display: "flex",
-          alignItems: "center",
-          justifyContent: "center",
-          maxHeight: "90vh",
-          height: { xs: "100vh", sm: "90vh" },
-          maxWidth: "100vw",
-          minWidth: "70vw",
-        }}
+          open={formModal}
+          onClose={handleClose}
+          sx={{
+            padding: 2,
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "center",
+            maxHeight: "90vh",
+            height: { xs: "100vh", sm: "90vh" },
+            maxWidth: "100vw",
+            minWidth: "70vw",
+          }}
         >
-        <DialogTitle>
-          <label className="slide-in-down-visible">
-            {activeForm ? (
-              activeForm === "callSlip" ? "Call Slip Form" :
-              activeForm === "noticeCaseDismissal" ? "Notice of Case Dismissal" :
-              activeForm === "letterOfSuspension" ? "Letter of Suspension" : ""
-            ) : (
-              "Select a Form"
+          <DialogTitle>
+            <label className="slide-in-down-visible">
+              {activeForm
+                ? activeForm === "callSlip"
+                  ? "Call Slip Form"
+                  : activeForm === "noticeCaseDismissal"
+                  ? "Notice of Case Dismissal"
+                  : activeForm === "letterOfSuspension"
+                  ? "Letter of Suspension"
+                  : activeForm === "studentIncidentReport"
+                  ? "Student Incident Report"
+                  : activeForm === "warningViolationOfNormsAndConduct"
+                  ? "Warning Violation of Norms and Conduct"
+                  : ""
+                : "Select a Form"}
+            </label>
+          </DialogTitle>
+          <DialogContent>
+            {!activeForm && (
+              <div
+                style={{
+                  display: "flex",
+                  flexDirection: "column",
+                  gap: "10px",
+                }}
+              >
+                <Button
+                  onClick={() => setActiveForm("callSlip")}
+                  color="error"
+                  sx={{ justifyContent: "left" }}
+                >
+                  Call Slip
+                </Button>
+                <Button
+                  onClick={() => setActiveForm("noticeCaseDismissal")}
+                  color="error"
+                  sx={{ justifyContent: "left" }}
+                >
+                  Notice of Case Dismissal
+                </Button>
+                <Button
+                  onClick={() => setActiveForm("letterOfSuspension")}
+                  color="error"
+                  sx={{ justifyContent: "left" }}
+                >
+                  Letter of Suspension
+                </Button>
+                <Button
+                  onClick={() => setActiveForm("studentIncidentReport")}
+                  color="error"
+                  sx={{ justifyContent: "left" }}
+                >
+                  Student Incident Report
+                </Button>
+                <Button
+                  onClick={() =>
+                    setActiveForm("warningViolationOfNormsAndConduct")
+                  }
+                  color="error"
+                  sx={{ justifyContent: "left" }}
+                >
+                  Warning Violation of Norms and Conduct
+                </Button>
+              </div>
             )}
-          </label>
-        </DialogTitle>
-        <DialogContent>
-          {!activeForm && (
-            <div style={{ display: "flex", flexDirection: "column", gap: "10px" }} >
-              <Button onClick={() => setActiveForm("callSlip")} >Call Slip</Button>
-              <Button onClick={() => setActiveForm("noticeCaseDismissal")}>Notice of Case Dismissal</Button>
-              <Button onClick={() => setActiveForm("letterOfSuspension")}>Letter of Suspension</Button>
-            </div>
-          )}
 
-          {/* Render the selected form */}
-          {activeForm === "callSlip" && (
-            <CallSlipForm studentDataToPass={targetStudent} alertMessageFunction={setAlertFunction} />
-          )}
-          {activeForm === "noticeCaseDismissal" && (
-            <NoticeCaseDismissal studentDataToPass={targetStudent} alertMessageFunction={setAlertFunction} />
-          )}
-          {activeForm === "letterOfSuspension" && (
-            <LetterOfSuspension studentDataToPass={targetStudent} alertMessageFunction={setAlertFunction} violationData={violationList} />
-          )}
-          
-        </DialogContent>
-        <DialogActions>
-          {activeForm && (
-            <Button style={{ marginTop: "10px" }} onClick={() => setActiveForm(null)}>
-              Back to Selection
-            </Button>
-          )}
-        </DialogActions>
+            {/* Render the selected form */}
+            {activeForm === "callSlip" && (
+              <CallSlipForm
+                studentDataToPass={targetStudent}
+                alertMessageFunction={setAlertFunction}
+              />
+            )}
+            {activeForm === "noticeCaseDismissal" && (
+              <NoticeCaseDismissal
+                studentDataToPass={targetStudent}
+                alertMessageFunction={setAlertFunction}
+              />
+            )}
+            {activeForm === "letterOfSuspension" && (
+              <LetterOfSuspension
+                studentDataToPass={targetStudent}
+                alertMessageFunction={setAlertFunction}
+                violationData={violationList}
+              />
+            )}
+            {activeForm === "studentIncidentReport" && (
+              <StudentIncidentReport
+                studentDataToPass={targetStudent}
+                alertMessageFunction={setAlertFunction}
+                violationData={violationList}
+                programData={programList}
+              />
+            )}
+            {activeForm === "warningViolationOfNormsAndConduct" && (
+              <WarningViolationOfNormsAndConduct
+                studentDataToPass={targetStudent}
+                alertMessageFunction={setAlertFunction}
+                violationData={violationList}
+              />
+            )}
+          </DialogContent>
+          <DialogActions>
+            {activeForm && (
+              <Button
+                style={{ marginTop: "10px" }}
+                onClick={() => setActiveForm(null)}
+                color="error"
+              >
+                Back to Selection
+              </Button>
+            )}
+          </DialogActions>
         </Dialog>
       )}
       {ViewModal && (
