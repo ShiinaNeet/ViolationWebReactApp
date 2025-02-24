@@ -94,6 +94,7 @@ const NoticeCaseDismissal = ({ studentDataToPass, alertMessageFunction }) => {
         hour: "2-digit",
         minute: "2-digit",
       }),
+      date_signed: new Date().toISOString().slice(0, 10),
     }));
   }, [studentDataToPass]);
 
@@ -175,6 +176,7 @@ const NoticeCaseDismissal = ({ studentDataToPass, alertMessageFunction }) => {
                         name="is_without_merit"
                         checked={formData.reason_for_dismissal.is_without_merit}
                         onChange={handleChange}
+                        color="error"
                       />
                     }
                     label="Without Merit"
@@ -214,7 +216,7 @@ const NoticeCaseDismissal = ({ studentDataToPass, alertMessageFunction }) => {
                   value={formData[key]}
                   onChange={handleChange}
                   variant="outlined"
-                  className="bg-white"
+                  color="error"
                 />
               </motion.div>
             );
