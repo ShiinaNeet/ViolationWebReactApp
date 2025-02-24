@@ -55,6 +55,10 @@ import CallSlipForm from "../components/forms/CallSlipForm";
 import LetterOfSuspension from "../components/forms/LetterOfSuspension";
 import StudentIncidentReport from "../components/forms/StudentIncidentReport";
 import WarningViolationOfNormsAndConduct from "../components/forms/WarningViolationOfNormsAndConduct";
+import ReprimandForm from "../components/forms/ReprimandForm";
+import TemporaryGatePass from "../components/forms/TemporaryGatePass";
+import NonWearingUniform from "../components/forms/NonWearingUniform";
+import FormalComplaint from "../components/forms/FormalComplaint";
 function TablePaginationActions(props) {
   const { count, page, rowsPerPage, onPageChange } = props;
 
@@ -1287,6 +1291,14 @@ const Students = () => {
                   ? "Student Incident Report"
                   : activeForm === "warningViolationOfNormsAndConduct"
                   ? "Warning Violation of Norms and Conduct"
+                  : activeForm === "reprimandForm"
+                  ? "Reprimand Form"
+                  : activeForm === "temporaryGatePass"
+                  ? "Temporary Gate Pass"
+                  : activeForm === "nonWearingUniform"
+                  ? "Non Wearining Uniform"
+                  : activeForm === "formalComplaint"
+                  ? "Formal Complaint"
                   : ""
                 : "Select a Form"}
             </label>
@@ -1337,6 +1349,34 @@ const Students = () => {
                 >
                   Warning Violation of Norms and Conduct
                 </Button>
+                <Button
+                  onClick={() => setActiveForm("reprimandForm")}
+                  color="error"
+                  sx={{ justifyContent: "left" }}
+                >
+                  Reprimand Form
+                </Button>
+                <Button
+                  onClick={() => setActiveForm("temporaryGatePass")}
+                  color="error"
+                  sx={{ justifyContent: "left" }}
+                >
+                  Temporary Gate Pass
+                </Button>
+                <Button
+                  onClick={() => setActiveForm("nonWearingUniform")}
+                  color="error"
+                  sx={{ justifyContent: "left" }}
+                >
+                  Non Wearing Uniform
+                </Button>
+                <Button
+                  onClick={() => setActiveForm("formalComplaint")}
+                  color="error"
+                  sx={{ justifyContent: "left" }}
+                >
+                  Formal Complaint
+                </Button>
               </div>
             )}
 
@@ -1373,6 +1413,33 @@ const Students = () => {
                 studentDataToPass={targetStudent}
                 alertMessageFunction={setAlertFunction}
                 violationData={violationList}
+              />
+            )}
+            {activeForm === "reprimandForm" && (
+              <ReprimandForm
+                studentDataToPass={targetStudent}
+                alertMessageFunction={setAlertFunction}
+                violationData={violationList}
+              />
+            )}
+            {activeForm === "temporaryGatePass" && (
+              <TemporaryGatePass
+                studentDataToPass={targetStudent}
+                programData={programList}
+                alertMessageFunction={setAlertFunction}
+              />
+            )}
+            {activeForm === "nonWearingUniform" && (
+              <NonWearingUniform
+                studentDataToPass={targetStudent}
+                programData={programList}
+                alertMessageFunction={setAlertFunction}
+              />
+            )}
+            {activeForm === "formalComplaint" && (
+              <FormalComplaint
+                studentDataToPass={targetStudent}
+                alertMessageFunction={setAlertFunction}
               />
             )}
           </DialogContent>
