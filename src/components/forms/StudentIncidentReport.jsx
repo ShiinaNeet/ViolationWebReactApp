@@ -140,7 +140,7 @@ const StudentIncidentReport = ({
           }}
         >
           <FormControl fullWidth required>
-            <InputLabel id="demo-simple-select-helper-label">
+            <InputLabel id="demo-simple-select-helper-label" color="error">
               Program
             </InputLabel>
             <Select
@@ -156,6 +156,7 @@ const StudentIncidentReport = ({
               }
               inputProps={{ "aria-label": "Without label" }}
               required
+              color="error"
             >
               {programData.map((program) => (
                 <MenuItem key={program.id} value={program.name}>
