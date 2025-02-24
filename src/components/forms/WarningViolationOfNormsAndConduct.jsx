@@ -218,7 +218,7 @@ const WarningViolationOfNormsAndConduct = ({
     >
       <form onSubmit={handleSubmit} className="space-y-4 mt-4">
         <FormControl fullWidth>
-          <InputLabel id="demo-simple-select-helper-label">
+          <InputLabel id="demo-simple-select-helper-label" color="error">
             Violation Code
           </InputLabel>
           <Select
@@ -301,7 +301,7 @@ const WarningViolationOfNormsAndConduct = ({
           transition={{ delay: Object.keys(formData).length * 0.05 }}
         >
           <FormControl fullWidth required>
-            <InputLabel id="demo-simple-select-helper-label">
+            <InputLabel id="demo-simple-select-helper-label" color="error">
               Coordinator Discipline Head
             </InputLabel>
             <Select
