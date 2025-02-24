@@ -1453,6 +1453,14 @@ const Students = () => {
                 Back to Selection
               </Button>
             )}
+
+            <Button
+              style={{ marginTop: "10px" }}
+              onClick={() => handleClose()}
+              color="error"
+            >
+              Close
+            </Button>
           </DialogActions>
         </Dialog>
       )}
