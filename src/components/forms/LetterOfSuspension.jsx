@@ -168,17 +168,17 @@ const LetterOfSuspension = ({
         violation_code: defaultViolationCode,
         violation_description: sanctionDetails.description || "",
         sanction: sanctionDetails.sanction || "",
-        program: firstStudent.course || "",
-        college: "Batangas State University",
-        year: firstStudent.year_and_department
-          ? firstStudent.year_and_department.split(" - ")[0]
-          : "",
-        campus: "Batangas State University - Nasugbu Campus",
-        report_date: new Date().toISOString().slice(0, 10),
-        report_time: new Date().toLocaleTimeString("en-US", {
-          hour: "2-digit",
-          minute: "2-digit",
-        }),
+        // program: firstStudent.course || "",
+        // college: "Batangas State University",
+        // year: firstStudent.year_and_department
+        //   ? firstStudent.year_and_department.split(" - ")[0]
+        //   : "",
+        // campus: "Batangas State University - Nasugbu Campus",
+        // report_date: new Date().toISOString().slice(0, 10),
+        // report_time: new Date().toLocaleTimeString("en-US", {
+        //   hour: "2-digit",
+        //   minute: "2-digit",
+        // }),
       }));
     }
   }, [studentData, violationData]);
@@ -239,7 +239,7 @@ const LetterOfSuspension = ({
       <form onSubmit={handleSubmit} className="space-y-4 w-full mt-4">
         {/* Violation Code Select Input */}
         <FormControl fullWidth>
-          <InputLabel id="demo-simple-select-helper-label">
+          <InputLabel id="demo-simple-select-helper-label" color="error">
             Violation Code
           </InputLabel>
           <Select
@@ -262,6 +262,7 @@ const LetterOfSuspension = ({
                 sanction: sanctionDetails.sanction || "",
               }));
             }}
+            color="error"
           >
             {studentData.length > 0 &&
               studentData[0].violations.map((violation, index) => (
@@ -307,6 +308,7 @@ const LetterOfSuspension = ({
                     onChange={handleChange}
                     required
                     InputLabelProps={{ shrink: true }}
+                    color="error"
                   />
                 </motion.div>
               );
@@ -339,6 +341,7 @@ const LetterOfSuspension = ({
                 onChange={handleChange}
                 required
                 InputLabelProps={{ shrink: true }}
+                color="error"
               />
             </motion.div>
           ) : null

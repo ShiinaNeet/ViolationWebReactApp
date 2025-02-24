@@ -44,11 +44,13 @@ const CallSlipForm = ({ studentDataToPass, alertMessageFunction }) => {
         ? studentDataToPass.year_and_department.split(" - ")[0]
         : "",
       campus: "Batangas State University - Nasugbu Campus",
-      report_date: new Date().toISOString().slice(0, 10),
+      report_date: new Date().toISOString().slice(0, 16),
       report_time: new Date().toLocaleTimeString("en-US", {
         hour: "2-digit",
         minute: "2-digit",
       }),
+      effectivity_date: new Date().toISOString().slice(0, 16),
+      date_signed: new Date().toISOString().slice(0, 16),
     }));
   }, [studentDataToPass]);
 
@@ -142,6 +144,7 @@ const CallSlipForm = ({ studentDataToPass, alertMessageFunction }) => {
                   value={formData[key]}
                   onChange={handleChange}
                   required
+                  color="error"
                 />
               </motion.div>
             )
@@ -155,7 +158,7 @@ const CallSlipForm = ({ studentDataToPass, alertMessageFunction }) => {
           }}
         >
           <FormControl fullWidth required>
-            <InputLabel id="demo-simple-select-helper-label">
+            <InputLabel id="demo-simple-select-helper-label" color="error">
               Coordinator Discipline Head
             </InputLabel>
             <Select
@@ -167,6 +170,7 @@ const CallSlipForm = ({ studentDataToPass, alertMessageFunction }) => {
               onChange={handleChange}
               inputProps={{ "aria-label": "Without label" }}
               required
+              color="error"
             >
               {coordinatorUsers
                 .filter((user) => user.type === "OSD_COORDINATOR")
