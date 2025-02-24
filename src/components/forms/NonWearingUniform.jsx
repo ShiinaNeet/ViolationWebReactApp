@@ -153,6 +153,7 @@ const NonWearingUniformForm = ({
                   value={formData[key]}
                   onChange={handleChange}
                   required
+                  color="error"
                 />
               </motion.div>
             )
@@ -167,6 +168,7 @@ const NonWearingUniformForm = ({
                     checked={formData.check[key]}
                     onChange={handleCheckboxChange}
                     name={key}
+                    color="error"
                   />
                 }
                 label={key.replace(/_/g, " ").toUpperCase()}
@@ -184,6 +186,7 @@ const NonWearingUniformForm = ({
                     check: { ...prev.check, [key]: e.target.value },
                   }))
                 }
+                color="error"
               />
             )
           )}
