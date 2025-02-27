@@ -25,7 +25,6 @@ import axios from "axios";
 import moment from "moment";
 import CreateNotificationModal from "./CreateNotificationModal";
 import ViewNotificationModal from "./ViewNotificationModal";
-import { red } from "@mui/material/colors";
 
 const StyledToolbar = styled(Toolbar)(({ theme }) => ({
   display: "flex",
