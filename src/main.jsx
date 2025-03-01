@@ -30,6 +30,7 @@ import Login from "./routes/Login";
 import Unauthorized from "./routes/Unauthorized";
 import Users from "./routes/Users";
 import Reports from "./routes/Reports";
+import Forms from "./routes/Forms";
 
 import { setupAxiosInterceptors } from "./axios";
 import ProtectedRoute from "./auth/ProtectedRoute";
@@ -66,6 +67,10 @@ const router = createBrowserRouter([
       {
         path: "reports",
         element: <ProtectedRoute element={<Reports />} />,
+      },
+      {
+        path: "forms",
+        element: <ProtectedRoute element={<Forms />} />,
       },
       {
         path: "/notification",
@@ -134,6 +139,10 @@ const router = createBrowserRouter([
       {
         path: "students",
         element: <ProtectedRoute element={<Students />} />,
+      },
+      {
+        path: "forms",
+        element: <ProtectedRoute element={<Forms />} />,
       },
       {
         path: "notification",
