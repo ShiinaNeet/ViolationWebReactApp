@@ -91,6 +91,14 @@ const NavigationBar = () => {
             <Button variant="text" color="white" size="small">
               <Link
                 className=" hover:bg-red-100 hover:text-red-600 hover:rounded-md hover:cursor-pointer p-2"
+                to="/coordinator/forms"
+              >
+                Forms
+              </Link>
+            </Button>
+            <Button variant="text" color="white" size="small">
+              <Link
+                className=" hover:bg-red-100 hover:text-red-600 hover:rounded-md hover:cursor-pointer p-2"
                 to="/coordinator/Notification"
               >
                 Notifications
@@ -136,11 +144,14 @@ const NavigationBar = () => {
                     <CloseRoundedIcon />
                   </IconButton>
                 </Box>
-                <Link to="/dean/students">
-                  <MenuItem>Students </MenuItem>
+                <Link to="/coordinator/students">
+                  <MenuItem>Students</MenuItem>
                 </Link>
-                <Link to="/dean/Notification">
-                  <MenuItem>Notifications </MenuItem>
+                <Link to="/coordinator/students">
+                  <MenuItem>Forms</MenuItem>
+                </Link>
+                <Link to="/coordinator/Notification">
+                  <MenuItem>Notifications</MenuItem>
                 </Link>
                 <Divider sx={{ my: 3 }} />
                 {isAuthenticated && (
