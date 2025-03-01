@@ -1,4 +1,5 @@
 import { Container } from "@mui/material";
+import FormsList from "../components/FormList";
 
 function Forms() {
   return (
@@ -12,7 +13,9 @@ function Forms() {
         height: "100vh",
       }}
     >
-      <div className="w-full h-full mx-auto "></div>
+      <div className="w-full h-full mx-auto ">
+        <FormsList />
+      </div>
     </Container>
   );
 }
