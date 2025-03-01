@@ -2,7 +2,6 @@ import React from "react";
 import reactsvg from "../assets/react.svg";
 import { Link } from "react-router-dom";
 import { useAuth } from "../auth/AuthProvider";
-import Notification from "./Notification";
 import {
   alpha,
   AppBar,
@@ -159,6 +158,14 @@ const Navigationbar = () => {
                 to="/Users"
               >
                 Users
+              </Link>
+            </Button>
+            <Button variant="text" color="white" size="small">
+              <Link
+                className=" hover:bg-red-100 hover:text-red-600 hover:rounded-md hover:cursor-pointer p-2"
+                to="/Forms"
+              >
+                Forms
               </Link>
             </Button>
             <Button variant="text" color="white" size="small">
