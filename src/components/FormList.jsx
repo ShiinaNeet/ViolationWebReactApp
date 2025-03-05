@@ -25,7 +25,6 @@ import moment from "moment";
 
 export default function FormList() {
   const [isViewModalOpen, setIsViewModalOpen] = useState(false);
-  const [forms, setForms] = useState([]);
   const [filteredForms, setFilteredForms] = useState([]);
   const [coordinatorUsers, setCoordinatorUsers] = useState([]);
   const [programList, setProgramList] = useState([]);
@@ -46,6 +45,7 @@ export default function FormList() {
   // Fetch Forms from API
   useEffect(() => {
     fetchForms();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [filter]);
   // Fetch Coordinator from API
   useEffect(() => {
@@ -61,7 +61,6 @@ export default function FormList() {
           form_type: filter,
         },
       });
-
       if (response.status === 200) {
         // const sec = {
         //   form_type: "case_dismissals",
@@ -278,7 +277,7 @@ export default function FormList() {
         // ];
         // setFilteredForms(dummyData);
         // setForms(dummyData);
-        setForms(response.data);
+
         setFilteredForms(response.data);
         console.log("Forms fetched:", response.data);
       }
@@ -365,9 +364,1190 @@ export default function FormList() {
     if (form.approved_by && form.approved_by.name) return form.approved_by.name;
     return "N/A";
   };
-  return (
-    <div>
-      <h1 className="text-2xl text-red-600 py-3">Sent Forms</h1>
+  const GetTableData = () => {
+    return filteredForms.map((form, idx) => (
+      <TableRow key={idx} className="hover:bg-gray-100">
+        <TableCell>{idx + 1}</TableCell>
+        <TableCell>{getName(form)}</TableCell>
+        <TableCell>{capitalizeFirstLetter(form.form_type)}</TableCell>
+        <TableCell align="center">
+          <Button color="error" variant="text" onClick={() => handleView(form)}>
+            View
+          </Button>
+        </TableCell>
+      </TableRow>
+    ));
+  };
+  const GetEmptyTableRowData = () => {
+    return (
+      <TableRow>
+        <TableCell colSpan={4} align="center">
+          No sent forms.
+        </TableCell>
+      </TableRow>
+    );
+  };
+  const GetTableLoadingRow = () => {
+    return (
+      <TableRow>
+        <TableCell colSpan={4} align="center">
+          Loading...
+        </TableCell>
+      </TableRow>
+    );
+  };
+  const GetTable = () => {
+    return (
+      <TableContainer component={Paper}>
+        <Table sx={{ minWidth: 500 }}>
+          <GetTableHeader />
+          <TableBody>
+            {isLoading ? <GetTableLoadingRow /> : <GetTableData />}
+            {filteredForms.length === 0 && isLoading === false && (
+              <GetEmptyTableRowData />
+            )}
+          </TableBody>
+        </Table>
+      </TableContainer>
+    );
+  };
+  const GetTableHeader = () => {
+    return (
+      <TableHead>
+        <TableRow>
+          <TableCell sx={{ fontWeight: "bold" }}>#</TableCell>
+          <TableCell sx={{ fontWeight: "bold" }}>Name</TableCell>
+          <TableCell sx={{ fontWeight: "bold" }}>Type</TableCell>
+          <TableCell sx={{ fontWeight: "bold" }} align="center">
+            Action
+          </TableCell>
+        </TableRow>
+      </TableHead>
+    );
+  };
+  const GetDialogContent = () => {
+    return (
+      <div>
+        <p className="my-2">
+          <strong>
+            Form Type: {capitalizeFirstLetter(selectedForm.form_type)}
+          </strong>
+        </p>
+
+        {selectedForm.form_type === "call_slip" && (
+          <div className="my-2">
+            <TextField
+              fullWidth
+              label="Name"
+              value={selectedForm.name}
+              InputProps={{
+                readOnly: true,
+              }}
+              color="error"
+              variant="outlined"
+              margin="normal"
+            />
+            <TextField
+              fullWidth
+              label="Effectivity Date"
+              value={moment(selectedForm.effectivity_date).format(
+                "MMMM DD, YYYY"
+              )}
+              InputProps={{
+                readOnly: true,
+              }}
+              color="error"
+              variant="outlined"
+              margin="normal"
+            />
+            <TextField
+              fullWidth
+              label="College"
+              value={selectedForm.college}
+              InputProps={{
+                readOnly: true,
+              }}
+              color="error"
+              variant="outlined"
+              margin="normal"
+            />
+            <TextField
+              fullWidth
+              color="error"
+              label="Program"
+              value={getProgramName(selectedForm.program)}
+              InputProps={{
+                readOnly: true,
+              }}
+              variant="outlined"
+              margin="normal"
+            />
+            <TextField
+              fullWidth
+              label="Date"
+              value={moment(selectedForm.date).format("MMMM DD, YYYY")}
+              InputProps={{
+                readOnly: true,
+              }}
+              color="error"
+              variant="outlined"
+              margin="normal"
+            />
+            <TextField
+              fullWidth
+              color="error"
+              label="Campus"
+              value={selectedForm.campus}
+              InputProps={{
+                readOnly: true,
+              }}
+              variant="outlined"
+              margin="normal"
+            />
+            <TextField
+              fullWidth
+              color="error"
+              label="Year"
+              value={selectedForm.year}
+              InputProps={{
+                readOnly: true,
+              }}
+              variant="outlined"
+              margin="normal"
+            />
+            <TextField
+              fullWidth
+              color="error"
+              label="Section"
+              value={selectedForm.section}
+              InputProps={{
+                readOnly: true,
+              }}
+              variant="outlined"
+              margin="normal"
+            />
+            <TextField
+              fullWidth
+              color="error"
+              label="Report Date"
+              value={moment(selectedForm.report_date).format("MMMM DD, YYYY")}
+              InputProps={{
+                readOnly: true,
+              }}
+              variant="outlined"
+              margin="normal"
+            />
+            <TextField
+              fullWidth
+              color="error"
+              label="Report Time"
+              value={selectedForm.report_time}
+              InputProps={{
+                readOnly: true,
+              }}
+              variant="outlined"
+              margin="normal"
+            />
+            <TextField
+              fullWidth
+              color="error"
+              label="Coordinator Discipline Head"
+              value={
+                selectedForm.coordinator_discipline_head &&
+                getCoordinatorFullName(selectedForm.coordinator_discipline_head)
+              }
+              InputProps={{
+                readOnly: true,
+              }}
+              variant="outlined"
+              margin="normal"
+            />
+            <TextField
+              fullWidth
+              color="error"
+              label="Date Signed"
+              value={moment(selectedForm.date_signed).format("MMMM DD, YYYY")}
+              InputProps={{
+                readOnly: true,
+              }}
+              variant="outlined"
+              margin="normal"
+            />
+          </div>
+        )}
+
+        {selectedForm.form_type === "reprimand" && (
+          <div className="my-2">
+            <TextField
+              fullWidth
+              label="Name"
+              value={selectedForm.name}
+              InputProps={{
+                readOnly: true,
+              }}
+              color="error"
+              variant="outlined"
+              margin="normal"
+            />
+            <TextField
+              fullWidth
+              label="Date"
+              value={moment(selectedForm.date).format("MMMM DD, YYYY")}
+              InputProps={{
+                readOnly: true,
+              }}
+              color="error"
+              variant="outlined"
+              margin="normal"
+            />
+            <TextField
+              fullWidth
+              label="Violation Code"
+              value={selectedForm.violation_code}
+              InputProps={{
+                readOnly: true,
+              }}
+              color="error"
+              variant="outlined"
+              margin="normal"
+            />
+            <TextField
+              fullWidth
+              label="Violation"
+              value={selectedForm.violation}
+              InputProps={{
+                readOnly: true,
+              }}
+              color="error"
+              variant="outlined"
+              margin="normal"
+            />
+            <TextField
+              fullWidth
+              label="Coordinator Discipline Head"
+              value={
+                selectedForm.coordinator_discipline_head &&
+                getCoordinatorFullName(selectedForm.coordinator_discipline_head)
+              }
+              InputProps={{
+                readOnly: true,
+              }}
+              color="error"
+              variant="outlined"
+              margin="normal"
+            />
+          </div>
+        )}
+
+        {selectedForm.form_type === "temporary_gatepass" && (
+          <div className="my-2">
+            <TextField
+              fullWidth
+              label="Name"
+              value={selectedForm.name}
+              InputProps={{
+                readOnly: true,
+              }}
+              color="error"
+              variant="outlined"
+              margin="normal"
+            />
+            <TextField
+              fullWidth
+              label="College"
+              value={selectedForm.college}
+              InputProps={{
+                readOnly: true,
+              }}
+              color="error"
+              variant="outlined"
+              margin="normal"
+            />
+            <TextField
+              fullWidth
+              label="Program"
+              value={getProgramName(selectedForm.program)}
+              InputProps={{
+                readOnly: true,
+              }}
+              color="error"
+              variant="outlined"
+              margin="normal"
+            />
+            <TextField
+              fullWidth
+              label="Date"
+              InputProps={{
+                readOnly: true,
+              }}
+              color="error"
+              variant="outlined"
+              margin="normal"
+            />
+            <TextField
+              fullWidth
+              label="SR Code"
+              value={selectedForm.sr_code}
+              InputProps={{
+                readOnly: true,
+              }}
+              color="error"
+              variant="outlined"
+              margin="normal"
+            />
+            <TextField
+              fullWidth
+              label="Year Section"
+              value={selectedForm.year_section || "N/A"}
+              InputProps={{
+                readOnly: true,
+              }}
+              color="error"
+              variant="outlined"
+              margin="normal"
+            />
+            <TextField
+              fullWidth
+              label="Remarks"
+              value={selectedForm.remarks}
+              InputProps={{
+                readOnly: true,
+              }}
+              color="error"
+              variant="outlined"
+              margin="normal"
+            />
+            <TextField
+              fullWidth
+              label="Valid Until"
+              value={moment(selectedForm.valid_until).format("MMMM DD, YYYY")}
+              InputProps={{
+                readOnly: true,
+              }}
+              color="error"
+              variant="outlined"
+              margin="normal"
+            />
+            <TextField
+              fullWidth
+              label="Issued By"
+              value={selectedForm.issued_by.name}
+              InputProps={{
+                readOnly: true,
+              }}
+              color="error"
+              variant="outlined"
+              margin="normal"
+            />
+            <TextField
+              fullWidth
+              label="Issued Date"
+              value={moment(selectedForm.issued_by.date).format(
+                "MMMM DD, YYYY"
+              )}
+              InputProps={{
+                readOnly: true,
+              }}
+              color="error"
+              variant="outlined"
+              margin="normal"
+            />
+          </div>
+        )}
+
+        {selectedForm.form_type === "case_dismissals" && (
+          <div className="my-2">
+            <TextField
+              fullWidth
+              label="Name"
+              value={selectedForm.name}
+              InputProps={{
+                readOnly: true,
+              }}
+              color="error"
+              variant="outlined"
+              margin="normal"
+            />
+            <TextField
+              fullWidth
+              label="Effectivity Date"
+              value={moment(selectedForm.effectivity_date).format(
+                "MMMM DD, YYYY"
+              )}
+              InputProps={{
+                readOnly: true,
+              }}
+              color="error"
+              variant="outlined"
+              margin="normal"
+            />
+            <TextField
+              fullWidth
+              label="College"
+              value={selectedForm.college}
+              InputProps={{
+                readOnly: true,
+              }}
+              color="error"
+              variant="outlined"
+              margin="normal"
+            />
+            <TextField
+              fullWidth
+              label="Program"
+              value={selectedForm.program}
+              InputProps={{
+                readOnly: true,
+              }}
+              color="error"
+              variant="outlined"
+              margin="normal"
+            />
+            <TextField
+              fullWidth
+              label="Campus"
+              value={selectedForm.campus}
+              InputProps={{
+                readOnly: true,
+              }}
+              color="error"
+              variant="outlined"
+              margin="normal"
+            />
+            <TextField
+              fullWidth
+              label="Year"
+              value={selectedForm.year}
+              InputProps={{
+                readOnly: true,
+              }}
+              color="error"
+              variant="outlined"
+              margin="normal"
+            />
+            <TextField
+              fullWidth
+              label="Section"
+              value={selectedForm.section}
+              InputProps={{
+                readOnly: true,
+              }}
+              color="error"
+              variant="outlined"
+              margin="normal"
+            />
+            <TextField
+              fullWidth
+              label="SR Code"
+              value={selectedForm.sr_code}
+              InputProps={{
+                readOnly: true,
+              }}
+              color="error"
+              variant="outlined"
+              margin="normal"
+            />
+            <TextField
+              fullWidth
+              label="Sex"
+              value={selectedForm.sex}
+              InputProps={{
+                readOnly: true,
+              }}
+              color="error"
+              variant="outlined"
+              margin="normal"
+            />
+            <TextField
+              fullWidth
+              label="Indicate Offense"
+              value={selectedForm.indicate_offense}
+              InputProps={{
+                readOnly: true,
+              }}
+              color="error"
+              variant="outlined"
+              margin="normal"
+            />
+            <FormControlLabel
+              control={
+                <Checkbox
+                  checked={selectedForm.reason_for_dismissal.is_without_merit}
+                  color="error"
+                  readOnly
+                />
+              }
+              label="Without Merit"
+            />
+            <TextField
+              fullWidth
+              label="Other Reasons"
+              value={selectedForm.reason_for_dismissal.others}
+              InputProps={{
+                readOnly: true,
+              }}
+              color="error"
+              variant="outlined"
+              margin="normal"
+            />
+            <TextField
+              fullWidth
+              label="Report Date"
+              value={moment(selectedForm.report_date).format("MMMM DD, YYYY")}
+              InputProps={{
+                readOnly: true,
+              }}
+              color="error"
+              variant="outlined"
+              margin="normal"
+            />
+            <TextField
+              fullWidth
+              label="Report Time"
+              value={selectedForm.report_time}
+              InputProps={{
+                readOnly: true,
+              }}
+              color="error"
+              variant="outlined"
+              margin="normal"
+            />
+            <TextField
+              fullWidth
+              label="Coordinator Discipline Head"
+              value={getCoordinatorFullName(
+                selectedForm.coordinator_discipline_head
+              )}
+              InputProps={{
+                readOnly: true,
+              }}
+              color="error"
+              variant="outlined"
+              margin="normal"
+            />
+            <TextField
+              fullWidth
+              label="Date Signed"
+              value={moment(selectedForm.date_signed).format("MMMM DD, YYYY")}
+              InputProps={{
+                readOnly: true,
+              }}
+              color="error"
+              variant="outlined"
+              margin="normal"
+            />
+          </div>
+        )}
+
+        {selectedForm.form_type === "formal_complaint_letter" && (
+          <div className="my-2">
+            <TextField
+              fullWidth
+              label="Date"
+              value={moment(selectedForm.date).format("MMMM DD, YYYY")}
+              InputProps={{
+                readOnly: true,
+              }}
+              color="error"
+              variant="outlined"
+              margin="normal"
+            />
+            <TextField
+              fullWidth
+              label="Coordinator Discipline Head"
+              value={getCoordinatorFullName(
+                selectedForm.coordinator_discipline_head
+              )}
+              InputProps={{
+                readOnly: true,
+              }}
+              color="error"
+              variant="outlined"
+              margin="normal"
+            />
+            <TextField
+              fullWidth
+              label="Subject of Complaint - Name"
+              value={selectedForm.subject_of_complaint.name}
+              InputProps={{
+                readOnly: true,
+              }}
+              color="error"
+              variant="outlined"
+              margin="normal"
+            />
+            <TextField
+              fullWidth
+              label="Subject of Complaint - College"
+              value={selectedForm.subject_of_complaint.college}
+              InputProps={{
+                readOnly: true,
+              }}
+              color="error"
+              variant="outlined"
+              margin="normal"
+            />
+            <TextField
+              fullWidth
+              label="Subject of Complaint - Year Section"
+              value={selectedForm.subject_of_complaint.year_section}
+              InputProps={{
+                readOnly: true,
+              }}
+              color="error"
+              variant="outlined"
+              margin="normal"
+            />
+            <TextField
+              fullWidth
+              label="Norms of Conduct Violated by the Student"
+              value={selectedForm.norms_of_conduct_violated_by_the_student}
+              InputProps={{
+                readOnly: true,
+              }}
+              color="error"
+              variant="outlined"
+              margin="normal"
+            />
+            <TextField
+              fullWidth
+              label="Narration of Facts and Circumstances"
+              value={selectedForm.narration_of_facts_and_circumstances}
+              InputProps={{
+                readOnly: true,
+              }}
+              color="error"
+              variant="outlined"
+              margin="normal"
+            />
+            <TextField
+              fullWidth
+              label="Final Word"
+              value={selectedForm.final_word}
+              InputProps={{
+                readOnly: true,
+              }}
+              color="error"
+              variant="outlined"
+              margin="normal"
+            />
+            <TextField
+              fullWidth
+              label="Name of Complainant"
+              value={selectedForm.name_of_complainant}
+              InputProps={{
+                readOnly: true,
+              }}
+              color="error"
+              variant="outlined"
+              margin="normal"
+            />
+            <TextField
+              fullWidth
+              label="Contact No of Complainant"
+              value={selectedForm.contact_no_of_complainant}
+              InputProps={{
+                readOnly: true,
+              }}
+              color="error"
+              variant="outlined"
+              margin="normal"
+            />
+            <TextField
+              fullWidth
+              label="Email Address of Complainant"
+              value={selectedForm.email_address_of_complainant}
+              InputProps={{
+                readOnly: true,
+              }}
+              color="error"
+              variant="outlined"
+              margin="normal"
+            />
+            <TextField
+              fullWidth
+              label="Witnesses"
+              value={selectedForm.witnesses.join(", ")}
+              InputProps={{
+                readOnly: true,
+              }}
+              color="error"
+              variant="outlined"
+              margin="normal"
+            />
+            <TextField
+              fullWidth
+              label="Enclosed Evidences"
+              value={selectedForm.enclosed_evidences.join(", ")}
+              InputProps={{
+                readOnly: true,
+              }}
+              color="error"
+              variant="outlined"
+              margin="normal"
+            />
+          </div>
+        )}
+
+        {selectedForm.form_type === "student_incident_report" && (
+          <div className="my-2">
+            <TextField
+              fullWidth
+              label="Name"
+              value={selectedForm.name}
+              InputProps={{
+                readOnly: true,
+              }}
+              color="error"
+              variant="outlined"
+              margin="normal"
+            />
+            <TextField
+              fullWidth
+              label="Date"
+              value={moment(selectedForm.date).format("MMMM DD, YYYY hh:mm A")}
+              InputProps={{
+                readOnly: true,
+              }}
+              color="error"
+              variant="outlined"
+              margin="normal"
+            />
+            <TextField
+              fullWidth
+              label="Time"
+              value={selectedForm.time}
+              InputProps={{
+                readOnly: true,
+              }}
+              color="error"
+              variant="outlined"
+              margin="normal"
+            />
+            <TextField
+              fullWidth
+              label="College"
+              value={selectedForm.college}
+              InputProps={{
+                readOnly: true,
+              }}
+              color="error"
+              variant="outlined"
+              margin="normal"
+            />
+            <TextField
+              fullWidth
+              label="Campus"
+              value={selectedForm.campus}
+              InputProps={{
+                readOnly: true,
+              }}
+              color="error"
+              variant="outlined"
+              margin="normal"
+            />
+            <TextField
+              fullWidth
+              label="SR Code"
+              value={selectedForm.sr_code}
+              InputProps={{
+                readOnly: true,
+              }}
+              color="error"
+              variant="outlined"
+              margin="normal"
+            />
+            <TextField
+              fullWidth
+              label="Program"
+              value={getProgramName(selectedForm.program)}
+              InputProps={{
+                readOnly: true,
+              }}
+              color="error"
+              variant="outlined"
+              margin="normal"
+            />
+            <TextField
+              fullWidth
+              label="Year Section"
+              value={selectedForm.year_section}
+              InputProps={{
+                readOnly: true,
+              }}
+              color="error"
+              variant="outlined"
+              margin="normal"
+            />
+            <TextField
+              fullWidth
+              label="Incident"
+              value={selectedForm.incident}
+              InputProps={{
+                readOnly: true,
+              }}
+              color="error"
+              variant="outlined"
+              margin="normal"
+            />
+            <TextField
+              fullWidth
+              label="Remarks"
+              value={selectedForm.remarks}
+              InputProps={{
+                readOnly: true,
+              }}
+              color="error"
+              variant="outlined"
+              margin="normal"
+            />
+            <TextField
+              fullWidth
+              label="Reported By"
+              value={selectedForm.reported_by}
+              InputProps={{
+                readOnly: true,
+              }}
+              color="error"
+              variant="outlined"
+              margin="normal"
+            />
+            <TextField
+              fullWidth
+              label="Designation"
+              value={selectedForm.designation}
+              InputProps={{
+                readOnly: true,
+              }}
+              color="error"
+              variant="outlined"
+              margin="normal"
+            />
+          </div>
+        )}
+
+        {selectedForm.form_type ===
+          "warning_violations_of_norms_of_conduct" && (
+          <div className="my-2">
+            <TextField
+              fullWidth
+              label="Name"
+              value={selectedForm.name}
+              InputProps={{
+                readOnly: true,
+              }}
+              color="error"
+              variant="outlined"
+              margin="normal"
+            />
+            <TextField
+              fullWidth
+              label="Date"
+              value={moment(selectedForm.date).format("MMMM DD, YYYY")}
+              InputProps={{
+                readOnly: true,
+              }}
+              color="error"
+              variant="outlined"
+              margin="normal"
+            />
+            <TextField
+              fullWidth
+              label="Received Letter Date"
+              value={moment(selectedForm.recieved_letter_date).format(
+                "MMMM DD, YYYY"
+              )}
+              InputProps={{
+                readOnly: true,
+              }}
+              color="error"
+              variant="outlined"
+              margin="normal"
+            />
+            <TextField
+              fullWidth
+              label="Violation Code"
+              value={selectedForm.violation_code}
+              InputProps={{
+                readOnly: true,
+              }}
+              color="error"
+              variant="outlined"
+              margin="normal"
+            />
+            <TextField
+              fullWidth
+              label="Violation Description"
+              value={selectedForm.violation_description}
+              InputProps={{
+                readOnly: true,
+              }}
+              color="error"
+              variant="outlined"
+              margin="normal"
+            />
+            <TextField
+              fullWidth
+              label="Addressed To"
+              value={selectedForm.addressed_to}
+              InputProps={{
+                readOnly: true,
+              }}
+              color="error"
+              variant="outlined"
+              margin="normal"
+            />
+            <TextField
+              fullWidth
+              label="Coordinator Discipline Head"
+              value={
+                getCoordinatorFullName(selectedForm.coordinator_discipline_head)
+                  .charAt(0)
+                  .toUpperCase() +
+                getCoordinatorFullName(
+                  selectedForm.coordinator_discipline_head
+                ).slice(1)
+              }
+              InputProps={{
+                readOnly: true,
+              }}
+              color="error"
+              variant="outlined"
+              margin="normal"
+            />
+          </div>
+        )}
+
+        {selectedForm.form_type === "non_wearing_uniform" && (
+          <div className="my-2">
+            <TextField
+              fullWidth
+              label="Name"
+              value={selectedForm.name}
+              InputProps={{
+                readOnly: true,
+              }}
+              color="error"
+              variant="outlined"
+              margin="normal"
+            />
+            <TextField
+              fullWidth
+              label="College"
+              value={selectedForm.college}
+              InputProps={{
+                readOnly: true,
+              }}
+              color="error"
+              variant="outlined"
+              margin="normal"
+            />
+            <TextField
+              fullWidth
+              label="Program"
+              value={getProgramName(selectedForm.program)}
+              InputProps={{
+                readOnly: true,
+              }}
+              color="error"
+              variant="outlined"
+              margin="normal"
+            />
+            <TextField
+              fullWidth
+              label="SR Code"
+              value={selectedForm.sr_code}
+              InputProps={{
+                readOnly: true,
+              }}
+              color="error"
+              variant="outlined"
+              margin="normal"
+            />
+            <TextField
+              fullWidth
+              label="Campus"
+              value={selectedForm.campus}
+              InputProps={{
+                readOnly: true,
+              }}
+              color="error"
+              variant="outlined"
+              margin="normal"
+            />
+            <TextField
+              fullWidth
+              label="Year Section"
+              value={selectedForm.year_section}
+              InputProps={{
+                readOnly: true,
+              }}
+              color="error"
+              variant="outlined"
+              margin="normal"
+            />
+            <FormControlLabel
+              control={
+                <Checkbox
+                  checked={selectedForm.check.fieldwork_workshop}
+                  color="error"
+                  readOnly
+                />
+              }
+              label="Fieldwork/Workshop"
+            />
+            <FormControlLabel
+              control={
+                <Checkbox
+                  checked={selectedForm.check.prolonged_standing}
+                  color="error"
+                  readOnly
+                />
+              }
+              label="Prolonged Standing"
+            />
+            <FormControlLabel
+              control={
+                <Checkbox
+                  checked={
+                    selectedForm.check.foreign_student_on_short_special_course
+                  }
+                  color="error"
+                  readOnly
+                />
+              }
+              label="Foreign Student on Short Special Course"
+            />
+            <FormControlLabel
+              control={
+                <Checkbox
+                  checked={selectedForm.check.pregnant}
+                  color="error"
+                  readOnly
+                />
+              }
+              label="Pregnant"
+            />
+            <FormControlLabel
+              control={
+                <Checkbox
+                  checked={selectedForm.check.special_cases}
+                  color="error"
+                  readOnly
+                />
+              }
+              label="Special Cases"
+            />
+            <FormControlLabel
+              control={
+                <Checkbox
+                  checked={selectedForm.check.force_majeure}
+                  color="error"
+                  readOnly
+                />
+              }
+              label="Force Majeure"
+            />
+            <FormControlLabel
+              control={
+                <Checkbox
+                  checked={selectedForm.check.intern}
+                  color="error"
+                  readOnly
+                />
+              }
+              label="Intern"
+            />
+            <TextField
+              fullWidth
+              label="Others"
+              value={selectedForm.check.others}
+              InputProps={{
+                readOnly: true,
+              }}
+              color="error"
+              variant="outlined"
+              margin="normal"
+            />
+            <TextField
+              fullWidth
+              label="Requested By"
+              value={selectedForm.requested_by.name}
+              InputProps={{
+                readOnly: true,
+              }}
+              color="error"
+              variant="outlined"
+              margin="normal"
+            />
+            <TextField
+              fullWidth
+              label="Requested Date"
+              value={moment(selectedForm.requested_by.date).format(
+                "MMMM DD, YYYY"
+              )}
+              InputProps={{
+                readOnly: true,
+              }}
+              color="error"
+              variant="outlined"
+              margin="normal"
+            />
+            <TextField
+              fullWidth
+              label="Reviewed By"
+              value={selectedForm.reviewed_by.name}
+              InputProps={{
+                readOnly: true,
+              }}
+              color="error"
+              variant="outlined"
+              margin="normal"
+            />
+            <TextField
+              fullWidth
+              label="Reviewed Date"
+              value={moment(selectedForm.reviewed_by.date).format(
+                "MMMM DD, YYYY"
+              )}
+              InputProps={{
+                readOnly: true,
+              }}
+              color="error"
+              variant="outlined"
+              margin="normal"
+            />
+            <TextField
+              fullWidth
+              label="Approved By"
+              value={selectedForm.approved_by.name}
+              InputProps={{
+                readOnly: true,
+              }}
+              color="error"
+              variant="outlined"
+              margin="normal"
+            />
+            <TextField
+              fullWidth
+              label="Approved Date"
+              value={moment(selectedForm.approved_by.date).format(
+                "MMMM DD, YYYY"
+              )}
+              InputProps={{
+                readOnly: true,
+              }}
+              color="error"
+              variant="outlined"
+              margin="normal"
+            />
+          </div>
+        )}
+      </div>
+    );
+  };
+  const GetSelectFormTypes = () => {
+    return (
       <FormControl sx={{ minWidth: 200, marginBottom: 2 }}>
         <InputLabel color="error">Form Type</InputLabel>
         <Select
@@ -383,49 +1563,10 @@ export default function FormList() {
           ))}
         </Select>
       </FormControl>
-      {isLoading ? (
-        <p>Loading...</p>
-      ) : (
-        <TableContainer component={Paper}>
-          <Table sx={{ minWidth: 500 }}>
-            <TableHead>
-              <TableRow>
-                <TableCell sx={{ fontWeight: "bold" }}>#</TableCell>
-                <TableCell sx={{ fontWeight: "bold" }}>Name</TableCell>
-                <TableCell sx={{ fontWeight: "bold" }}>Type</TableCell>
-                <TableCell sx={{ fontWeight: "bold" }} align="center">
-                  Action
-                </TableCell>
-              </TableRow>
-            </TableHead>
-            <TableBody>
-              {filteredForms.map((form, idx) => (
-                <TableRow key={idx} className="hover:bg-gray-100">
-                  <TableCell>{idx + 1}</TableCell>
-                  <TableCell>{getName(form)}</TableCell>
-                  <TableCell>{capitalizeFirstLetter(form.form_type)}</TableCell>
-                  <TableCell align="center">
-                    <Button
-                      color="error"
-                      variant="text"
-                      onClick={() => handleView(form)}
-                    >
-                      View
-                    </Button>
-                  </TableCell>
-                </TableRow>
-              ))}
-              {filteredForms.length === 0 && (
-                <TableRow>
-                  <TableCell colSpan={3} align="center">
-                    No sent forms.
-                  </TableCell>
-                </TableRow>
-              )}
-            </TableBody>
-          </Table>
-        </TableContainer>
-      )}
+    );
+  };
+  const GetViewDialog = () => {
+    return (
       <Dialog
         open={isViewModalOpen}
         onClose={handleClose}
@@ -434,1150 +1575,7 @@ export default function FormList() {
       >
         <DialogTitle>View Form Details</DialogTitle>
         <DialogContent>
-          {selectedForm ? (
-            <div>
-              <p className="my-2">
-                <strong>
-                  Form Type: {capitalizeFirstLetter(selectedForm.form_type)}
-                </strong>
-              </p>
-
-              {selectedForm.form_type === "call_slip" && (
-                <div className="my-2">
-                  <TextField
-                    fullWidth
-                    label="Name"
-                    value={selectedForm.name}
-                    InputProps={{
-                      readOnly: true,
-                    }}
-                    color="error"
-                    variant="outlined"
-                    margin="normal"
-                  />
-                  <TextField
-                    fullWidth
-                    label="Effectivity Date"
-                    value={moment(selectedForm.effectivity_date).format(
-                      "MMMM DD, YYYY"
-                    )}
-                    InputProps={{
-                      readOnly: true,
-                    }}
-                    color="error"
-                    variant="outlined"
-                    margin="normal"
-                  />
-                  <TextField
-                    fullWidth
-                    label="College"
-                    value={selectedForm.college}
-                    InputProps={{
-                      readOnly: true,
-                    }}
-                    color="error"
-                    variant="outlined"
-                    margin="normal"
-                  />
-                  <TextField
-                    fullWidth
-                    color="error"
-                    label="Program"
-                    value={getProgramName(selectedForm.program)}
-                    InputProps={{
-                      readOnly: true,
-                    }}
-                    variant="outlined"
-                    margin="normal"
-                  />
-                  <TextField
-                    fullWidth
-                    label="Date"
-                    value={moment(selectedForm.date).format("MMMM DD, YYYY")}
-                    InputProps={{
-                      readOnly: true,
-                    }}
-                    color="error"
-                    variant="outlined"
-                    margin="normal"
-                  />
-                  <TextField
-                    fullWidth
-                    color="error"
-                    label="Campus"
-                    value={selectedForm.campus}
-                    InputProps={{
-                      readOnly: true,
-                    }}
-                    variant="outlined"
-                    margin="normal"
-                  />
-                  <TextField
-                    fullWidth
-                    color="error"
-                    label="Year"
-                    value={selectedForm.year}
-                    InputProps={{
-                      readOnly: true,
-                    }}
-                    variant="outlined"
-                    margin="normal"
-                  />
-                  <TextField
-                    fullWidth
-                    color="error"
-                    label="Section"
-                    value={selectedForm.section}
-                    InputProps={{
-                      readOnly: true,
-                    }}
-                    variant="outlined"
-                    margin="normal"
-                  />
-                  <TextField
-                    fullWidth
-                    color="error"
-                    label="Report Date"
-                    value={moment(selectedForm.report_date).format(
-                      "MMMM DD, YYYY"
-                    )}
-                    InputProps={{
-                      readOnly: true,
-                    }}
-                    variant="outlined"
-                    margin="normal"
-                  />
-                  <TextField
-                    fullWidth
-                    color="error"
-                    label="Report Time"
-                    value={selectedForm.report_time}
-                    InputProps={{
-                      readOnly: true,
-                    }}
-                    variant="outlined"
-                    margin="normal"
-                  />
-                  <TextField
-                    fullWidth
-                    color="error"
-                    label="Coordinator Discipline Head"
-                    value={
-                      selectedForm.coordinator_discipline_head &&
-                      getCoordinatorFullName(
-                        selectedForm.coordinator_discipline_head
-                      )
-                    }
-                    InputProps={{
-                      readOnly: true,
-                    }}
-                    variant="outlined"
-                    margin="normal"
-                  />
-                  <TextField
-                    fullWidth
-                    color="error"
-                    label="Date Signed"
-                    value={moment(selectedForm.date_signed).format(
-                      "MMMM DD, YYYY"
-                    )}
-                    InputProps={{
-                      readOnly: true,
-                    }}
-                    variant="outlined"
-                    margin="normal"
-                  />
-                </div>
-              )}
-
-              {selectedForm.form_type === "reprimand" && (
-                <div className="my-2">
-                  <TextField
-                    fullWidth
-                    label="Name"
-                    value={selectedForm.name}
-                    InputProps={{
-                      readOnly: true,
-                    }}
-                    color="error"
-                    variant="outlined"
-                    margin="normal"
-                  />
-                  <TextField
-                    fullWidth
-                    label="Date"
-                    value={moment(selectedForm.date).format("MMMM DD, YYYY")}
-                    InputProps={{
-                      readOnly: true,
-                    }}
-                    color="error"
-                    variant="outlined"
-                    margin="normal"
-                  />
-                  <TextField
-                    fullWidth
-                    label="Violation Code"
-                    value={selectedForm.violation_code}
-                    InputProps={{
-                      readOnly: true,
-                    }}
-                    color="error"
-                    variant="outlined"
-                    margin="normal"
-                  />
-                  <TextField
-                    fullWidth
-                    label="Violation"
-                    value={selectedForm.violation}
-                    InputProps={{
-                      readOnly: true,
-                    }}
-                    color="error"
-                    variant="outlined"
-                    margin="normal"
-                  />
-                  <TextField
-                    fullWidth
-                    label="Coordinator Discipline Head"
-                    value={
-                      selectedForm.coordinator_discipline_head &&
-                      getCoordinatorFullName(
-                        selectedForm.coordinator_discipline_head
-                      )
-                    }
-                    InputProps={{
-                      readOnly: true,
-                    }}
-                    color="error"
-                    variant="outlined"
-                    margin="normal"
-                  />
-                </div>
-              )}
-
-              {selectedForm.form_type === "temporary_gatepass" && (
-                <div className="my-2">
-                  <TextField
-                    fullWidth
-                    label="Name"
-                    value={selectedForm.name}
-                    InputProps={{
-                      readOnly: true,
-                    }}
-                    color="error"
-                    variant="outlined"
-                    margin="normal"
-                  />
-                  <TextField
-                    fullWidth
-                    label="College"
-                    value={selectedForm.college}
-                    InputProps={{
-                      readOnly: true,
-                    }}
-                    color="error"
-                    variant="outlined"
-                    margin="normal"
-                  />
-                  <TextField
-                    fullWidth
-                    label="Program"
-                    value={getProgramName(selectedForm.program)}
-                    InputProps={{
-                      readOnly: true,
-                    }}
-                    color="error"
-                    variant="outlined"
-                    margin="normal"
-                  />
-                  <TextField
-                    fullWidth
-                    label="Date"
-                    InputProps={{
-                      readOnly: true,
-                    }}
-                    color="error"
-                    variant="outlined"
-                    margin="normal"
-                  />
-                  <TextField
-                    fullWidth
-                    label="SR Code"
-                    value={selectedForm.sr_code}
-                    InputProps={{
-                      readOnly: true,
-                    }}
-                    color="error"
-                    variant="outlined"
-                    margin="normal"
-                  />
-                  <TextField
-                    fullWidth
-                    label="Year Section"
-                    value={selectedForm.year_section || "N/A"}
-                    InputProps={{
-                      readOnly: true,
-                    }}
-                    color="error"
-                    variant="outlined"
-                    margin="normal"
-                  />
-                  <TextField
-                    fullWidth
-                    label="Remarks"
-                    value={selectedForm.remarks}
-                    InputProps={{
-                      readOnly: true,
-                    }}
-                    color="error"
-                    variant="outlined"
-                    margin="normal"
-                  />
-                  <TextField
-                    fullWidth
-                    label="Valid Until"
-                    value={moment(selectedForm.valid_until).format(
-                      "MMMM DD, YYYY"
-                    )}
-                    InputProps={{
-                      readOnly: true,
-                    }}
-                    color="error"
-                    variant="outlined"
-                    margin="normal"
-                  />
-                  <TextField
-                    fullWidth
-                    label="Issued By"
-                    value={selectedForm.issued_by.name}
-                    InputProps={{
-                      readOnly: true,
-                    }}
-                    color="error"
-                    variant="outlined"
-                    margin="normal"
-                  />
-                  <TextField
-                    fullWidth
-                    label="Issued Date"
-                    value={moment(selectedForm.issued_by.date).format(
-                      "MMMM DD, YYYY"
-                    )}
-                    InputProps={{
-                      readOnly: true,
-                    }}
-                    color="error"
-                    variant="outlined"
-                    margin="normal"
-                  />
-                </div>
-              )}
-
-              {selectedForm.form_type === "case_dismissals" && (
-                <div className="my-2">
-                  <TextField
-                    fullWidth
-                    label="Name"
-                    value={selectedForm.name}
-                    InputProps={{
-                      readOnly: true,
-                    }}
-                    color="error"
-                    variant="outlined"
-                    margin="normal"
-                  />
-                  <TextField
-                    fullWidth
-                    label="Effectivity Date"
-                    value={moment(selectedForm.effectivity_date).format(
-                      "MMMM DD, YYYY"
-                    )}
-                    InputProps={{
-                      readOnly: true,
-                    }}
-                    color="error"
-                    variant="outlined"
-                    margin="normal"
-                  />
-                  <TextField
-                    fullWidth
-                    label="College"
-                    value={selectedForm.college}
-                    InputProps={{
-                      readOnly: true,
-                    }}
-                    color="error"
-                    variant="outlined"
-                    margin="normal"
-                  />
-                  <TextField
-                    fullWidth
-                    label="Program"
-                    value={selectedForm.program}
-                    InputProps={{
-                      readOnly: true,
-                    }}
-                    color="error"
-                    variant="outlined"
-                    margin="normal"
-                  />
-                  <TextField
-                    fullWidth
-                    label="Campus"
-                    value={selectedForm.campus}
-                    InputProps={{
-                      readOnly: true,
-                    }}
-                    color="error"
-                    variant="outlined"
-                    margin="normal"
-                  />
-                  <TextField
-                    fullWidth
-                    label="Year"
-                    value={selectedForm.year}
-                    InputProps={{
-                      readOnly: true,
-                    }}
-                    color="error"
-                    variant="outlined"
-                    margin="normal"
-                  />
-                  <TextField
-                    fullWidth
-                    label="Section"
-                    value={selectedForm.section}
-                    InputProps={{
-                      readOnly: true,
-                    }}
-                    color="error"
-                    variant="outlined"
-                    margin="normal"
-                  />
-                  <TextField
-                    fullWidth
-                    label="SR Code"
-                    value={selectedForm.sr_code}
-                    InputProps={{
-                      readOnly: true,
-                    }}
-                    color="error"
-                    variant="outlined"
-                    margin="normal"
-                  />
-                  <TextField
-                    fullWidth
-                    label="Sex"
-                    value={selectedForm.sex}
-                    InputProps={{
-                      readOnly: true,
-                    }}
-                    color="error"
-                    variant="outlined"
-                    margin="normal"
-                  />
-                  <TextField
-                    fullWidth
-                    label="Indicate Offense"
-                    value={selectedForm.indicate_offense}
-                    InputProps={{
-                      readOnly: true,
-                    }}
-                    color="error"
-                    variant="outlined"
-                    margin="normal"
-                  />
-                  <FormControlLabel
-                    control={
-                      <Checkbox
-                        checked={
-                          selectedForm.reason_for_dismissal.is_without_merit
-                        }
-                        color="error"
-                        readOnly
-                      />
-                    }
-                    label="Without Merit"
-                  />
-                  <TextField
-                    fullWidth
-                    label="Other Reasons"
-                    value={selectedForm.reason_for_dismissal.others}
-                    InputProps={{
-                      readOnly: true,
-                    }}
-                    color="error"
-                    variant="outlined"
-                    margin="normal"
-                  />
-                  <TextField
-                    fullWidth
-                    label="Report Date"
-                    value={moment(selectedForm.report_date).format(
-                      "MMMM DD, YYYY"
-                    )}
-                    InputProps={{
-                      readOnly: true,
-                    }}
-                    color="error"
-                    variant="outlined"
-                    margin="normal"
-                  />
-                  <TextField
-                    fullWidth
-                    label="Report Time"
-                    value={selectedForm.report_time}
-                    InputProps={{
-                      readOnly: true,
-                    }}
-                    color="error"
-                    variant="outlined"
-                    margin="normal"
-                  />
-                  <TextField
-                    fullWidth
-                    label="Coordinator Discipline Head"
-                    value={getCoordinatorFullName(
-                      selectedForm.coordinator_discipline_head
-                    )}
-                    InputProps={{
-                      readOnly: true,
-                    }}
-                    color="error"
-                    variant="outlined"
-                    margin="normal"
-                  />
-                  <TextField
-                    fullWidth
-                    label="Date Signed"
-                    value={moment(selectedForm.date_signed).format(
-                      "MMMM DD, YYYY"
-                    )}
-                    InputProps={{
-                      readOnly: true,
-                    }}
-                    color="error"
-                    variant="outlined"
-                    margin="normal"
-                  />
-                </div>
-              )}
-
-              {selectedForm.form_type === "formal_complaint_letter" && (
-                <div className="my-2">
-                  <TextField
-                    fullWidth
-                    label="Date"
-                    value={moment(selectedForm.date).format("MMMM DD, YYYY")}
-                    InputProps={{
-                      readOnly: true,
-                    }}
-                    color="error"
-                    variant="outlined"
-                    margin="normal"
-                  />
-                  <TextField
-                    fullWidth
-                    label="Coordinator Discipline Head"
-                    value={getCoordinatorFullName(
-                      selectedForm.coordinator_discipline_head
-                    )}
-                    InputProps={{
-                      readOnly: true,
-                    }}
-                    color="error"
-                    variant="outlined"
-                    margin="normal"
-                  />
-                  <TextField
-                    fullWidth
-                    label="Subject of Complaint - Name"
-                    value={selectedForm.subject_of_complaint.name}
-                    InputProps={{
-                      readOnly: true,
-                    }}
-                    color="error"
-                    variant="outlined"
-                    margin="normal"
-                  />
-                  <TextField
-                    fullWidth
-                    label="Subject of Complaint - College"
-                    value={selectedForm.subject_of_complaint.college}
-                    InputProps={{
-                      readOnly: true,
-                    }}
-                    color="error"
-                    variant="outlined"
-                    margin="normal"
-                  />
-                  <TextField
-                    fullWidth
-                    label="Subject of Complaint - Year Section"
-                    value={selectedForm.subject_of_complaint.year_section}
-                    InputProps={{
-                      readOnly: true,
-                    }}
-                    color="error"
-                    variant="outlined"
-                    margin="normal"
-                  />
-                  <TextField
-                    fullWidth
-                    label="Norms of Conduct Violated by the Student"
-                    value={
-                      selectedForm.norms_of_conduct_violated_by_the_student
-                    }
-                    InputProps={{
-                      readOnly: true,
-                    }}
-                    color="error"
-                    variant="outlined"
-                    margin="normal"
-                  />
-                  <TextField
-                    fullWidth
-                    label="Narration of Facts and Circumstances"
-                    value={selectedForm.narration_of_facts_and_circumstances}
-                    InputProps={{
-                      readOnly: true,
-                    }}
-                    color="error"
-                    variant="outlined"
-                    margin="normal"
-                  />
-                  <TextField
-                    fullWidth
-                    label="Final Word"
-                    value={selectedForm.final_word}
-                    InputProps={{
-                      readOnly: true,
-                    }}
-                    color="error"
-                    variant="outlined"
-                    margin="normal"
-                  />
-                  <TextField
-                    fullWidth
-                    label="Name of Complainant"
-                    value={selectedForm.name_of_complainant}
-                    InputProps={{
-                      readOnly: true,
-                    }}
-                    color="error"
-                    variant="outlined"
-                    margin="normal"
-                  />
-                  <TextField
-                    fullWidth
-                    label="Contact No of Complainant"
-                    value={selectedForm.contact_no_of_complainant}
-                    InputProps={{
-                      readOnly: true,
-                    }}
-                    color="error"
-                    variant="outlined"
-                    margin="normal"
-                  />
-                  <TextField
-                    fullWidth
-                    label="Email Address of Complainant"
-                    value={selectedForm.email_address_of_complainant}
-                    InputProps={{
-                      readOnly: true,
-                    }}
-                    color="error"
-                    variant="outlined"
-                    margin="normal"
-                  />
-                  <TextField
-                    fullWidth
-                    label="Witnesses"
-                    value={selectedForm.witnesses.join(", ")}
-                    InputProps={{
-                      readOnly: true,
-                    }}
-                    color="error"
-                    variant="outlined"
-                    margin="normal"
-                  />
-                  <TextField
-                    fullWidth
-                    label="Enclosed Evidences"
-                    value={selectedForm.enclosed_evidences.join(", ")}
-                    InputProps={{
-                      readOnly: true,
-                    }}
-                    color="error"
-                    variant="outlined"
-                    margin="normal"
-                  />
-                </div>
-              )}
-
-              {selectedForm.form_type === "student_incident_report" && (
-                <div className="my-2">
-                  <TextField
-                    fullWidth
-                    label="Name"
-                    value={selectedForm.name}
-                    InputProps={{
-                      readOnly: true,
-                    }}
-                    color="error"
-                    variant="outlined"
-                    margin="normal"
-                  />
-                  <TextField
-                    fullWidth
-                    label="Date"
-                    value={moment(selectedForm.date).format(
-                      "MMMM DD, YYYY hh:mm A"
-                    )}
-                    InputProps={{
-                      readOnly: true,
-                    }}
-                    color="error"
-                    variant="outlined"
-                    margin="normal"
-                  />
-                  <TextField
-                    fullWidth
-                    label="Time"
-                    value={selectedForm.time}
-                    InputProps={{
-                      readOnly: true,
-                    }}
-                    color="error"
-                    variant="outlined"
-                    margin="normal"
-                  />
-                  <TextField
-                    fullWidth
-                    label="College"
-                    value={selectedForm.college}
-                    InputProps={{
-                      readOnly: true,
-                    }}
-                    color="error"
-                    variant="outlined"
-                    margin="normal"
-                  />
-                  <TextField
-                    fullWidth
-                    label="Campus"
-                    value={selectedForm.campus}
-                    InputProps={{
-                      readOnly: true,
-                    }}
-                    color="error"
-                    variant="outlined"
-                    margin="normal"
-                  />
-                  <TextField
-                    fullWidth
-                    label="SR Code"
-                    value={selectedForm.sr_code}
-                    InputProps={{
-                      readOnly: true,
-                    }}
-                    color="error"
-                    variant="outlined"
-                    margin="normal"
-                  />
-                  <TextField
-                    fullWidth
-                    label="Program"
-                    value={getProgramName(selectedForm.program)}
-                    InputProps={{
-                      readOnly: true,
-                    }}
-                    color="error"
-                    variant="outlined"
-                    margin="normal"
-                  />
-                  <TextField
-                    fullWidth
-                    label="Year Section"
-                    value={selectedForm.year_section}
-                    InputProps={{
-                      readOnly: true,
-                    }}
-                    color="error"
-                    variant="outlined"
-                    margin="normal"
-                  />
-                  <TextField
-                    fullWidth
-                    label="Incident"
-                    value={selectedForm.incident}
-                    InputProps={{
-                      readOnly: true,
-                    }}
-                    color="error"
-                    variant="outlined"
-                    margin="normal"
-                  />
-                  <TextField
-                    fullWidth
-                    label="Remarks"
-                    value={selectedForm.remarks}
-                    InputProps={{
-                      readOnly: true,
-                    }}
-                    color="error"
-                    variant="outlined"
-                    margin="normal"
-                  />
-                  <TextField
-                    fullWidth
-                    label="Reported By"
-                    value={selectedForm.reported_by}
-                    InputProps={{
-                      readOnly: true,
-                    }}
-                    color="error"
-                    variant="outlined"
-                    margin="normal"
-                  />
-                  <TextField
-                    fullWidth
-                    label="Designation"
-                    value={selectedForm.designation}
-                    InputProps={{
-                      readOnly: true,
-                    }}
-                    color="error"
-                    variant="outlined"
-                    margin="normal"
-                  />
-                </div>
-              )}
-
-              {selectedForm.form_type ===
-                "warning_violations_of_norms_of_conduct" && (
-                <div className="my-2">
-                  <TextField
-                    fullWidth
-                    label="Name"
-                    value={selectedForm.name}
-                    InputProps={{
-                      readOnly: true,
-                    }}
-                    color="error"
-                    variant="outlined"
-                    margin="normal"
-                  />
-                  <TextField
-                    fullWidth
-                    label="Date"
-                    value={moment(selectedForm.date).format("MMMM DD, YYYY")}
-                    InputProps={{
-                      readOnly: true,
-                    }}
-                    color="error"
-                    variant="outlined"
-                    margin="normal"
-                  />
-                  <TextField
-                    fullWidth
-                    label="Received Letter Date"
-                    value={moment(selectedForm.recieved_letter_date).format(
-                      "MMMM DD, YYYY"
-                    )}
-                    InputProps={{
-                      readOnly: true,
-                    }}
-                    color="error"
-                    variant="outlined"
-                    margin="normal"
-                  />
-                  <TextField
-                    fullWidth
-                    label="Violation Code"
-                    value={selectedForm.violation_code}
-                    InputProps={{
-                      readOnly: true,
-                    }}
-                    color="error"
-                    variant="outlined"
-                    margin="normal"
-                  />
-                  <TextField
-                    fullWidth
-                    label="Violation Description"
-                    value={selectedForm.violation_description}
-                    InputProps={{
-                      readOnly: true,
-                    }}
-                    color="error"
-                    variant="outlined"
-                    margin="normal"
-                  />
-                  <TextField
-                    fullWidth
-                    label="Addressed To"
-                    value={selectedForm.addressed_to}
-                    InputProps={{
-                      readOnly: true,
-                    }}
-                    color="error"
-                    variant="outlined"
-                    margin="normal"
-                  />
-                  <TextField
-                    fullWidth
-                    label="Coordinator Discipline Head"
-                    value={
-                      getCoordinatorFullName(
-                        selectedForm.coordinator_discipline_head
-                      )
-                        .charAt(0)
-                        .toUpperCase() +
-                      getCoordinatorFullName(
-                        selectedForm.coordinator_discipline_head
-                      ).slice(1)
-                    }
-                    InputProps={{
-                      readOnly: true,
-                    }}
-                    color="error"
-                    variant="outlined"
-                    margin="normal"
-                  />
-                </div>
-              )}
-
-              {selectedForm.form_type === "non_wearing_uniform" && (
-                <div className="my-2">
-                  <TextField
-                    fullWidth
-                    label="Name"
-                    value={selectedForm.name}
-                    InputProps={{
-                      readOnly: true,
-                    }}
-                    color="error"
-                    variant="outlined"
-                    margin="normal"
-                  />
-                  <TextField
-                    fullWidth
-                    label="College"
-                    value={selectedForm.college}
-                    InputProps={{
-                      readOnly: true,
-                    }}
-                    color="error"
-                    variant="outlined"
-                    margin="normal"
-                  />
-                  <TextField
-                    fullWidth
-                    label="Program"
-                    value={getProgramName(selectedForm.program)}
-                    InputProps={{
-                      readOnly: true,
-                    }}
-                    color="error"
-                    variant="outlined"
-                    margin="normal"
-                  />
-                  <TextField
-                    fullWidth
-                    label="SR Code"
-                    value={selectedForm.sr_code}
-                    InputProps={{
-                      readOnly: true,
-                    }}
-                    color="error"
-                    variant="outlined"
-                    margin="normal"
-                  />
-                  <TextField
-                    fullWidth
-                    label="Campus"
-                    value={selectedForm.campus}
-                    InputProps={{
-                      readOnly: true,
-                    }}
-                    color="error"
-                    variant="outlined"
-                    margin="normal"
-                  />
-                  <TextField
-                    fullWidth
-                    label="Year Section"
-                    value={selectedForm.year_section}
-                    InputProps={{
-                      readOnly: true,
-                    }}
-                    color="error"
-                    variant="outlined"
-                    margin="normal"
-                  />
-                  <FormControlLabel
-                    control={
-                      <Checkbox
-                        checked={selectedForm.check.fieldwork_workshop}
-                        color="error"
-                        readOnly
-                      />
-                    }
-                    label="Fieldwork/Workshop"
-                  />
-                  <FormControlLabel
-                    control={
-                      <Checkbox
-                        checked={selectedForm.check.prolonged_standing}
-                        color="error"
-                        readOnly
-                      />
-                    }
-                    label="Prolonged Standing"
-                  />
-                  <FormControlLabel
-                    control={
-                      <Checkbox
-                        checked={
-                          selectedForm.check
-                            .foreign_student_on_short_special_course
-                        }
-                        color="error"
-                        readOnly
-                      />
-                    }
-                    label="Foreign Student on Short Special Course"
-                  />
-                  <FormControlLabel
-                    control={
-                      <Checkbox
-                        checked={selectedForm.check.pregnant}
-                        color="error"
-                        readOnly
-                      />
-                    }
-                    label="Pregnant"
-                  />
-                  <FormControlLabel
-                    control={
-                      <Checkbox
-                        checked={selectedForm.check.special_cases}
-                        color="error"
-                        readOnly
-                      />
-                    }
-                    label="Special Cases"
-                  />
-                  <FormControlLabel
-                    control={
-                      <Checkbox
-                        checked={selectedForm.check.force_majeure}
-                        color="error"
-                        readOnly
-                      />
-                    }
-                    label="Force Majeure"
-                  />
-                  <FormControlLabel
-                    control={
-                      <Checkbox
-                        checked={selectedForm.check.intern}
-                        color="error"
-                        readOnly
-                      />
-                    }
-                    label="Intern"
-                  />
-                  <TextField
-                    fullWidth
-                    label="Others"
-                    value={selectedForm.check.others}
-                    InputProps={{
-                      readOnly: true,
-                    }}
-                    color="error"
-                    variant="outlined"
-                    margin="normal"
-                  />
-                  <TextField
-                    fullWidth
-                    label="Requested By"
-                    value={selectedForm.requested_by.name}
-                    InputProps={{
-                      readOnly: true,
-                    }}
-                    color="error"
-                    variant="outlined"
-                    margin="normal"
-                  />
-                  <TextField
-                    fullWidth
-                    label="Requested Date"
-                    value={moment(selectedForm.requested_by.date).format(
-                      "MMMM DD, YYYY"
-                    )}
-                    InputProps={{
-                      readOnly: true,
-                    }}
-                    color="error"
-                    variant="outlined"
-                    margin="normal"
-                  />
-                  <TextField
-                    fullWidth
-                    label="Reviewed By"
-                    value={selectedForm.reviewed_by.name}
-                    InputProps={{
-                      readOnly: true,
-                    }}
-                    color="error"
-                    variant="outlined"
-                    margin="normal"
-                  />
-                  <TextField
-                    fullWidth
-                    label="Reviewed Date"
-                    value={moment(selectedForm.reviewed_by.date).format(
-                      "MMMM DD, YYYY"
-                    )}
-                    InputProps={{
-                      readOnly: true,
-                    }}
-                    color="error"
-                    variant="outlined"
-                    margin="normal"
-                  />
-                  <TextField
-                    fullWidth
-                    label="Approved By"
-                    value={selectedForm.approved_by.name}
-                    InputProps={{
-                      readOnly: true,
-                    }}
-                    color="error"
-                    variant="outlined"
-                    margin="normal"
-                  />
-                  <TextField
-                    fullWidth
-                    label="Approved Date"
-                    value={moment(selectedForm.approved_by.date).format(
-                      "MMMM DD, YYYY"
-                    )}
-                    InputProps={{
-                      readOnly: true,
-                    }}
-                    color="error"
-                    variant="outlined"
-                    margin="normal"
-                  />
-                </div>
-              )}
-            </div>
-          ) : (
-            <p>No form selected.</p>
-          )}
+          {selectedForm ? <GetDialogContent /> : <p>No form selected.</p>}
         </DialogContent>
         <DialogActions>
           <Button color="error" onClick={handleClose}>
@@ -1585,6 +1583,14 @@ export default function FormList() {
           </Button>
         </DialogActions>
       </Dialog>
+    );
+  };
+  return (
+    <div>
+      <h1 className="text-2xl text-red-600 py-3">Sent Forms</h1>
+      <GetSelectFormTypes />
+      <GetTable />
+      <GetViewDialog />
     </div>
   );
 }
