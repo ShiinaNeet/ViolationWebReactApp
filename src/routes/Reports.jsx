@@ -21,30 +21,21 @@ import DialogActions from "@mui/material/DialogActions";
 import DialogContent from "@mui/material/DialogContent";
 import DialogTitle from "@mui/material/DialogTitle";
 import TextField from "@mui/material/TextField";
-import Tooltip from "@mui/material/Tooltip";
 import {
   Alert,
   AlertTitle,
   alpha,
-  Chip,
   Container,
-  DialogContentText,
   FormControl,
   InputLabel,
-  ListItemButton,
-  ListItemText,
   MenuItem,
   Select,
   Snackbar,
   styled,
   TableHead,
   Toolbar,
-  Typography,
 } from "@mui/material";
 import axios from "axios";
-import formatDate from "../utils/moment";
-import { red } from "@mui/material/colors";
-import { RemoveRedEye } from "@mui/icons-material";
 
 function TablePaginationActions(props) {
   const { count, page, rowsPerPage, onPageChange } = props;
@@ -120,37 +111,29 @@ const StyledToolbar = styled(Toolbar)(({ theme }) => ({
   boxShadow: `0px 10px 6px rgba(0, 0, 0, 0.1)`,
 }));
 export default function Reports() {
+  const position = { vertical: "bottom", horizontal: "right" };
+  const { vertical, horizontal } = position;
+  const [isLoading, setIsLoading] = React.useState(true);
   const [page, setPage] = React.useState(0);
   const [rowsPerPage, setRowsPerPage] = React.useState(6);
   const [rows, setRows] = React.useState([]);
   const [term, setTerm] = React.useState([]);
-  const [open, setOpen] = React.useState(false);
   const [searchFilter, setSearchFilter] = React.useState("");
   const [semesterFilter, setSemesterFilter] = React.useState("");
-
   const [searchFilterModal, setSearchFilterModal] = React.useState(false);
-
   const [alertMessage, setAlertMessage] = React.useState({
     open: false,
     title: "",
     message: "",
     variant: "",
   });
-
-  const vertical = "bottom";
-  const horizontal = "right";
-  const emptyRows =
-    page > 0 ? Math.max(0, (1 + page) * rowsPerPage - rows.length) : 0;
-
   const handleChangePage = (event, newPage) => {
     setPage(newPage);
   };
-
   const handleChangeRowsPerPage = (event) => {
     setRowsPerPage(parseInt(event.target.value, 6));
     setPage(0);
   };
-
   const handleAlertClose = (event, reason) => {
     if (reason === "clickaway") {
       return;
@@ -158,18 +141,8 @@ export default function Reports() {
 
     setAlertMessage({ open: false });
   };
-
-  React.useEffect(() => {
-    fetchData();
-
-    return () => {
-      console.log("Reports component mounted");
-    };
-  }, []);
-  //   React.useEffect(() => {
-  //     setSearchFilterModal(false);
-  //   }, [searchFilter, semesterFilter]);
   const fetchData = async () => {
+    setIsLoading(true);
     axios
       .get("/statistic/reports", {
         params: {
@@ -196,6 +169,9 @@ export default function Reports() {
           message: error.message,
           variant: "error",
         });
+      })
+      .finally(() => {
+        setIsLoading(false);
       });
     axios
       .get("/term/", {
@@ -225,91 +201,6 @@ export default function Reports() {
         });
       });
   };
-  const data = [
-    {
-      department_name: "CAS",
-      semester: { name: "Second Semester", number: 2 },
-      departmentViolationCount: 2,
-      programs: [
-        {
-          program_name: "BA Communication",
-          violations: [
-            {
-              code: "12.1.12",
-              date_committed: "2025-02-05T11:15:00.146Z",
-              reported_by: "6728b20d48c4d4c422da5c59",
-              student: {
-                srcode: "88888888",
-                fullname: "John Cruz",
-                email: "johncruz@email.com",
-                violation_summary: {
-                  categories: [{ category: "minor", count: 1 }],
-                  total_violations: 1,
-                },
-              },
-            },
-            {
-              code: "14.3.4",
-              date_committed: "2025-02-10T09:30:00.000Z",
-              reported_by: "6728b20d48c4d4c422da5c59",
-              student: {
-                srcode: "88888888",
-                fullname: "John Cruz",
-                email: "johncruz@email.com",
-                violation_summary: {
-                  categories: [{ category: "major", count: 1 }],
-                  total_violations: 2,
-                },
-              },
-            },
-          ],
-          programViolationCount: 2,
-        },
-      ],
-    },
-    {
-      department_name: "CABEIHM",
-      semester: { name: "Second Semester", number: 2 },
-      departmentViolationCount: 2,
-      programs: [
-        {
-          program_name: "BSBA Marketing Management",
-          violations: [
-            {
-              code: "12.1.2",
-              date_committed: "2025-02-06T15:55:34.218Z",
-              reported_by: "6728b20d48c4d4c422da5c59",
-              student: {
-                srcode: "99999999",
-                fullname: "Justin Bieber",
-                email: "justinbieber@email.com",
-                violation_summary: {
-                  categories: [{ category: "minor", count: 2 }],
-                  total_violations: 2,
-                },
-              },
-            },
-            {
-              code: "10.5.3",
-              date_committed: "2025-02-12T08:45:00.000Z",
-              reported_by: "6728b20d48c4d4c422da5c59",
-              student: {
-                srcode: "99999999",
-                fullname: "Justin Bieber",
-                email: "justinbieber@email.com",
-                violation_summary: {
-                  categories: [{ category: "major", count: 1 }],
-                  total_violations: 3,
-                },
-              },
-            },
-          ],
-          programViolationCount: 2,
-        },
-      ],
-    },
-  ];
-
   const filteredData = rows.flatMap((dept) =>
     dept.programs.flatMap((program) =>
       program.violations
@@ -324,7 +215,7 @@ export default function Reports() {
           const summary = violation.student.violation_summary;
           const minorCount = summary
             ? summary.categories.find((c) => c.category === "minor")?.count || 0
-            : 1; // Default to 1 if summary is null
+            : 1;
           const majorCount = summary
             ? summary.categories.find((c) => c.category === "major")?.count || 0
             : 0;
@@ -342,7 +233,99 @@ export default function Reports() {
         })
     )
   );
-
+  const GetHeader = () => {
+    return (
+      <div className="flex flex-col md:flex-row justify-between gap-x-2 text-sm md:text-md bg-white my-2 rounded-md">
+        <h1 className="text-2xl text-red-600 py-3 flex items-center">
+          Reports List
+        </h1>
+        <Button onClick={() => setSearchFilterModal(true)} color="error">
+          Filter
+        </Button>
+      </div>
+    );
+  };
+  const GetTableHead = () => {
+    return (
+      <TableHead>
+        <TableRow>
+          <TableCell sx={{ fontWeight: "bold" }}>Student</TableCell>
+          <TableCell sx={{ fontWeight: "bold" }}>Department</TableCell>
+          <TableCell sx={{ fontWeight: "bold" }}>Program</TableCell>
+          <TableCell sx={{ fontWeight: "bold" }}>Violation Details</TableCell>
+          <TableCell sx={{ fontWeight: "bold" }}>Minor Offenses</TableCell>
+          <TableCell sx={{ fontWeight: "bold" }}>Major Offenses</TableCell>
+        </TableRow>
+      </TableHead>
+    );
+  };
+  const GetTableBodyData = () => {
+    if (isLoading) {
+      return (
+        <TableRow>
+          <TableCell colSpan={6} align="center">
+            Loading...
+          </TableCell>
+        </TableRow>
+      );
+    } else if (filteredData.length === 0 && isLoading === false) {
+      return (
+        <TableRow>
+          <TableCell colSpan={6} align="center">
+            No records found
+          </TableCell>
+        </TableRow>
+      );
+    }
+    return filteredData.map((row, index) => (
+      <TableRow key={index}>
+        <TableCell>{row.student}</TableCell>
+        <TableCell>{row.department}</TableCell>
+        <TableCell>{row.program}</TableCell>
+        <TableCell>{row.violationDetails}</TableCell>
+        <TableCell>{row.minorOffenses}</TableCell>
+        <TableCell>{row.majorOffenses}</TableCell>
+      </TableRow>
+    ));
+  };
+  const GetTableFooter = () => {
+    return (
+      <TableRow>
+        <TablePagination
+          rowsPerPageOptions={[{ label: "All", value: -1 }]} // Provide an array of options
+          count={filteredData.length}
+          rowsPerPage={rowsPerPage}
+          page={page}
+          onPageChange={handleChangePage}
+          onRowsPerPageChange={handleChangeRowsPerPage}
+          ActionsComponent={TablePaginationActions}
+        />
+      </TableRow>
+    );
+  };
+  const GetTable = () => {
+    return (
+      <StyledToolbar variant="dense" disableGutters>
+        <TableContainer component={Paper} className="">
+          <Table sx={{ minWidth: 400 }}>
+            <GetTableHead />
+            <TableBody>
+              <GetTableBodyData />
+            </TableBody>
+            <TableFooter>
+              <GetTableFooter />
+            </TableFooter>
+          </Table>
+        </TableContainer>
+      </StyledToolbar>
+    );
+  };
+  React.useEffect(() => {
+    fetchData();
+    return () => {
+      console.log("Reports component mounted");
+    };
+  }, []);
   return (
     <Container
       sx={{
@@ -355,61 +338,8 @@ export default function Reports() {
       }}
     >
       <div className="w-full h-full mx-auto ">
-        <div className="flex flex-col md:flex-row justify-between gap-x-2 text-sm md:text-md bg-white my-2 rounded-md">
-          <h1 className="text-2xl text-red-600 py-3 flex items-center">
-            Reports List
-          </h1>
-          <Button onClick={() => setSearchFilterModal(true)} color="error">
-            Filter
-          </Button>
-        </div>
-        <StyledToolbar variant="dense" disableGutters>
-          <TableContainer component={Paper} className="">
-            <Table sx={{ minWidth: 400 }}>
-              <TableHead>
-                <TableRow>
-                  <TableCell sx={{ fontWeight: "bold" }}>Student</TableCell>
-                  <TableCell sx={{ fontWeight: "bold" }}>Department</TableCell>
-                  <TableCell sx={{ fontWeight: "bold" }}>Program</TableCell>
-                  <TableCell sx={{ fontWeight: "bold" }}>
-                    Violation Details
-                  </TableCell>
-                  <TableCell sx={{ fontWeight: "bold" }}>
-                    Minor Offenses
-                  </TableCell>
-                  <TableCell sx={{ fontWeight: "bold" }}>
-                    Major Offenses
-                  </TableCell>
-                </TableRow>
-              </TableHead>
-              <TableBody>
-                {filteredData.map((row, index) => (
-                  <TableRow key={index}>
-                    <TableCell>{row.student}</TableCell>
-                    <TableCell>{row.department}</TableCell>
-                    <TableCell>{row.program}</TableCell>
-                    <TableCell>{row.violationDetails}</TableCell>
-                    <TableCell>{row.minorOffenses}</TableCell>
-                    <TableCell>{row.majorOffenses}</TableCell>
-                  </TableRow>
-                ))}
-              </TableBody>
-              <TableFooter>
-                <TableRow>
-                  <TablePagination
-                    rowsPerPageOptions={[{ label: "All", value: -1 }]} // Provide an array of options
-                    count={filteredData.length}
-                    rowsPerPage={rowsPerPage}
-                    page={page}
-                    onPageChange={handleChangePage}
-                    onRowsPerPageChange={handleChangeRowsPerPage}
-                    ActionsComponent={TablePaginationActions}
-                  />
-                </TableRow>
-              </TableFooter>
-            </Table>
-          </TableContainer>
-        </StyledToolbar>
+        <GetHeader />
+        <GetTable />
         {searchFilterModal && (
           <Dialog
             open={searchFilterModal}
@@ -426,7 +356,7 @@ export default function Reports() {
             <DialogTitle className="slide-in-visible mb-1 font-bold text-large">
               Filter the reports by student name and semester
             </DialogTitle>
-            <DialogContent>
+            <DialogContent sx={{ overflowX: "hidden", overflowY: "hidden" }}>
               <TextField
                 className="slide-in-from-right"
                 fullWidth
