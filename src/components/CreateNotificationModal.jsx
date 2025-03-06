@@ -1,5 +1,6 @@
 import {
   Button,
+  DialogActions,
   FormControl,
   InputLabel,
   MenuItem,
@@ -53,7 +54,6 @@ function CreateNotificationModal({ closeModal, sendAlert }) {
       return;
     }
     const formattedValue = formatToMicroseconds(Notification.set_when);
-
     axios
       .post(
         "/notification",
@@ -87,103 +87,99 @@ function CreateNotificationModal({ closeModal, sendAlert }) {
       .finally(() => {
         closeModal();
       });
-    // console.log(
-    //   "Converted using formattomicrosecond function: ",
-    //   formattedValue
-    // );
   };
   return (
     <div>
-      {/* <h1 className="text-xl font-semibold">Queue Notification</h1> */}
-      <div>
-        <TextField
-          margin="dense"
-          id="standard-multiline-static"
-          label="Subject"
+      <TextField
+        margin="dense"
+        id="standard-multiline-static"
+        label="Subject"
+        color="error"
+        multiline
+        rows={2}
+        fullWidth
+        required={true}
+        error={Notification.error}
+        helperText={Notification.error ? "Subject is required" : ""}
+        value={Notification.subject}
+        onChange={(e) =>
+          setNotification({ ...Notification, subject: e.target.value })
+        }
+      />
+      <TextField
+        margin="dense"
+        id="standard-multiline-static"
+        label="Message"
+        color="error"
+        multiline
+        rows={6}
+        fullWidth
+        required={true}
+        error={Notification.error}
+        helperText={Notification.error ? "Notification body is required" : ""}
+        value={Notification.body}
+        onChange={(e) =>
+          setNotification({ ...Notification, body: e.target.value })
+        }
+      />
+      <TextField
+        margin="dense"
+        id="standard-multiline-static"
+        label="Category"
+        color="error"
+        fullWidth
+        required={true}
+        error={Notification.error}
+        helperText={Notification.error ? "Category is required" : ""}
+        value={Notification.category}
+        onChange={(e) =>
+          setNotification({ ...Notification, category: e.target.value })
+        }
+      />
+      <TextField
+        margin="dense"
+        label="Send Notification At"
+        type="datetime-local"
+        color="error"
+        fullWidth
+        required={true}
+        error={Notification.error}
+        helperText={Notification.error ? "Notification is required" : ""}
+        value={Notification.set_when} // Display in a valid format for datetime-local
+        onChange={handleDateTimeChange}
+      />
+      <FormControl fullWidth margin="dense">
+        <InputLabel id="demo-simple-select-label" color="error">
+          Sent to the following:
+        </InputLabel>
+        <Select
+          labelId="demo-multiple-name-label"
+          id="demo-multiple-name"
+          multiple
+          value={Notification.sent_to}
+          input={<OutlinedInput label="Sent to the following:" />}
+          MenuProps={MenuProps}
+          onChange={(e) => {
+            setNotification({ ...Notification, sent_to: e.target.value });
+            console.log("Sent to:", Notification.sent_to);
+          }}
           color="error"
-          multiline
-          rows={2}
-          fullWidth
-          required={true}
-          error={Notification.error}
-          helperText={Notification.error ? "Subject is required" : ""}
-          value={Notification.subject}
-          onChange={(e) =>
-            setNotification({ ...Notification, subject: e.target.value })
-          }
-        />
-        <TextField
-          margin="dense"
-          id="standard-multiline-static"
-          label="Message"
-          color="error"
-          multiline
-          rows={6}
-          fullWidth
-          required={true}
-          error={Notification.error}
-          helperText={Notification.error ? "Notification body is required" : ""}
-          value={Notification.body}
-          onChange={(e) =>
-            setNotification({ ...Notification, body: e.target.value })
-          }
-        />
-        <TextField
-          margin="dense"
-          id="standard-multiline-static"
-          label="Category"
-          color="error"
-          fullWidth
-          required={true}
-          error={Notification.error}
-          helperText={Notification.error ? "Category is required" : ""}
-          value={Notification.category}
-          onChange={(e) =>
-            setNotification({ ...Notification, category: e.target.value })
-          }
-        />
-        <TextField
-          margin="dense"
-          label="Send Notification At"
-          type="datetime-local"
-          color="error"
-          fullWidth
-          required={true}
-          error={Notification.error}
-          helperText={Notification.error ? "Notification is required" : ""}
-          value={Notification.set_when} // Display in a valid format for datetime-local
-          onChange={handleDateTimeChange}
-        />
-        <FormControl fullWidth margin="dense">
-          <InputLabel id="demo-simple-select-label">
-            Sent to the following:
-          </InputLabel>
-          <Select
-            labelId="demo-multiple-name-label"
-            id="demo-multiple-name"
-            multiple
-            value={Notification.sent_to}
-            input={<OutlinedInput label="Sent to the following:" />}
-            MenuProps={MenuProps}
-            onChange={(e) => {
-              setNotification({ ...Notification, sent_to: e.target.value });
-              console.log("Sent to:", Notification.sent_to);
-            }}
-          >
-            <MenuItem value={"STUDENT"}>Student</MenuItem>
-            <MenuItem value={"ADMIN"}>Admin</MenuItem>
-            <MenuItem value={"SECURITY"}>Security Guard</MenuItem>
-            <MenuItem value={"PROGRAM HEAD"}>Program Head</MenuItem>
-            <MenuItem value={"DEAN"}>Dean</MenuItem>
-          </Select>
-        </FormControl>
-        <Button onClick={sendNotification} color="error" fullWidth>
+        >
+          <MenuItem value={"STUDENT"}>Student</MenuItem>
+          <MenuItem value={"ADMIN"}>Admin</MenuItem>
+          <MenuItem value={"SECURITY"}>Security Guard</MenuItem>
+          <MenuItem value={"PROGRAM HEAD"}>Program Head</MenuItem>
+          <MenuItem value={"DEAN"}>Dean</MenuItem>
+        </Select>
+      </FormControl>
+      <DialogActions sx={{ padding: "0", marginY: "3px" }}>
+        <Button onClick={sendNotification} color="error">
           Send Notification
         </Button>
-        <Button onClick={closeModal} color="error" fullWidth>
+        <Button onClick={closeModal} color="error">
           Cancel
         </Button>
-      </div>
+      </DialogActions>
     </div>
   );
 }

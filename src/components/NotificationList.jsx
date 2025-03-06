@@ -8,23 +8,21 @@ import {
   DialogActions,
   DialogContent,
   DialogTitle,
-  Paper,
   Snackbar,
   styled,
   Table,
   TableBody,
   TableCell,
-  TableContainer,
-  TableHead,
+  TableFooter,
   TableRow,
   Toolbar,
-  Tooltip,
 } from "@mui/material";
 import ReplayIcon from "@mui/icons-material/Replay";
 import axios from "axios";
 import moment from "moment";
 import CreateNotificationModal from "./CreateNotificationModal";
 import ViewNotificationModal from "./ViewNotificationModal";
+import { AnimatePresence, motion } from "framer-motion";
 
 const StyledToolbar = styled(Toolbar)(({ theme }) => ({
   display: "flex",
@@ -50,50 +48,22 @@ export default function NotificationList() {
   const [notifications, setNotifications] = useState([]);
   const [filteredNotifications, setFilteredNotifications] = useState([]);
   const [selectedNotification, setSelectedNotification] = useState(null);
-  const [isLoading, setIsLoading] = useState(false);
-  const [filter, setFilter] = useState("All");
+  const [isLoading, setIsLoading] = useState(true);
+  const [filter] = useState("All");
   const [alertMessage, setAlertMessage] = React.useState({
     open: false,
     title: "",
     message: "",
     variant: "",
   });
+  const truncateText = (text, maxLength) =>
+    text.length > maxLength ? text.slice(0, maxLength) + "..." : text;
   // Fetch notifications from the API
-  const fetchNotifications = () => {
-    setIsLoading(true);
-    try {
-      axios
-        .get(`notification`, {
-          headers: {
-            "Content-Type": "application/json",
-          },
-          params: {
-            skip: 0,
-            limit: 100,
-          },
-        })
-        .then((response) => {
-          if (response.data.status === "success") {
-            setNotifications(response.data.data);
-            setFilteredNotifications(response.data.data);
-            console.log("Notifications fetched:", response.data.data); // Check if this logs the correct data
-            applyFilter();
-          }
-        });
-    } catch (error) {
-      console.error("Error fetching notifications:", error);
-    } finally {
-      setIsLoading(false);
-    }
-  };
-
   // Apply filter to notifications
   const applyFilter = () => {
     const currentTimestamp = Date.now();
-    if (filteredNotifications.length == 0) return;
     if (filter === "All") {
       setFilteredNotifications(notifications);
-      console.log("Filtering all");
     } else if (filter === "Sent") {
       setFilteredNotifications(
         notifications.filter(
@@ -107,23 +77,7 @@ export default function NotificationList() {
         )
       );
     }
-    console.log("Filtering");
   };
-
-  // Fetch notifications on initial render
-  useEffect(() => {
-    fetchNotifications();
-  }, []);
-
-  // Apply filter whenever notifications or filter state changes
-  useEffect(() => {
-    applyFilter();
-  }, [notifications, filter]);
-
-  const handleFilterChange = (event) => {
-    setFilter(event.target.value);
-  };
-
   const handleClose = () => {
     setIsCreateModalOpen(false);
     setIsViewModalOpen(false);
@@ -162,35 +116,86 @@ export default function NotificationList() {
         setIsDeleteModalOpen(false);
       });
   };
-  const truncateText = (text, maxLength) =>
-    text.length > maxLength ? text.slice(0, maxLength) + "..." : text;
+  const fetchNotifications = () => {
+    try {
+      setIsLoading(true);
+      axios
+        .get(`notification`, {
+          headers: {
+            "Content-Type": "application/json",
+          },
+          params: {
+            skip: 0,
+            limit: 100,
+          },
+        })
+        .then((response) => {
+          if (response.data.status === "success") {
+            setNotifications(response.data.data);
+            setFilteredNotifications(response.data.data);
+          }
+        });
+    } catch (error) {
+      console.error("Error fetching notifications:", error);
+    } finally {
+      setIsLoading(false);
+      applyFilter();
+    }
+  };
+  // Fetch notifications on initial render
+  useEffect(() => {
+    fetchNotifications();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+  // Apply filter whenever notifications or filter state changes
+  useEffect(() => {
+    applyFilter();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [notifications, filter]);
   return (
-    <div className="">
-      <div className="flex flex-row justify-between my-2">
-        <h1 className="text-2xl text-red-600 py-3">Notifications</h1>
-      </div>
-      {isLoading ? (
-        <p>Loading...</p>
-      ) : (
+    <>
+      <div className="w-full h-full mx-auto">
+        <AnimatePresence>
+          <motion.div
+            key="header"
+            initial={{ opacity: 0, y: -10 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, y: -10 }}
+          >
+            <h1 className="text-2xl text-red-600 py-3">Notifications</h1>
+          </motion.div>
+        </AnimatePresence>
         <StyledToolbar variant="dense" disableGutters>
-          <TableContainer component={Paper} className="">
-            <Table sx={{ minWidth: 500 }} aria-label="simple table">
-              <TableHead sx={{ padding: "10px" }}>
-                <TableRow className="slide-in-down-visible">
+          <Table sx={{ minWidth: 500 }} aria-label="simple table">
+            <AnimatePresence>
+              <motion.thead
+                key="table-head"
+                initial={{ opacity: 0, y: -10 }} // Slide down animation
+                animate={{ opacity: 1, y: 0 }}
+                exit={{ opacity: 0, y: -10 }}
+                transition={{ duration: 0.3 }}
+              >
+                <TableRow sx={{ width: "100%" }}>
                   <TableCell onClick={() => fetchNotifications()} size="small">
-                    <div className="hover:bg-gray-200 hover:rounded-md py-2 px-3 rounded-sm flex items-start w-fit">
+                    <motion.div
+                      whileHover={{ scale: 1.1 }}
+                      className="hover:bg-gray-200 hover:rounded-md py-2 px-3 rounded-sm flex items-start w-fit"
+                      onClick={() => fetchNotifications()}
+                    >
                       <ReplayIcon fontSize="small" />
-                    </div>
+                    </motion.div>
                   </TableCell>
                   <TableCell size="small">
                     <div className="hover:bg-gray-200 hover:rounded-md rounded-sm flex items-start w-fit">
-                      <Button
-                        onClick={() => setIsCreateModalOpen(true)}
-                        color="black"
-                        sx={{ fontWeight: "bold", fontSize: "auto" }}
-                      >
-                        Compose
-                      </Button>
+                      <motion.div whileHover={{ scale: 1.1 }}>
+                        <Button
+                          onClick={() => setIsCreateModalOpen(true)}
+                          color="black"
+                          sx={{ fontWeight: "bold", fontSize: "auto" }}
+                        >
+                          Compose
+                        </Button>
+                      </motion.div>
                     </div>
                   </TableCell>
                   <TableCell size="small"></TableCell>
@@ -199,7 +204,7 @@ export default function NotificationList() {
                     align="center"
                     sx={{ textSizeAdjust: "auto", fontWeight: "bold" }}
                   >
-                    Status
+                    Sent At
                   </TableCell>
                   <TableCell
                     size="large"
@@ -209,92 +214,86 @@ export default function NotificationList() {
                     Action
                   </TableCell>
                 </TableRow>
-              </TableHead>
-              <TableBody>
-                {filteredNotifications
-                  ? filteredNotifications.map((notif, idx) => (
-                      // <Tooltip
-                      //   title={"Click to view " + notif.subject}
-                      //   key={idx}
-                      // >
-                      <TableRow
-                        key={idx}
-                        className=" border-gray-200 w-full border-separate hover:bg-gray-100 hover:cursor-pointer slide-in-down-visible"
-                        sx={{ paddingY: 2 }} // Increase vertical padding
-                      >
-                        <TableCell className="w-[10px] sm:w-[20px] md:w-[30px] lg:w-[40px] xl:w-[50px] 2xl:w-[60px] border text-center">
-                          <p> {idx + 1}.</p>
-                        </TableCell>
-                        <TableCell className="px-4 py-2 text-sm text-gray-800 md:text-lg font-semibold font-sans w-1/4 border ">
-                          <p className="font-semibold">
-                            {truncateText(notif.subject, 50)}
-                          </p>
-                        </TableCell>
-                        <TableCell className="px-4 py-2 text-sm text-gray-800 w-1/4 overflow-hidden  border">
-                          <p className="font-thin">
-                            <strong className="font-semibold text-">
-                              {truncateText(notif.category, 20)}
-                            </strong>{" "}
-                            - {truncateText(notif.body, 50)}
-                          </p>
-                        </TableCell>
-                        <TableCell
-                          className="px-4 py-2 text-sm text-gray-800 w-1/4 "
-                          align="center"
-                        >
-                          {moment(notif.send_at).format("MMMM DD, YYYY")}
-                        </TableCell>
-                        <TableCell className="w-fit" align="center">
-                          <Button
-                            color="error"
-                            variant="text"
-                            onClick={() => {
-                              setSelectedNotification(notif);
-                              setIsViewModalOpen(true);
-                            }}
-                          >
-                            View
-                          </Button>
-                          <Button
-                            color="error"
-                            variant="text"
-                            onClick={() => {
-                              setIsDeleteModalOpen(true);
-                              setSelectedNotification(notif);
-                            }}
-                          >
-                            Delete
-                          </Button>
-                        </TableCell>
-                      </TableRow>
-                      // </Tooltip>
-                    ))
-                  : ""}
-                {filteredNotifications.length === 0 && (
-                  <TableRow fullWidth align="center">
+              </motion.thead>
+            </AnimatePresence>
+            <TableBody>
+              <AnimatePresence>
+                {isLoading ? (
+                  <TableRow align="center">
                     <TableCell
                       colSpan={5}
                       className="text-center"
                       align="center"
                     >
-                      No Notifications.
+                      Loading...
                     </TableCell>
                   </TableRow>
+                ) : (
+                  filteredNotifications.map((notif, idx) => (
+                    <motion.tr
+                      key={notif.id}
+                      layout
+                      initial={{ opacity: 0, y: 10 }}
+                      animate={{ opacity: 1, y: 0 }}
+                      exit={{ opacity: 0, y: -10 }}
+                      transition={{ duration: 0.3, delay: idx * 0.1 }}
+                    >
+                      <TableCell className="w-[10px] sm:w-[20px] md:w-[30px] lg:w-[40px] xl:w-[50px] 2xl:w-[60px] border text-center">
+                        {idx + 1}.
+                      </TableCell>
+                      <TableCell className="px-4 py-2 text-sm text-gray-800 md:text-lg font-semibold font-sans w-1/4 border ">
+                        {truncateText(notif.subject, 50)}
+                      </TableCell>
+                      <TableCell className="px-4 py-2 text-sm text-gray-800 w-1/4 overflow-hidden border">
+                        <strong className="font-semibold">
+                          {truncateText(notif.category, 20)}
+                        </strong>{" "}
+                        - {truncateText(notif.body, 50)}
+                      </TableCell>
+                      <TableCell
+                        className="px-4 py-2 text-sm text-gray-800 w-1/4"
+                        align="center"
+                      >
+                        {moment(notif.send_at).format("MMMM DD, YYYY")}
+                      </TableCell>
+                      <TableCell className="w-fit" align="center">
+                        <Button
+                          color="error"
+                          variant="text"
+                          onClick={() => {
+                            setSelectedNotification(notif);
+                            setIsViewModalOpen(true);
+                          }}
+                        >
+                          View
+                        </Button>
+                        <Button
+                          color="error"
+                          variant="text"
+                          onClick={() => {
+                            setIsDeleteModalOpen(true);
+                            setSelectedNotification(notif);
+                          }}
+                        >
+                          Delete
+                        </Button>
+                      </TableCell>
+                    </motion.tr>
+                  ))
                 )}
-              </TableBody>
-            </Table>
-          </TableContainer>
+              </AnimatePresence>
+            </TableBody>
+            <TableFooter></TableFooter>
+          </Table>
         </StyledToolbar>
-      )}
-
-      <Dialog
-        open={isCreateModalOpen}
-        onClose={handleClose}
-        fullWidth={true}
-        maxWidth="sm"
-      >
-        <DialogTitle>New Message</DialogTitle>
-        <DialogContent>
+      </div>
+      <Dialog open={isCreateModalOpen} onClose={handleClose} maxWidth="sm">
+        <DialogTitle
+          sx={{ paddingY: "10px", paddingBottom: "0px", paddingX: "15px" }}
+        >
+          New Message
+        </DialogTitle>
+        <DialogContent sx={{ padding: "15px", paddingBottom: "10px" }}>
           <CreateNotificationModal
             closeModal={handleClose}
             sendAlert={sendAlert}
@@ -304,23 +303,28 @@ export default function NotificationList() {
       <Dialog
         open={isViewModalOpen}
         onClose={handleClose}
-        fullWidth={true}
+        fullWidth
         maxWidth="sm"
       >
-        <DialogContent>
-          <ViewNotificationModal
-            closeModal={handleClose}
-            notificationData={selectedNotification}
-            Snackbar={alertMessage}
-          />
+        <DialogTitle sx={{ padding: "15px", paddingBottom: "10px" }}>
+          View Notification
+        </DialogTitle>
+        <DialogContent sx={{ padding: "15px", paddingBottom: "10px" }}>
+          {isViewModalOpen && selectedNotification && (
+            <ViewNotificationModal
+              closeModal={handleClose}
+              notificationData={selectedNotification}
+              Snackbar={alertMessage}
+            />
+          )}
         </DialogContent>
+        <DialogActions>
+          <Button onClick={handleClose} color="error">
+            Close
+          </Button>
+        </DialogActions>
       </Dialog>
-      <Dialog
-        open={isDeleteModalOpen}
-        onClose={handleClose}
-        fullWidth={true}
-        maxWidth="sm"
-      >
+      <Dialog open={isDeleteModalOpen} onClose={handleClose} maxWidth="sm">
         <DialogTitle>Delete Notification?</DialogTitle>
         <DialogContent>
           <p>Are you sure you want to delete this notification?</p>
@@ -333,20 +337,6 @@ export default function NotificationList() {
             Cancel
           </Button>
         </DialogActions>
-      </Dialog>
-      <Dialog
-        open={isViewModalOpen}
-        onClose={handleClose}
-        fullWidth={true}
-        maxWidth="sm"
-      >
-        <DialogContent>
-          <ViewNotificationModal
-            closeModal={handleClose}
-            notificationData={selectedNotification}
-            Snackbar={alertMessage}
-          />
-        </DialogContent>
       </Dialog>
       <Snackbar
         open={alertMessage.open}
@@ -365,6 +355,6 @@ export default function NotificationList() {
           {alertMessage.message}
         </Alert>
       </Snackbar>
-    </div>
+    </>
   );
 }
