@@ -54,33 +54,6 @@ export default function Chart() {
     };
   }, []);
 
-  const legendProps =
-    screenWidth < 730
-      ? {
-          padding: { bottom: -50 },
-          direction: "row",
-          itemMarkHeight: 10,
-          position: {
-            horizontal: "left",
-            vertical: "top",
-          },
-          itemMarkWidth: 20,
-          itemGap: 5,
-          spacing: 20,
-        }
-      : {
-          padding: { right: 0 },
-          direction: "column",
-          itemMarkHeight: 10,
-          position: {
-            horizontal: "right",
-            vertical: "top",
-          },
-          itemMarkWidth: 20,
-          itemGap: 5,
-          spacing: 20,
-        };
-
   return (
     <>
       <Container
@@ -93,49 +66,6 @@ export default function Chart() {
         }}
       >
         <BarChartHead />
-        {/* <div className="w-full flex-col pb-5 px-10 my-20">
-          <div className="w-full p-5 overflow-visible group h-full bg-white rounded-md my-4 ">
-            <div className="flex justify-between">
-              <h1 className="text-lg font-bold">Department name here</h1>
-              <button
-                onClick={fetchData}
-                className="group-hover:block hidden text-cyan-600 hover:bg-cyan-100 p-2 rounded-md"
-              >
-                <RestartAltIcon />
-                Reload
-              </button>
-            </div>
-            {loading ? (
-              <p>Loading...</p>
-            ) : (
-              <StyledEngineProvider injectFirst>
-                <PieChart
-                  series={[
-                    {
-                      data: data,
-                      highlightScope: {
-                        fade: "global",
-                        highlight: "item",
-                      },
-                      faded: {
-                        innerRadius: 30,
-                        additionalRadius: -30,
-                        color: "gray",
-                      },
-                      valueFormatter,
-                      arcLabelMinAngle: 20,
-                      arcLabelRadius: 90,
-                    },
-                  ]}
-                  slotProps={{
-                    legend: legendProps,
-                  }}
-                  height={screenWidth < 1000 ? 600 : 500}
-                />
-              </StyledEngineProvider>
-            )}
-          </div>
-        </div> */}
       </Container>
     </>
   );
