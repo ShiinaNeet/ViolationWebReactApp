@@ -107,7 +107,7 @@ export default function BarChartHead() {
         minHeight: "100vh",
       }}
     >
-      <div className="mx-auto h-full sm:w-full px-4">
+      <div className="mx-auto h-full w-full px-4">
         {loading ? (
           <GetLoadingUI />
         ) : departments.length > 0 && !loading ? (
