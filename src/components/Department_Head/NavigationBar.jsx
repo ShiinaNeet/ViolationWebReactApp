@@ -20,24 +20,27 @@ import {
 } from "@mui/material";
 import { red } from "@mui/material/colors";
 
-const StyledToolbar = styled(Toolbar)(({ theme }) => ({
-  display: "flex",
-  alignItems: "center",
-  justifyContent: "space-between",
-  flexShrink: 0,
-  borderRadius: `calc(${theme.shape.borderRadius}px + 8px)`,
-  backdropFilter: "blur(24px)",
-  border: "1px solid ",
-  borderColor: (theme.vars || theme).palette.divider,
-  backgroundColor: "red",
-  boxShadow: `0px 4px 6px ${alpha(red[500], 0.9)}`,
-  padding: "8px 12px",
-}));
-
 const Department_Head_NavigationBar = () => {
   const { logout, isAuthenticated } = useAuth();
   const [open, setOpen] = React.useState(false);
-
+  const MenuButtonItems = [
+    { name: "Program Head", link: "/department-head/home" },
+    { name: "Graph", link: "/department-head/graph" },
+    { name: "Notification", link: "/department-head/Notification" },
+  ];
+  const StyledToolbar = styled(Toolbar)(({ theme }) => ({
+    display: "flex",
+    alignItems: "center",
+    justifyContent: "space-between",
+    flexShrink: 0,
+    borderRadius: `calc(${theme.shape.borderRadius}px + 8px)`,
+    backdropFilter: "blur(24px)",
+    border: "1px solid ",
+    borderColor: (theme.vars || theme).palette.divider,
+    backgroundColor: "red",
+    boxShadow: `0px 4px 6px ${alpha(red[500], 0.9)}`,
+    padding: "8px 12px",
+  }));
   const toggleDrawer = (newOpen) => () => {
     if (
       event.type === "keydown" &&
@@ -48,11 +51,6 @@ const Department_Head_NavigationBar = () => {
     setOpen(newOpen);
   };
 
-  const MenuButtonItems = [
-    { name: "Program Head", link: "/department-head/home" },
-    { name: "Graph", link: "/department-head/graph" },
-    { name: "Notification", link: "/department-head/Notification" },
-  ];
   const GetMenuButtons = () => {
     return (
       <Box sx={{ p: 2, backgroundColor: "background.default" }}>

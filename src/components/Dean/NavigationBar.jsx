@@ -36,9 +36,38 @@ const StyledToolbar = styled(Toolbar)(({ theme }) => ({
 const NavigationBar = () => {
   const { logout, isAuthenticated } = useAuth();
   const [open, setOpen] = React.useState(false);
-
+  const MenuButtonItems = [
+    { name: "Home", link: "/dean/home" },
+    { name: "Students", link: "/dean/students" },
+    { name: "Departments", link: "/dean/departments" },
+    { name: "Notification", link: "/dean/Notification" },
+  ];
   const toggleDrawer = (newOpen) => () => {
     setOpen(newOpen);
+  };
+  const GetNavigationButtons = () => {
+    return MenuButtonItems.map((item, index) => {
+      return (
+        <Button variant="text" color="white" size="small" key={index}>
+          <Link
+            to={item.link}
+            className=" hover:bg-red-100 hover:text-red-600 hover:rounded-md
+            hover:cursor-pointer p-2"
+          >
+            {item.name}
+          </Link>
+        </Button>
+      );
+    });
+  };
+  const GetMenuButtons = () => {
+    return MenuButtonItems.map((item, index) => {
+      return (
+        <Link to={item.link} key={index}>
+          <MenuItem>{item.name} </MenuItem>
+        </Link>
+      );
+    });
   };
   return (
     <AppBar
@@ -62,18 +91,8 @@ const NavigationBar = () => {
               className="h-fit mx-2 flex justify-center self-center "
             />
             <h1 className="text-white-500">
-              {" "}
               Batangas State University Disciplinary Management
             </h1>
-
-            <Box sx={{ display: { xs: "none", md: "flex" } }}>
-              {/* <Link
-                className="p-5 hover:bg-blue-700 hover:rounded-md hover:cursor-pointer"
-                to="/Students"
-              >
-                Students
-              </Link>{" "} */}
-            </Box>
           </Box>
           <Box
             sx={{
@@ -82,41 +101,9 @@ const NavigationBar = () => {
               alignItems: "center",
             }}
           >
-            <Button variant="text" color="white" size="small">
-              <Link
-                className=" hover:bg-red-100 hover:text-red-600 hover:rounded-md hover:cursor-pointer p-2"
-                to="/dean/home"
-              >
-                HOME
-              </Link>
-            </Button>
-            <Button variant="text" color="white" size="small">
-              <Link
-                className=" hover:bg-red-100 hover:text-red-600 hover:rounded-md hover:cursor-pointer p-2"
-                to="/dean/students"
-              >
-                Students
-              </Link>
-            </Button>
-            <Button variant="text" color="white" size="small">
-              <Link
-                className=" hover:bg-red-100 hover:text-red-600 hover:rounded-md hover:cursor-pointer p-2"
-                to="/dean/departments"
-              >
-                Departments
-              </Link>
-            </Button>
-            <Button variant="text" color="white" size="small">
-              <Link
-                className=" hover:bg-red-100 hover:text-red-600 hover:rounded-md hover:cursor-pointer p-2"
-                to="/dean/Notification"
-              >
-                Notifications
-              </Link>
-            </Button>
+            <GetNavigationButtons />
             {isAuthenticated && (
               <Button variant="text" color="white" size="small">
-                {" "}
                 <Link
                   className=" hover:bg-red-100 hover:text-red-600 hover:rounded-md hover:cursor-pointer p-2"
                   onClick={logout}
@@ -132,7 +119,6 @@ const NavigationBar = () => {
             <IconButton aria-label="Menu button" onClick={toggleDrawer(true)}>
               <MenuIcon />
             </IconButton>
-
             <Drawer
               anchor="top"
               open={open}
@@ -154,30 +140,13 @@ const NavigationBar = () => {
                     <CloseRoundedIcon />
                   </IconButton>
                 </Box>
-
-                <Link to="/dean/home">
-                  <MenuItem>Dean </MenuItem>
-                </Link>
-
-                <Link to="/dean/students">
-                  <MenuItem>Students </MenuItem>
-                </Link>
-
-                <Link to="/dean/departments">
-                  <MenuItem>Departments </MenuItem>
-                </Link>
-
-                <Link to="/dean/Notification">
-                  <MenuItem>Notifications </MenuItem>
-                </Link>
+                <GetMenuButtons />
                 <Divider sx={{ my: 3 }} />
-
                 {isAuthenticated && (
                   <Link onClick={logout}>
                     <MenuItem>Logout </MenuItem>
                   </Link>
                 )}
-
                 {localStorage.getItem("accessToken") === null &&
                   window.location.replace("/login")}
               </Box>
