@@ -47,6 +47,7 @@ export default function BarChartHead() {
       <Box
         key={department.name}
         sx={{
+          marginTop: "30px",
           marginBottom: "30px",
           padding: "10px",
           borderRadius: "5px",
@@ -101,7 +102,7 @@ export default function BarChartHead() {
         display: "flex",
         flexDirection: "column",
         alignItems: "center",
-        pt: { xs: 10, sm: 15 },
+        pt: { xs: 15, sm: 15 },
         pb: { xs: 8, sm: 12 },
         minHeight: "100vh",
       }}
