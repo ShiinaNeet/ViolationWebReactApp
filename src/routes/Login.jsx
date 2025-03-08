@@ -1,4 +1,4 @@
-import React, { useRef } from "react";
+import React from "react";
 import { useAuth } from "../auth/AuthProvider";
 import { useNavigate } from "react-router-dom";
 import Button from "@mui/material/Button";
@@ -6,25 +6,32 @@ import TextField from "@mui/material/TextField";
 import {
   Alert,
   AlertTitle,
-  Card,
-  CardContent,
-  Link,
   Snackbar,
   Tooltip,
   Typography,
 } from "@mui/material";
 import "../animations.css";
-import { Download } from "@mui/icons-material";
 import { motion, AnimatePresence } from "framer-motion";
 import DocumentList from "../components/DocumentList";
 
 const Login = () => {
-  const { login, setUserType } = useAuth();
-  const navigate = useNavigate();
-
   const vertical = "bottom";
   const horizontal = "right";
-
+  const formVariants = {
+    hidden: { opacity: 0, y: 50 },
+    visible: { opacity: 1, y: 0 },
+    exit: { opacity: 0, y: -50 },
+  };
+  const inputVariants = {
+    hidden: { opacity: 0, y: 20 },
+    visible: { opacity: 1, y: 0, transition: { duration: 0.5 } },
+  };
+  const buttonVariants = {
+    hidden: { opacity: 0, y: 20 },
+    visible: { opacity: 1, y: 0, transition: { duration: 0.5, delay: 0.5 } },
+  };
+  const { login } = useAuth();
+  const navigate = useNavigate();
   const [alertMessage, setAlertMessage] = React.useState({
     open: false,
     title: "",
@@ -38,13 +45,11 @@ const Login = () => {
     department_head: "PROGRAM HEAD",
     dean: "DEAN",
     professor: "PROFESSOR",
-    coordinator: "OSD_COORDINATOR"
+    coordinator: "OSD_COORDINATOR",
   };
-
   const [activeForm, setActiveForm] = React.useState("login");
-
   const handleLogin = async (event) => {
-    event.preventDefault(); // Prevent default form submission behavior
+    event.preventDefault();
     setIsLoading(true);
     if (account.name === "" || account.password === "") {
       setAlertMessage({
@@ -70,7 +75,7 @@ const Login = () => {
         navigate("/department-head/home");
       } else if (responseData == userType.coordinator) {
         navigate("/coordinator/home");
-      }else {
+      } else {
         setAlertMessage({
           open: true,
           title: "Error",
@@ -88,26 +93,9 @@ const Login = () => {
       setIsLoading(false);
     }
   };
-
   const handleSwitchForm = (nextForm) => {
     setActiveForm(nextForm);
   };
-
-  const formVariants = {
-    hidden: { opacity: 0, y: 50 },
-    visible: { opacity: 1, y: 0 },
-    exit: { opacity: 0, y: -50 },
-  };
-  const inputVariants = {
-    hidden: { opacity: 0, y: 20 },
-    visible: { opacity: 1, y: 0, transition: { duration: 0.5 } },
-  };
-
-  const buttonVariants = {
-    hidden: { opacity: 0, y: 20 },
-    visible: { opacity: 1, y: 0, transition: { duration: 0.5, delay: 0.5 } },
-  };
-
   return (
     <div className="flex flex-col items-center justify-center h-screen w-full bg-gradient-to-br p-4 overflow-hidden">
       <AnimatePresence mode="wait">
@@ -184,6 +172,7 @@ const Login = () => {
                   variant="outlined"
                   color="error"
                   onClick={handleLogin}
+                  disabled={isLoading}
                   sx={{ marginBottom: 1, height: "100%" }}
                 >
                   {isLoading ? "Logging in..." : "Login"}
