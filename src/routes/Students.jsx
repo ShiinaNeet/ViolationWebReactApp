@@ -134,7 +134,19 @@ const StyledToolbar = styled(Toolbar)(({ theme }) => ({
   boxShadow: `0px 10px 6px rgba(0, 0, 0, 0.1)`,
 }));
 const Students = () => {
-  // const { userType } = useAuth();
+  const vertical = "bottom";
+  const horizontal = "right";
+  const yearList = ["1st year", "2nd year", "3rd year", "4th year", "5th year"];
+  const searchViolationCategory = ["academic_dishonesty", "major", "minor"];
+  //Page & State
+  const [page, setPage] = React.useState(0);
+  const [rows, setRows] = React.useState([]);
+  const [rowsPerPage, setRowsPerPage] = React.useState(5);
+  const emptyRows =
+    page > 0 ? Math.max(0, (1 + page) * rowsPerPage - rows.length) : 0;
+  const truncateText = (text, maxLength) =>
+    text?.length > maxLength ? text.slice(0, maxLength) + "..." : text;
+  const listRef = React.useRef(null);
   const [CurrentUserType, setCurrentUserType] = React.useState({});
   const [isLoading, setIsLoading] = React.useState(false);
   const [ViewModal, setViewModal] = React.useState(false);
@@ -164,21 +176,22 @@ const Students = () => {
     department: "",
     violations: [],
   });
+  const [selectedViolation, setSelectedViolation] = React.useState({
+    code: "",
+    description: "",
+  });
   const [violationList, setViolationList] = React.useState([]);
   const [departments, setDepartments] = React.useState([]);
   const [searchFilter, setSearchFilter] = React.useState({
     category: "",
     userid: "",
   });
+  const [isSelectViolationComponentOpen, setIsSelectViolationComponentOpen] =
+    useState(false);
   const [users, setUsers] = React.useState([]);
-  const yearList = ["1st year", "2nd year", "3rd year", "4th year", "5th year"];
   const [schoolTermList, setSchoolTermList] = React.useState([]);
-  const searchViolationCategory = ["academic_dishonesty", "major", "minor"];
   const [programList, setProgramList] = React.useState([]);
   const [filteredPrograms, setFilteredPrograms] = React.useState([]);
-
-  const vertical = "bottom";
-  const horizontal = "right";
   const [alertMessage, setAlertMessage] = React.useState({
     open: false,
     title: "",
@@ -186,27 +199,6 @@ const Students = () => {
     variant: "",
   });
   const [errorMessages, setErrorMessages] = React.useState([]);
-  const handleAlertClose = (event, reason) => {
-    if (reason === "clickaway") {
-      return;
-    }
-
-    setAlertMessage({ open: false });
-  };
-
-  const [page, setPage] = React.useState(0);
-  const [rows, setRows] = React.useState([]);
-  const [rowsPerPage, setRowsPerPage] = React.useState(5);
-  const emptyRows =
-    page > 0 ? Math.max(0, (1 + page) * rowsPerPage - rows.length) : 0;
-  const handleChangePage = (event, newPage) => {
-    setPage(newPage);
-  };
-  const handleChangeRowsPerPage = (event) => {
-    console.log("Rows per page: ", event.target.value);
-    setRowsPerPage(parseInt(event.target.value, 5));
-    setPage(0);
-  };
   const [isQrScannerOpen, setIsQrScannerOpen] = React.useState(false);
   const [isViolationLoading, setIsViolationLoading] = React.useState(false);
   const [isUpdateModalLoading, setIsUpdateModalLoading] = React.useState(false);
@@ -218,7 +210,21 @@ const Students = () => {
     React.useState(false);
   const [messageStudentModal, setMessageStudentModal] = React.useState(false);
   const [formModal, setFormModal] = React.useState(false);
-
+  const [activeForm, setActiveForm] = useState(null);
+  const handleAlertClose = (event, reason) => {
+    if (reason === "clickaway") {
+      return;
+    }
+    setAlertMessage({ open: false });
+  };
+  const handleChangePage = (event, newPage) => {
+    setPage(newPage);
+  };
+  const handleChangeRowsPerPage = (event) => {
+    console.log("Rows per page: ", event.target.value);
+    setRowsPerPage(parseInt(event.target.value, 5));
+    setPage(0);
+  };
   const handleClose = () => {
     setViewModal(false);
     setSearchFilterModal(false);
@@ -306,7 +312,6 @@ const Students = () => {
     //   setIsUpdateModalLoading(false);
     // }, 300);
   };
-
   const handleSearch = () => {
     console.log(searchFilter);
     console.log("Searching...");
@@ -375,11 +380,8 @@ const Students = () => {
         setIsLoading(false);
       });
   };
-
   const fetchAllData = async () => {
     try {
-      // Set loading states
-      // setIsDepartmentLoading(true);
       setIsLoading(true);
       setIsViolationLoading(true);
       setIsFetchingDone(true);
@@ -628,7 +630,6 @@ const Students = () => {
         setIsQrScannerOpen(false);
       });
   };
-
   const fetchDecodedQRCode = async (data) => {
     axios
       .get(`/decode_qr`, {
@@ -661,12 +662,6 @@ const Students = () => {
         console.warn("Error Occurred fetching QR Code: ", error);
       });
   };
-
-  const [selectedViolation, setSelectedViolation] = React.useState({
-    code: "",
-    description: "",
-  });
-
   const handleDeleteViolation = (index, type) => {
     if (type === "update") {
       const updatedViolations = [...targetStudent.violations];
@@ -1021,9 +1016,71 @@ const Students = () => {
   const closeQrScanner = () => {
     setIsQrScannerOpen(false);
   };
-  const truncateText = (text, maxLength) =>
-    text?.length > maxLength ? text.slice(0, maxLength) + "..." : text;
-
+  const handleCloseMenu = () => {
+    setIsSelectViolationComponentOpen(false);
+  };
+  const setAlertFunction = (isOpen, message, title) => {
+    setAlertMessage({
+      open: isOpen,
+      title: title,
+      message: message,
+      variant: "info",
+    });
+  };
+  const GetHeader = () => {
+    return (
+      <div className="flex flex-row justify-between h-fit rounded-md my-2">
+        <h1 className="text-2xl py-3 text-red-600">Student Violations</h1>
+        <div className="flex items-center">
+          <Button
+            className="bg-red-500 p-2 rounded-sm text-red "
+            onClick={() => setCreateStudentViolationModal(true)}
+            color="error"
+          >
+            Add Violation
+          </Button>
+          <Button
+            className=" my-2 p-2 rounded-sm text-red"
+            onClick={() => setSearchFilterModal(true)}
+            color="error"
+          >
+            <FilterAltRoundedIcon color="error" /> Filter
+          </Button>
+        </div>
+      </div>
+    );
+  };
+  const GetTableHeader = () => {
+    return (
+      <TableHead>
+        <TableRow className="text-left px-4 text-sm font-bold">
+          <th className="py-5 px-4 border-b">Name</th>
+          <th className="py-5 px-4 border-b">Violation</th>
+          <th className="py-5 px-4 border-b">Department and Year</th>
+          <th className="py-5 px-4 border-b text-center">Date</th>
+          <th className="py-5 px-4 border-b text-center ">Actions</th>
+        </TableRow>
+      </TableHead>
+    );
+  };
+  const GetTableRowLoading = () => {
+    return (
+      <TableRow>
+        <TableCell colSpan={5} align="center">
+          Loading...
+        </TableCell>
+      </TableRow>
+    );
+  };
+  const GetTableRowNoStudentData = () => {
+    return (
+      <TableRow style={{ height: 53 * emptyRows }}>
+        <TableCell colSpan={6} align="center">
+          No student...
+        </TableCell>
+      </TableRow>
+    );
+  };
   React.useEffect(() => {
     fetchAllData();
     fetchPrograms();
@@ -1039,7 +1096,6 @@ const Students = () => {
       }, index * 69);
     });
   }, [rows]);
-  const listRef = React.useRef(null);
   React.useEffect(() => {
     setTimeout(() => {
       if (listRef.current) {
@@ -1053,22 +1109,6 @@ const Students = () => {
       }
     }, 1);
   }, [targetStudent.violations]);
-
-  const [isSelectViolationComponentOpen, setIsSelectViolationComponentOpen] =
-    useState(false);
-
-  const handleCloseMenu = () => {
-    setIsSelectViolationComponentOpen(false);
-  };
-  const setAlertFunction = (isOpen, message, title) => {
-    setAlertMessage({
-      open: isOpen,
-      title: title,
-      message: message,
-      variant: "info",
-    });
-  };
-  const [activeForm, setActiveForm] = useState(null);
   return (
     <>
       <Container
@@ -1082,58 +1122,17 @@ const Students = () => {
         }}
       >
         <div className="w-full mx-auto h-full">
-          <div className="flex flex-row justify-between h-fit rounded-md my-2">
-            <h1 className="text-2xl py-3 text-red-600">Student Violations</h1>
-            <div className="flex items-center">
-              {/* <Button
-                className="bg-red-500 p-2 rounded-sm text-red hover:bg-red-100"
-                onClick={() => setMessageStudentModal(true)}
-                color="error"
-              >
-                <AddAlertIcon color="error" /> Alert
-              </Button> */}
-              <Button
-                className="bg-red-500 p-2 rounded-sm text-red "
-                onClick={() => setCreateStudentViolationModal(true)}
-                color="error"
-              >
-                Add Violation
-              </Button>
-              <Button
-                className=" my-2 p-2 rounded-sm text-red"
-                onClick={() => setSearchFilterModal(true)}
-                color="error"
-              >
-                <FilterAltRoundedIcon color="error" /> Filter
-              </Button>
-            </div>
-          </div>
+          <GetHeader />
           <StyledToolbar variant="dense" disableGutters>
             <TableContainer component={Paper}>
               <Table sx={{ minWidth: 500 }}>
-                <TableHead>
-                  <TableRow className="text-left px-4 text-sm font-bold">
-                    <th className="py-5 px-4 border-b">Name</th>
-                    <th className="py-5 px-4 border-b">Violation</th>
-                    <th className="py-5 px-4 border-b">Department and Year</th>
-                    <th className="py-5 px-4 border-b text-center">Date</th>
-                    <th className="py-5 px-4 border-b text-center ">Actions</th>
-                  </TableRow>
-                </TableHead>
+                <GetTableHeader />
                 <TableBody>
-                  {isFetchingDone || isLoading || isViolationLoading ? (
-                    <TableRow>
-                      <TableCell colSpan={5} align="center">
-                        Loading...
-                      </TableCell>
-                    </TableRow>
-                  ) : rows.length === 0 ? (
-                    <TableRow style={{ height: 53 * emptyRows }}>
-                      <TableCell colSpan={6} align="center">
-                        No student...
-                      </TableCell>
-                    </TableRow>
-                  ) : (
+                  {(isFetchingDone || isLoading || isViolationLoading) && (
+                    <GetTableRowLoading />
+                  )}
+
+                  {(!isFetchingDone || !isLoading || !isViolationLoading) &&
                     (rowsPerPage > 0
                       ? rows.slice(
                           page * rowsPerPage,
@@ -1242,7 +1241,9 @@ const Students = () => {
                           )}
                         </td>
                       </tr>
-                    ))
+                    ))}
+                  {rows.length === 0 && !isLoading && (
+                    <GetTableRowNoStudentData />
                   )}
                 </TableBody>
                 <TableFooter>
@@ -1613,9 +1614,7 @@ const Students = () => {
           fullWidth={true}
           maxWidth="false"
           sx={{
-            // maxWidth: "95vw",
             maxHeight: "90vh",
-            // width: "60vw",
             height: "90vh",
             display: "flex",
             alignItems: "center",
@@ -1675,13 +1674,15 @@ const Students = () => {
           </DialogContent>
           <DialogActions sx={{ overflowX: "hidden", overflowY: "hidden" }}>
             <Button
-              onClick={handleSearch}
               className="flex w-full sm:w-1/2 justify-center slide-in-visible"
+              color="error"
+              onClick={handleSearch}
             >
               Search
             </Button>
             <Button
               className="flex w-full sm:w-1/2 justify-center slide-in-from-right"
+              color="error"
               onClick={() => setSearchFilterModal(false)}
             >
               Close

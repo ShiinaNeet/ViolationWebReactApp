@@ -36,7 +36,7 @@ import {
 } from "@mui/material";
 import axios from "axios";
 import "../animations.css";
-import { motion } from "framer-motion";
+import { AnimatePresence, motion } from "framer-motion";
 
 function TablePaginationActions(props) {
   const { count, page, rowsPerPage, onPageChange } = props;
@@ -97,12 +97,25 @@ TablePaginationActions.propTypes = {
   page: PropTypes.number.isRequired,
   rowsPerPage: PropTypes.number.isRequired,
 };
-
+const StyledToolbar = styled(Toolbar)(({ theme }) => ({
+  display: "flex",
+  alignItems: "center",
+  justifyContent: "space-between",
+  flexShrink: 0,
+  borderRadius: `calc(${theme.shape.borderRadius}px + 8px)`,
+  backdropFilter: "blur(24px)",
+  border: "1px solid",
+  borderColor: (theme.vars || theme).palette.divider,
+  backgroundColor: theme.vars
+    ? `rgba(${theme.vars.palette.background.defaultChannel} / 0.4)`
+    : alpha(theme.palette.background.default, 0.4),
+  boxShadow: `0px 10px 6px rgba(0, 0, 0, 0.1)`,
+}));
 export default function Users() {
   const [page, setPage] = React.useState(0);
   const [rowsPerPage, setRowsPerPage] = React.useState(5);
   const [rows, setRows] = React.useState([]);
-  const [openCreate, setOpenCreate] = React.useState(false);
+  const [isLoading, setIsLoading] = React.useState(true);
   const [departmentData, setDepartmentData] = React.useState([]);
   const [user, setUser] = React.useState({
     first_name: "",
@@ -114,6 +127,7 @@ export default function Users() {
     assigned_department: "",
     assigned_departments: [],
   });
+  const [openCreate, setOpenCreate] = React.useState(false);
   const [alertMessage, setAlertMessage] = React.useState({
     open: false,
     title: "",
@@ -121,73 +135,33 @@ export default function Users() {
     variant: "",
   });
   const [errorMessages, setErrorMessages] = React.useState([]);
-  const hasAnimated = React.useRef(false);
   const vertical = "bottom";
   const horizontal = "right";
-  const emptyRows =
-    page > 0 ? Math.max(0, (1 + page) * rowsPerPage - rows.length) : 0;
-  const [isLoading, setIsLoading] = React.useState(true);
-
+  const rowVariants = {
+    hidden: { opacity: 0, y: 20 },
+    visible: (index) => ({
+      opacity: 1,
+      y: 0,
+      transition: {
+        delay: index * 0.1,
+        duration: 0.5,
+      },
+    }),
+  };
+  const handleAlertClose = (event, reason) => {
+    if (reason === "clickaway") {
+      return;
+    }
+    setAlertMessage({ open: false });
+  };
   const handleChangePage = (event, newPage) => {
     setPage(newPage);
   };
   const handleChangeRowsPerPage = (event) => {
-    const newRowsPerPage = parseInt(event.target.value, 6);
+    const newRowsPerPage = parseInt(event.target.value, 5);
     setRowsPerPage(newRowsPerPage);
     setPage(0);
   };
-  React.useEffect(() => {
-    const fetchData = async () => {
-      try {
-        // setIsLoading(true);
-        console.log("Fetching data...");
-        const [dataResponse, departmentResponse] = await Promise.all([
-          axios.get("admin", {
-            params: { skip: 0, limit: 100 },
-            headers: { "Content-Type": "application/json" },
-          }),
-          axios.get("/department", {
-            params: { skip: 0, limit: 100 },
-            headers: { "Content-Type": "application/json" },
-          }),
-        ]);
-
-        if (dataResponse.data.status === "success") {
-          setRows(dataResponse.data.data);
-        } else {
-          setAlertMessage({
-            open: true,
-            title: "No Data",
-            message: "No data available",
-            variant: "info",
-          });
-        }
-
-        if (departmentResponse.data.status === "success") {
-          setDepartmentData(departmentResponse.data.data);
-        } else {
-          setAlertMessage({
-            open: true,
-            title: "No Data",
-            message: "No department data available",
-            variant: "info",
-          });
-        }
-      } catch (error) {
-        console.error("There was an error fetching the data!", error);
-        setAlertMessage({
-          open: true,
-          title: error.title,
-          message: error.message || "An error occurred",
-          variant: "error",
-        });
-      } finally {
-        setIsLoading(false);
-        hasAnimated.current = true;
-      }
-    };
-    fetchData();
-  }, []);
   const handleClose = () => {
     setOpenCreate(false);
 
@@ -200,13 +174,6 @@ export default function Users() {
       assigned_department: "",
       assigned_departments: [],
     });
-  };
-  const handleAlertClose = (event, reason) => {
-    if (reason === "clickaway") {
-      return;
-    }
-
-    setAlertMessage({ open: false });
   };
   const handleSave = async () => {
     setIsLoading(false);
@@ -237,16 +204,14 @@ export default function Users() {
       if (department) {
         departmentToAssign = [department];
       }
-    } 
-    else if (user.type === "OSD_COORDINATOR") {
+    } else if (user.type === "OSD_COORDINATOR") {
       const department = departmentData.find(
         (department) => department.name === user.assigned_department
       );
       if (department) {
         departmentToAssign = [department];
       }
-    } 
-     else if (user.type === "DEAN") {
+    } else if (user.type === "DEAN") {
       departmentToAssign = departmentData.filter((department) =>
         user.assigned_departments.includes(department.name)
       );
@@ -316,7 +281,6 @@ export default function Users() {
         });
       });
   };
-
   const addMultipleDepartment = (event) => {
     const {
       target: { value },
@@ -327,33 +291,126 @@ export default function Users() {
         typeof value === "string" ? value.split(",") : value,
     });
   };
-  const StyledToolbar = styled(Toolbar)(({ theme }) => ({
-    display: "flex",
-    alignItems: "center",
-    justifyContent: "space-between",
-    flexShrink: 0,
-    borderRadius: `calc(${theme.shape.borderRadius}px + 8px)`,
-    backdropFilter: "blur(24px)",
-    border: "1px solid",
-    borderColor: (theme.vars || theme).palette.divider,
-    backgroundColor: theme.vars
-      ? `rgba(${theme.vars.palette.background.defaultChannel} / 0.4)`
-      : alpha(theme.palette.background.default, 0.4),
-    boxShadow: `0px 10px 6px rgba(0, 0, 0, 0.1)`,
-  }));
-  const rowVariants = {
-    hidden: { opacity: 0, y: 20 },
-    visible: (index) => ({
-      opacity: 1,
-      y: 0,
-      transition: {
-        delay: index * 0.1,
-        duration: 0.5,
-        // ease: "easeOut",
-      },
-    }),
+  const GetHeader = () => {
+    return (
+      <div className="flex flex-col md:flex-row justify-between gap-x-2 text-sm md:text-md bg-white my-2 rounded-md">
+        <h1 className="text-2xl text-red-600 flex items-center py-3">
+          Users List
+        </h1>
+        <Tooltip title="Create User">
+          <Button
+            onClick={() => setOpenCreate(true)}
+            className="p-2"
+            color="error"
+          >
+            Create User
+          </Button>
+        </Tooltip>
+      </div>
+    );
   };
+  const GetTableHeader = () => {
+    return (
+      <TableHead>
+        <TableRow className="text-sm font-bold">
+          <TableCell className="py-5 px-4 font-bold ">Name</TableCell>
+          <TableCell className="py-5 px-4 font-bold ">Username</TableCell>
+          <TableCell className="py-5 px-4 font-bold">Email address</TableCell>
+          <TableCell className="py-5 px-4 font-bold" align="center">
+            Category
+          </TableCell>
+        </TableRow>
+      </TableHead>
+    );
+  };
+  const GetTableLoadingBody = () => {
+    if (isLoading) {
+      return (
+        <TableRow>
+          <TableCell colSpan={5} align="center">
+            Loading...
+          </TableCell>
+        </TableRow>
+      );
+    }
+    if (isLoading == false && rows.length == 0) {
+      return (
+        <TableRow className="flex justify-center items-center">
+          <TableCell>Loading...</TableCell>
+        </TableRow>
+      );
+    }
+    return null;
+  };
+  const emptyRows = React.useMemo(
+    () =>
+      Array.from({ length: 5 }, () => ({
+        first_name: "",
+        last_name: "",
+        username: "",
+        email: "",
+        type: "",
+        isPlaceholder: true,
+      })),
+    []
+  );
+  const displayedRows = React.useMemo(() => {
+    return [...rows, ...emptyRows].slice(
+      page * rowsPerPage,
+      page * rowsPerPage + rowsPerPage
+    );
+  }, [rows, emptyRows, page, rowsPerPage]);
+  React.useEffect(() => {
+    const fetchData = async () => {
+      try {
+        // setIsLoading(true);
+        console.log("Fetching data...");
+        const [dataResponse, departmentResponse] = await Promise.all([
+          axios.get("admin", {
+            params: { skip: 0, limit: 100 },
+            headers: { "Content-Type": "application/json" },
+          }),
+          axios.get("/department", {
+            params: { skip: 0, limit: 100 },
+            headers: { "Content-Type": "application/json" },
+          }),
+        ]);
 
+        if (dataResponse.data.status === "success") {
+          setRows(dataResponse.data.data);
+        } else {
+          setAlertMessage({
+            open: true,
+            title: "No Data",
+            message: "No data available",
+            variant: "info",
+          });
+        }
+
+        if (departmentResponse.data.status === "success") {
+          setDepartmentData(departmentResponse.data.data);
+        } else {
+          setAlertMessage({
+            open: true,
+            title: "No Data",
+            message: "No department data available",
+            variant: "info",
+          });
+        }
+      } catch (error) {
+        console.error("There was an error fetching the data!", error);
+        setAlertMessage({
+          open: true,
+          title: error.title,
+          message: error.message || "An error occurred",
+          variant: "error",
+        });
+      } finally {
+        setIsLoading(false);
+      }
+    };
+    fetchData();
+  }, []);
   return (
     <>
       <Container
@@ -367,103 +424,69 @@ export default function Users() {
         }}
       >
         <div className="w-full h-full mx-auto">
-          <div className="flex flex-col md:flex-row justify-between gap-x-2 text-sm md:text-md bg-white my-2 rounded-md">
-            <h1 className="text-2xl text-red-600 flex items-center py-3">
-              Users List
-            </h1>
-            <Tooltip title="Create User">
-              <Button
-                onClick={() => setOpenCreate(true)}
-                className="p-2"
-                color="error"
-              >
-                Create User
-              </Button>
-            </Tooltip>
-          </div>
+          <GetHeader />
           <StyledToolbar variant="dense" disableGutters>
-            <TableContainer component={Paper} className="">
+            <TableContainer component={Paper}>
               <Table sx={{ minWidth: 500 }}>
-                <TableHead>
-                  <TableRow className="text-sm font-bold">
-                    <th className="py-5 px-4 font-bold ">Name</th>
-                    <th className="py-5 px-4 font-bold ">Username</th>
-                    <th className="py-5 px-4 font-bold">Email address</th>
-                    <th className="py-5 px-4 font-bold text-center">
-                      Category
-                    </th>
-                  </TableRow>
-                </TableHead>
-                {isLoading == false && rows.length == 0 ? (
-                  <TableBody>
-                    <TableRow className="flex justify-center items-center">
-                      <TableCell>Loading...</TableCell>
-                    </TableRow>
-                  </TableBody>
-                ) : (
-                  <TableBody>
-                    {isLoading ? (
-                      <TableRow>
-                        <TableCell colSpan={5} align="center">
-                          Loading...
-                        </TableCell>
-                      </TableRow>
-                    ) : rows.length === 0 ? (
-                      <TableRow style={{ height: 53 * emptyRows }}>
-                        <TableCell colSpan={6} align="center">
-                          No student...
-                        </TableCell>
-                      </TableRow>
-                    ) : (
-                      (rowsPerPage > 0
-                        ? rows.slice(
-                            page * rowsPerPage,
-                            page * rowsPerPage + rowsPerPage
-                          )
-                        : rows
-                      ).map((row, index) => (
-                        <motion.tr
+                <GetTableHeader />
+                <TableBody>
+                  {isLoading ? (
+                    <GetTableLoadingBody />
+                  ) : (
+                    <AnimatePresence>
+                      {displayedRows.map((row, index) => (
+                        <TableRow
                           key={index}
+                          component={motion.tr}
                           variants={rowVariants}
-                          initial={hasAnimated.current ? false : "hidden"}
-                          animate={hasAnimated.current ? false : "visible"}
+                          initial="hidden"
+                          animate="visible"
                           custom={index}
+                          layout
                         >
                           <TableCell component="th" scope="row">
                             {row.first_name && row.last_name
-                              ? row.first_name + " " + row.last_name
+                              ? `${row.first_name} ${row.last_name}`
+                              : row.isPlaceholder
+                              ? "-"
                               : "No name attached"}
                           </TableCell>
                           <TableCell>
-                            {row.username ? row.username : "No username"}
+                            {row.username ||
+                              (row.isPlaceholder ? "-" : "No username")}
                           </TableCell>
                           <TableCell>
-                            {row.email
-                              ? row.email
-                              : "No email address attached"}
+                            {row.email ||
+                              (row.isPlaceholder
+                                ? "-"
+                                : "No email address attached")}
                           </TableCell>
                           <TableCell align="center">
-                            <Button
-                              className={`p-2 rounded-sm text-center ${
-                                row.type === "ADMIN" ? "primary" : "secondary"
-                              }`}
-                              color={
-                                row.type === "ADMIN" ? "primary" : "secondary"
-                              }
-                            >
-                              {row.type ? row.type : "No type attached"}{" "}
-                            </Button>
+                            {row.isPlaceholder ? (
+                              "-"
+                            ) : (
+                              <Button
+                                className={`p-2 rounded-sm text-center ${
+                                  row.type === "ADMIN" ? "primary" : "secondary"
+                                }`}
+                                color={
+                                  row.type === "ADMIN" ? "primary" : "secondary"
+                                }
+                              >
+                                {row.type || "No type attached"}
+                              </Button>
+                            )}
                           </TableCell>
-                        </motion.tr>
-                      ))
-                    )}
-                  </TableBody>
-                )}
+                        </TableRow>
+                      ))}
+                    </AnimatePresence>
+                  )}
+                </TableBody>
                 <TableFooter>
                   <TableRow>
                     <TablePagination
-                      rowsPerPageOptions={[{ label: "All", value: -1 }]} // Provide an array of options
-                      count={rows.length}
+                      rowsPerPageOptions={[{ label: "All", value: -1 }]}
+                      count={Math.max(rows.length, 5)}
                       rowsPerPage={rowsPerPage}
                       page={page}
                       onPageChange={handleChangePage}
@@ -591,33 +614,34 @@ export default function Users() {
               <MenuItem value={"PROFESSOR"}>Professor</MenuItem>
               <MenuItem value={"OSD_COORDINATOR"}>OSD Coordinator</MenuItem>
             </Select>
-            {user.type === "PROGRAM HEAD" || user.type === "OSD_COORDINATOR" && (
-              <>
-                <InputLabel id="demo-simple-select-label" color="error">
-                  Assign a Department
-                </InputLabel>
-                <Select
-                  color="error"
-                  labelId="demo-simple-select-label"
-                  id="demo-simple-select"
-                  value={user.assigned_department}
-                  onChange={(e) => {
-                    setUser({
-                      ...user,
-                      assigned_department: e.target.value,
-                    }),
-                      console.log(e.target.value);
-                  }}
-                  fullWidth
-                >
-                  {departmentData.map((department, idx) => (
-                    <MenuItem value={department.name} key={idx}>
-                      {department.name}
-                    </MenuItem>
-                  ))}
-                </Select>
-              </>
-            )}
+            {user.type === "PROGRAM HEAD" ||
+              (user.type === "OSD_COORDINATOR" && (
+                <>
+                  <InputLabel id="demo-simple-select-label" color="error">
+                    Assign a Department
+                  </InputLabel>
+                  <Select
+                    color="error"
+                    labelId="demo-simple-select-label"
+                    id="demo-simple-select"
+                    value={user.assigned_department}
+                    onChange={(e) => {
+                      setUser({
+                        ...user,
+                        assigned_department: e.target.value,
+                      }),
+                        console.log(e.target.value);
+                    }}
+                    fullWidth
+                  >
+                    {departmentData.map((department, idx) => (
+                      <MenuItem value={department.name} key={idx}>
+                        {department.name}
+                      </MenuItem>
+                    ))}
+                  </Select>
+                </>
+              ))}
             {user.type === "PROFESSOR" && (
               <>
                 <InputLabel id="demo-simple-select-label" color="error">

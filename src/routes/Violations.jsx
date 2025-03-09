@@ -416,7 +416,7 @@ export default function Violations() {
       <div className="w-full h-full mx-auto ">
         <GetHeader />
         <StyledToolbar variant="dense" disableGutters>
-          <TableContainer component={Paper} className="">
+          <TableContainer component={Paper}>
             <Table sx={{ minWidth: 400 }}>
               <GetTableHeader />
               <TableBody>
