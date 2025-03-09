@@ -108,7 +108,20 @@ const Login = () => {
           transition={{ duration: 0.5 }}
           className="sm:w-[450px] md:w-[550px] w-full- p-6 rounded-xl border border-gray-200 bg-white/80 backdrop-blur-md shadow-huge"
         >
-          {activeForm === "login" ? (
+          {activeForm === "request" ? (
+            <>
+              <DocumentList />
+              <Button
+                fullWidth
+                variant="outlined"
+                color="error"
+                onClick={() => handleSwitchForm("login")}
+                className="mt-4 my-2"
+              >
+                Back to Login
+              </Button>
+            </>
+          ) : (
             <div className="flex flex-col gap-y-2">
               <motion.div
                 variants={inputVariants}
@@ -208,19 +221,6 @@ const Login = () => {
                 </motion.div>
               </div>
             </div>
-          ) : (
-            <>
-              <DocumentList />
-              <Button
-                fullWidth
-                variant="outlined"
-                color="error"
-                onClick={() => handleSwitchForm("login")}
-                className="mt-4 my-2"
-              >
-                Back to Login
-              </Button>
-            </>
           )}
         </motion.div>
       </AnimatePresence>
