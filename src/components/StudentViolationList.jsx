@@ -92,11 +92,11 @@ StudentViolationList.propTypes = {
     violations: PropTypes.arrayOf(
       PropTypes.shape({
         code: PropTypes.string.isRequired,
-        date: PropTypes.string.isRequired,
+        date_committed: PropTypes.string.isRequired,
       })
     ),
   }).isRequired,
-  users: PropTypes.isRequired,
+  users: PropTypes.array.isRequired,
 };
 
 export default function StudentViolationList(props) {
