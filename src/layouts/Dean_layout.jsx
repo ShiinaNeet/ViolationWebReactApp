@@ -1,11 +1,11 @@
 import { Outlet } from "react-router-dom";
-import Navigationbar from "./components/Professor/NavigationBar";
+import Navigationbar from "../components/Dean/NavigationBar";
 
-const ProfessorLayout = () => (
+const DeanLayout = () => (
   <div className="overflow-x-scroll:hidden">
     <Navigationbar />
     <Outlet />
   </div>
 );
 
-export default ProfessorLayout;
+export default DeanLayout;

@@ -4,11 +4,11 @@ import "./index.css";
 
 import { createBrowserRouter, RouterProvider } from "react-router-dom";
 
-import Layout from "./layout";
-import DeanLayout from "./Dean_layout";
-import DepartmentHeadLayout from "./DepartmentHead_layout";
-import ProfessorLayout from "./Professor_layout";
-import CoordinatorLayout from "./Coordinator_Layout";
+import Layout from "./layouts/layout";
+import DeanLayout from "./layouts/Dean_layout";
+import DepartmentHeadLayout from "./layouts/DepartmentHead_layout";
+import ProfessorLayout from "./layouts/Professor_layout";
+import CoordinatorLayout from "./layouts/Coordinator_Layout";
 //Dean Layout
 import Dean_Home from "./routes/Dean/Home";
 import Dean_Department from "./components/Dean/DepartmentTable";
