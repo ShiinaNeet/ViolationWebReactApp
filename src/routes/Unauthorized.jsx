@@ -1,4 +1,3 @@
-import React from "react";
 import Notfound from "../assets/NotFound.svg";
 
 export default function Unauthorized() {
