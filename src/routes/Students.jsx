@@ -1,6 +1,5 @@
 import React, { useState } from "react";
 import Button from "@mui/material/Button";
-import PropTypes from "prop-types";
 import Table from "@mui/material/Table";
 import TableBody from "@mui/material/TableBody";
 import TableCell from "@mui/material/TableCell";
@@ -9,11 +8,6 @@ import TableFooter from "@mui/material/TableFooter";
 import TablePagination from "@mui/material/TablePagination";
 import TableRow from "@mui/material/TableRow";
 import Paper from "@mui/material/Paper";
-import IconButton from "@mui/material/IconButton";
-import FirstPageIcon from "@mui/icons-material/FirstPage";
-import KeyboardArrowLeft from "@mui/icons-material/KeyboardArrowLeft";
-import KeyboardArrowRight from "@mui/icons-material/KeyboardArrowRight";
-import LastPageIcon from "@mui/icons-material/LastPage";
 import Dialog from "@mui/material/Dialog";
 import DialogActions from "@mui/material/DialogActions";
 import DialogContent from "@mui/material/DialogContent";
@@ -24,8 +18,7 @@ import RemoveRedEyeIcon from "@mui/icons-material/RemoveRedEye";
 import EditIcon from "@mui/icons-material/Edit";
 import Tooltip from "@mui/material/Tooltip";
 import FilterAltRoundedIcon from "@mui/icons-material/FilterAltRounded";
-import Box from "@mui/material/Box";
-import { alpha } from "@mui/material/styles";
+
 import "../animations.css";
 import {
   Alert,
@@ -39,8 +32,6 @@ import {
   Select,
   Snackbar,
   TableHead,
-  Toolbar,
-  styled,
 } from "@mui/material";
 import TextField from "@mui/material/TextField";
 import StudentViolationList from "../components/StudentViolationList";
@@ -59,80 +50,10 @@ import ReprimandForm from "../components/forms/ReprimandForm";
 import TemporaryGatePass from "../components/forms/TemporaryGatePass";
 import NonWearingUniform from "../components/forms/NonWearingUniform";
 import FormalComplaint from "../components/forms/FormalComplaint";
-function TablePaginationActions(props) {
-  const { count, page, rowsPerPage, onPageChange } = props;
+import TablePaginationActions from "../utils/TablePaginationActions";
+import { StyledToolbar } from "../utils/StyledToolBar";
+import { AnimatePresence, motion } from "framer-motion";
 
-  const handleFirstPageButtonClick = (event) => {
-    onPageChange(event, 0);
-  };
-
-  const handleBackButtonClick = (event) => {
-    onPageChange(event, page - 1);
-  };
-
-  const handleNextButtonClick = (event) => {
-    onPageChange(event, page + 1);
-  };
-
-  const handleLastPageButtonClick = (event) => {
-    onPageChange(event, Math.max(0, Math.ceil(count / rowsPerPage) - 1));
-  };
-
-  return (
-    <Box sx={{ flexShrink: 0, ml: 2.5 }}>
-      <IconButton
-        onClick={handleFirstPageButtonClick}
-        disabled={page === 0}
-        aria-label="first page"
-      >
-        <FirstPageIcon />
-      </IconButton>
-      <IconButton
-        onClick={handleBackButtonClick}
-        disabled={page === 0}
-        aria-label="previous page"
-      >
-        <KeyboardArrowLeft />
-      </IconButton>
-      <IconButton
-        onClick={handleNextButtonClick}
-        disabled={page >= Math.ceil(count / rowsPerPage) - 1}
-        aria-label="next page"
-      >
-        <KeyboardArrowRight />
-      </IconButton>
-      <IconButton
-        onClick={handleLastPageButtonClick}
-        disabled={page >= Math.ceil(count / rowsPerPage) - 1}
-        aria-label="last page"
-      >
-        <LastPageIcon />
-      </IconButton>
-    </Box>
-  );
-}
-
-TablePaginationActions.propTypes = {
-  count: PropTypes.number.isRequired,
-  onPageChange: PropTypes.func.isRequired,
-  page: PropTypes.number.isRequired,
-  rowsPerPage: PropTypes.number.isRequired,
-};
-
-const StyledToolbar = styled(Toolbar)(({ theme }) => ({
-  display: "flex",
-  alignItems: "center",
-  justifyContent: "space-between",
-  flexShrink: 0,
-  borderRadius: `calc(${theme.shape.borderRadius}px + 8px)`,
-  backdropFilter: "blur(24px)",
-  border: "1px solid",
-  borderColor: (theme.vars || theme).palette.divider,
-  backgroundColor: theme.vars
-    ? `rgba(${theme.vars.palette.background.defaultChannel} / 0.4)`
-    : alpha(theme.palette.background.default, 0.4),
-  boxShadow: `0px 10px 6px rgba(0, 0, 0, 0.1)`,
-}));
 const Students = () => {
   const vertical = "bottom";
   const horizontal = "right";
@@ -141,7 +62,7 @@ const Students = () => {
   //Page & State
   const [page, setPage] = React.useState(0);
   const [rows, setRows] = React.useState([]);
-  const [rowsPerPage, setRowsPerPage] = React.useState(5);
+  const [rowsPerPage, setRowsPerPage] = React.useState(3);
   const emptyRows =
     page > 0 ? Math.max(0, (1 + page) * rowsPerPage - rows.length) : 0;
   const truncateText = (text, maxLength) =>
@@ -211,6 +132,17 @@ const Students = () => {
   const [messageStudentModal, setMessageStudentModal] = React.useState(false);
   const [formModal, setFormModal] = React.useState(false);
   const [activeForm, setActiveForm] = useState(null);
+  const rowVariants = {
+    hidden: { opacity: 0, y: 20 },
+    visible: (index) => ({
+      opacity: 1,
+      y: 0,
+      transition: {
+        delay: index * 0.1,
+        duration: 0.2,
+      },
+    }),
+  };
   const handleAlertClose = (event, reason) => {
     if (reason === "clickaway") {
       return;
@@ -222,7 +154,7 @@ const Students = () => {
   };
   const handleChangeRowsPerPage = (event) => {
     console.log("Rows per page: ", event.target.value);
-    setRowsPerPage(parseInt(event.target.value, 5));
+    setRowsPerPage(parseInt(event.target.value, 10));
     setPage(0);
   };
   const handleClose = () => {
@@ -430,8 +362,125 @@ const Students = () => {
             return { ...student, violations: updatedViolations };
           }
         );
-
-        setRows(completedDataWithViolationName);
+        const students = [
+          {
+            id: "001",
+            srcode: "21-11111",
+            userid: "21-11111",
+            email: "student1@email.com",
+            fullname: "SMITH, JOHN D.",
+            course: "Computer Science",
+            term: "First Semester",
+            year_and_department: "1st year - CCIS",
+            type: "STUDENT",
+            violations: [
+              {
+                code: "12.1.2",
+                date_committed: "2025-03-01T10:30:00Z",
+                sem_committed: "652a1b9f1c4a1a001c4a1ba0",
+                reported_by: "6728b20d48c4d4c422da5c59",
+                description:
+                  "Violation of Section 10 (Proper Uniform, Dress Code and Related Rules/Regulations)",
+              },
+              {
+                code: "12.1.5",
+                date_committed: "2025-03-02T14:20:00Z",
+                sem_committed: "652a1b9f1c4a1a001c4a1ba0",
+                reported_by: "6728b20d48c4d4c422da5c59",
+                description:
+                  "Posting, distributing or disseminating notices, posters, leaflets without prior approval",
+              },
+            ],
+            violation_summary: {
+              categories: [{ category: "minor", count: 2 }],
+              total_violations: 2,
+            },
+          },
+          {
+            id: "002",
+            srcode: "21-22222",
+            userid: "21-22222",
+            email: "student2@email.com",
+            fullname: "DOE, JANE A.",
+            course: "Business Administration",
+            term: "Second Semester",
+            year_and_department: "2nd year - CBA",
+            type: "STUDENT",
+            violations: [
+              {
+                code: "13.2",
+                date_committed: "2025-03-03T11:45:00Z",
+                sem_committed: "652a1b9f1c4a1a001c4a1ba0",
+                reported_by: "6728b20d48c4d4c422da5c59",
+                description:
+                  "Refusal to obey legal order of a person of authority",
+              },
+            ],
+            violation_summary: {
+              categories: [{ category: "major", count: 1 }],
+              total_violations: 1,
+            },
+          },
+          {
+            id: "003",
+            srcode: "21-33333",
+            userid: "21-33333",
+            email: "student3@email.com",
+            fullname: "GARCIA, MARIA L.",
+            course: "Engineering",
+            term: "Third Semester",
+            year_and_department: "3rd year - COE",
+            type: "STUDENT",
+            violations: [
+              {
+                code: "14.1",
+                date_committed: "2025-03-04T09:15:00Z",
+                sem_committed: "652a1b9f1c4a1a001c4a1ba0",
+                reported_by: "6728b20d48c4d4c422da5c59",
+                description: "Use of mobile phones during examinations",
+              },
+              {
+                code: "14.3",
+                date_committed: "2025-03-05T16:50:00Z",
+                sem_committed: "652a1b9f1c4a1a001c4a1ba0",
+                reported_by: "6728b20d48c4d4c422da5c59",
+                description:
+                  "Assisting or dictating answers to fellow examinees",
+              },
+            ],
+            violation_summary: {
+              categories: [{ category: "academic dishonesty", count: 2 }],
+              total_violations: 2,
+            },
+          },
+          {
+            id: "004",
+            srcode: "21-44444",
+            userid: "21-44444",
+            email: "student4@email.com",
+            fullname: "LEE, JASON K.",
+            course: "Information Technology",
+            term: "Fourth Semester",
+            year_and_department: "4th year - CCIS",
+            type: "STUDENT",
+            violations: [
+              {
+                code: "12.1.9",
+                date_committed: "2025-03-06T13:00:00Z",
+                sem_committed: "652a1b9f1c4a1a001c4a1ba0",
+                reported_by: "6728b20d48c4d4c422da5c59",
+                description:
+                  "Breaking into a class or College-sponsored activities without permission",
+              },
+            ],
+            violation_summary: {
+              categories: [{ category: "minor", count: 1 }],
+              total_violations: 1,
+            },
+          },
+        ];
+        console.log("Completed Data: ", completedDataWithViolationName);
+        setRows(students);
         if (studentResponse.data.data.length === 0) {
           setAlertMessage({
             open: true,
@@ -1125,126 +1174,133 @@ const Students = () => {
           <GetHeader />
           <StyledToolbar variant="dense" disableGutters>
             <TableContainer component={Paper}>
-              <Table sx={{ minWidth: 500 }}>
+              <Table
+                sx={{
+                  minWidth: 500,
+                  minHeight: 400,
+                }}
+                aria-label="custom pagination table"
+              >
                 <GetTableHeader />
                 <TableBody>
-                  {(isFetchingDone || isLoading || isViolationLoading) && (
-                    <GetTableRowLoading />
-                  )}
+                  <AnimatePresence>
+                    {(isFetchingDone || isLoading || isViolationLoading) && (
+                      <GetTableRowLoading />
+                    )}
 
-                  {(!isFetchingDone || !isLoading || !isViolationLoading) &&
-                    (rowsPerPage > 0
-                      ? rows.slice(
-                          page * rowsPerPage,
-                          page * rowsPerPage + rowsPerPage
-                        )
-                      : rows
-                    ).map((student, index) => (
-                      <tr
-                        key={index}
-                        className="hover:bg-gray-50 slide-in-down-visible"
-                      >
-                        <td className="py-5 px-4 border-b">
-                          {student.fullname}
-                        </td>
-                        <td className="py-5 px-4 border-b">
-                          {student.violations.slice(0, 2).map((violation) => {
-                            return (
-                              <Chip
-                                key={violation.code}
-                                label={violation.code}
-                                variant="outlined"
-                                color="primary"
-                                margin="dense"
-                                size="medium"
-                                sx={{ mr: 0.5, mb: 0.5, p: 0.5 }}
-                              />
-                            );
-                          })}
-                        </td>
-                        <td className="py-5 px-4 border-b">
-                          {student.year_and_department
-                            ? `${student.year_and_department.split(" - ")[1]} -
+                    {(!isFetchingDone || !isLoading || !isViolationLoading) &&
+                      (rowsPerPage > 0
+                        ? rows.slice(
+                            page * rowsPerPage,
+                            page * rowsPerPage + rowsPerPage
+                          )
+                        : rows
+                      ).map((student, index) => (
+                        <TableRow
+                          key={index}
+                          component={motion.tr}
+                          variants={rowVariants}
+                          initial="hidden"
+                          hidden={{ opacity: 0, y: -10 }}
+                          exit={{ opacity: 0 }}
+                          animate="visible"
+                          custom={index}
+                          layout
+                        >
+                          <TableCell className="py-5 px-4 border-b">
+                            {student.fullname}
+                          </TableCell>
+                          <TableCell className="py-5 px-4 border-b">
+                            {student.violations.slice(0, 2).map((violation) => {
+                              return (
+                                <Chip
+                                  key={violation.code}
+                                  label={violation.code}
+                                  variant="outlined"
+                                  color="primary"
+                                  margin="dense"
+                                  size="medium"
+                                  sx={{ mr: 0.5, mb: 0.5, p: 0.5 }}
+                                />
+                              );
+                            })}
+                          </TableCell>
+                          <TableCell className="py-5 px-4 border-b">
+                            {student.year_and_department
+                              ? `${
+                                  student.year_and_department.split(" - ")[1]
+                                } -
                               ${student.year_and_department.split(" - ")[0]}`
-                            : "No Data"}
-                        </td>
-                        <td className="py-5 px-4 border-b">
-                          {student.violations
-                            ? formatDate(
-                                student.violations[0].date_committed,
-                                "MMMM DD, YYYY - hh:mm A"
-                              )
-                            : "No Data"}
-                        </td>
-                        <td className="border-b flex justify-center sticky">
-                          <Tooltip title="View Student">
-                            <Button
-                              className="rounded-sm text-white hover:bg-red-100 hover:text-red-700"
-                              onClick={() => handleViewViolationModal(student)}
-                              color="error"
-                            >
-                              <RemoveRedEyeIcon color="error" />
-                            </Button>
-                          </Tooltip>
-                          <Tooltip title="Forms">
-                            <Button
-                              className="rounded-sm text-white hover:bg-red-100 hover:text-red-700"
-                              // onClick={() => {
-                              //   const programData = programList.find((program) => program.id === student.course).name;
-                              //   if (programData) {
-                              //     setTargetStudent({
-                              //       ...student,
-                              //       course: programData
-                              //     });
-                              //     setCallSlipFormModal(true);
-                              //   } else {
-                              //     console.error('Program not found for student course:', student.course);
-                              //   }
-                              // }}
-                              onClick={() => {
-                                setFormModal(true);
-                                const programData = programList.find(
-                                  (program) => program.id === student.course
-                                ).name;
-                                if (programData) {
-                                  setTargetStudent({
-                                    ...student,
-                                    course: programData,
-                                  });
-                                } else {
-                                  console.error(
-                                    "Program not found for student course:",
-                                    student.course
-                                  );
-                                }
-                              }}
-                              color="error"
-                            >
-                              Forms
-                            </Button>
-                          </Tooltip>
-                          {CurrentUserType == "ADMIN" ||
-                          localStorage.getItem("userType") == "ADMIN" ? (
-                            <Tooltip title="Edit Student">
+                              : "No Data"}
+                          </TableCell>
+                          <TableCell className="py-5 px-4 border-b">
+                            {student.violations
+                              ? formatDate(
+                                  student.violations[0].date_committed,
+                                  "MMMM DD, YYYY - hh:mm A"
+                                )
+                              : "No Data"}
+                          </TableCell>
+                          <TableCell className="border-b flex justify-center sticky">
+                            <Tooltip title="View Student">
                               <Button
                                 className="rounded-sm text-white hover:bg-red-100 hover:text-red-700"
                                 onClick={() =>
-                                  handleUpdateViolationModal(student)
+                                  handleViewViolationModal(student)
                                 }
                                 color="error"
                               >
-                                <EditIcon color="error" />
+                                <RemoveRedEyeIcon color="error" />
                               </Button>
                             </Tooltip>
-                          ) : (
-                            ""
-                          )}
-                        </td>
-                      </tr>
-                    ))}
-                  {rows.length === 0 && !isLoading && (
-                    <GetTableRowNoStudentData />
-                  )}
+                            <Tooltip title="Forms">
+                              <Button
+                                className="rounded-sm text-white hover:bg-red-100 hover:text-red-700"
+                                onClick={() => {
+                                  setFormModal(true);
+                                  const programData = programList.find(
+                                    (program) => program.id === student.course
+                                  ).name;
+                                  if (programData) {
+                                    setTargetStudent({
+                                      ...student,
+                                      course: programData,
+                                    });
+                                  } else {
+                                    console.error(
+                                      "Program not found for student course:",
+                                      student.course
+                                    );
+                                  }
+                                }}
+                                color="error"
+                              >
+                                Forms
+                              </Button>
+                            </Tooltip>
+                            {CurrentUserType == "ADMIN" ||
+                            localStorage.getItem("userType") == "ADMIN" ? (
+                              <Tooltip title="Edit Student">
+                                <Button
+                                  className="rounded-sm text-white hover:bg-red-100 hover:text-red-700"
+                                  onClick={() =>
+                                    handleUpdateViolationModal(student)
+                                  }
+                                  color="error"
+                                >
+                                  <EditIcon color="error" />
+                                </Button>
+                              </Tooltip>
+                            ) : (
+                              ""
+                            )}
+                          </TableCell>
+                        </TableRow>
+                      ))}
+                    {rows.length === 0 && !isLoading && (
+                      <GetTableRowNoStudentData />
+                    )}
+                  </AnimatePresence>
                 </TableBody>
                 <TableFooter>
                   <TableRow>
