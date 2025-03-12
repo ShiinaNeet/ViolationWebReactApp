@@ -19,7 +19,6 @@ export default function Notification() {
   const handleClose = () => {
     setAnchorEl(null);
   };
-
   const GetNofitication = () => {
     axios
       .get(`notification`, {
@@ -43,6 +42,7 @@ export default function Notification() {
   };
   useEffect(() => {
     GetNofitication();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
   return (
     <>
@@ -60,7 +60,6 @@ export default function Notification() {
           </IconButton>
         </Tooltip>
       </div>
-
       <Menu
         anchorEl={anchorEl}
         id="account-menu"
