@@ -1,5 +1,4 @@
 import * as React from "react";
-import PropTypes from "prop-types";
 import Box from "@mui/material/Box";
 import Table from "@mui/material/Table";
 import TableBody from "@mui/material/TableBody";
@@ -9,12 +8,6 @@ import TableFooter from "@mui/material/TableFooter";
 import TablePagination from "@mui/material/TablePagination";
 import TableRow from "@mui/material/TableRow";
 import Paper from "@mui/material/Paper";
-import IconButton from "@mui/material/IconButton";
-import FirstPageIcon from "@mui/icons-material/FirstPage";
-import KeyboardArrowLeft from "@mui/icons-material/KeyboardArrowLeft";
-import KeyboardArrowRight from "@mui/icons-material/KeyboardArrowRight";
-import LastPageIcon from "@mui/icons-material/LastPage";
-
 import Button from "@mui/material/Button";
 import Dialog from "@mui/material/Dialog";
 import DialogActions from "@mui/material/DialogActions";
@@ -25,93 +18,20 @@ import Tooltip from "@mui/material/Tooltip";
 import {
   Alert,
   AlertTitle,
-  alpha,
   Chip,
   Container,
   ListItemButton,
   ListItemText,
   Snackbar,
-  styled,
   TableHead,
-  Toolbar,
   Typography,
 } from "@mui/material";
 import axios from "axios";
+import TablePaginationActions from "../utils/TablePaginationActions";
+import { StyledToolbar } from "../utils/StyledToolBar";
 import { RemoveRedEye } from "@mui/icons-material";
+import { AnimatePresence, motion } from "framer-motion";
 
-function TablePaginationActions(props) {
-  const { count, page, rowsPerPage, onPageChange } = props;
-
-  const handleFirstPageButtonClick = (event) => {
-    onPageChange(event, 0);
-  };
-
-  const handleBackButtonClick = (event) => {
-    onPageChange(event, page - 1);
-  };
-
-  const handleNextButtonClick = (event) => {
-    onPageChange(event, page + 1);
-  };
-
-  const handleLastPageButtonClick = (event) => {
-    onPageChange(event, Math.max(0, Math.ceil(count / rowsPerPage) - 1));
-  };
-
-  return (
-    <Box sx={{ flexShrink: 0, ml: 2.5 }}>
-      <IconButton
-        onClick={handleFirstPageButtonClick}
-        disabled={page === 0}
-        aria-label="first page"
-      >
-        <FirstPageIcon />
-      </IconButton>
-      <IconButton
-        onClick={handleBackButtonClick}
-        disabled={page === 0}
-        aria-label="previous page"
-      >
-        <KeyboardArrowLeft />
-      </IconButton>
-      <IconButton
-        onClick={handleNextButtonClick}
-        disabled={page >= Math.ceil(count / rowsPerPage) - 1}
-        aria-label="next page"
-      >
-        <KeyboardArrowRight />
-      </IconButton>
-      <IconButton
-        onClick={handleLastPageButtonClick}
-        disabled={page >= Math.ceil(count / rowsPerPage) - 1}
-        aria-label="last page"
-      >
-        <LastPageIcon />
-      </IconButton>
-    </Box>
-  );
-}
-
-TablePaginationActions.propTypes = {
-  count: PropTypes.number.isRequired,
-  onPageChange: PropTypes.func.isRequired,
-  page: PropTypes.number.isRequired,
-  rowsPerPage: PropTypes.number.isRequired,
-};
-const StyledToolbar = styled(Toolbar)(({ theme }) => ({
-  display: "flex",
-  alignItems: "center",
-  justifyContent: "space-between",
-  flexShrink: 0,
-  borderRadius: `calc(${theme.shape.borderRadius}px + 8px)`,
-  backdropFilter: "blur(24px)",
-  border: "1px solid",
-  borderColor: (theme.vars || theme).palette.divider,
-  backgroundColor: theme.vars
-    ? `rgba(${theme.vars.palette.background.defaultChannel} / 0.4)`
-    : alpha(theme.palette.background.default, 0.4),
-  boxShadow: `0px 10px 6px rgba(0, 0, 0, 0.1)`,
-}));
 export default function Violations() {
   const [page, setPage] = React.useState(0);
   const [rowsPerPage, setRowsPerPage] = React.useState(5);
@@ -137,12 +57,23 @@ export default function Violations() {
   const horizontal = "right";
   const emptyRows =
     page > 0 ? Math.max(0, (1 + page) * rowsPerPage - rows.length) : 0;
+  const rowVariants = {
+    hidden: { opacity: 0, y: 20 },
+    visible: (index) => ({
+      opacity: 1,
+      y: 0,
+      transition: {
+        delay: index * 0.1,
+        duration: 0.5,
+      },
+    }),
+  };
   const [isLoading, setIsLoading] = React.useState(false);
   const handleChangePage = (event, newPage) => {
     setPage(newPage);
   };
   const handleChangeRowsPerPage = (event) => {
-    setRowsPerPage(parseInt(event.target.value, 6));
+    setRowsPerPage(parseInt(event.target.value, 10));
     setPage(0);
   };
   const handleAlertClose = (event, reason) => {
@@ -210,93 +141,31 @@ export default function Violations() {
       </TableHead>
     );
   };
-  const GetTableBodyData = () => {
-    if (isLoading) {
-      return (
-        <TableRow style={{ height: 53 * emptyRows }}>
-          <TableCell colSpan={4} align="center">
-            Loading....
-          </TableCell>
-        </TableRow>
-      );
-    } else if (rows.length == 0 && isLoading == false) {
-      return (
-        <TableRow style={{ height: 53 * emptyRows }}>
-          <TableCell colSpan={4} align="center">
-            No Data to show.
-          </TableCell>
-        </TableRow>
-      );
-    }
+  const GetTableRowLoading = () => {
     return (
-      <>
-        {(rowsPerPage > 0
-          ? rows.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
-          : rows
-        ).map((row) => (
-          <TableRow key={row.id} className="slide-in-down-visible">
-            <TableCell scope="row">
-              <Tooltip title={row.section} arrow>
-                <div className="flex flex-wrap break-words whitespace-normal justify-start">
-                  {row.section}
-                </div>
-              </Tooltip>
-            </TableCell>
-            <TableCell scope="row" className="w-fit">
-              <Tooltip title={row.set} arrow>
-                <div className="flex flex-wrap break-words whitespace-normal justify-start">
-                  {row.set}
-                </div>
-              </Tooltip>
-            </TableCell>
-            <TableCell align="center">
-              <Tooltip
-                title={
-                  row.category.charAt(0).toUpperCase() + row.category.slice(1)
-                }
-                arrow
-              >
-                <div className="flex flex-wrap break-words whitespace-normal justify-center">
-                  <Chip
-                    label={
-                      row.category.charAt(0).toUpperCase() +
-                      row.category.slice(1)
-                    }
-                    color={row.category === "major" ? "primary" : "error"}
-                    sx={{ width: "50%" }}
-                    variant="filled"
-                  />
-                </div>
-              </Tooltip>
-            </TableCell>
-            <TableCell className="flex justify-center" align="center">
-              <Tooltip title="Edit">
-                <Button
-                  className="rounded-sm text-white hover:bg-red-100 hover:text-blue"
-                  onClick={() => handleOpen(row)}
-                >
-                  <RemoveRedEye color="error" />
-                </Button>
-              </Tooltip>
-            </TableCell>
-          </TableRow>
-        ))}
-      </>
+      <TableRow style={{ height: 53 * emptyRows }}>
+        <TableCell colSpan={4} align="center">
+          Loading....
+        </TableCell>
+      </TableRow>
     );
   };
   const GetTableFooter = () => {
     return (
-      <TableRow>
-        <TablePagination
-          rowsPerPageOptions={[{ label: "All", value: -1 }]}
-          count={rows.length}
-          rowsPerPage={rowsPerPage}
-          page={page}
-          onPageChange={handleChangePage}
-          onRowsPerPageChange={handleChangeRowsPerPage}
-          ActionsComponent={TablePaginationActions}
-        />
-      </TableRow>
+      <TableFooter>
+        <TableRow>
+          <TablePagination
+            rowsPerPageOptions={[{ label: "All", value: -1 }]}
+            count={rows.length}
+            rowsPerPage={rowsPerPage}
+            page={page}
+            onPageChange={handleChangePage}
+            onRowsPerPageChange={handleChangeRowsPerPage}
+            ActionsComponent={TablePaginationActions}
+            colSpan={4}
+          />
+        </TableRow>
+      </TableFooter>
     );
   };
   const GetDialogContent = () => {
@@ -343,7 +212,7 @@ export default function Violations() {
             Offense Codes:
           </Typography>
           <div>
-            {rowDataToView.offense_codes.length > 0 && (
+            {rowDataToView.offense_codes?.length > 0 && (
               <>
                 {rowDataToView.offense_codes.map((offense_code) => (
                   <Chip
@@ -417,14 +286,105 @@ export default function Violations() {
         <GetHeader />
         <StyledToolbar variant="dense" disableGutters>
           <TableContainer component={Paper}>
-            <Table sx={{ minWidth: 400 }}>
+            <Table
+              sx={{
+                minWidth: 500,
+                minHeight: 400,
+              }}
+              aria-label="custom pagination table"
+            >
               <GetTableHeader />
               <TableBody>
-                <GetTableBodyData />
+                <AnimatePresence>
+                  {isLoading ? (
+                    <GetTableRowLoading />
+                  ) : (
+                    (rowsPerPage > 0
+                      ? rows.slice(
+                          page * rowsPerPage,
+                          page * rowsPerPage + rowsPerPage
+                        )
+                      : rows
+                    ).map((row, index) => (
+                      <TableRow
+                        key={index}
+                        component={motion.tr}
+                        variants={rowVariants}
+                        initial="hidden"
+                        hidden={isLoading}
+                        exit={{ opacity: 0, y: -10 }}
+                        animate="visible"
+                        custom={index}
+                        layout
+                        sx={{ maxHeight: 160 }}
+                      >
+                        <TableCell scope="row">
+                          <Tooltip title={row.section} arrow>
+                            <div className="flex flex-wrap break-words whitespace-normal justify-start">
+                              {row.section}
+                            </div>
+                          </Tooltip>
+                        </TableCell>
+                        <TableCell
+                          style={{ maxHeight: 160 }}
+                          scope="row"
+                          className="w-fit"
+                        >
+                          <Tooltip title={row.set} arrow>
+                            <div className="flex flex-wrap break-words whitespace-normal justify-start">
+                              {row.set}
+                            </div>
+                          </Tooltip>
+                        </TableCell>
+                        <TableCell align="center">
+                          <Tooltip
+                            title={
+                              row.category.charAt(0).toUpperCase() +
+                              row.category.slice(1)
+                            }
+                            arrow
+                          >
+                            <div className="flex flex-wrap break-words whitespace-normal justify-center">
+                              <Chip
+                                label={
+                                  row.category.charAt(0).toUpperCase() +
+                                  row.category.slice(1)
+                                }
+                                color={
+                                  row.category === "major" ? "primary" : "error"
+                                }
+                                sx={{ width: "50%" }}
+                                variant="filled"
+                              />
+                            </div>
+                          </Tooltip>
+                        </TableCell>
+                        <TableCell
+                          className="flex justify-center"
+                          align="center"
+                        >
+                          <Tooltip title="Edit">
+                            <Button
+                              className="rounded-sm text-white hover:bg-red-100 hover:text-blue"
+                              onClick={() => handleOpen(row)}
+                            >
+                              <RemoveRedEye color="error" />
+                            </Button>
+                          </Tooltip>
+                        </TableCell>
+                      </TableRow>
+                    ))
+                  )}
+                </AnimatePresence>
+                {rows.length === 0 && !isLoading && (
+                  <TableRow>
+                    <TableCell colSpan={4} align="center">
+                      No Data to show.
+                    </TableCell>
+                  </TableRow>
+                )}
               </TableBody>
-              <TableFooter>
-                <GetTableFooter />
-              </TableFooter>
+              <GetTableFooter />
             </Table>
           </TableContainer>
         </StyledToolbar>

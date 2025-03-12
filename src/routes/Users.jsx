@@ -1,19 +1,11 @@
 import * as React from "react";
-import PropTypes from "prop-types";
-import Box from "@mui/material/Box";
 import Table from "@mui/material/Table";
 import TableBody from "@mui/material/TableBody";
 import TableCell from "@mui/material/TableCell";
 import TableContainer from "@mui/material/TableContainer";
-import TableFooter from "@mui/material/TableFooter";
 import TablePagination from "@mui/material/TablePagination";
 import TableRow from "@mui/material/TableRow";
 import Paper from "@mui/material/Paper";
-import IconButton from "@mui/material/IconButton";
-import FirstPageIcon from "@mui/icons-material/FirstPage";
-import KeyboardArrowLeft from "@mui/icons-material/KeyboardArrowLeft";
-import KeyboardArrowRight from "@mui/icons-material/KeyboardArrowRight";
-import LastPageIcon from "@mui/icons-material/LastPage";
 import Button from "@mui/material/Button";
 import Dialog from "@mui/material/Dialog";
 import DialogActions from "@mui/material/DialogActions";
@@ -24,94 +16,20 @@ import Tooltip from "@mui/material/Tooltip";
 import {
   Alert,
   AlertTitle,
-  alpha,
   Container,
   InputLabel,
   MenuItem,
   Select,
   Snackbar,
-  styled,
   TableHead,
-  Toolbar,
 } from "@mui/material";
 import axios from "axios";
 import "../animations.css";
 import { AnimatePresence, motion } from "framer-motion";
+import { StyledToolbar } from "../utils/StyledToolBar";
+import TablePaginationActions from "../utils/TablePaginationActions";
 
-function TablePaginationActions(props) {
-  const { count, page, rowsPerPage, onPageChange } = props;
-
-  const handleFirstPageButtonClick = (event) => {
-    onPageChange(event, 0);
-  };
-
-  const handleBackButtonClick = (event) => {
-    onPageChange(event, page - 1);
-  };
-
-  const handleNextButtonClick = (event) => {
-    onPageChange(event, page + 1);
-  };
-
-  const handleLastPageButtonClick = (event) => {
-    onPageChange(event, Math.max(0, Math.ceil(count / rowsPerPage) - 1));
-  };
-
-  return (
-    <Box sx={{ flexShrink: 0, ml: 2.5 }}>
-      <IconButton
-        onClick={handleFirstPageButtonClick}
-        disabled={page === 0}
-        aria-label="first page"
-      >
-        <FirstPageIcon />
-      </IconButton>
-      <IconButton
-        onClick={handleBackButtonClick}
-        disabled={page === 0}
-        aria-label="previous page"
-      >
-        <KeyboardArrowLeft />
-      </IconButton>
-      <IconButton
-        onClick={handleNextButtonClick}
-        disabled={page >= Math.ceil(count / rowsPerPage) - 1}
-        aria-label="next page"
-      >
-        <KeyboardArrowRight />
-      </IconButton>
-      <IconButton
-        onClick={handleLastPageButtonClick}
-        disabled={page >= Math.ceil(count / rowsPerPage) - 1}
-        aria-label="last page"
-      >
-        <LastPageIcon />
-      </IconButton>
-    </Box>
-  );
-}
-
-TablePaginationActions.propTypes = {
-  count: PropTypes.number.isRequired,
-  onPageChange: PropTypes.func.isRequired,
-  page: PropTypes.number.isRequired,
-  rowsPerPage: PropTypes.number.isRequired,
-};
-const StyledToolbar = styled(Toolbar)(({ theme }) => ({
-  display: "flex",
-  alignItems: "center",
-  justifyContent: "space-between",
-  flexShrink: 0,
-  borderRadius: `calc(${theme.shape.borderRadius}px + 8px)`,
-  backdropFilter: "blur(24px)",
-  border: "1px solid",
-  borderColor: (theme.vars || theme).palette.divider,
-  backgroundColor: theme.vars
-    ? `rgba(${theme.vars.palette.background.defaultChannel} / 0.4)`
-    : alpha(theme.palette.background.default, 0.4),
-  boxShadow: `0px 10px 6px rgba(0, 0, 0, 0.1)`,
-}));
-export default function Users() {
+function Users() {
   const [page, setPage] = React.useState(0);
   const [rowsPerPage, setRowsPerPage] = React.useState(5);
   const [rows, setRows] = React.useState([]);
@@ -426,77 +344,79 @@ export default function Users() {
         <div className="w-full h-full mx-auto">
           <GetHeader />
           <StyledToolbar variant="dense" disableGutters>
-            <TableContainer component={Paper}>
-              <Table sx={{ minWidth: 500 }}>
-                <GetTableHeader />
-                <TableBody>
-                  {isLoading ? (
-                    <GetTableLoadingBody />
-                  ) : (
-                    <AnimatePresence>
-                      {displayedRows.map((row, index) => (
-                        <TableRow
-                          key={index}
-                          component={motion.tr}
-                          variants={rowVariants}
-                          initial="hidden"
-                          animate="visible"
-                          custom={index}
-                          layout
-                        >
-                          <TableCell component="th" scope="row">
-                            {row.first_name && row.last_name
-                              ? `${row.first_name} ${row.last_name}`
-                              : row.isPlaceholder
-                              ? "-"
-                              : "No name attached"}
-                          </TableCell>
-                          <TableCell>
-                            {row.username ||
-                              (row.isPlaceholder ? "-" : "No username")}
-                          </TableCell>
-                          <TableCell>
-                            {row.email ||
-                              (row.isPlaceholder
+            <Paper sx={{ width: "100%", mb: 2 }}>
+              <TableContainer>
+                <Table>
+                  <GetTableHeader />
+                  <TableBody>
+                    {isLoading ? (
+                      <GetTableLoadingBody />
+                    ) : (
+                      <AnimatePresence>
+                        {displayedRows.map((row, index) => (
+                          <TableRow
+                            key={index}
+                            component={motion.tr}
+                            variants={rowVariants}
+                            initial="hidden"
+                            animate="visible"
+                            custom={index}
+                            layout
+                          >
+                            <TableCell component="th" scope="row">
+                              {row.first_name && row.last_name
+                                ? `${row.first_name} ${row.last_name}`
+                                : row.isPlaceholder
                                 ? "-"
-                                : "No email address attached")}
-                          </TableCell>
-                          <TableCell align="center">
-                            {row.isPlaceholder ? (
-                              "-"
-                            ) : (
-                              <Button
-                                className={`p-2 rounded-sm text-center ${
-                                  row.type === "ADMIN" ? "primary" : "secondary"
-                                }`}
-                                color={
-                                  row.type === "ADMIN" ? "primary" : "secondary"
-                                }
-                              >
-                                {row.type || "No type attached"}
-                              </Button>
-                            )}
-                          </TableCell>
-                        </TableRow>
-                      ))}
-                    </AnimatePresence>
-                  )}
-                </TableBody>
-                <TableFooter>
-                  <TableRow>
-                    <TablePagination
-                      rowsPerPageOptions={[{ label: "All", value: -1 }]}
-                      count={Math.max(rows.length, 5)}
-                      rowsPerPage={rowsPerPage}
-                      page={page}
-                      onPageChange={handleChangePage}
-                      onRowsPerPageChange={handleChangeRowsPerPage}
-                      ActionsComponent={TablePaginationActions}
-                    />
-                  </TableRow>
-                </TableFooter>
-              </Table>
-            </TableContainer>
+                                : "No name attached"}
+                            </TableCell>
+                            <TableCell>
+                              {row.username ||
+                                (row.isPlaceholder ? "-" : "No username")}
+                            </TableCell>
+                            <TableCell>
+                              {row.email ||
+                                (row.isPlaceholder
+                                  ? "-"
+                                  : "No email address attached")}
+                            </TableCell>
+                            <TableCell align="center">
+                              {row.isPlaceholder ? (
+                                "-"
+                              ) : (
+                                <Button
+                                  className={`p-2 rounded-sm text-center ${
+                                    row.type === "ADMIN"
+                                      ? "primary"
+                                      : "secondary"
+                                  }`}
+                                  color={
+                                    row.type === "ADMIN"
+                                      ? "primary"
+                                      : "secondary"
+                                  }
+                                >
+                                  {row.type || "No type attached"}
+                                </Button>
+                              )}
+                            </TableCell>
+                          </TableRow>
+                        ))}
+                      </AnimatePresence>
+                    )}
+                  </TableBody>
+                  <TablePagination
+                    rowsPerPageOptions={[{ label: "All", value: -1 }]}
+                    count={Math.max(rows.length, 5)}
+                    rowsPerPage={rowsPerPage}
+                    page={page}
+                    onPageChange={handleChangePage}
+                    onRowsPerPageChange={handleChangeRowsPerPage}
+                    ActionsComponent={TablePaginationActions}
+                  />
+                </Table>
+              </TableContainer>
+            </Paper>
           </StyledToolbar>
         </div>
       </Container>
@@ -735,3 +655,4 @@ export default function Users() {
     </>
   );
 }
+export default Users;
