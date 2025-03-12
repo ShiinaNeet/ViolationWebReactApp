@@ -2,15 +2,10 @@ import React from "react";
 import Button from "@mui/material/Button";
 import TextField from "@mui/material/TextField";
 import SendIcon from "@mui/icons-material/Send";
-import {
-  Alert,
-  AlertTitle,
-  Snackbar,
-} from "@mui/material";
+import { Alert, AlertTitle, Snackbar } from "@mui/material";
 import axios from "axios";
 import { useDropzone } from "react-dropzone";
 import { motion } from "framer-motion";
-import { AnimatePresence } from "framer-motion";
 
 import "../animations.css";
 
@@ -55,7 +50,12 @@ export default function AlertMessageStudent() {
     setIsLoading(true);
     console.log("Message: ", message);
     // if(message.body === '' || message.violationName.length === 0 || message.email === '') {
-    if (message.body === "" || message.files.length === 0 || message.recipients.length === 0 || message.subject === "") {
+    if (
+      message.body === "" ||
+      message.files.length === 0 ||
+      message.recipients.length === 0 ||
+      message.subject === ""
+    ) {
       setMessage({ ...message, error: true });
       setAlertMessage({
         open: true,
@@ -68,17 +68,15 @@ export default function AlertMessageStudent() {
     }
 
     const formData = new FormData();
-    message.files.forEach(file => {
-      formData.append('attachment', file);
+    message.files.forEach((file) => {
+      formData.append("attachment", file);
     });
-    message.recipients.forEach(recipient => {
-      formData.append('recipient', recipient);
+    message.recipients.forEach((recipient) => {
+      formData.append("recipient", recipient);
     });
 
-    await axios.post(
-      "form/send",
-      formData,
-      {
+    await axios
+      .post("form/send", formData, {
         headers: {
           "Content-Type": "multipart/form-data",
         },
@@ -86,42 +84,49 @@ export default function AlertMessageStudent() {
           subject: message.subject,
           body: message.body,
         },
-    })
-    .then((response) => {
-      if (response.data.status === "success") {
-        console.log("Email was sent succesfully!");
-        setAlertMessage({
-          open: true,
-          title: "Success",
-          message: "Email was sent succesfully!",
-          variant: "success",
-        });
+      })
+      .then((response) => {
+        if (response.data.status === "success") {
+          console.log("Email was sent succesfully!");
+          setAlertMessage({
+            open: true,
+            title: "Success",
+            message: "Email was sent succesfully!",
+            variant: "success",
+          });
+          setIsLoading(false);
+        } else {
+          console.log("Failed to send email: ", response.data.message);
+          setAlertMessage({
+            open: true,
+            title: "Error Occured!",
+            message: response.data.message,
+            variant: "error",
+          });
+          setIsLoading(false);
+        }
+      })
+      .catch((e) => {
+        console.log("Error Occurred: ", e);
         setIsLoading(false);
-      } else {
-        console.log("Failed to send email: ", response.data.message);
         setAlertMessage({
           open: true,
           title: "Error Occured!",
-          message: response.data.message,
+          message: "Please try again later.",
           variant: "error",
         });
-        setIsLoading(false);
-      }
-    })
-    .catch((e) => {
-      console.log("Error Occurred: ", e);
-      setIsLoading(false);
-      setAlertMessage({
-        open: true,
-        title: "Error Occured!",
-        message: "Please try again later.",
-        variant: "error",
       });
-    });
   };
   const onDrop = (acceptedFiles) => {
-    const filteredFiles = acceptedFiles.filter(file =>
-      ["application/pdf", "video/mp4", "application/vnd.openxmlformats-officedocument.wordprocessingml.document", "application/msword", "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet", "application/vnd.ms-excel"].includes(file.type)
+    const filteredFiles = acceptedFiles.filter((file) =>
+      [
+        "application/pdf",
+        "video/mp4",
+        "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
+        "application/msword",
+        "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+        "application/vnd.ms-excel",
+      ].includes(file.type)
     );
     setMessage((prevState) => ({
       ...prevState,
@@ -147,62 +152,86 @@ export default function AlertMessageStudent() {
     <div className="w-full mx-0 h-screen">
       <div>
         <div className="text-2xl py-3">
-          <motion.div variants={itemVariants} initial="hidden" animate="visible">
+          <motion.div
+            variants={itemVariants}
+            initial="hidden"
+            animate="visible"
+          >
             <label className="font-bold">Send Email</label>
             <br />
           </motion.div>
         </div>
         <div className="flex flex-col gap-y-3">
-          <motion.div variants={itemVariants} initial="hidden" animate="visible">
-          <TextField
-            autoFocus
-            id="standard-multiline-static"
-            label="Subject"
-            color="error"
-            multiline
-            rows={2}
-            variant="outlined"
-            fullWidth
-            required={true}
-            value={message.subject}
-            onChange={(e) => setMessage({ ...message, subject: e.target.value })}
-          />
+          <motion.div
+            variants={itemVariants}
+            initial="hidden"
+            animate="visible"
+          >
+            <TextField
+              autoFocus
+              id="standard-multiline-static"
+              label="Subject"
+              color="error"
+              multiline
+              rows={2}
+              variant="outlined"
+              fullWidth
+              required={true}
+              value={message.subject}
+              onChange={(e) =>
+                setMessage({ ...message, subject: e.target.value })
+              }
+            />
           </motion.div>
-          <motion.div variants={itemVariants} initial="hidden" animate="visible">
-          <TextField
-            autoFocus
-            id="standard-multiline-static"
-            label="Message Body"
-            color="error"
-            multiline
-            rows={6}
-            variant="outlined"
-            fullWidth
-            required={true}
-            value={message.body}
-            onChange={(e) => setMessage({ ...message, body: e.target.value })}
-          />
+          <motion.div
+            variants={itemVariants}
+            initial="hidden"
+            animate="visible"
+          >
+            <TextField
+              autoFocus
+              id="standard-multiline-static"
+              label="Message Body"
+              color="error"
+              multiline
+              rows={6}
+              variant="outlined"
+              fullWidth
+              required={true}
+              value={message.body}
+              onChange={(e) => setMessage({ ...message, body: e.target.value })}
+            />
           </motion.div>
           <div className="flex flex-col gap-y-3 md:flex-row md:gap-x-1">
             {/* <div className="md:w-3/4 flex flex-col gap-y-2"> */}
-              <motion.div className="md:w-3/4 flex flex-col gap-y-2" variants={itemVariants} initial="hidden" animate="visible">
-                {message.recipients.map((recipient, index) => (
-                  <TextField
-                    key={index}
-                    id={`recipient-${index}`}
-                    label={`Email Address ${index + 1}`}
-                    variant="outlined"
-                    fullWidth
-                    required
-                    value={recipient}
-                    size="small"
-                    onChange={(e) => handleRecipientChange(index, e.target.value)}
-                    color="error"
-                  />
-                ))}
-              </motion.div>
+            <motion.div
+              className="md:w-3/4 flex flex-col gap-y-2"
+              variants={itemVariants}
+              initial="hidden"
+              animate="visible"
+            >
+              {message.recipients.map((recipient, index) => (
+                <TextField
+                  key={index}
+                  id={`recipient-${index}`}
+                  label={`Email Address ${index + 1}`}
+                  variant="outlined"
+                  fullWidth
+                  required
+                  value={recipient}
+                  size="small"
+                  onChange={(e) => handleRecipientChange(index, e.target.value)}
+                  color="error"
+                />
+              ))}
+            </motion.div>
             {/* </div> */}
-            <motion.div className="h-full w-full md:w-1/4 flex items-center justify-center" variants={itemVariants} initial="hidden" animate="visible">
+            <motion.div
+              className="h-full w-full md:w-1/4 flex items-center justify-center"
+              variants={itemVariants}
+              initial="hidden"
+              animate="visible"
+            >
               <Button
                 variant="outlined"
                 onClick={addRecipientField}
@@ -213,17 +242,31 @@ export default function AlertMessageStudent() {
               </Button>
             </motion.div>
           </div>
-          <motion.div variants={itemVariants} initial="hidden" animate="visible">
-            <div {...getRootProps({ className: "dropzone" })} className="border-solid border rounded-sm border-gray-400 p-4 text-center">
-                <input {...getInputProps()} />
-                <p>Drag & drop some files here, or click to select files</p>
-                <em>(Only PDF, MP4, DOCX, Word, and Excel files will be accepted)</em>
-              </div>
+          <motion.div
+            variants={itemVariants}
+            initial="hidden"
+            animate="visible"
+          >
+            <div
+              {...getRootProps({ className: "dropzone" })}
+              className="border-solid border rounded-sm border-gray-400 p-4 text-center"
+            >
+              <input {...getInputProps()} />
+              <p>Drag & drop some files here, or click to select files</p>
+              <em>
+                (Only PDF, MP4, DOCX, Word, and Excel files will be accepted)
+              </em>
+            </div>
             <div>
               {message.files.map((file, index) => (
                 <div key={index} className="flex w-full h-fit whitespace-pre">
-                  <label className="py-2">{file.name +  "  "}</label> 
-                  <label className="py-2 px-2 rounded-sm text-blue-500 hover:bg-blue-100" onClick={()=>onRemoveItem(index)} >Remove</label>
+                  <label className="py-2">{file.name + "  "}</label>
+                  <label
+                    className="py-2 px-2 rounded-sm text-blue-500 hover:bg-blue-100"
+                    onClick={() => onRemoveItem(index)}
+                  >
+                    Remove
+                  </label>
                 </div>
               ))}
             </div>
@@ -250,7 +293,11 @@ export default function AlertMessageStudent() {
         key={vertical + horizontal}
         className="snackbar-bottom"
       >
-        <Alert onClose={handleAlertClose} severity={alertMessage.variant} sx={{ width: "100%" }}>
+        <Alert
+          onClose={handleAlertClose}
+          severity={alertMessage.variant}
+          sx={{ width: "100%" }}
+        >
           <AlertTitle>{alertMessage.title}</AlertTitle>
           {alertMessage.message}
         </Alert>
