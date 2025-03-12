@@ -21,6 +21,8 @@ import {
   MenuItem,
   Select,
   Snackbar,
+  Tab,
+  TableFooter,
   TableHead,
 } from "@mui/material";
 import axios from "axios";
@@ -344,7 +346,7 @@ function Users() {
         <div className="w-full h-full mx-auto">
           <GetHeader />
           <StyledToolbar variant="dense" disableGutters>
-            <Paper sx={{ width: "100%", mb: 2 }}>
+            <Paper sx={{ width: "100%" }}>
               <TableContainer>
                 <Table>
                   <GetTableHeader />
@@ -405,15 +407,19 @@ function Users() {
                       </AnimatePresence>
                     )}
                   </TableBody>
-                  <TablePagination
-                    rowsPerPageOptions={[{ label: "All", value: -1 }]}
-                    count={Math.max(rows.length, 5)}
-                    rowsPerPage={rowsPerPage}
-                    page={page}
-                    onPageChange={handleChangePage}
-                    onRowsPerPageChange={handleChangeRowsPerPage}
-                    ActionsComponent={TablePaginationActions}
-                  />
+                  <TableFooter>
+                    <TableRow>
+                      <TablePagination
+                        rowsPerPageOptions={[{ label: "All", value: -1 }]}
+                        count={Math.max(rows.length, 5)}
+                        rowsPerPage={rowsPerPage}
+                        page={page}
+                        onPageChange={handleChangePage}
+                        onRowsPerPageChange={handleChangeRowsPerPage}
+                        ActionsComponent={TablePaginationActions}
+                      />
+                    </TableRow>
+                  </TableFooter>
                 </Table>
               </TableContainer>
             </Paper>
