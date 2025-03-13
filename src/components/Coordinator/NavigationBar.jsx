@@ -17,21 +17,7 @@ import {
 } from "@mui/material";
 import MenuIcon from "@mui/icons-material/Menu";
 import CloseRoundedIcon from "@mui/icons-material/CloseRounded";
-import { red } from "@mui/material/colors";
-
-const StyledToolbar = styled(Toolbar)(({ theme }) => ({
-  display: "flex",
-  alignItems: "center",
-  justifyContent: "space-between",
-  flexShrink: 0,
-  borderRadius: `calc(${theme.shape.borderRadius}px + 8px)`,
-  backdropFilter: "blur(24px)",
-  border: "1px solid",
-  borderColor: (theme.vars || theme).palette.divider,
-  backgroundColor: "red",
-  boxShadow: `0px 4px 6px ${alpha(red[500], 0.9)}`,
-  padding: "8px 12px",
-}));
+import { StyledToolbarWithRed } from "@src/utils/StyledToolBar.js";
 
 const NavigationBar = () => {
   const { logout, isAuthenticated } = useAuth();
@@ -81,16 +67,14 @@ const NavigationBar = () => {
       }}
     >
       <Container maxWidth="lg">
-        <StyledToolbar variant="dense" disableGutters>
-          <Box
-            sx={{ flexGrow: 1, display: "flex", alignItems: "center", px: 0 }}
-          >
+        <StyledToolbarWithRed variant="dense" disableGutters>
+          <Box className="flex items-center px-0 flex-grow">
             <img
               src={reactsvg}
               alt="React Logo"
-              className="h-fit mx-2 flex justify-center self-center "
+              className="h-fit mx-2 flex justify-center self-center"
             />
-            <h1 className="text-white-500">
+            <h1 className="text-white-500 hidden sm:block">
               Batangas State University Disciplinary Management
             </h1>
           </Box>
@@ -115,54 +99,59 @@ const NavigationBar = () => {
             {localStorage.getItem("accessToken") === null &&
               window.location.replace("/login")}
           </Box>
-          <Box sx={{ display: { xs: "flex", md: "none" }, gap: 1 }}>
+          <Box
+            sx={{
+              display: { xs: "flex", md: "none" }, // Change grid to flex
+              justifyContent: "flex-end", // Align items to the end horizontally
+              alignItems: "center", // Align vertically
+            }}
+          >
             <IconButton aria-label="Menu button" onClick={toggleDrawer(true)}>
               <MenuIcon />
             </IconButton>
-            <Drawer
-              anchor="top"
-              open={open}
-              onClose={toggleDrawer(false)}
-              PaperProps={{
-                sx: {
-                  top: "var(--template-frame-height, 0px)",
-                  display: "flex",
-                  flexDirection: "column",
-                },
+          </Box>
+          <Drawer
+            anchor="top"
+            open={open}
+            onClose={toggleDrawer(false)}
+            PaperProps={{
+              sx: {
+                top: "var(--template-frame-height, 0px)",
+                display: "flex",
+                flexDirection: "column",
+              },
+            }}
+          >
+            <Box
+              sx={{
+                p: 2,
+                backgroundColor: "background.default",
+                display: "flex",
+                flexDirection: "column",
               }}
             >
               <Box
                 sx={{
-                  p: 2,
-                  backgroundColor: "background.default",
                   display: "flex",
-                  flexDirection: "column",
-                  // rowGap: 2,
+                  justifyContent: "flex-end",
                 }}
               >
-                <Box
-                  sx={{
-                    display: "flex",
-                    justifyContent: "flex-end",
-                  }}
-                >
-                  <IconButton onClick={toggleDrawer(false)}>
-                    <CloseRoundedIcon />
-                  </IconButton>
-                </Box>
-                <GetMenuButtons />
-                <Divider sx={{ my: 3 }} />
-                {isAuthenticated && (
-                  <Link onClick={logout}>
-                    <MenuItem>Logout </MenuItem>
-                  </Link>
-                )}
-                {localStorage.getItem("accessToken") === null &&
-                  window.location.replace("/login")}
+                <IconButton onClick={toggleDrawer(false)}>
+                  <CloseRoundedIcon />
+                </IconButton>
               </Box>
-            </Drawer>
-          </Box>
-        </StyledToolbar>
+              <GetMenuButtons />
+              <Divider sx={{ my: 3 }} />
+              {isAuthenticated && (
+                <Link onClick={logout}>
+                  <MenuItem>Logout </MenuItem>
+                </Link>
+              )}
+              {localStorage.getItem("accessToken") === null &&
+                window.location.replace("/login")}
+            </Box>
+          </Drawer>
+        </StyledToolbarWithRed>
       </Container>
     </AppBar>
   );

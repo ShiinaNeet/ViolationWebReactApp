@@ -1,8 +1,6 @@
 import React from "react";
 import reactsvg from "@src/assets/react.svg";
 import { Link } from "react-router-dom";
-import { useAuth } from "../../auth/AuthProvider";
-
 import MenuIcon from "@mui/icons-material/Menu";
 import CloseRoundedIcon from "@mui/icons-material/CloseRounded";
 import {
@@ -19,6 +17,8 @@ import {
   Divider,
 } from "@mui/material";
 import { red } from "@mui/material/colors";
+import { useAuth } from "../../auth/AuthProvider";
+import { StyledToolbarWithRed } from "@src/utils/StyledToolBar.js";
 
 const Department_Head_NavigationBar = () => {
   const { logout, isAuthenticated } = useAuth();
@@ -28,19 +28,7 @@ const Department_Head_NavigationBar = () => {
     { name: "Graph", link: "/department-head/graph" },
     { name: "Notification", link: "/department-head/Notification" },
   ];
-  const StyledToolbar = styled(Toolbar)(({ theme }) => ({
-    display: "flex",
-    alignItems: "center",
-    justifyContent: "space-between",
-    flexShrink: 0,
-    borderRadius: `calc(${theme.shape.borderRadius}px + 8px)`,
-    backdropFilter: "blur(24px)",
-    border: "1px solid ",
-    borderColor: (theme.vars || theme).palette.divider,
-    backgroundColor: "red",
-    boxShadow: `0px 4px 6px ${alpha(red[500], 0.9)}`,
-    padding: "8px 12px",
-  }));
+
   const toggleDrawer = (newOpen) => () => {
     if (
       event.type === "keydown" &&
@@ -104,16 +92,16 @@ const Department_Head_NavigationBar = () => {
       }}
     >
       <Container maxWidth="lg">
-        <StyledToolbar variant="dense" disableGutters>
+        <StyledToolbarWithRed variant="dense" disableGutters>
           <Box
             sx={{ flexGrow: 1, display: "flex", alignItems: "center", px: 0 }}
           >
             <img
               src={reactsvg}
               alt="React Logo"
-              className="h-fit mx-2 flex justify-center self-center "
+              className="h-fit mx-2 flex justify-center self-center"
             />
-            <h1 className="text-white-500">
+            <h1 className="text-white-500 hidden sm:block">
               Batangas State University Disciplinary Management
             </h1>
           </Box>
@@ -153,7 +141,7 @@ const Department_Head_NavigationBar = () => {
               <GetMenuButtons />
             </Drawer>
           </Box>
-        </StyledToolbar>
+        </StyledToolbarWithRed>
       </Container>
     </AppBar>
   );

@@ -1078,13 +1078,16 @@ const Students = () => {
   };
   const GetHeader = () => {
     return (
-      <div className="flex flex-row justify-between h-fit rounded-md my-2">
-        <h1 className="text-2xl py-3 text-red-600">Student Violations</h1>
+      <div className="flex flex-row justify-between h-fit rounded-md mt-5">
+        <h1 className="text-lg sm:text-2xl py-3 text-red-600">
+          Student Violations
+        </h1>
         <div className="flex items-center">
           <Button
             className="bg-red-500 p-2 rounded-sm text-red "
             onClick={() => setCreateStudentViolationModal(true)}
             color="error"
+            size="small"
           >
             Add Violation
           </Button>
@@ -1092,6 +1095,7 @@ const Students = () => {
             className=" my-2 p-2 rounded-sm text-red"
             onClick={() => setSearchFilterModal(true)}
             color="error"
+            size="small"
           >
             <FilterAltRoundedIcon color="error" /> Filter
           </Button>
@@ -1165,12 +1169,12 @@ const Students = () => {
           display: "flex",
           flexDirection: "column",
           alignItems: "center",
-          pt: { xs: 10, sm: 15 },
+          pt: { xs: 10, sm: 15, md: 15 },
           pb: { xs: 8, sm: 12 },
           minHeight: "100vh",
         }}
       >
-        <div className="w-full mx-auto h-full">
+        <div className="w-full h-full">
           <GetHeader />
           <StyledToolbar variant="dense" disableGutters>
             <TableContainer component={Paper}>
