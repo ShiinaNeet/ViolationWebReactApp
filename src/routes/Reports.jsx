@@ -300,6 +300,7 @@ export default function Reports() {
                 onChange={(e) => setSearchFilter(e.target.value)}
                 inputProps={{ "aria-label": "Without label" }}
                 label="Search by student name"
+                margin="normal"
               />
 
               <FormControl fullWidth margin="normal">

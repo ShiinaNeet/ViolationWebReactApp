@@ -4,9 +4,6 @@ import { Link } from "react-router-dom";
 import MenuIcon from "@mui/icons-material/Menu";
 import CloseRoundedIcon from "@mui/icons-material/CloseRounded";
 import {
-  alpha,
-  styled,
-  Toolbar,
   AppBar,
   Box,
   Button,
@@ -16,7 +13,6 @@ import {
   MenuItem,
   Divider,
 } from "@mui/material";
-import { red } from "@mui/material/colors";
 import { useAuth } from "../../auth/AuthProvider";
 import { StyledToolbarWithRed } from "@src/utils/StyledToolBar.js";
 
