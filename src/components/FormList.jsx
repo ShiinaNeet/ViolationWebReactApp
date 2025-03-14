@@ -677,6 +677,7 @@ export default function FormList() {
             <TextField
               fullWidth
               label="Date"
+              value={moment(selectedForm.valid_until).format("MMMM DD, YYYY")}
               InputProps={{
                 readOnly: true,
               }}
