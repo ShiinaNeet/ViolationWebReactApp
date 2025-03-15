@@ -26,6 +26,8 @@ import ViewNotificationModal from "../components/ViewNotificationModal";
 import { AnimatePresence, motion } from "framer-motion";
 import { StyledToolbar } from "../utils/StyledToolBar";
 import TablePaginationActions from "../utils/TablePaginationActions";
+import DeleteOutlineIcon from "@mui/icons-material/DeleteOutline";
+import RemoveRedEyeIcon from "@mui/icons-material/RemoveRedEye";
 
 function Notification() {
   const vertical = "bottom";
@@ -253,6 +255,7 @@ function Notification() {
             // ];
             // setNotifications(dummyData);
             // setFilteredNotifications(dummyData);
+
             setNotifications(response.data.data);
             setFilteredNotifications(response.data.data);
           }
@@ -322,7 +325,6 @@ function Notification() {
             <TableContainer component={Paper}>
               <Table
                 sx={{
-                  minWidth: 500,
                   minHeight: 500,
                   overflow: "hidden",
                 }}
@@ -339,7 +341,7 @@ function Notification() {
                       <TableCell
                         size="small"
                         sx={{
-                          width: "20%",
+                          width: "30%",
                           display: "flex",
                           flexDirection: "row",
                           justifyContent: "space-between",
@@ -378,10 +380,11 @@ function Notification() {
                         Sent At
                       </TableCell>
                       <TableCell
+                        align="center"
                         sx={{
                           fontWeight: "bold",
                           display: { xs: "none", sm: "flex" },
-                          textAlign: { xs: "left", sm: "center" },
+                          textAlign: { xs: "left" },
                         }}
                       >
                         Action
@@ -419,7 +422,7 @@ function Notification() {
                           {/* <TableCell className="w-[1px] md:w-[30px] lg:w-[40px] xl:w-[50px] 2xl:w-[60px] border text-center"></TableCell> */}
                           <TableCell
                             sx={{
-                              width: { xs: "40%" },
+                              width: { xs: "50%" },
                             }}
                             className="px-4 py-2 text-sm text-gray-800 md:text-lg font-semibold font-sans w-1/4  border "
                           >
@@ -443,9 +446,14 @@ function Notification() {
                           </TableCell>
                           <TableCell
                             sx={{
-                              alignItems: "start",
-
-                              width: { xs: "auto", sm: "20%" },
+                              alignItems: "center",
+                              justifyContent: "center",
+                              display: "flex",
+                              flexDirection: "row",
+                              "@media (max-width: 400px)": {
+                                flexDirection: "column",
+                                gap: "10px",
+                              },
                             }}
                           >
                             <Button
@@ -456,19 +464,51 @@ function Notification() {
                                 setIsViewModalOpen(true);
                               }}
                               size="small"
+                              sx={{
+                                padding: "5px",
+                                ":hover": {
+                                  backgroundColor: "#d54a2c",
+                                  color: "white",
+                                  "& .MuiSvgIcon-root": {
+                                    color: "white", // Changes icon color on hover
+                                  },
+                                },
+                              }}
                             >
-                              View
+                              <RemoveRedEyeIcon
+                                color="error"
+                                sx={{
+                                  cursor: "pointer",
+                                  transition: "color 0.2s ease-in-out",
+                                }}
+                              />
                             </Button>
                             <Button
                               color="error"
                               variant="text"
-                              size="small"
                               onClick={() => {
                                 setIsDeleteModalOpen(true);
                                 setSelectedNotification(notif);
                               }}
+                              size="small"
+                              sx={{
+                                padding: "5px",
+                                ":hover": {
+                                  backgroundColor: "#d54a2c",
+                                  color: "white",
+                                  "& .MuiSvgIcon-root": {
+                                    color: "white", // Changes icon color on hover
+                                  },
+                                },
+                              }}
                             >
-                              Delete
+                              <DeleteOutlineIcon
+                                color="error"
+                                sx={{
+                                  cursor: "pointer",
+                                  transition: "color 0.2s ease-in-out",
+                                }}
+                              />
                             </Button>
                           </TableCell>
                         </motion.tr>

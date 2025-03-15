@@ -60,7 +60,7 @@ const Navigationbar = () => {
               alt="React Logo"
               className="h-fit mx-2 flex justify-center self-center "
             />
-            <h1 className="text-white-500 hidden sm:block">
+            <h1 className="text-white-500 hidden lg:block">
               Batangas State University Disciplinary Management
             </h1>
 

@@ -218,7 +218,7 @@ export default function Violations() {
                   <Chip
                     label={offense_code}
                     variant="outlined"
-                    color="primary"
+                    color="error"
                     key={offense_code}
                     margin="dense"
                     size="medium"
@@ -226,6 +226,16 @@ export default function Violations() {
                   />
                 ))}
               </>
+            )}
+            {!rowDataToView.offense_codes && (
+              <Chip
+                label={"No Data"}
+                variant="outlined"
+                color="error"
+                margin="dense"
+                size="medium"
+                sx={{ mr: 0.5, mb: 0.5, p: 0.5 }}
+              />
             )}
           </div>
         </Box>
@@ -330,8 +340,8 @@ export default function Violations() {
                           scope="row"
                           className="w-fit"
                         >
-                          <Tooltip title={row.set} arrow>
-                            <div className="flex flex-wrap break-words whitespace-normal justify-start">
+                          <Tooltip title={row.set}>
+                            <div className="flex flex-wrap break-words whitespace-normal cursor-pointer justify-start">
                               {row.set}
                             </div>
                           </Tooltip>
@@ -345,17 +355,17 @@ export default function Violations() {
                             arrow
                           >
                             <div className="flex flex-wrap break-words whitespace-normal justify-center">
-                              <Chip
-                                label={
-                                  row.category.charAt(0).toUpperCase() +
-                                  row.category.slice(1)
-                                }
+                              <Button
+                                variant="text"
                                 color={
                                   row.category === "major" ? "primary" : "error"
                                 }
                                 sx={{ width: "50%" }}
-                                variant="filled"
-                              />
+                                size="small"
+                              >
+                                {row.category.charAt(0).toUpperCase() +
+                                  row.category.slice(1)}
+                              </Button>
                             </div>
                           </Tooltip>
                         </TableCell>
