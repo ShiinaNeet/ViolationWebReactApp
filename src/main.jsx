@@ -3,7 +3,7 @@ import { createRoot } from "react-dom/client";
 import "./index.css";
 
 import { createBrowserRouter, RouterProvider } from "react-router-dom";
-
+import { ThemeProvider, createTheme } from "@mui/material";
 import Layout from "./layouts/layout";
 import DeanLayout from "./layouts/Dean_layout";
 import DepartmentHeadLayout from "./layouts/DepartmentHead_layout";
@@ -159,11 +159,22 @@ const router = createBrowserRouter([
     element: <Unauthorized />,
   },
 ]);
-
+createTheme({
+  palette: {
+    primary: {
+      main: "#ff5722",
+    },
+    secondary: {
+      main: "#ff5722",
+    },
+  },
+});
 createRoot(document.getElementById("root")).render(
   <StrictMode>
     <AuthProvider>
-      <RouterProvider router={router} />
+      <ThemeProvider theme={createTheme()}>
+        <RouterProvider router={router} />
+      </ThemeProvider>
     </AuthProvider>
   </StrictMode>
 );
