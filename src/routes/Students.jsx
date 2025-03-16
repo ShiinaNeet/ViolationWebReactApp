@@ -18,7 +18,7 @@ import RemoveRedEyeIcon from "@mui/icons-material/RemoveRedEye";
 import EditIcon from "@mui/icons-material/Edit";
 import Tooltip from "@mui/material/Tooltip";
 import FilterAltRoundedIcon from "@mui/icons-material/FilterAltRounded";
-
+import SourceIcon from "@mui/icons-material/Source";
 import "../animations.css";
 import {
   Alert,
@@ -53,12 +53,14 @@ import FormalComplaint from "../components/forms/FormalComplaint";
 import TablePaginationActions from "../utils/TablePaginationActions";
 import { StyledToolbar } from "../utils/StyledToolBar";
 import { AnimatePresence, motion } from "framer-motion";
+import useMediaQuery from "@mui/material/useMediaQuery";
 
 const Students = () => {
   const vertical = "bottom";
   const horizontal = "right";
   const yearList = ["1st year", "2nd year", "3rd year", "4th year", "5th year"];
   const searchViolationCategory = ["academic_dishonesty", "major", "minor"];
+  const isXs = useMediaQuery((theme) => theme.breakpoints.down("xs"));
   //Page & State
   const [page, setPage] = React.useState(0);
   const [rows, setRows] = React.useState([]);
@@ -1082,22 +1084,41 @@ const Students = () => {
         <h1 className="text-lg sm:text-2xl py-3 text-red-600">
           Student Violations
         </h1>
-        <div className="flex items-center">
+        <div className="flex items-center ss:flex-row flex-col">
           <Button
-            className="bg-red-500 p-2 rounded-sm text-red "
+            className="bg-red-500 p-2 rounded-sm text-red cursor-pointer"
             onClick={() => setCreateStudentViolationModal(true)}
             color="error"
             size="small"
+            variant="text"
+            sx={{
+              cursor: "pointer",
+              ":hover": { backgroundColor: "#f44336", color: "white" },
+            }}
           >
-            Add Violation
+            <label className="text-[11px] sm:text-md cursor-pointer">
+              Add Violation
+            </label>
           </Button>
           <Button
-            className=" my-2 p-2 rounded-sm text-red"
             onClick={() => setSearchFilterModal(true)}
             color="error"
             size="small"
+            sx={{
+              cursor: "pointer",
+              ":hover": { backgroundColor: "#f44336", color: "white" },
+            }}
           >
-            <FilterAltRoundedIcon color="error" /> Filter
+            <label className="text-[11px] sm:text-md cursor-pointer">
+              Filter
+            </label>
+            <FilterAltRoundedIcon
+              color="error"
+              sx={{
+                fontSize: { xs: 15, sm: 20 },
+                ":hover": { backgroundColor: "#f44336", color: "white" },
+              }}
+            />
           </Button>
         </div>
       </div>
@@ -1106,12 +1127,51 @@ const Students = () => {
   const GetTableHeader = () => {
     return (
       <TableHead>
-        <TableRow className="text-left px-4 text-sm font-bold">
-          <th className="py-5 px-4 border-b">Name</th>
-          <th className="py-5 px-4 border-b">Violation</th>
-          <th className="py-5 px-4 border-b">Department and Year</th>
-          <th className="py-5 px-4 border-b text-center">Date</th>
-          <th className="py-5 px-4 border-b text-center ">Actions</th>
+        <TableRow>
+          <TableCell
+            sx={{
+              fontWeight: "bold",
+            }}
+          >
+            Name
+          </TableCell>
+          <TableCell
+            sx={{
+              fontWeight: "bold",
+              display: "table-cell", // Default display
+              "@media (max-width: 400px)": {
+                display: "none", // Hide when screen width is 400px or less
+              },
+            }}
+          >
+            Violation
+          </TableCell>
+          <TableCell
+            sx={{
+              display: { xs: "none", sm: "table-cell" },
+              fontWeight: "bold",
+              textAlign: "center",
+            }}
+          >
+            Department and Year
+          </TableCell>
+          <TableCell
+            sx={{
+              display: { xs: "none", sm: "table-cell" },
+              fontWeight: "bold",
+              textAlign: "center",
+            }}
+          >
+            Date
+          </TableCell>
+          <TableCell
+            sx={{
+              fontWeight: "bold",
+              textAlign: "center",
+            }}
+          >
+            Actions
+          </TableCell>
         </TableRow>
       </TableHead>
     );
@@ -1180,7 +1240,6 @@ const Students = () => {
             <TableContainer component={Paper}>
               <Table
                 sx={{
-                  minWidth: 500,
                   minHeight: 400,
                 }}
                 aria-label="custom pagination table"
@@ -1214,14 +1273,21 @@ const Students = () => {
                           <TableCell className="py-5 px-4 border-b">
                             {student.fullname}
                           </TableCell>
-                          <TableCell className="py-5 px-4 border-b">
+                          <TableCell
+                            sx={{
+                              display: "table-cell", // Default display
+                              "@media (max-width: 400px)": {
+                                display: "none", // Hide when screen width is 400px or less
+                              },
+                            }}
+                          >
                             {student.violations.slice(0, 2).map((violation) => {
                               return (
                                 <Chip
                                   key={violation.code}
                                   label={violation.code}
                                   variant="outlined"
-                                  color="primary"
+                                  color="error"
                                   margin="dense"
                                   size="medium"
                                   sx={{ mr: 0.5, mb: 0.5, p: 0.5 }}
@@ -1229,7 +1295,12 @@ const Students = () => {
                               );
                             })}
                           </TableCell>
-                          <TableCell className="py-5 px-4 border-b">
+                          <TableCell
+                            sx={{
+                              display: { xs: "none", sm: "table-cell" },
+                            }}
+                            className="py-5 px-4 border-b"
+                          >
                             {student.year_and_department
                               ? `${
                                   student.year_and_department.split(" - ")[1]
@@ -1237,7 +1308,12 @@ const Students = () => {
                               ${student.year_and_department.split(" - ")[0]}`
                               : "No Data"}
                           </TableCell>
-                          <TableCell className="py-5 px-4 border-b">
+                          <TableCell
+                            sx={{
+                              display: { xs: "none", sm: "table-cell" },
+                            }}
+                            className="py-5 px-4 border-b"
+                          >
                             {student.violations
                               ? formatDate(
                                   student.violations[0].date_committed,
@@ -1245,7 +1321,11 @@ const Students = () => {
                                 )
                               : "No Data"}
                           </TableCell>
-                          <TableCell className="border-b flex justify-center sticky">
+                          <TableCell
+                            sx={{
+                              width: "fit-content",
+                            }}
+                          >
                             <Tooltip title="View Student">
                               <Button
                                 className="rounded-sm text-white hover:bg-red-100 hover:text-red-700"
@@ -1253,6 +1333,7 @@ const Students = () => {
                                   handleViewViolationModal(student)
                                 }
                                 color="error"
+                                size={isXs ? "small" : "medium"}
                               >
                                 <RemoveRedEyeIcon color="error" />
                               </Button>
@@ -1279,7 +1360,7 @@ const Students = () => {
                                 }}
                                 color="error"
                               >
-                                Forms
+                                <SourceIcon color="error" />
                               </Button>
                             </Tooltip>
                             {CurrentUserType == "ADMIN" ||
