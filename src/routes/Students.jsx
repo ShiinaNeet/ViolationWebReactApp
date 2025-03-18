@@ -1342,21 +1342,23 @@ const Students = () => {
                               <Button
                                 className="rounded-sm text-white hover:bg-red-100 hover:text-red-700"
                                 onClick={() => {
-                                  setFormModal(true);
                                   const programData = programList.find(
                                     (program) => program.id === student.course
-                                  ).name;
+                                  )?.name;
                                   if (programData) {
-                                    setTargetStudent({
+                                    const newstudent = {
                                       ...student,
                                       course: programData,
-                                    });
+                                    };
+                                    setTargetStudent(newstudent);
                                   } else {
                                     console.error(
                                       "Program not found for student course:",
                                       student.course
                                     );
+                                    setTargetStudent(student);
                                   }
+                                  setFormModal(true);
                                 }}
                                 color="error"
                               >
@@ -1550,13 +1552,16 @@ const Students = () => {
                 programData={programList}
               />
             )}
-            {activeForm === "warningViolationOfNormsAndConduct" && (
-              <WarningViolationOfNormsAndConduct
-                studentDataToPass={targetStudent}
-                alertMessageFunction={setAlertFunction}
-                violationData={violationList}
-              />
-            )}
+            {targetStudent &&
+              activeForm === "warningViolationOfNormsAndConduct" && (
+                <WarningViolationOfNormsAndConduct
+                  studentDataToPass={targetStudent}
+                  alertMessageFunction={setAlertFunction}
+                  violationData={violationList}
+                  departmentData={departments}
+                />
+              )}
+
             {activeForm === "reprimandForm" && (
               <ReprimandForm
                 studentDataToPass={targetStudent}

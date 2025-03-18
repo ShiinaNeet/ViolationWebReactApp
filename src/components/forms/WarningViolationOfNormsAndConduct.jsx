@@ -15,6 +15,7 @@ const WarningViolationOfNormsAndConduct = ({
   studentDataToPass,
   alertMessageFunction,
   violationData,
+  departmentData,
 }) => {
   const [formData, setFormData] = useState({
     name: "",
@@ -23,47 +24,25 @@ const WarningViolationOfNormsAndConduct = ({
     violation_code: "",
     violation_description: "",
     addressed_to: "",
-    coordinator_discipline_head: "",
+    department: "",
   });
   const [isLoading, setIsLoading] = useState(false);
-  const [coordinatorUsers, setCoordinatorUsers] = useState([]);
   const [studentData, setStudentData] = useState([]);
   const [selectedViolation, setSelectedViolation] = useState("");
-
-  const fetchCoordinator = async () => {
-    try {
-      setIsLoading(true);
-      const response = await axios.get("/admin", {
-        params: { skip: 0, limit: 10 },
-        headers: { "Content-Type": "application/json" },
-      });
-
-      if (response.data.status === "success") {
-        setCoordinatorUsers(response.data.data);
-        console.log("Coordinator Users", response.data.data);
-      } else {
-        console.log("Failed to fetch data");
-      }
-    } catch (error) {
-      console.error("There was an error fetching the data!", error);
-    } finally {
-      setIsLoading(false);
-    }
-  };
   useEffect(() => {
-    console.log(studentDataToPass);
-    fetchCoordinator();
     setFormData((prev) => ({
       ...prev,
       name: studentDataToPass.fullname || "",
       date: new Date().toISOString().slice(0, 10),
+      violations: studentDataToPass.violations || [],
     }));
     setStudentData([studentDataToPass]);
   }, [studentDataToPass]);
   useEffect(() => {
     if (studentData.length > 0 && studentData[0].violations.length > 0) {
-      const firstStudent = studentData[0]; // Get first student object
-      const defaultViolationCode = firstStudent.violations[0].code;
+      const firstStudent = studentData[0];
+
+      const defaultViolationCode = firstStudent.violations[0]?.code || "";
 
       setSelectedViolation(defaultViolationCode);
 
@@ -81,7 +60,12 @@ const WarningViolationOfNormsAndConduct = ({
       }));
     }
   }, [studentData, violationData]);
-
+  useEffect(() => {
+    setFormData((prev) => ({
+      ...prev,
+      violation_code: selectedViolation,
+    }));
+  }, [selectedViolation]);
   function getSanctionByViolation(student, rules, selectedCode) {
     if (!student || !student.violations || student.violations.length === 0) {
       console.error("No violations found for student.");
@@ -176,18 +160,22 @@ const WarningViolationOfNormsAndConduct = ({
   const handleSubmit = async (e) => {
     e.preventDefault();
     setIsLoading(true);
-
-    if (Object.values(formData).some((value) => value.trim() === "")) {
+    const { violations, ...newForm } = formData;
+    console.log(newForm);
+    if (
+      Object.values(formData).some(
+        (value) => typeof value === "string" && value.trim() === ""
+      )
+    ) {
       alertMessageFunction(true, "Error", "Please fill out all fields.");
       setIsLoading(false);
       return;
     }
-    console.log(formData);
 
     try {
       const response = await axios.post(
         "/form/warning_violation_of_norms_and_conduct",
-        formData
+        newForm
       );
       if (response.data.status === "success") {
         alertMessageFunction(true, "Form submitted successfully.", "Success");
@@ -249,6 +237,12 @@ const WarningViolationOfNormsAndConduct = ({
                   {violation.code}
                 </MenuItem>
               ))}
+            {/* {violationData.length > 0 &&
+              violationData.map((violation, index) => (
+                <MenuItem key={index} value={violation.code}>
+                  {violation.code}
+                </MenuItem>
+              ))} */}
           </Select>
         </FormControl>
         <FormControl fullWidth>
@@ -269,7 +263,8 @@ const WarningViolationOfNormsAndConduct = ({
         {Object.keys(formData)
           .filter(
             (key) =>
-              key !== "coordinator_discipline_head" &&
+              key !== "department" &&
+              key !== "violations" &&
               key !== "violation_code" &&
               key !== "violation_description"
           )
@@ -302,24 +297,22 @@ const WarningViolationOfNormsAndConduct = ({
         >
           <FormControl fullWidth required>
             <InputLabel id="demo-simple-select-helper-label" color="error">
-              Coordinator Discipline Head
+              Department
             </InputLabel>
             <Select
               labelId="demo-simple-select-helper-label"
-              label="Coordinator Discipline Head"
+              label="Department"
               id="demo-simple-select-helper"
-              name="coordinator_discipline_head"
-              value={formData.coordinator_discipline_head}
+              name="department"
+              value={formData.department}
               onChange={handleChange}
               color="error"
             >
-              {coordinatorUsers
-                .filter((user) => user.type === "OSD_COORDINATOR")
-                .map((coordinator) => (
-                  <MenuItem key={coordinator.id} value={coordinator.id}>
-                    {coordinator.first_name + " " + coordinator.last_name}
-                  </MenuItem>
-                ))}
+              {departmentData.map((department, idx) => (
+                <MenuItem key={idx} value={department._id}>
+                  {department.name}
+                </MenuItem>
+              ))}
             </Select>
           </FormControl>
         </motion.div>
@@ -348,18 +341,19 @@ const WarningViolationOfNormsAndConduct = ({
 
 WarningViolationOfNormsAndConduct.propTypes = {
   studentDataToPass: PropTypes.shape({
+    id: PropTypes.string,
+    userid: PropTypes.number,
     fullname: PropTypes.string,
-    program: PropTypes.string,
+    violations: PropTypes.arrayOf(PropTypes.object),
     year: PropTypes.string,
-    srcode: PropTypes.string,
-    year_and_department: PropTypes.string,
+    department: PropTypes.string,
+    email: PropTypes.string,
     course: PropTypes.string,
     term: PropTypes.string,
-    email: PropTypes.string,
-    userid: PropTypes.string,
   }).isRequired,
   alertMessageFunction: PropTypes.func.isRequired,
   violationData: PropTypes.array.isRequired,
+  departmentData: PropTypes.array.isRequired,
 };
 
 export default WarningViolationOfNormsAndConduct;
