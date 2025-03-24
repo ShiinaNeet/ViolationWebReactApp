@@ -28,6 +28,7 @@ export default function FormList() {
   const [filteredForms, setFilteredForms] = useState([]);
   const [coordinatorUsers, setCoordinatorUsers] = useState([]);
   const [programList, setProgramList] = useState([]);
+  const [departmentList, setDepartmentList] = useState([]);
   const [filter, setFilter] = useState("call_slip");
   const [selectedForm, setSelectedForm] = useState(null);
   const [isLoading, setIsLoading] = useState(false);
@@ -51,6 +52,7 @@ export default function FormList() {
   useEffect(() => {
     fetchCoordinator();
     fetchPrograms();
+    fetchDepartments();
   }, []);
   const fetchForms = async () => {
     setIsLoading(true);
@@ -145,14 +147,14 @@ export default function FormList() {
         //     name: "John Doe",
         //     effectivity_date: "2025-03-01T12:58:49.211Z",
         //     college: "College of Engineering",
-        //     program: "5eb7cf5a86d9755df3a6c593",
+        //     program: "65a9f2c8b432e1f89d7c3a01",
         //     date: "2025-03-01T12:58:49.211Z",
         //     campus: "Main Campus",
         //     year: "4th Year",
         //     section: "A",
         //     report_date: "2025-03-01T12:58:49.211Z",
         //     report_time: "10:00 AM",
-        //     coordinator_discipline_head: "5eb7cf5a86d9755df3a6c593",
+        //     coordinator_discipline_head: "67b5b81c246f98af202c41eb",
         //     date_signed: "2025-03-01T12:58:49.211Z",
         //   },
         //   {
@@ -161,7 +163,7 @@ export default function FormList() {
         //     date: "2025-03-01T12:58:49.211Z",
         //     violation_code: "V001",
         //     violation: "Minor Violation",
-        //     coordinator_discipline_head: "Dr. Smith",
+        //     coordinator_discipline_head: "67b5b81c246f98af202c41eb",
         //   },
         //   {
         //     form_type: "temporary_gatepass",
@@ -196,13 +198,13 @@ export default function FormList() {
         //     },
         //     report_date: "2025-03-01T12:58:49.211Z",
         //     report_time: "11:00 AM",
-        //     coordinator_discipline_head: "5eb7cf5a86d9755df3a6c593",
+        //     coordinator_discipline_head: "67b5b81c246f98af202c41eb",
         //     date_signed: "2025-03-01T12:58:49.211Z",
         //   },
         //   {
         //     form_type: "formal_complaint_letter",
         //     date: "2025-03-01T12:58:49.211Z",
-        //     coordinator_discipline_head: "Dr. Alice Johnson",
+        //     coordinator_discipline_head: "67b5b81c246f98af202c41eb",
         //     subject_of_complaint: {
         //       name: "John Smith",
         //       college: "College of Law",
@@ -226,7 +228,7 @@ export default function FormList() {
         //     college: "College of Medicine",
         //     campus: "West Campus",
         //     sr_code: "321654",
-        //     program: "5eb7cf5a86d9755df3a6c593",
+        //     program: "65a9f2c8b432e1f89d7c3a02",
         //     year_section: "1st Year - B",
         //     incident: "Disruptive behavior in class",
         //     remarks: "Handled by the class advisor",
@@ -241,7 +243,7 @@ export default function FormList() {
         //     violation_code: "V003",
         //     violation_description: "Violation of conduct norms",
         //     addressed_to: "Jane Smith",
-        //     coordinator_discipline_head: "Dr. Alice Johnson",
+        //     department: "60d5f8f8d3b7f1c1a3b8c8d4",
         //   },
         //   {
         //     form_type: "non_wearing_uniform",
@@ -304,6 +306,23 @@ export default function FormList() {
       console.error("There was an error fetching the data!", error);
     }
   };
+  const fetchDepartments = async () => {
+    try {
+      const response = await axios.get("/department", {
+        params: { skip: 0, limit: 100 },
+        headers: { "Content-Type": "application/json" },
+      });
+
+      if (response.data.status === "success") {
+        console.log("Department List fetched successfully");
+        setDepartmentList(response.data.data);
+      } else {
+        console.log("Failed to fetch data");
+      }
+    } catch (error) {
+      console.error("There was an error fetching the data!", error);
+    }
+  };
   const fetchCoordinator = async () => {
     try {
       setIsLoading(true);
@@ -332,6 +351,12 @@ export default function FormList() {
   const handleClose = () => {
     setIsViewModalOpen(false);
     setSelectedForm(null);
+  };
+  const getDepartmentName = (departmentId) => {
+    let departmentName = departmentList.find(
+      (dept) => dept._id === departmentId
+    );
+    return departmentName ? departmentName.name : "Unknown";
   };
   const getCoordinatorFullName = (userid) => {
     let fullname = coordinatorUsers.find((user) => user.id === userid);
@@ -1300,14 +1325,18 @@ export default function FormList() {
             />
             <TextField
               fullWidth
-              label="Coordinator Discipline Head"
+              label="Department"
               value={
-                getCoordinatorFullName(selectedForm.coordinator_discipline_head)
+                // getCoordinatorFullName(selectedForm.coordinator_discipline_head)
+                //   .charAt(0)
+                //   .toUpperCase() +
+                // getCoordinatorFullName(
+                //   selectedForm.coordinator_discipline_head
+                // ).slice(1)
+                getDepartmentName(selectedForm.department)
                   .charAt(0)
                   .toUpperCase() +
-                getCoordinatorFullName(
-                  selectedForm.coordinator_discipline_head
-                ).slice(1)
+                getDepartmentName(selectedForm.department).slice(1)
               }
               InputProps={{
                 readOnly: true,

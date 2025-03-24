@@ -482,6 +482,7 @@ const Students = () => {
           },
         ];
         console.log("Completed Data: ", completedDataWithViolationName);
+        // setRows(completedDataWithViolationName);
         setRows(students);
         if (studentResponse.data.data.length === 0) {
           setAlertMessage({
@@ -1342,21 +1343,23 @@ const Students = () => {
                               <Button
                                 className="rounded-sm text-white hover:bg-red-100 hover:text-red-700"
                                 onClick={() => {
-                                  setFormModal(true);
                                   const programData = programList.find(
                                     (program) => program.id === student.course
-                                  ).name;
+                                  )?.name;
                                   if (programData) {
-                                    setTargetStudent({
+                                    const newstudent = {
                                       ...student,
                                       course: programData,
-                                    });
+                                    };
+                                    setTargetStudent(newstudent);
                                   } else {
                                     console.error(
                                       "Program not found for student course:",
                                       student.course
                                     );
+                                    setTargetStudent(student);
                                   }
+                                  setFormModal(true);
                                 }}
                                 color="error"
                               >
@@ -1550,13 +1553,16 @@ const Students = () => {
                 programData={programList}
               />
             )}
-            {activeForm === "warningViolationOfNormsAndConduct" && (
-              <WarningViolationOfNormsAndConduct
-                studentDataToPass={targetStudent}
-                alertMessageFunction={setAlertFunction}
-                violationData={violationList}
-              />
-            )}
+            {targetStudent &&
+              activeForm === "warningViolationOfNormsAndConduct" && (
+                <WarningViolationOfNormsAndConduct
+                  studentDataToPass={targetStudent}
+                  alertMessageFunction={setAlertFunction}
+                  violationData={violationList}
+                  departmentData={departments}
+                />
+              )}
+
             {activeForm === "reprimandForm" && (
               <ReprimandForm
                 studentDataToPass={targetStudent}
@@ -1867,7 +1873,7 @@ const Students = () => {
             sx={{
               overflowY: "auto",
               marginBottom: "20px",
-              minWidth: "70vw",
+              minWidth: "50vw",
               maxWidth: "90vw",
               maxHeight: "80vh",
             }}
@@ -1900,7 +1906,7 @@ const Students = () => {
                     ))}
                   </ul>
                 </div>
-                <div className="mt-5 ">
+                <div className="my-5 pb-5">
                   <h3 className="mb-3 slide-in-down-visible">Add Violation</h3>
                   <div className="flex ">
                     {/* <select
@@ -2115,13 +2121,17 @@ const Students = () => {
                   </div>
                   <div className="my-2 slide-in-visible">
                     <FormControl fullWidth>
-                      <InputLabel id="demo-simple-select-helper-label">
+                      <InputLabel
+                        id="demo-simple-select-helper-label"
+                        color="error"
+                      >
                         Term
                       </InputLabel>
                       <Select
                         labelId="demo-simple-select-helper-label"
                         id="demo-simple-select-helper"
                         label="Term"
+                        color="error"
                         margin="dense"
                         fullWidth
                         value={createStudent.term}
@@ -2144,13 +2154,17 @@ const Students = () => {
                   </div>
                   <div className="my-2 slide-in-visible">
                     <FormControl fullWidth>
-                      <InputLabel id="demo-simple-select-helper-label">
+                      <InputLabel
+                        id="demo-simple-select-helper-label"
+                        color="error"
+                      >
                         Department
                       </InputLabel>
                       <Select
                         labelId="demo-simple-select-helper-label"
                         id="demo-simple-select-helper"
                         label="Department"
+                        color="error"
                         margin="dense"
                         fullWidth
                         value={createStudent.department}
@@ -2170,7 +2184,10 @@ const Students = () => {
                   </div>
                   <div className="my-2 slide-in-visible">
                     <FormControl fullWidth>
-                      <InputLabel id="demo-simple-select-helper-label">
+                      <InputLabel
+                        id="demo-simple-select-helper-label"
+                        color="error"
+                      >
                         Course
                       </InputLabel>
                       <Select
@@ -2178,6 +2195,7 @@ const Students = () => {
                         id="demo-simple-select-helper"
                         label="Course"
                         margin="dense"
+                        color="error"
                         fullWidth
                         value={createStudent.course}
                         onChange={(e) => {
@@ -2199,7 +2217,10 @@ const Students = () => {
                   </div>
                   <div className="my-2 mb-5">
                     <FormControl fullWidth>
-                      <InputLabel id="demo-simple-select-helper-label">
+                      <InputLabel
+                        id="demo-simple-select-helper-label"
+                        color="error"
+                      >
                         School Year
                       </InputLabel>
                       <Select
@@ -2207,6 +2228,7 @@ const Students = () => {
                         labelId="demo-simple-select-helper-label"
                         id="demo-simple-select-helper"
                         label="School Year"
+                        color="error"
                         margin="dense"
                         fullWidth
                         value={createStudent.year}
@@ -2619,7 +2641,7 @@ const Students = () => {
             >
               {isLoading ? "Deleting student..." : "Delete student"}
             </Button>
-            <Button onClick={handleClose} color="primary">
+            <Button onClick={handleClose} color="error">
               Cancel
             </Button>
           </DialogActions>
