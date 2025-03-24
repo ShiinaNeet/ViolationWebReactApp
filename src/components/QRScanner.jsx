@@ -84,7 +84,7 @@ function QRScanner({ fetchQrData, onClose }) {
   }, [fetchQrData, onClose]);
   return (
     <div className="w-full overflow-y-hidden">
-      <div id="readerw" style={{ width: "100%", height: "80%" }}></div>
+      <div id="readerw" style={{ width: "100%", height: "300px" }}></div>
     </div>
   );
 }

@@ -1873,7 +1873,7 @@ const Students = () => {
             sx={{
               overflowY: "auto",
               marginBottom: "20px",
-              minWidth: "70vw",
+              minWidth: "50vw",
               maxWidth: "90vw",
               maxHeight: "80vh",
             }}
