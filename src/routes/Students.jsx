@@ -364,126 +364,126 @@ const Students = () => {
             return { ...student, violations: updatedViolations };
           }
         );
-        const students = [
-          {
-            id: "001",
-            srcode: "21-11111",
-            userid: "21-11111",
-            email: "student1@email.com",
-            fullname: "SMITH, JOHN D.",
-            course: "Computer Science",
-            term: "First Semester",
-            year_and_department: "1st year - CCIS",
-            type: "STUDENT",
-            violations: [
-              {
-                code: "12.1.2",
-                date_committed: "2025-03-01T10:30:00Z",
-                sem_committed: "652a1b9f1c4a1a001c4a1ba0",
-                reported_by: "6728b20d48c4d4c422da5c59",
-                description:
-                  "Violation of Section 10 (Proper Uniform, Dress Code and Related Rules/Regulations)",
-              },
-              {
-                code: "12.1.5",
-                date_committed: "2025-03-02T14:20:00Z",
-                sem_committed: "652a1b9f1c4a1a001c4a1ba0",
-                reported_by: "6728b20d48c4d4c422da5c59",
-                description:
-                  "Posting, distributing or disseminating notices, posters, leaflets without prior approval",
-              },
-            ],
-            violation_summary: {
-              categories: [{ category: "minor", count: 2 }],
-              total_violations: 2,
-            },
-          },
-          {
-            id: "002",
-            srcode: "21-22222",
-            userid: "21-22222",
-            email: "student2@email.com",
-            fullname: "DOE, JANE A.",
-            course: "Business Administration",
-            term: "Second Semester",
-            year_and_department: "2nd year - CBA",
-            type: "STUDENT",
-            violations: [
-              {
-                code: "13.2",
-                date_committed: "2025-03-03T11:45:00Z",
-                sem_committed: "652a1b9f1c4a1a001c4a1ba0",
-                reported_by: "6728b20d48c4d4c422da5c59",
-                description:
-                  "Refusal to obey legal order of a person of authority",
-              },
-            ],
-            violation_summary: {
-              categories: [{ category: "major", count: 1 }],
-              total_violations: 1,
-            },
-          },
-          {
-            id: "003",
-            srcode: "21-33333",
-            userid: "21-33333",
-            email: "student3@email.com",
-            fullname: "GARCIA, MARIA L.",
-            course: "Engineering",
-            term: "Third Semester",
-            year_and_department: "3rd year - COE",
-            type: "STUDENT",
-            violations: [
-              {
-                code: "14.1",
-                date_committed: "2025-03-04T09:15:00Z",
-                sem_committed: "652a1b9f1c4a1a001c4a1ba0",
-                reported_by: "6728b20d48c4d4c422da5c59",
-                description: "Use of mobile phones during examinations",
-              },
-              {
-                code: "14.3",
-                date_committed: "2025-03-05T16:50:00Z",
-                sem_committed: "652a1b9f1c4a1a001c4a1ba0",
-                reported_by: "6728b20d48c4d4c422da5c59",
-                description:
-                  "Assisting or dictating answers to fellow examinees",
-              },
-            ],
-            violation_summary: {
-              categories: [{ category: "academic dishonesty", count: 2 }],
-              total_violations: 2,
-            },
-          },
-          {
-            id: "004",
-            srcode: "21-44444",
-            userid: "21-44444",
-            email: "student4@email.com",
-            fullname: "LEE, JASON K.",
-            course: "Information Technology",
-            term: "Fourth Semester",
-            year_and_department: "4th year - CCIS",
-            type: "STUDENT",
-            violations: [
-              {
-                code: "12.1.9",
-                date_committed: "2025-03-06T13:00:00Z",
-                sem_committed: "652a1b9f1c4a1a001c4a1ba0",
-                reported_by: "6728b20d48c4d4c422da5c59",
-                description:
-                  "Breaking into a class or College-sponsored activities without permission",
-              },
-            ],
-            violation_summary: {
-              categories: [{ category: "minor", count: 1 }],
-              total_violations: 1,
-            },
-          },
-        ];
-        console.log("Completed Data: ", completedDataWithViolationName);
+        // const students = [
+        //   {
+        //     id: "001",
+        //     srcode: "21-11111",
+        //     userid: "21-11111",
+        //     email: "student1@email.com",
+        //     fullname: "SMITH, JOHN D.",
+        //     course: "Computer Science",
+        //     term: "First Semester",
+        //     year_and_department: "1st year - CCIS",
+        //     type: "STUDENT",
+        //     violations: [
+        //       {
+        //         code: "12.1.2",
+        //         date_committed: "2025-03-01T10:30:00Z",
+        //         sem_committed: "652a1b9f1c4a1a001c4a1ba0",
+        //         reported_by: "6728b20d48c4d4c422da5c59",
+        //         description:
+        //           "Violation of Section 10 (Proper Uniform, Dress Code and Related Rules/Regulations)",
+        //       },
+        //       {
+        //         code: "12.1.5",
+        //         date_committed: "2025-03-02T14:20:00Z",
+        //         sem_committed: "652a1b9f1c4a1a001c4a1ba0",
+        //         reported_by: "6728b20d48c4d4c422da5c59",
+        //         description:
+        //           "Posting, distributing or disseminating notices, posters, leaflets without prior approval",
+        //       },
+        //     ],
+        //     violation_summary: {
+        //       categories: [{ category: "minor", count: 2 }],
+        //       total_violations: 2,
+        //     },
+        //   },
+        //   {
+        //     id: "002",
+        //     srcode: "21-22222",
+        //     userid: "21-22222",
+        //     email: "student2@email.com",
+        //     fullname: "DOE, JANE A.",
+        //     course: "Business Administration",
+        //     term: "Second Semester",
+        //     year_and_department: "2nd year - CBA",
+        //     type: "STUDENT",
+        //     violations: [
+        //       {
+        //         code: "13.2",
+        //         date_committed: "2025-03-03T11:45:00Z",
+        //         sem_committed: "652a1b9f1c4a1a001c4a1ba0",
+        //         reported_by: "6728b20d48c4d4c422da5c59",
+        //         description:
+        //           "Refusal to obey legal order of a person of authority",
+        //       },
+        //     ],
+        //     violation_summary: {
+        //       categories: [{ category: "major", count: 1 }],
+        //       total_violations: 1,
+        //     },
+        //   },
+        //   {
+        //     id: "003",
+        //     srcode: "21-33333",
+        //     userid: "21-33333",
+        //     email: "student3@email.com",
+        //     fullname: "GARCIA, MARIA L.",
+        //     course: "Engineering",
+        //     term: "Third Semester",
+        //     year_and_department: "3rd year - COE",
+        //     type: "STUDENT",
+        //     violations: [
+        //       {
+        //         code: "14.1",
+        //         date_committed: "2025-03-04T09:15:00Z",
+        //         sem_committed: "652a1b9f1c4a1a001c4a1ba0",
+        //         reported_by: "6728b20d48c4d4c422da5c59",
+        //         description: "Use of mobile phones during examinations",
+        //       },
+        //       {
+        //         code: "14.3",
+        //         date_committed: "2025-03-05T16:50:00Z",
+        //         sem_committed: "652a1b9f1c4a1a001c4a1ba0",
+        //         reported_by: "6728b20d48c4d4c422da5c59",
+        //         description:
+        //           "Assisting or dictating answers to fellow examinees",
+        //       },
+        //     ],
+        //     violation_summary: {
+        //       categories: [{ category: "academic dishonesty", count: 2 }],
+        //       total_violations: 2,
+        //     },
+        //   },
+        //   {
+        //     id: "004",
+        //     srcode: "21-44444",
+        //     userid: "21-44444",
+        //     email: "student4@email.com",
+        //     fullname: "LEE, JASON K.",
+        //     course: "Information Technology",
+        //     term: "Fourth Semester",
+        //     year_and_department: "4th year - CCIS",
+        //     type: "STUDENT",
+        //     violations: [
+        //       {
+        //         code: "12.1.9",
+        //         date_committed: "2025-03-06T13:00:00Z",
+        //         sem_committed: "652a1b9f1c4a1a001c4a1ba0",
+        //         reported_by: "6728b20d48c4d4c422da5c59",
+        //         description:
+        //           "Breaking into a class or College-sponsored activities without permission",
+        //       },
+        //     ],
+        //     violation_summary: {
+        //       categories: [{ category: "minor", count: 1 }],
+        //       total_violations: 1,
+        //     },
+        //   },
+        // ];
+        // console.log("Completed Data: ", completedDataWithViolationName);
         // setRows(completedDataWithViolationName);
-        setRows(students);
+        setRows(completedDataWithViolationName);
         if (studentResponse.data.data.length === 0) {
           setAlertMessage({
             open: true,
@@ -1317,7 +1317,8 @@ const Students = () => {
                           >
                             {student.violations
                               ? formatDate(
-                                  student.violations[0].date_committed,
+                                  student.violations[0]?.date_committed ??
+                                    new Date().toISOString(),
                                   "MMMM DD, YYYY - hh:mm A"
                                 )
                               : "No Data"}

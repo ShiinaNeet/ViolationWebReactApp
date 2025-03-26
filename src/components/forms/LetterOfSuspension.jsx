@@ -358,7 +358,7 @@ const LetterOfSuspension = ({
             <Button
               type="submit"
               variant="outlined"
-              color="primary"
+              color="error"
               fullWidth
               disabled={isLoading}
             >
