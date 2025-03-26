@@ -88,7 +88,7 @@ function QRScanner({ fetchQrData, onClose }) {
   //   };
   // }, [fetchQrData, onClose]);
   useEffect(() => {
-    if (scannerRef.current) return; // Prevent multiple instances
+    if (scannerRef.current) return;
 
     const qrCodeScanner = new Html5Qrcode(scannerId);
     scannerRef.current = qrCodeScanner;
@@ -119,7 +119,7 @@ function QRScanner({ fetchQrData, onClose }) {
       try {
         await qrCodeScanner.stop();
         qrCodeScanner.clear();
-        scannerRef.current = null; // Reset scanner ref
+        scannerRef.current = null;
       } catch (error) {
         console.error("Error stopping scanner:", error);
       }
