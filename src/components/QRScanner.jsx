@@ -132,8 +132,8 @@ function QRScanner({ fetchQrData, onClose }) {
     };
   }, [fetchQrData, onClose]);
   return (
-    <div className="w-full flex justify-center items-center ">
-      <div id={scannerId} className="w-full max-w-md h-64 "></div>
+    <div className="w-full h-full flex justify-center items-center ">
+      <div id={scannerId} className="w-full max-w-md  "></div>
     </div>
   );
 }

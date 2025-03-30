@@ -1,10 +1,5 @@
 import axios from "axios";
-import React, {
-  createContext,
-  useContext,
-  useState,
-  useEffect,
-} from "react";
+import { createContext, useContext, useState, useEffect } from "react";
 import { setupAxiosInterceptors } from "../axios";
 
 const AuthContext = createContext();
@@ -66,7 +61,7 @@ export const AuthProvider = ({ children }) => {
       setIsAuthenticated(true);
     }
   }, []);
- 
+
   return (
     <AuthContext.Provider
       value={{ isAuthenticated, userType, setUserType, login, logout }}
