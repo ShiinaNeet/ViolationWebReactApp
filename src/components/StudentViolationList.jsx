@@ -24,10 +24,11 @@ StudentViolationList.propTypes = {
     ),
   }).isRequired,
   users: PropTypes.array.isRequired,
+  terms: PropTypes.array.isRequired,
 };
 
 export default function StudentViolationList(props) {
-  const { student, users } = props;
+  const { student, users, terms } = props;
   const [page, setPage] = React.useState(0);
   const [rowsPerPage, setRowsPerPage] = React.useState(5);
   const [data, setData] = React.useState([]);
@@ -60,27 +61,45 @@ export default function StudentViolationList(props) {
     <Box>
       <Paper>
         <TableContainer>
-          <Table size="small">
+          <Table>
             <TableHead>
-              <TableRow className="slide-in-down-visible">
-                <TableCell>Name</TableCell>
-                <TableCell align="center">Date</TableCell>
-                <TableCell align="center">Reported By</TableCell>
+              <TableRow
+                className="slide-in-down-visible"
+                style={{ fontWeight: 600 }}
+              >
+                <TableCell style={{ fontWeight: "bold" }}>Name</TableCell>
+                <TableCell align="center" style={{ fontWeight: "bold" }}>
+                  Semester
+                </TableCell>
+                <TableCell align="center" style={{ fontWeight: "bold" }}>
+                  Date
+                </TableCell>
+                <TableCell align="center" style={{ fontWeight: "bold" }}>
+                  Reported By
+                </TableCell>
               </TableRow>
             </TableHead>
             <TableBody>
               {data
                 .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
                 .map((row, index) => (
-                  <TableRow key={index} className="slide-in">
+                  <TableRow
+                    key={index}
+                    className="slide-in"
+                    sx={{ padding: 5 }}
+                  >
                     <TableCell>{row.code}</TableCell>
+                    <TableCell align="center">
+                      {terms.find((term) => term.number === row.sem_committed)
+                        ?.name ?? "Unknown"}
+                    </TableCell>
                     <TableCell align="center">
                       {formatDate(
                         row.date_committed,
                         "MMMM DD, YYYY - hh:mm A"
                       )}
                     </TableCell>
-                    <TableCell>
+                    <TableCell align="center">
                       {(() => {
                         const user = users.find(
                           (user) => user.id === row.reported_by

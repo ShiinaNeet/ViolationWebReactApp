@@ -107,17 +107,26 @@ body {
   line-height: 1;
   font-family: "Roboto", sans-serif;
   background-color: rgba(255, 255, 255, 0.521);
-  /* background-image: url("/bsu_image.jpg"); */
-  -webkit-backdrop-filter: blur(10px);
-  backdrop-filter: blur(10px);
-  background-repeat: no-repeat;
-  background-size: cover;
-  background-position-x: center;
-  background-position-y: center;
-  background-attachment: fixed;
   overflow-y: scroll;
   width: 100%;
   height: 100%;
+  --dot-bg: #ffffff;
+  --dot-color: #1f1c1c;
+  --dot-size: 1px;
+  --dot-space: 10px;
+  background: linear-gradient(
+        90deg,
+        var(--dot-bg) calc(var(--dot-space) - var(--dot-size)),
+        transparent 1%
+      )
+      center / var(--dot-space) var(--dot-space),
+    linear-gradient(
+        var(--dot-bg) calc(var(--dot-space) - var(--dot-size)),
+        transparent 1%
+      )
+      center / var(--dot-space) var(--dot-space),
+    var(--dot-color);
+  backdrop-filter: blur(1px);
 }
 ol,
 ul {

@@ -816,19 +816,25 @@ const Students = () => {
           date_committed: violation.date_committed
             ? violation.date_committed
             : new Date().toISOString(),
-          sem_committed: targetStudent.sem_committed
-            ? targetStudent.sem_committed
-            : termToUpdate.number,
+          sem_committed:
+            violation.sem_committed != null
+              ? violation.sem_committed
+              : termToUpdate?.number,
+          // reported_by: violation.reported_by
+          //   ? violation.reported_by
+          //   : users[0].userid,
         };
       }
     );
-    console.log("Term to update: ", termToUpdate);
-    console.log("Creating student...");
-    console.log("Current Target student info: ", targetStudent);
-    console.log(
-      "Current target student violation: ",
-      transformViolationToArray
-    );
+    // console.log("STUDENT VIOLATIONS: ", transformViolationToArray);
+    // return;
+    // console.log("Term to update: ", termToUpdate);
+    // console.log("Creating student...");
+    // console.log("Current Target student info: ", targetStudent);
+    // console.log(
+    //   "Current target student violation: ",
+    //   transformViolationToArray
+    // );
 
     axios
       .put(
@@ -947,7 +953,7 @@ const Students = () => {
     const violationsToSave = createStudent.violations.map((violation) => {
       return {
         code: violation.code,
-        // description: violation.description,
+        description: violation.description,
         date_committed: new Date().toISOString(),
         sem_committed: termToSave.number,
       };
@@ -1617,42 +1623,39 @@ const Students = () => {
         <Dialog
           open={ViewModal}
           onClose={handleClose}
+          fullWidth={true}
+          maxWidth="false"
           sx={{
-            padding: 2,
+            maxHeight: "90vh",
+            height: "90vh",
             display: "flex",
             alignItems: "center",
             justifyContent: "center",
-            maxHeight: "90vh",
-            height: { xs: "100vh", sm: "90vh" },
-
-            maxWidth: "100vw",
-            minWidth: "70vw",
+            marginX: { md: "10px", lg: "auto" },
           }}
         >
           <DialogContent
             sx={{
-              padding: 2,
-              // width: "100%",
-              // height: "100%",
-              // maxHeight: "90vh",
-              // height: { xs: "100vh", sm: "90vh" },
-              marginX: { md: "10px", lg: "auto" },
-              overflowX: "hidden",
+              // padding: 2,
+              // // width: "100%",
+              // // height: "100%",
+              // // maxHeight: "90vh",
+              // // height: { xs: "100vh", sm: "90vh" },
+              // marginX: { md: "10px", lg: "auto" },
+              // overflowX: "hidden",
+              overflowY: "auto",
+              // overflowX: "scroll",
+              marginBottom: "60px",
+              minWidth: "70vw",
+              maxWidth: "95vw",
+              maxHeight: "80vh",
             }}
           >
             <div className=" flex flex-col justify-center items-center md:flex-row sm:justify-between sm:items-center sm:w-full gap-x-5">
               <h2 className="py-1 sm:text-2xl sm:font-bold text-center font-semibold slide-in-visible ">
                 Student Violation History
               </h2>
-              <div className="gap-x-2">
-                <Button
-                  className=" p-2 rounded-sm hover:bg-red-200 slide-in-from-right"
-                  onClick={handleClose}
-                  color="error"
-                >
-                  <CloseIcon /> Close
-                </Button>
-              </div>
+              <div className="gap-x-2"></div>
             </div>
             <div className="flex flex-col gap-y-2 slide-in-down-visible overflow-hidden">
               <TextField
@@ -1665,6 +1668,7 @@ const Students = () => {
                     readOnly: true,
                   },
                 }}
+                color="error"
               />
               <TextField
                 className="slide-in-down-visible"
@@ -1681,6 +1685,7 @@ const Students = () => {
                     readOnly: true,
                   },
                 }}
+                color="error"
               />
               <TextField
                 id="standard-read-only-input"
@@ -1698,6 +1703,7 @@ const Students = () => {
                     readOnly: true,
                   },
                 }}
+                color="error"
               />
               {console.log("Course: ", targetStudent.course)}
               <TextField
@@ -1712,6 +1718,7 @@ const Students = () => {
                     readOnly: true,
                   },
                 }}
+                color="error"
               />
               <TextField
                 id="standard-read-only-input"
@@ -1723,6 +1730,7 @@ const Students = () => {
                     readOnly: true,
                   },
                 }}
+                color="error"
               />
               <TextField
                 id="standard-read-only-input"
@@ -1740,19 +1748,37 @@ const Students = () => {
                     readOnly: true,
                   },
                 }}
+                color="error"
               />
             </div>
             <div
               id="Violation list"
-              className="px-2"
-              style={{ overflowX: "hidden" }}
+              style={{
+                overflowX: "auto",
+                overflowY: "auto",
+              }}
             >
               <h2 className="py-3 text-base font-bold text-left slide-in-visible">
                 Violation Records
               </h2>
-              <StudentViolationList student={targetStudent} users={users} />
+              <div style={{ minWidth: "600px" }}>
+                <StudentViolationList
+                  student={targetStudent}
+                  users={users}
+                  terms={schoolTermList}
+                />
+              </div>
             </div>
           </DialogContent>
+          <DialogActions>
+            <Button
+              className="p-2 rounded-sm hover:bg-red-200 slide-in-from-right"
+              onClick={handleClose}
+              color="error"
+            >
+              <CloseIcon /> Close
+            </Button>
+          </DialogActions>
         </Dialog>
       )}
       {searchFilterModal && (
@@ -1876,11 +1902,13 @@ const Students = () => {
               marginBottom: "20px",
               minWidth: "50vw",
               maxWidth: "90vw",
+              minHeight: "30vh",
               maxHeight: "80vh",
             }}
           >
             {isQrScannerOpen ? (
               <QRScanner
+                style={{ margin: "0", position: "relative" }}
                 fetchQrData={handleDatafromQRScanner}
                 onClose={closeQrScanner}
               />
@@ -1910,35 +1938,8 @@ const Students = () => {
                 <div className="my-5 pb-5">
                   <h3 className="mb-3 slide-in-down-visible">Add Violation</h3>
                   <div className="flex ">
-                    {/* <select
-                      className="w-full rounded border slide-in-visible"
-                      value={selectedViolation.code}
-                      onChange={(e) => {
-                        const selectedCode = e.target.value;
-                        const foundViolation = violationList
-                          .flatMap((violation) => violation.violations)
-                          .find((v) => v.code === selectedCode);
-                        if (foundViolation) {
-                          setSelectedViolation({
-                            code: foundViolation.code,
-                            description: foundViolation.description,
-                          });
-                        }
-                      }}
-                    >
-                      <option value="">Pick atleast 1 option...</option>
-                      {violationList.flatMap((violation) =>
-                        violation.violations.map((v, index) => (
-                          <option
-                            key={`${violation.id}-${index}`}
-                            value={v.code}
-                          >
-                            {v.code}
-                          </option>
-                        ))
-                      )}
-                    </select> */}
                     <Select
+                      color="error"
                       className="slide-in-visible w-3/4"
                       size="small"
                       value={selectedViolation.code}
@@ -1971,9 +1972,9 @@ const Students = () => {
                         style={{
                           position: "sticky",
                           top: 5,
-                          zIndex: 1001, // Ensure the button is above other content
-                          width: "100%", // Ensure div spans the entire width
-                          paddingRight: "10px", // Some padding to avoid the button sticking too close to the edge
+                          zIndex: 1001,
+                          width: "90%",
+                          paddingRight: "10px",
                         }}
                       >
                         <MenuItem
@@ -1983,6 +1984,7 @@ const Students = () => {
                             right: 0,
                             padding: 0,
                           }}
+                          color="error"
                         >
                           <Button
                             // fullWidth
@@ -2353,38 +2355,6 @@ const Students = () => {
                 <div className="my-5 w-full slide-in-visible">
                   <h3 className="mb-3">Add Violation</h3>
                   <div className="flex ">
-                    {/* <select
-                      className="w-full border rounded  flex-1 slide-in-down-visible"
-                      value={selectedViolation.code}
-                      onChange={(e) => {
-                        const selectedCode = e.target.value;
-                        const foundViolation = violationList
-                          .flatMap((violation) => violation.violations)
-                          .find((v) => v.code === selectedCode);
-                        console.log(
-                          "Selected Violation in select: ",
-                          foundViolation
-                        );
-                        if (foundViolation) {
-                          setSelectedViolation({
-                            code: foundViolation.code,
-                            description: foundViolation.description,
-                          });
-                        }
-                      }}
-                    >
-                      <option value="">Select Violation</option>
-                      {violationList.flatMap((violation) =>
-                        violation.violations.map((v, index) => (
-                          <option
-                            key={`${violation.id}-${index}`}
-                            value={v.code}
-                          >
-                            {v.code}
-                          </option>
-                        ))
-                      )}
-                    </select> */}
                     <Select
                       className="slide-in-visible w-3/4"
                       size="small"
