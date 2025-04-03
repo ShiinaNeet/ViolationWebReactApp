@@ -190,8 +190,8 @@ const Navigationbar = () => {
                 {/* <Link onClick={toggleDrawer(false)} to="/Chart">
                   <MenuItem>Charts </MenuItem>
                 </Link> */}
-                <Link onClick={toggleDrawer(false)} to="/Users">
-                  <MenuItem>Report </MenuItem>
+                <Link onClick={toggleDrawer(false)} to="/Reports">
+                  <MenuItem>Reports </MenuItem>
                 </Link>
                 <Link onClick={toggleDrawer(false)} to="/Notification">
                   <MenuItem>Notifications </MenuItem>
