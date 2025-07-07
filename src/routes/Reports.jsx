@@ -148,12 +148,16 @@ export default function Reports() {
         )
         .map((violation) => {
           const summary = violation.student.violation_summary;
-          const minorCount = summary
-            ? summary.categories.find((c) => c.category === "minor")?.count || 0
-            : 1;
-          const majorCount = summary
-            ? summary.categories.find((c) => c.category === "major")?.count || 0
-            : 0;
+          const minorCount =
+            summary && summary.categories
+              ? summary.categories.find((c) => c.category === "minor")?.count ||
+                0
+              : 1;
+          const majorCount =
+            summary && summary.categories
+              ? summary.categories.find((c) => c.category === "major")?.count ||
+                0
+              : 0;
 
           return {
             department: dept.department_name,
