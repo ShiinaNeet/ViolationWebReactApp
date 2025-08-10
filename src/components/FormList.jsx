@@ -19,18 +19,24 @@ import {
   DialogActions,
   FormControlLabel,
   Checkbox,
+  Typography,
 } from "@mui/material";
 import axios from "axios";
 import moment from "moment";
 
 export default function FormList() {
   const [isViewModalOpen, setIsViewModalOpen] = useState(false);
+  const [isEditModalOpen, setIsEditModalOpen] = useState(false);
   const [filteredForms, setFilteredForms] = useState([]);
   const [coordinatorUsers, setCoordinatorUsers] = useState([]);
   const [programList, setProgramList] = useState([]);
   const [departmentList, setDepartmentList] = useState([]);
   const [filter, setFilter] = useState("call_slip");
   const [selectedForm, setSelectedForm] = useState(null);
+  const [selectedEditForm, setSelectedEditForm] = useState({
+    status: 0,
+    reason: "",
+  });
   const [isLoading, setIsLoading] = useState(false);
   const formTypes = [
     "call_slip",
@@ -64,222 +70,6 @@ export default function FormList() {
         },
       });
       if (response.status === 200) {
-        // const sec = {
-        //   form_type: "case_dismissals",
-        //   name: "John Doe",
-        //   effectivity_date: "2025-03-01T12:16:47.962Z",
-        //   college: "College of Engineering",
-        //   program: "Computer Engineering",
-        //   campus: "Main Campus",
-        //   year: "4th Year",
-        //   section: "A",
-        //   sr_code: "123456",
-        //   sex: "Male",
-        //   indicate_offense: "Cheating",
-        //   reason_for_dismissal: {
-        //     is_without_merit: true,
-        //     others: "Lack of evidence",
-        //   },
-        //   report_date: "2025-03-01T12:16:47.962Z",
-        //   report_time: "10:00 AM",
-        //   coordinator_discipline_head: "67b5ce20338e7035a73bce5e",
-        //   date_signed: "2025-03-01T12:16:47.962Z",
-        // };
-        // const selectedForm = {
-        //   form_type: "student_incident_report",
-        //   name: "Jane Doe",
-        //   date: "2025-03-01T12:16:47.962Z",
-        //   time: "10:30 AM",
-        //   college: "College of Arts and Sciences",
-        //   campus: "North Campus",
-        //   sr_code: "654321",
-        //   program: "5eb7cf5a86d9755df3a6c593",
-        //   year_section: "2nd Year - B",
-        //   incident: "Disruptive behavior in class",
-        //   remarks: "Handled by the class advisor",
-        //   reported_by: "Mr. Smith",
-        //   designation: "Class Advisor",
-        // };
-        // const selectedForm = {
-        //   form_type: "warning_violations_of_norms_of_conduct",
-        //   name: "John Doe",
-        //   date: "2025-03-01T12:16:47.962Z",
-        //   recieved_letter_date: "2025-03-01T12:16:47.962Z",
-        //   violation_code: "V001",
-        //   violation_description: "Violation of conduct norms",
-        //   addressed_to: "Jane Smith",
-        //   coordinator_discipline_head: "678ed1684f25f7a412bd2efe",
-        // };
-        // const selectedForm = {
-        //   form_type: "non_wearing_uniform",
-        //   name: "John Doe",
-        //   college: "College of Engineering",
-        //   program: "5eb7cf5a86d9755df3a6c593",
-        //   sr_code: "123456",
-        //   campus: "Main Campus",
-        //   year_section: "2nd Year - A",
-        //   check: {
-        //     fieldwork_workshop: false,
-        //     prolonged_standing: true,
-        //     foreign_student_on_short_special_course: false,
-        //     pregnant: true,
-        //     special_cases: true,
-        //     force_majeure: false,
-        //     intern: false,
-        //     others: "qweqweqwe",
-        //   },
-        //   requested_by: {
-        //     name: "Jane Smith",
-        //     date: "2025-03-01T12:58:49.211Z",
-        //   },
-        //   reviewed_by: {
-        //     name: "Robert Brown",
-        //     date: "2025-03-01T12:58:49.211Z",
-        //   },
-        //   approved_by: {
-        //     name: "Alice Johnson",
-        //     date: "2025-03-01T12:58:49.211Z",
-        //   },
-        // };
-        // const dummyData = [
-        //   {
-        //     form_type: "call_slip",
-        //     name: "John Doe",
-        //     effectivity_date: "2025-03-01T12:58:49.211Z",
-        //     college: "College of Engineering",
-        //     program: "65a9f2c8b432e1f89d7c3a01",
-        //     date: "2025-03-01T12:58:49.211Z",
-        //     campus: "Main Campus",
-        //     year: "4th Year",
-        //     section: "A",
-        //     report_date: "2025-03-01T12:58:49.211Z",
-        //     report_time: "10:00 AM",
-        //     coordinator_discipline_head: "67b5b81c246f98af202c41eb",
-        //     date_signed: "2025-03-01T12:58:49.211Z",
-        //   },
-        //   {
-        //     form_type: "reprimand",
-        //     name: "Jane Doe",
-        //     date: "2025-03-01T12:58:49.211Z",
-        //     violation_code: "V001",
-        //     violation: "Minor Violation",
-        //     coordinator_discipline_head: "67b5b81c246f98af202c41eb",
-        //   },
-        //   {
-        //     form_type: "temporary_gatepass",
-        //     name: "Alice Johnson",
-        //     college: "College of Arts and Sciences",
-        //     program: "5eb7cf5a86d9755df3a6c593",
-        //     date: "2025-03-01T12:58:49.211Z",
-        //     sr_code: "654321",
-        //     year_section: "2nd Year - B",
-        //     remarks: "Temporary gatepass issued",
-        //     valid_until: "2025-03-01T12:58:49.211Z",
-        //     issued_by: {
-        //       name: "Mr. Brown",
-        //       date: "2025-03-01T12:58:49.211Z",
-        //     },
-        //   },
-        //   {
-        //     form_type: "case_dismissals",
-        //     name: "Robert Brown",
-        //     effectivity_date: "2025-03-01T12:58:49.211Z",
-        //     college: "College of Business",
-        //     program: "Business Administration",
-        //     campus: "South Campus",
-        //     year: "3rd Year",
-        //     section: "C",
-        //     sr_code: "789012",
-        //     sex: "Male",
-        //     indicate_offense: "Plagiarism",
-        //     reason_for_dismissal: {
-        //       is_without_merit: false,
-        //       others: "Lack of evidence",
-        //     },
-        //     report_date: "2025-03-01T12:58:49.211Z",
-        //     report_time: "11:00 AM",
-        //     coordinator_discipline_head: "67b5b81c246f98af202c41eb",
-        //     date_signed: "2025-03-01T12:58:49.211Z",
-        //   },
-        //   {
-        //     form_type: "formal_complaint_letter",
-        //     date: "2025-03-01T12:58:49.211Z",
-        //     coordinator_discipline_head: "67b5b81c246f98af202c41eb",
-        //     subject_of_complaint: {
-        //       name: "John Smith",
-        //       college: "College of Law",
-        //       year_section: "1st Year - A",
-        //     },
-        //     norms_of_conduct_violated_by_the_student: "Cheating",
-        //     narration_of_facts_and_circumstances:
-        //       "Detailed narration of the incident",
-        //     final_word: "Final remarks",
-        //     name_of_complainant: "Jane Doe",
-        //     contact_no_of_complainant: "123-456-7890",
-        //     email_address_of_complainant: "jane.doe@example.com",
-        //     witnesses: ["Witness 1", "Witness 2"],
-        //     enclosed_evidences: ["Evidence 1", "Evidence 2"],
-        //   },
-        //   {
-        //     form_type: "student_incident_report",
-        //     name: "Emily Davis",
-        //     date: "2025-03-01T12:58:49.211Z",
-        //     time: "09:30 AM",
-        //     college: "College of Medicine",
-        //     campus: "West Campus",
-        //     sr_code: "321654",
-        //     program: "65a9f2c8b432e1f89d7c3a02",
-        //     year_section: "1st Year - B",
-        //     incident: "Disruptive behavior in class",
-        //     remarks: "Handled by the class advisor",
-        //     reported_by: "Mr. Smith",
-        //     designation: "Class Advisor",
-        //   },
-        //   {
-        //     form_type: "warning_violations_of_norms_of_conduct",
-        //     name: "David Wilson",
-        //     date: "2025-03-01T12:58:49.211Z",
-        //     recieved_letter_date: "2025-03-01T12:58:49.211Z",
-        //     violation_code: "V003",
-        //     violation_description: "Violation of conduct norms",
-        //     addressed_to: "Jane Smith",
-        //     department: "60d5f8f8d3b7f1c1a3b8c8d4",
-        //   },
-        //   {
-        //     form_type: "non_wearing_uniform",
-        //     name: "Sophia Martinez",
-        //     college: "College of Engineering",
-        //     program: "5eb7cf5a86d9755df3a6c593",
-        //     sr_code: "987654",
-        //     campus: "Main Campus",
-        //     year_section: "2nd Year - A",
-        //     check: {
-        //       fieldwork_workshop: false,
-        //       prolonged_standing: false,
-        //       foreign_student_on_short_special_course: false,
-        //       pregnant: false,
-        //       special_cases: false,
-        //       force_majeure: false,
-        //       intern: false,
-        //       others: "None",
-        //     },
-        //     requested_by: {
-        //       name: "Jane Smith",
-        //       date: "2025-03-01T12:58:49.211Z",
-        //     },
-        //     reviewed_by: {
-        //       name: "Robert Brown",
-        //       date: "2025-03-01T12:58:49.211Z",
-        //     },
-        //     approved_by: {
-        //       name: "Alice Johnson",
-        //       date: "2025-03-01T12:58:49.211Z",
-        //     },
-        //   },
-        // ];
-        // setFilteredForms(dummyData);
-        // setForms(dummyData);
-
         setFilteredForms(response.data);
         console.log("Forms fetched:", response.data);
       }
@@ -348,9 +138,30 @@ export default function FormList() {
 
     setIsViewModalOpen(true);
   };
+  const handleEdit = (form) => {
+    console.log("Editing form:", form.id);
+    setSelectedEditForm(form);
+    setIsEditModalOpen(true);
+  };
   const handleClose = () => {
     setIsViewModalOpen(false);
     setSelectedForm(null);
+    setIsEditModalOpen(false);
+  };
+  const saveFormStatus = async (formId, status) => {
+    console.log("Saving form status:", selectedEditForm);
+    return;
+    try {
+      const response = await axios.post(`form/${formId}/status`, {
+        status: status,
+        reason: "Form status updated",
+      });
+      if (response.status === 200) {
+        console.log("Form status updated successfully");
+      }
+    } catch (error) {
+      console.error("Error updating form status:", error);
+    }
   };
   const getDepartmentName = (departmentId) => {
     let departmentName = departmentList.find(
@@ -398,6 +209,9 @@ export default function FormList() {
         <TableCell align="center">
           <Button color="error" variant="text" onClick={() => handleView(form)}>
             View
+          </Button>
+          <Button color="error" variant="text" onClick={() => handleEdit(form)}>
+            Edit
           </Button>
         </TableCell>
       </TableRow>
@@ -1578,9 +1392,10 @@ export default function FormList() {
   };
   const GetSelectFormTypes = () => {
     return (
-      <FormControl sx={{ minWidth: 200, marginBottom: 2 }}>
+      <FormControl sx={{ minWidth: 200 }}>
         <InputLabel color="error">Form Type</InputLabel>
         <Select
+          size="small"
           label="Form Type"
           color="error"
           value={filter}
@@ -1595,6 +1410,7 @@ export default function FormList() {
       </FormControl>
     );
   };
+
   const GetViewDialog = () => {
     return (
       <Dialog
@@ -1617,10 +1433,138 @@ export default function FormList() {
   };
   return (
     <div>
-      <h1 className="text-2xl text-red-600 py-3">Sent Forms</h1>
-      <GetSelectFormTypes />
+      <div className="flex items-end justify-between py-3">
+        <h1 className="text-red-600" style={{ fontSize: "16px" }}>
+          Sent Forms
+        </h1>
+        <GetSelectFormTypes />
+      </div>
       <GetTable />
       <GetViewDialog />
+      <EditFormDialog
+        open={isEditModalOpen}
+        onClose={handleClose}
+        form={selectedEditForm}
+        onChange={setSelectedEditForm}
+        onSave={saveFormStatus}
+        capitalizeFirstLetter={capitalizeFirstLetter}
+      />
     </div>
+  );
+}
+
+function EditFormDialog({
+  open,
+  onClose,
+  form,
+  onChange,
+  onSave,
+  capitalizeFirstLetter,
+}) {
+  // Default status to 0 if undefined/null to prevent MUI Select warning
+  const selectStatus =
+    form &&
+    (form.status === 0 ||
+      form.status === 1 ||
+      form.status === 2 ||
+      form.status === 3 ||
+      form.status === 4 ||
+      form.status === 5)
+      ? form.status
+      : 0;
+  return (
+    <Dialog open={open} onClose={onClose} fullWidth maxWidth="sm">
+      <DialogTitle
+        sx={{
+          display: "flex",
+          alignItems: "center",
+          justifyContent: "space-between",
+        }}
+      >
+        <div>
+          Form Details{" - "}
+          <span variant="text" color="error">
+            {form ? form.violation : ""}
+          </span>
+        </div>
+      </DialogTitle>
+      <DialogContent>
+        <TextField
+          fullWidth
+          color="error"
+          label="Name"
+          value={form ? form.name : ""}
+          InputProps={{ readOnly: true }}
+          variant="outlined"
+          margin="normal"
+          disabled
+        />
+        <TextField
+          fullWidth
+          color="error"
+          label="Violation Code"
+          value={form ? form.violation_code : ""}
+          InputProps={{ readOnly: true }}
+          variant="outlined"
+          disabled
+          margin="normal"
+        />
+        <TextField
+          fullWidth
+          color="error"
+          label="Form Type"
+          value={form ? capitalizeFirstLetter(form.form_type) : ""}
+          InputProps={{ readOnly: true }}
+          disabled
+          variant="outlined"
+          margin="normal"
+          sx={{ textTransform: "uppercase" }}
+        />
+        <Typography variant="body2" color="textSecondary" className="pt-5">
+          Change the status of the form
+        </Typography>
+        <Select
+          fullWidth
+          value={selectStatus}
+          onChange={(e) => {
+            e.preventDefault();
+            onChange({ ...form, status: e.target.value });
+          }}
+          color="error"
+          variant="outlined"
+          sx={{ textTransform: "uppercase" }}
+        >
+          <MenuItem value={0}>Pending</MenuItem>
+          <MenuItem value={1}>Under Review</MenuItem>
+          <MenuItem value={2}>Approved</MenuItem>
+          <MenuItem value={3}>Rejected</MenuItem>
+          <MenuItem value={4}>Completed</MenuItem>
+          <MenuItem value={5}>Archived</MenuItem>
+        </Select>
+        <TextField
+          fullWidth
+          color="error"
+          label="Reason"
+          value={typeof form?.reason === "string" ? form.reason : ""}
+          onChange={(e) => onChange({ ...form, reason: e.target.value })}
+          variant="outlined"
+          margin="normal"
+        />
+      </DialogContent>
+      <DialogActions>
+        <Button
+          color="error"
+          onClick={() => {
+            onSave(form._id, selectStatus);
+            onClose();
+          }}
+        >
+          Update Status
+        </Button>
+        <Button color="error" onClick={onClose}>
+          Close
+        </Button>
+      </DialogActions>
+    </Dialog>
   );
 }

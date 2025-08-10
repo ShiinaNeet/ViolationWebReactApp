@@ -50,7 +50,7 @@ export default function Reports() {
   const { vertical, horizontal } = position;
   const [isLoading, setIsLoading] = React.useState(true);
   const [page, setPage] = React.useState(0);
-  const [rowsPerPage, setRowsPerPage] = React.useState(5);
+  const [rowsPerPage, setRowsPerPage] = React.useState(10);
   const [rows, setRows] = React.useState([]);
   const [term, setTerm] = React.useState([]);
   const [searchFilter, setSearchFilter] = React.useState("");
@@ -66,7 +66,7 @@ export default function Reports() {
     setPage(newPage);
   };
   const handleChangeRowsPerPage = (event) => {
-    setRowsPerPage(parseInt(event.target.value, 6));
+    setRowsPerPage(parseInt(event.target.value, 10));
     setPage(0);
   };
   const handleAlertClose = (event, reason) => {
@@ -174,8 +174,14 @@ export default function Reports() {
   );
   const GetHeader = () => {
     return (
-      <div className="flex flex-col md:flex-row justify-between gap-x-2 text-sm md:text-md bg-white my-2 rounded-md">
-        <h1 className="text-2xl text-red-600 py-3 flex items-center">
+      <div
+        className="flex flex-col md:flex-row justify-between gap-x-2 bg-white my-2 rounded-md"
+        style={{ fontSize: "16px" }}
+      >
+        <h1
+          className="text-red-600 py-3 flex items-center"
+          style={{ fontSize: "16px" }}
+        >
           Reports List
         </h1>
         <Button onClick={() => setSearchFilterModal(true)} color="error">
@@ -216,22 +222,24 @@ export default function Reports() {
         </TableRow>
       );
     }
-    return filteredData.map((row, index) => (
-      <TableRow key={index}>
-        <TableCell>{row.student}</TableCell>
-        <TableCell>{row.department}</TableCell>
-        <TableCell>{row.program}</TableCell>
-        <TableCell>{row.violationDetails}</TableCell>
-        <TableCell>{row.minorOffenses}</TableCell>
-        <TableCell>{row.majorOffenses}</TableCell>
-      </TableRow>
-    ));
+    return filteredData
+      .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
+      .map((row, index) => (
+        <TableRow key={index}>
+          <TableCell>{row.student}</TableCell>
+          <TableCell>{row.department}</TableCell>
+          <TableCell>{row.program}</TableCell>
+          <TableCell>{row.violationDetails}</TableCell>
+          <TableCell>{row.minorOffenses}</TableCell>
+          <TableCell>{row.majorOffenses}</TableCell>
+        </TableRow>
+      ));
   };
   const GetTableFooter = () => {
     return (
       <TableRow>
         <TablePagination
-          rowsPerPageOptions={[{ label: "All", value: -1 }]} // Provide an array of options
+          rowsPerPageOptions={[5, 10, 25, { label: "All", value: -1 }]}
           count={filteredData.length}
           rowsPerPage={rowsPerPage}
           page={page}
@@ -267,6 +275,7 @@ export default function Reports() {
   }, []);
   return (
     <Container
+      maxWidth={false}
       sx={{
         display: "flex",
         flexDirection: "column",
@@ -274,6 +283,8 @@ export default function Reports() {
         pt: { xs: 10, sm: 15 },
         pb: { xs: 8, sm: 12 },
         height: "100vh",
+        width: "90%",
+        mx: "auto",
       }}
     >
       <div className="w-full h-full mx-auto ">
@@ -292,7 +303,10 @@ export default function Reports() {
               },
             }}
           >
-            <DialogTitle className="slide-in-visible mb-1 font-bold text-large">
+            <DialogTitle
+              className="slide-in-visible mb-1 font-bold"
+              sx={{ fontSize: "16px" }}
+            >
               Filter the reports by student name and semester
             </DialogTitle>
             <DialogContent sx={{ overflowX: "hidden", overflowY: "hidden" }}>
@@ -305,10 +319,18 @@ export default function Reports() {
                 inputProps={{ "aria-label": "Without label" }}
                 label="Search by student name"
                 margin="normal"
+                sx={{
+                  "& .MuiInputBase-input": { fontSize: "16px" },
+                  "& .MuiInputLabel-root": { fontSize: "16px" },
+                }}
               />
 
               <FormControl fullWidth margin="normal">
-                <InputLabel id="semester" color="error">
+                <InputLabel
+                  id="semester"
+                  color="error"
+                  sx={{ fontSize: "16px" }}
+                >
                   Semester
                 </InputLabel>
                 <Select
@@ -323,6 +345,9 @@ export default function Reports() {
                     )
                   }
                   inputProps={{ "aria-label": "Without label" }}
+                  sx={{
+                    "& .MuiSelect-select": { fontSize: "16px" },
+                  }}
                 >
                   <MenuItem value=""> All </MenuItem>
                   {term.map((term, index) => (

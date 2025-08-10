@@ -14,6 +14,7 @@ export default function AlertMessageStudent() {
     subject: "",
     body: "",
     files: [],
+    usertype: "student",
     recipients: [""],
     error: false,
   });
@@ -54,7 +55,8 @@ export default function AlertMessageStudent() {
       message.body === "" ||
       message.files.length === 0 ||
       message.recipients.length === 0 ||
-      message.subject === ""
+      message.subject === "" ||
+      message.usertype === ""
     ) {
       setMessage({ ...message, error: true });
       setAlertMessage({
@@ -83,6 +85,7 @@ export default function AlertMessageStudent() {
         params: {
           subject: message.subject,
           body: message.body,
+          usertype: message.usertype,
         },
       })
       .then((response) => {
@@ -151,13 +154,15 @@ export default function AlertMessageStudent() {
   return (
     <div className="w-full mx-0 h-screen">
       <div>
-        <div className="text-2xl py-3">
+        <div className="py-3" style={{ fontSize: "16px" }}>
           <motion.div
             variants={itemVariants}
             initial="hidden"
             animate="visible"
           >
-            <label className="font-bold">Send Email</label>
+            <label className="font-bold" style={{ fontSize: "16px" }}>
+              Send Email
+            </label>
             <br />
           </motion.div>
         </div>
@@ -180,6 +185,27 @@ export default function AlertMessageStudent() {
               value={message.subject}
               onChange={(e) =>
                 setMessage({ ...message, subject: e.target.value })
+              }
+            />
+          </motion.div>
+          <motion.div
+            variants={itemVariants}
+            initial="hidden"
+            animate="visible"
+          >
+            <TextField
+              autoFocus
+              id="standard-multiline-static"
+              label="User Type"
+              color="error"
+              multiline
+              rows={2}
+              variant="outlined"
+              fullWidth
+              required={true}
+              value={message.usertype}
+              onChange={(e) =>
+                setMessage({ ...message, usertype: e.target.value })
               }
             />
           </motion.div>

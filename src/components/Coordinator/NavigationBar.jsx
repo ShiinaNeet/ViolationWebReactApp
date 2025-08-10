@@ -1,9 +1,10 @@
+import React from "react";
 import reactsvg from "@src/assets/react.svg";
 import { Link } from "react-router-dom";
 import { useAuth } from "../../auth/AuthProvider";
-import React from "react";
+import MenuIcon from "@mui/icons-material/Menu";
+import CloseRoundedIcon from "@mui/icons-material/CloseRounded";
 import {
-  alpha,
   AppBar,
   Box,
   Button,
@@ -14,145 +15,178 @@ import {
   Drawer,
   MenuItem,
   Divider,
+  Typography,
 } from "@mui/material";
-import MenuIcon from "@mui/icons-material/Menu";
-import CloseRoundedIcon from "@mui/icons-material/CloseRounded";
-import { StyledToolbarWithRed } from "@src/utils/StyledToolBar.js";
+
+const StyledToolbar = styled(Toolbar)(() => ({
+  display: "flex",
+  alignItems: "center",
+  justifyContent: "space-between",
+  flexShrink: 0,
+  width: "100%",
+  backdropFilter: "blur(24px)",
+  backgroundColor: "red",
+  padding: "8px 12px",
+}));
 
 const NavigationBar = () => {
   const { logout, isAuthenticated } = useAuth();
   const [open, setOpen] = React.useState(false);
 
-  const toggleDrawer = (newOpen) => () => {
-    setOpen(newOpen);
-  };
   const MenuButtons = [
     { name: "Home", link: "/coordinator/home" },
     { name: "Students", link: "/coordinator/students" },
     { name: "Forms", link: "/coordinator/forms" },
     { name: "Notifications", link: "/coordinator/Notification" },
   ];
-  const GetNavigationButtons = () => {
-    return MenuButtons.map((button) => {
-      return (
-        <Button variant="text" color="white" size="small" key={button.name}>
-          <Link
-            className=" hover:bg-red-100 hover:text-red-600 hover:rounded-md hover:cursor-pointer p-2"
-            to={button.link}
-          >
-            {button.name}
-          </Link>
-        </Button>
-      );
-    });
+
+  const toggleDrawer = (newOpen) => (event) => {
+    if (
+      event &&
+      event.type === "keydown" &&
+      (event.key === "Tab" || event.key === "Shift")
+    ) {
+      return;
+    }
+    setOpen(newOpen);
   };
-  const GetMenuButtons = () => {
-    return MenuButtons.map((button) => {
-      return (
-        <Link to={button.link} key={button.name}>
-          <MenuItem>{button.name} </MenuItem>
-        </Link>
-      );
-    });
-  };
+
   return (
     <AppBar
       position="fixed"
-      enableColorOnDark
       sx={{
-        boxShadow: 0,
-        bgcolor: "transparent",
-        backgroundImage: "none",
-        mt: "calc(var(--template-frame-height, 0px) + 28px)",
+        top: 0,
+        left: 0,
+        right: 0,
+        width: "100%",
+        bgcolor: "red",
+        color: "black",
+        boxShadow: 3,
       }}
     >
-      <Container maxWidth="lg">
-        <StyledToolbarWithRed variant="dense" disableGutters>
-          <Box className="flex items-center px-0 flex-grow">
-            <img
-              src={reactsvg}
-              alt="React Logo"
-              className="h-fit mx-2 flex justify-center self-center"
-            />
-            <h1 className="text-white-500 hidden sm:block">
-              Batangas State University Disciplinary Management
-            </h1>
-          </Box>
+      <StyledToolbar>
+        <Box
+          sx={{
+            display: "flex",
+            alignItems: "center",
+            flexGrow: 1,
+          }}
+        >
           <Box
+            component="img"
+            src={reactsvg}
+            alt="React Logo"
             sx={{
-              display: { xs: "none", md: "flex" },
-              gap: 1,
-              alignItems: "center",
+              height: 40,
+              mr: 2,
             }}
-          >
-            <GetNavigationButtons />
-            {isAuthenticated && (
-              <Button variant="text" color="white" size="small">
-                <Link
-                  className=" hover:bg-red-100 hover:text-red-600 hover:rounded-md hover:cursor-pointer p-2"
-                  onClick={logout}
-                >
-                  Logout
-                </Link>
-              </Button>
-            )}
-            {localStorage.getItem("accessToken") === null &&
-              window.location.replace("/login")}
-          </Box>
-          <Box
+          />
+          <Typography
+            variant="h6"
+            component="div"
+            color="white"
             sx={{
-              display: { xs: "flex", md: "none" }, // Change grid to flex
-              justifyContent: "flex-end", // Align items to the end horizontally
-              alignItems: "center", // Align vertically
+              display: { xs: "none", sm: "block" },
+              fontWeight: "bold",
             }}
           >
-            <IconButton aria-label="Menu button" onClick={toggleDrawer(true)}>
-              <MenuIcon />
-            </IconButton>
-          </Box>
-          <Drawer
-            anchor="top"
-            open={open}
-            onClose={toggleDrawer(false)}
-            PaperProps={{
-              sx: {
-                top: "var(--template-frame-height, 0px)",
-                display: "flex",
-                flexDirection: "column",
-              },
-            }}
-          >
-            <Box
+            Batangas State University Disciplinary Management
+          </Typography>
+        </Box>
+
+        {/* Desktop Navigation Links */}
+        <Box
+          sx={{
+            display: { xs: "none", md: "flex" },
+            gap: 2,
+            alignItems: "center",
+          }}
+        >
+          {MenuButtons.map((button) => (
+            <Button
+              variant="text"
               sx={{
-                p: 2,
-                backgroundColor: "background.default",
-                display: "flex",
-                flexDirection: "column",
+                color: "white",
+                "&:hover": {
+                  backgroundColor: "rgba(255, 255, 255, 0.2)",
+                },
               }}
+              key={button.name}
             >
-              <Box
-                sx={{
-                  display: "flex",
-                  justifyContent: "flex-end",
+              <Link
+                to={button.link}
+                style={{
+                  textDecoration: "none",
+                  color: "white",
+                  padding: "8px 16px",
                 }}
               >
+                {button.name}
+              </Link>
+            </Button>
+          ))}
+
+          {isAuthenticated && (
+            <Button
+              variant="contained"
+              sx={{
+                backgroundColor: "white",
+                color: "red",
+                "&:hover": {
+                  backgroundColor: "rgba(255, 255, 255, 0.8)",
+                },
+              }}
+              onClick={logout}
+            >
+              Logout
+            </Button>
+          )}
+          {localStorage.getItem("accessToken") === null &&
+            window.location.replace("/login")}
+        </Box>
+
+        {/* Mobile Menu */}
+        <Box sx={{ display: { xs: "flex", md: "none" } }}>
+          <IconButton
+            aria-label="Menu button"
+            onClick={toggleDrawer(true)}
+            sx={{ color: "white" }}
+          >
+            <MenuIcon />
+          </IconButton>
+
+          <Drawer anchor="top" open={open} onClose={toggleDrawer(false)}>
+            <Box sx={{ p: 2, backgroundColor: "white" }}>
+              <Box sx={{ display: "flex", justifyContent: "flex-end" }}>
                 <IconButton onClick={toggleDrawer(false)}>
                   <CloseRoundedIcon />
                 </IconButton>
               </Box>
-              <GetMenuButtons />
-              <Divider sx={{ my: 3 }} />
-              {isAuthenticated && (
-                <Link onClick={logout}>
-                  <MenuItem>Logout </MenuItem>
+
+              {MenuButtons.map((button) => (
+                <Link
+                  key={button.name}
+                  to={button.link}
+                  style={{ textDecoration: "none", color: "inherit" }}
+                >
+                  <MenuItem>{button.name}</MenuItem>
                 </Link>
+              ))}
+
+              <Divider sx={{ my: 2 }} />
+
+              {isAuthenticated && (
+                <MenuItem onClick={logout} sx={{ color: "red" }}>
+                  Logout
+                </MenuItem>
               )}
+
               {localStorage.getItem("accessToken") === null &&
                 window.location.replace("/login")}
             </Box>
           </Drawer>
-        </StyledToolbarWithRed>
-      </Container>
+        </Box>
+      </StyledToolbar>
     </AppBar>
   );
 };

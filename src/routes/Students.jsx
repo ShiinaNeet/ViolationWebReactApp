@@ -64,7 +64,7 @@ const Students = () => {
   //Page & State
   const [page, setPage] = React.useState(0);
   const [rows, setRows] = React.useState([]);
-  const [rowsPerPage, setRowsPerPage] = React.useState(3);
+  const [rowsPerPage, setRowsPerPage] = React.useState(10);
   const emptyRows =
     page > 0 ? Math.max(0, (1 + page) * rowsPerPage - rows.length) : 0;
   const truncateText = (text, maxLength) =>
@@ -364,125 +364,7 @@ const Students = () => {
             return { ...student, violations: updatedViolations };
           }
         );
-        // const students = [
-        //   {
-        //     id: "001",
-        //     srcode: "21-11111",
-        //     userid: "21-11111",
-        //     email: "student1@email.com",
-        //     fullname: "SMITH, JOHN D.",
-        //     course: "Computer Science",
-        //     term: "First Semester",
-        //     year_and_department: "1st year - CCIS",
-        //     type: "STUDENT",
-        //     violations: [
-        //       {
-        //         code: "12.1.2",
-        //         date_committed: "2025-03-01T10:30:00Z",
-        //         sem_committed: "652a1b9f1c4a1a001c4a1ba0",
-        //         reported_by: "6728b20d48c4d4c422da5c59",
-        //         description:
-        //           "Violation of Section 10 (Proper Uniform, Dress Code and Related Rules/Regulations)",
-        //       },
-        //       {
-        //         code: "12.1.5",
-        //         date_committed: "2025-03-02T14:20:00Z",
-        //         sem_committed: "652a1b9f1c4a1a001c4a1ba0",
-        //         reported_by: "6728b20d48c4d4c422da5c59",
-        //         description:
-        //           "Posting, distributing or disseminating notices, posters, leaflets without prior approval",
-        //       },
-        //     ],
-        //     violation_summary: {
-        //       categories: [{ category: "minor", count: 2 }],
-        //       total_violations: 2,
-        //     },
-        //   },
-        //   {
-        //     id: "002",
-        //     srcode: "21-22222",
-        //     userid: "21-22222",
-        //     email: "student2@email.com",
-        //     fullname: "DOE, JANE A.",
-        //     course: "Business Administration",
-        //     term: "Second Semester",
-        //     year_and_department: "2nd year - CBA",
-        //     type: "STUDENT",
-        //     violations: [
-        //       {
-        //         code: "13.2",
-        //         date_committed: "2025-03-03T11:45:00Z",
-        //         sem_committed: "652a1b9f1c4a1a001c4a1ba0",
-        //         reported_by: "6728b20d48c4d4c422da5c59",
-        //         description:
-        //           "Refusal to obey legal order of a person of authority",
-        //       },
-        //     ],
-        //     violation_summary: {
-        //       categories: [{ category: "major", count: 1 }],
-        //       total_violations: 1,
-        //     },
-        //   },
-        //   {
-        //     id: "003",
-        //     srcode: "21-33333",
-        //     userid: "21-33333",
-        //     email: "student3@email.com",
-        //     fullname: "GARCIA, MARIA L.",
-        //     course: "Engineering",
-        //     term: "Third Semester",
-        //     year_and_department: "3rd year - COE",
-        //     type: "STUDENT",
-        //     violations: [
-        //       {
-        //         code: "14.1",
-        //         date_committed: "2025-03-04T09:15:00Z",
-        //         sem_committed: "652a1b9f1c4a1a001c4a1ba0",
-        //         reported_by: "6728b20d48c4d4c422da5c59",
-        //         description: "Use of mobile phones during examinations",
-        //       },
-        //       {
-        //         code: "14.3",
-        //         date_committed: "2025-03-05T16:50:00Z",
-        //         sem_committed: "652a1b9f1c4a1a001c4a1ba0",
-        //         reported_by: "6728b20d48c4d4c422da5c59",
-        //         description:
-        //           "Assisting or dictating answers to fellow examinees",
-        //       },
-        //     ],
-        //     violation_summary: {
-        //       categories: [{ category: "academic dishonesty", count: 2 }],
-        //       total_violations: 2,
-        //     },
-        //   },
-        //   {
-        //     id: "004",
-        //     srcode: "21-44444",
-        //     userid: "21-44444",
-        //     email: "student4@email.com",
-        //     fullname: "LEE, JASON K.",
-        //     course: "Information Technology",
-        //     term: "Fourth Semester",
-        //     year_and_department: "4th year - CCIS",
-        //     type: "STUDENT",
-        //     violations: [
-        //       {
-        //         code: "12.1.9",
-        //         date_committed: "2025-03-06T13:00:00Z",
-        //         sem_committed: "652a1b9f1c4a1a001c4a1ba0",
-        //         reported_by: "6728b20d48c4d4c422da5c59",
-        //         description:
-        //           "Breaking into a class or College-sponsored activities without permission",
-        //       },
-        //     ],
-        //     violation_summary: {
-        //       categories: [{ category: "minor", count: 1 }],
-        //       total_violations: 1,
-        //     },
-        //   },
-        // ];
-        // console.log("Completed Data: ", completedDataWithViolationName);
-        // setRows(completedDataWithViolationName);
+
         setRows(completedDataWithViolationName);
         if (studentResponse.data.data.length === 0) {
           setAlertMessage({
@@ -1088,7 +970,7 @@ const Students = () => {
   const GetHeader = () => {
     return (
       <div className="flex flex-row justify-between h-fit rounded-md mt-5">
-        <h1 className="text-lg sm:text-2xl py-3 text-red-600">
+        <h1 className="py-3 text-red-600" style={{ fontSize: "16px" }}>
           Student Violations
         </h1>
         <div className="flex items-center ss:flex-row flex-col">
@@ -1122,7 +1004,7 @@ const Students = () => {
             <FilterAltRoundedIcon
               color="error"
               sx={{
-                fontSize: { xs: 15, sm: 20 },
+                fontSize: "16px",
                 ":hover": { backgroundColor: "#f44336", color: "white" },
               }}
             />
@@ -1232,6 +1114,7 @@ const Students = () => {
   return (
     <>
       <Container
+        maxWidth={false}
         sx={{
           display: "flex",
           flexDirection: "column",
@@ -1239,15 +1122,17 @@ const Students = () => {
           pt: { xs: 10, sm: 15, md: 15 },
           pb: { xs: 8, sm: 12 },
           minHeight: "100vh",
+          width: "90%",
         }}
       >
-        <div className="w-full h-full">
+        <div style={{ width: "100%", height: "100%" }}>
           <GetHeader />
-          <StyledToolbar variant="dense" disableGutters>
-            <TableContainer component={Paper}>
+          <StyledToolbar variant="dense" disableGutters sx={{ width: "100%" }}>
+            <TableContainer component={Paper} sx={{ width: "100%" }}>
               <Table
                 sx={{
-                  minHeight: 400,
+                  minHeight: 1150,
+                  width: "100%",
                 }}
                 aria-label="custom pagination table"
               >
@@ -1645,14 +1530,17 @@ const Students = () => {
               // overflowX: "hidden",
               overflowY: "auto",
               // overflowX: "scroll",
-              marginBottom: "60px",
+              marginBottom: "20px",
               minWidth: "70vw",
               maxWidth: "95vw",
               maxHeight: "80vh",
             }}
           >
             <div className=" flex flex-col justify-center items-center md:flex-row sm:justify-between sm:items-center sm:w-full gap-x-5">
-              <h2 className="py-1 sm:text-2xl sm:font-bold text-center font-semibold slide-in-visible ">
+              <h2
+                className="py-1 text-center font-semibold slide-in-visible"
+                style={{ fontSize: "16px", fontWeight: "bold" }}
+              >
                 Student Violation History
               </h2>
               <div className="gap-x-2"></div>
@@ -1751,6 +1639,55 @@ const Students = () => {
                 color="error"
               />
             </div>
+            <div>
+              <h2
+                className="py-3 font-bold text-left slide-in-visible"
+                style={{ fontSize: "16px" }}
+              >
+                Violation Summary
+              </h2>
+              <div>
+                <Table>
+                  <TableHead>
+                    <TableRow>
+                      <TableCell sx={{ fontWeight: 600 }}>Category</TableCell>
+                      <TableCell align="center" sx={{ fontWeight: 600 }}>
+                        Count
+                      </TableCell>
+                    </TableRow>
+                  </TableHead>
+                  <TableBody>
+                    {targetStudent.violation_summary &&
+                    Array.isArray(targetStudent.violation_summary.categories) &&
+                    targetStudent.violation_summary.categories.length > 0 ? (
+                      targetStudent.violation_summary.categories.map(
+                        (category, index) => (
+                          <TableRow
+                            key={index}
+                            className={`${
+                              category.count > 3 ? "bg-red-100" : ""
+                            }`}
+                          >
+                            <TableCell sx={{ textTransform: "capitalize" }}>
+                              {category.category}
+                            </TableCell>
+                            <TableCell align="center">
+                              {category.count}
+                            </TableCell>
+                          </TableRow>
+                        )
+                      )
+                    ) : (
+                      <TableRow>
+                        <TableCell colSpan={2} align="center">
+                          No Violation Records Found
+                        </TableCell>
+                      </TableRow>
+                    )}
+                  </TableBody>
+                </Table>
+              </div>
+            </div>
             <div
               id="Violation list"
               style={{
@@ -1758,7 +1695,10 @@ const Students = () => {
                 overflowY: "auto",
               }}
             >
-              <h2 className="py-3 text-base font-bold text-left slide-in-visible">
+              <h2
+                className="py-3 font-bold text-left slide-in-visible"
+                style={{ fontSize: "16px" }}
+              >
                 Violation Records
               </h2>
               <div style={{ minWidth: "600px" }}>
@@ -1807,7 +1747,7 @@ const Students = () => {
                 Violation Category
               </label>
               <Select
-                className="slide-in-from-right font-medium"
+                className="slide-in-visible font-medium"
                 fullWidth
                 color="error"
                 value={searchFilter.category}
@@ -1832,7 +1772,7 @@ const Students = () => {
                 User ID
               </label>
               <TextField
-                className="slide-in-from-right"
+                className="slide-in-visible"
                 fullWidth
                 color="error"
                 value={searchFilter.userid}

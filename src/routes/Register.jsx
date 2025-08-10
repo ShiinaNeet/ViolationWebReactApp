@@ -11,7 +11,9 @@ export default function Register() {
   return (
     <div className="flex flex-col items-center justify-center h-screen">
       <div className="flex flex-col bg-slate-100 w-full sm:w-1/3 p-3 rounded-md gap-y-5 shadow-sm shadow-red-400">
-        <h1 className="mb-4 text-2xl text-center">Register</h1>
+        <h1 className="mb-4 text-center" style={{ fontSize: "16px" }}>
+          Register
+        </h1>
         <TextField
           id="outlined-basic"
           label="Email Address"

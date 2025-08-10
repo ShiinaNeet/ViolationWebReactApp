@@ -295,116 +295,110 @@ export default function DepartmentTable() {
   // const debouncedSearchFunction = debounce(searchFunction, 300);
 
   return (
-    <Container
-      sx={{
-        display: "flex",
-        flexDirection: "column",
-        alignItems: "center",
-        pt: { xs: 10, sm: 15 },
-        pb: { xs: 8, sm: 12 },
-        minHeight: "100vh",
-      }}
-    >
-      <div className="w-full mx-auto h-full">
-        <div className="flex justify-between gap-x-2 my-2 md:m-0 text-sm md:text-md bg-white rounded-sm px-2">
-          <h1 className="text-3xl py-3">Departments</h1>
-        </div>
-        <div style={{ boxShadow: `0px 4px 6px ${alpha(red[500], 0.9)}` }}>
-          <TableContainer component={Paper} className="">
-            <Table sx={{ minWidth: 500 }}>
-              <TableHead>
-                <TableRow>
-                  <th className="py-5 px-4 font-bold ">Name</th>
-                </TableRow>
-              </TableHead>
-              <TableBody>
-                {(rowsPerPage > 0
-                  ? rows.slice(
-                      page * rowsPerPage,
-                      page * rowsPerPage + rowsPerPage
-                    )
-                  : rows
-                ).map((row) => (
-                  <TableRow key={row.name}>
-                    <TableCell component="th" scope="row">
-                      {row.name ? row.name : "No name attached"}
-                    </TableCell>
-                  </TableRow>
-                ))}
-                {rows.length == 0 && (
-                  <TableRow style={{ height: 53 * emptyRows }}>
-                    <TableCell colSpan={6}>Loading....</TableCell>
-                  </TableRow>
-                )}
-              </TableBody>
-              <TableFooter>
-                <TableRow>
-                  <TablePagination
-                    rowsPerPageOptions={[{ label: "All", value: -1 }]} // Provide an array of options
-                    count={rows.length}
-                    rowsPerPage={rowsPerPage}
-                    page={page}
-                    onPageChange={handleChangePage}
-                    onRowsPerPageChange={handleChangeRowsPerPage}
-                    ActionsComponent={TablePaginationActions}
-                  />
-                </TableRow>
-              </TableFooter>
-            </Table>
-            <Dialog open={openCreate} onClose={handleClose}>
-              <DialogTitle>Create Department</DialogTitle>
-              <DialogContent>
-                <form>
-                  <TextField
-                    autoFocus
-                    color="error"
-                    margin="dense"
-                    label="Department Name"
-                    type="text"
-                    fullWidth
-                    value={department.name}
-                    required={true}
-                    onChange={(e) =>
-                      setDepartment({
-                        ...department,
-                        name: e.target.value,
-                      })
-                    }
-                  />
-                </form>
-              </DialogContent>
-              <DialogActions>
-                <Button onClick={handleSave} color="error" disabled={isLoading}>
-                  {isLoading ? "Saving...." : "Create"}
-                </Button>
-                <Button onClick={handleClose} color="error">
-                  Cancel
-                </Button>
-              </DialogActions>
-            </Dialog>
-          </TableContainer>
-        </div>
-
-        <Snackbar
-          open={alertMessage.open}
-          autoHideDuration={3000}
-          onClose={handleAlertClose}
-          anchorOrigin={{ vertical, horizontal }}
-          key={vertical + horizontal}
-        >
-          <Alert
-            onClose={handleAlertClose}
-            icon={false}
-            severity="info"
-            sx={{ width: "100%" }}
-          >
-            <AlertTitle>{alertMessage.title}</AlertTitle>
-            {errorMessages.length > 0
-              ? errorMessages.join(", ")
-              : alertMessage.message}
-          </Alert>
-        </Snackbar>
+    <div className="flex flex-col mt-32 w-[90%] mx-auto px-[1%]">
+      <div
+        className="flex justify-between gap-x-2 my-2 md:m-0 bg-white rounded-sm px-2"
+        style={{ fontSize: "16px" }}
+      >
+        <h1 className="py-3" style={{ fontSize: "16px" }}>
+          Departments
+        </h1>
       </div>
-    </Container>
+      <div>
+        <TableContainer component={Paper} sx={{ width: "100%" }}>
+          <Table sx={{ minWidth: 500, width: "100%" }}>
+            <TableHead>
+              <TableRow>
+                <th className="py-5 px-4 font-bold ">Name</th>
+              </TableRow>
+            </TableHead>
+            <TableBody>
+              {(rowsPerPage > 0
+                ? rows.slice(
+                    page * rowsPerPage,
+                    page * rowsPerPage + rowsPerPage
+                  )
+                : rows
+              ).map((row) => (
+                <TableRow key={row.name}>
+                  <TableCell component="th" scope="row">
+                    {row.name ? row.name : "No name attached"}
+                  </TableCell>
+                </TableRow>
+              ))}
+              {rows.length == 0 && (
+                <TableRow style={{ height: 53 * emptyRows }}>
+                  <TableCell colSpan={6}>Loading....</TableCell>
+                </TableRow>
+              )}
+            </TableBody>
+            <TableFooter>
+              <TableRow>
+                <TablePagination
+                  rowsPerPageOptions={[{ label: "All", value: -1 }]} // Provide an array of options
+                  count={rows.length}
+                  rowsPerPage={rowsPerPage}
+                  page={page}
+                  onPageChange={handleChangePage}
+                  onRowsPerPageChange={handleChangeRowsPerPage}
+                  ActionsComponent={TablePaginationActions}
+                />
+              </TableRow>
+            </TableFooter>
+          </Table>
+        </TableContainer>
+        <Dialog open={openCreate} onClose={handleClose}>
+          <DialogTitle>Create Department</DialogTitle>
+          <DialogContent>
+            <form>
+              <TextField
+                autoFocus
+                color="error"
+                margin="dense"
+                label="Department Name"
+                type="text"
+                fullWidth
+                value={department.name}
+                required={true}
+                onChange={(e) =>
+                  setDepartment({
+                    ...department,
+                    name: e.target.value,
+                  })
+                }
+              />
+            </form>
+          </DialogContent>
+          <DialogActions>
+            <Button onClick={handleSave} color="error" disabled={isLoading}>
+              {isLoading ? "Saving...." : "Create"}
+            </Button>
+            <Button onClick={handleClose} color="error">
+              Cancel
+            </Button>
+          </DialogActions>
+        </Dialog>
+      </div>
+
+      <Snackbar
+        open={alertMessage.open}
+        autoHideDuration={3000}
+        onClose={handleAlertClose}
+        anchorOrigin={{ vertical, horizontal }}
+        key={vertical + horizontal}
+      >
+        <Alert
+          onClose={handleAlertClose}
+          icon={false}
+          severity="info"
+          sx={{ width: "100%" }}
+        >
+          <AlertTitle>{alertMessage.title}</AlertTitle>
+          {errorMessages.length > 0
+            ? errorMessages.join(", ")
+            : alertMessage.message}
+        </Alert>
+      </Snackbar>
+    </div>
   );
 }

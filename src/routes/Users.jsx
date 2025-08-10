@@ -213,8 +213,14 @@ function Users() {
   };
   const GetHeader = () => {
     return (
-      <div className="flex flex-col md:flex-row justify-between gap-x-2 text-sm md:text-md bg-white my-2 rounded-md">
-        <h1 className="text-2xl text-red-600 flex items-center py-3">
+      <div
+        className="flex flex-col md:flex-row justify-between gap-x-2 bg-white my-2 rounded-md"
+        style={{ fontSize: "16px" }}
+      >
+        <h1
+          className="text-red-600 flex items-center py-3"
+          style={{ fontSize: "16px" }}
+        >
           Users List
         </h1>
         <Tooltip title="Create User">
@@ -232,11 +238,30 @@ function Users() {
   const GetTableHeader = () => {
     return (
       <TableHead>
-        <TableRow className="text-sm font-bold">
-          <TableCell className="py-5 px-4 font-bold ">Name</TableCell>
-          <TableCell className="py-5 px-4 font-bold ">Username</TableCell>
-          <TableCell className="py-5 px-4 font-bold">Email address</TableCell>
-          <TableCell className="py-5 px-4 font-bold" align="center">
+        <TableRow style={{ fontSize: "16px" }}>
+          <TableCell
+            className="py-5 px-4 font-bold"
+            style={{ fontSize: "16px" }}
+          >
+            Name
+          </TableCell>
+          <TableCell
+            className="py-5 px-4 font-bold"
+            style={{ fontSize: "16px" }}
+          >
+            Username
+          </TableCell>
+          <TableCell
+            className="py-5 px-4 font-bold"
+            style={{ fontSize: "16px" }}
+          >
+            Email address
+          </TableCell>
+          <TableCell
+            className="py-5 px-4 font-bold"
+            align="center"
+            style={{ fontSize: "16px" }}
+          >
             Category
           </TableCell>
         </TableRow>
@@ -334,6 +359,7 @@ function Users() {
   return (
     <>
       <Container
+        maxWidth={false}
         sx={{
           display: "flex",
           flexDirection: "column",
@@ -341,6 +367,8 @@ function Users() {
           pt: { xs: 15, sm: 15 },
           pb: { xs: 8, sm: 12 },
           height: "100vh",
+          width: "90%",
+          mx: "auto",
         }}
       >
         <div className="w-full h-full mx-auto">

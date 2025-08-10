@@ -122,8 +122,14 @@ export default function Violations() {
   };
   const GetHeader = () => {
     return (
-      <div className="flex flex-col md:flex-row justify-between gap-x-2 text-sm md:text-md bg-white my-2 rounded-md py-3">
-        <h1 className="text-2xl text-red-600 flex items-center">
+      <div
+        className="flex flex-col md:flex-row justify-between gap-x-2 bg-white my-2 rounded-md py-3"
+        style={{ fontSize: "16px" }}
+      >
+        <h1
+          className="text-red-600 flex items-center"
+          style={{ fontSize: "16px" }}
+        >
           Violation List
         </h1>
       </div>
@@ -132,11 +138,28 @@ export default function Violations() {
   const GetTableHeader = () => {
     return (
       <TableHead>
-        <TableRow className="text-sm font-bold">
-          <th className="py-5 px-4 font-bold ">Section</th>
-          <th className="py-5 px-4 font-bold w-fit">Set</th>
-          <th className="py-5 px-4 font-bold text-center w-1/3 ">Category</th>
-          <th className="py-5 px-4 font-bold text-center">Actions</th>
+        <TableRow style={{ fontSize: "16px" }}>
+          <th className="py-5 px-4 font-bold" style={{ fontSize: "16px" }}>
+            Section
+          </th>
+          <th
+            className="py-5 px-4 font-bold w-fit"
+            style={{ fontSize: "16px" }}
+          >
+            Set
+          </th>
+          <th
+            className="py-5 px-4 font-bold text-center w-1/3"
+            style={{ fontSize: "16px" }}
+          >
+            Category
+          </th>
+          <th
+            className="py-5 px-4 font-bold text-center"
+            style={{ fontSize: "16px" }}
+          >
+            Actions
+          </th>
         </TableRow>
       </TableHead>
     );
@@ -144,7 +167,7 @@ export default function Violations() {
   const GetTableRowLoading = () => {
     return (
       <TableRow style={{ height: 53 * emptyRows }}>
-        <TableCell colSpan={4} align="center">
+        <TableCell colSpan={4} align="center" style={{ fontSize: "16px" }}>
           Loading....
         </TableCell>
       </TableRow>
@@ -185,7 +208,11 @@ export default function Violations() {
                 rowDataToView.category.slice(1)
               : "No data"
           }
-          sx={{ cursor: "none" }}
+          sx={{
+            cursor: "none",
+            "& .MuiInputBase-input": { fontSize: "16px" },
+            "& .MuiInputLabel-root": { fontSize: "16px" },
+          }}
           readOnly
         />
         <TextField
@@ -198,7 +225,11 @@ export default function Violations() {
           value={
             rowDataToView.section.length > 0 ? rowDataToView.section : "No data"
           }
-          sx={{ cursor: "none" }}
+          sx={{
+            cursor: "none",
+            "& .MuiInputBase-input": { fontSize: "16px" },
+            "& .MuiInputLabel-root": { fontSize: "16px" },
+          }}
           readOnly
         />
         <Box
@@ -208,7 +239,7 @@ export default function Violations() {
             my: 1,
           }}
         >
-          <Typography variant="h8" sx={{ mb: 1 }}>
+          <Typography variant="h8" sx={{ mb: 1, fontSize: "16px" }}>
             Offense Codes:
           </Typography>
           <div>
@@ -222,7 +253,12 @@ export default function Violations() {
                     key={offense_code}
                     margin="dense"
                     size="medium"
-                    sx={{ mr: 0.5, mb: 0.5, p: 0.5 }}
+                    sx={{
+                      mr: 0.5,
+                      mb: 0.5,
+                      p: 0.5,
+                      "& .MuiChip-label": { fontSize: "16px" },
+                    }}
                   />
                 ))}
               </>
@@ -234,13 +270,20 @@ export default function Violations() {
                 color="error"
                 margin="dense"
                 size="medium"
-                sx={{ mr: 0.5, mb: 0.5, p: 0.5 }}
+                sx={{
+                  mr: 0.5,
+                  mb: 0.5,
+                  p: 0.5,
+                  "& .MuiChip-label": { fontSize: "16px" },
+                }}
               />
             )}
           </div>
         </Box>
         <Box sx={{ display: "flex", flexDirection: "column", marginY: 1 }}>
-          <Typography variant="h8">Sanctions:</Typography>
+          <Typography variant="h8" sx={{ fontSize: "16px" }}>
+            Sanctions:
+          </Typography>
           <div>
             {rowDataToView.sanctions &&
               Object.entries(rowDataToView.sanctions).map(
@@ -258,7 +301,7 @@ export default function Violations() {
           </div>
         </Box>
         <Box sx={{ display: "flex", flexDirection: "column", my: 1 }}>
-          <Typography variant="h8" sx={{ mb: 1 }}>
+          <Typography variant="h8" sx={{ mb: 1, fontSize: "16px" }}>
             Violations:
           </Typography>
           <div>
@@ -283,6 +326,7 @@ export default function Violations() {
   }, []);
   return (
     <Container
+      maxWidth={false}
       sx={{
         display: "flex",
         flexDirection: "column",
@@ -290,6 +334,8 @@ export default function Violations() {
         pt: { xs: 10, sm: 15 },
         pb: { xs: 8, sm: 12 },
         height: "100vh",
+        width: "90%",
+        mx: "auto",
       }}
     >
       <div className="w-full h-full mx-auto ">
@@ -388,7 +434,11 @@ export default function Violations() {
                 </AnimatePresence>
                 {rows.length === 0 && !isLoading && (
                   <TableRow>
-                    <TableCell colSpan={4} align="center">
+                    <TableCell
+                      colSpan={4}
+                      align="center"
+                      style={{ fontSize: "16px" }}
+                    >
                       No Data to show.
                     </TableCell>
                   </TableRow>
@@ -411,7 +461,7 @@ export default function Violations() {
             marginX: { md: "10px", lg: "auto" },
           }}
         >
-          <DialogTitle>Violation Details</DialogTitle>
+          <DialogTitle sx={{ fontSize: "16px" }}>Violation Details</DialogTitle>
           <DialogContent
             sx={{
               overflowY: "auto",

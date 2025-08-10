@@ -12,9 +12,22 @@ import {
   Drawer,
   MenuItem,
   Divider,
+  Typography,
+  Toolbar,
+  styled,
 } from "@mui/material";
 import { useAuth } from "../../auth/AuthProvider";
-import { StyledToolbarWithRed } from "@src/utils/StyledToolBar.js";
+
+const StyledToolbar = styled(Toolbar)(() => ({
+  display: "flex",
+  alignItems: "center",
+  justifyContent: "space-between",
+  flexShrink: 0,
+  width: "100%",
+  backdropFilter: "blur(24px)",
+  backgroundColor: "red",
+  padding: "8px 12px",
+}));
 
 const Department_Head_NavigationBar = () => {
   const { logout, isAuthenticated } = useAuth();
@@ -25,8 +38,9 @@ const Department_Head_NavigationBar = () => {
     { name: "Notification", link: "/department-head/Notification" },
   ];
 
-  const toggleDrawer = (newOpen) => () => {
+  const toggleDrawer = (newOpen) => (event) => {
     if (
+      event &&
       event.type === "keydown" &&
       (event.key === "Tab" || event.key === "Shift")
     ) {
@@ -35,110 +49,142 @@ const Department_Head_NavigationBar = () => {
     setOpen(newOpen);
   };
 
-  const GetMenuButtons = () => {
-    return (
-      <Box sx={{ p: 2, backgroundColor: "background.default" }}>
-        <Box
-          sx={{
-            display: "flex",
-            justifyContent: "flex-end",
-          }}
-        >
-          <IconButton onClick={toggleDrawer(false)}>
-            <CloseRoundedIcon />
-          </IconButton>
-        </Box>
-        {MenuButtonItems.map((item, index) => (
-          <Link key={index} to={item.link}>
-            <MenuItem>{item.name}</MenuItem>
-          </Link>
-        ))}
-        <Divider sx={{ my: 3 }} />
-        {isAuthenticated && (
-          <Link onClick={logout}>
-            <MenuItem>Logout </MenuItem>
-          </Link>
-        )}
-        {localStorage.getItem("accessToken") === null &&
-          window.location.replace("/login")}
-      </Box>
-    );
-  };
-  const GetNavigationButtons = () => {
-    return MenuButtonItems.map((item, index) => (
-      <Button variant="text" color="white" size="small" key={index}>
-        <Link
-          className=" hover:bg-red-100 hover:text-red-600 hover:rounded-md hover:cursor-pointer p-2"
-          to={item.link}
-        >
-          {item.name}
-        </Link>
-      </Button>
-    ));
-  };
   return (
     <AppBar
       position="fixed"
-      enableColorOnDark
       sx={{
-        boxShadow: 0,
-        bgcolor: "transparent",
-        backgroundImage: "none",
-        mt: "calc(var(--template-frame-height, 0px) + 28px)",
+        top: 0,
+        left: 0,
+        right: 0,
+        width: "100%",
+        bgcolor: "red",
+        color: "black",
+        boxShadow: 3,
       }}
     >
-      <Container maxWidth="lg">
-        <StyledToolbarWithRed variant="dense" disableGutters>
+      <StyledToolbar>
+        <Box
+          sx={{
+            display: "flex",
+            alignItems: "center",
+            flexGrow: 1,
+          }}
+        >
           <Box
-            sx={{ flexGrow: 1, display: "flex", alignItems: "center", px: 0 }}
-          >
-            <img
-              src={reactsvg}
-              alt="React Logo"
-              className="h-fit mx-2 flex justify-center self-center"
-            />
-            <h1 className="text-white-500 hidden sm:block">
-              Batangas State University Disciplinary Management
-            </h1>
-          </Box>
-          <Box
+            component="img"
+            src={reactsvg}
+            alt="React Logo"
             sx={{
-              display: { xs: "none", md: "flex" },
-              gap: 1,
-              alignItems: "center",
+              height: 40,
+              mr: 2,
+            }}
+          />
+          <Typography
+            variant="h6"
+            component="div"
+            color="white"
+            sx={{
+              display: { xs: "none", sm: "block" },
+              fontWeight: "bold",
             }}
           >
-            <GetNavigationButtons />
-            {isAuthenticated && (
-              <Button variant="text" color="white" size="small">
-                <Link
-                  className=" hover:bg-red-100 hover:text-red-600 hover:rounded-md hover:cursor-pointer p-2"
-                  onClick={logout}
-                >
-                  Logout
-                </Link>
-              </Button>
-            )}
-            {localStorage.getItem("accessToken") === null &&
-              window.location.replace("/login")}
-          </Box>
-          <Box sx={{ display: { xs: "flex", md: "none" }, gap: 1 }}>
-            <IconButton aria-label="Menu button" onClick={toggleDrawer(true)}>
-              <MenuIcon />
-            </IconButton>
-            <Drawer
-              anchor="top"
-              open={open}
-              onClose={toggleDrawer(false)}
-              PaperProps={{
-                sx: { top: "var(--template-frame-height, 0px)" },
+            Batangas State University Disciplinary Management
+          </Typography>
+        </Box>
+
+        {/* Desktop Navigation Links */}
+        <Box
+          sx={{
+            display: { xs: "none", md: "flex" },
+            gap: 2,
+            alignItems: "center",
+          }}
+        >
+          {MenuButtonItems.map((item, index) => (
+            <Button
+              variant="text"
+              sx={{
+                color: "white",
+                "&:hover": {
+                  backgroundColor: "rgba(255, 255, 255, 0.2)",
+                },
               }}
+              key={index}
             >
-              <GetMenuButtons />
-            </Drawer>
-          </Box>
-        </StyledToolbarWithRed>
-      </Container>
+              <Link
+                to={item.link}
+                style={{
+                  textDecoration: "none",
+                  color: "white",
+                  padding: "6px 12px",
+                }}
+              >
+                {item.name}
+              </Link>
+            </Button>
+          ))}
+
+          {isAuthenticated && (
+            <Button
+              variant="contained"
+              sx={{
+                backgroundColor: "white",
+                color: "red",
+                "&:hover": {
+                  backgroundColor: "rgba(255, 255, 255, 0.8)",
+                },
+              }}
+              onClick={logout}
+            >
+              Logout
+            </Button>
+          )}
+          {localStorage.getItem("accessToken") === null &&
+            window.location.replace("/login")}
+        </Box>
+
+        {/* Mobile Menu */}
+        <Box sx={{ display: { xs: "flex", md: "none" } }}>
+          <IconButton
+            aria-label="Menu button"
+            onClick={toggleDrawer(true)}
+            sx={{ color: "white" }}
+          >
+            <MenuIcon />
+          </IconButton>
+
+          <Drawer anchor="top" open={open} onClose={toggleDrawer(false)}>
+            <Box sx={{ p: 2, backgroundColor: "white" }}>
+              <Box sx={{ display: "flex", justifyContent: "flex-end" }}>
+                <IconButton onClick={toggleDrawer(false)}>
+                  <CloseRoundedIcon />
+                </IconButton>
+              </Box>
+
+              {MenuButtonItems.map((item, index) => (
+                <Link
+                  key={index}
+                  to={item.link}
+                  style={{ textDecoration: "none", color: "inherit" }}
+                >
+                  <MenuItem>{item.name}</MenuItem>
+                </Link>
+              ))}
+
+              <Divider sx={{ my: 2 }} />
+
+              {isAuthenticated && (
+                <MenuItem onClick={logout} sx={{ color: "red" }}>
+                  Logout
+                </MenuItem>
+              )}
+
+              {localStorage.getItem("accessToken") === null &&
+                window.location.replace("/login")}
+            </Box>
+          </Drawer>
+        </Box>
+      </StyledToolbar>
     </AppBar>
   );
 };

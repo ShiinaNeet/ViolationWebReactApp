@@ -220,7 +220,7 @@ const FormalComplaint = ({ studentDataToPass, alertMessageFunction }) => {
           </div>
 
           <ul className="space-y-2 my-2 p-1">
-            <label className="text-sm">
+            <label style={{ fontSize: "16px" }}>
               {formData.witnesses.length > 0 ? "Click the Item to Remove" : ""}
             </label>
             {formData.witnesses.map((witness, index) => (
@@ -256,7 +256,7 @@ const FormalComplaint = ({ studentDataToPass, alertMessageFunction }) => {
             </Button>
           </div>
           <ul className="space-y-2 my-2 p-1">
-            <label className="text-sm">
+            <label style={{ fontSize: "16px" }}>
               {formData.enclosed_evidences.length > 0
                 ? "Click the Item to Remove"
                 : ""}

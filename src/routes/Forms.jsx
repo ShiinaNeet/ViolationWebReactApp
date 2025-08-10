@@ -4,6 +4,7 @@ import FormsList from "../components/FormList";
 function Forms() {
   return (
     <Container
+      maxWidth={false}
       sx={{
         display: "flex",
         flexDirection: "column",
@@ -11,6 +12,8 @@ function Forms() {
         pt: { xs: 15, sm: 15 },
         pb: { xs: 8, sm: 12 },
         height: "100vh",
+        width: "90%",
+        mx: "auto",
       }}
     >
       <div className="w-full h-full mx-auto ">

@@ -5,12 +5,12 @@ export default function Home() {
   return (
     <>
       <Container
+        maxWidth={false}
         sx={{
-          display: "flex",
-          flexDirection: "column",
-
           pb: { xs: 8, sm: 12 },
-          height: "100vh",
+          minHeight: "100vh",
+          width: "90%",
+          margin: "auto",
         }}
       >
         <Students DataToGet={"professor"} />

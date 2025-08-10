@@ -29,6 +29,7 @@ import {
   AlertTitle,
   alpha,
   Chip,
+  Container,
   FormControl,
   InputLabel,
   MenuItem,
@@ -453,13 +454,18 @@ export default function UserManagement() {
     }
   };
   return (
-    <div className="container mx-auto px-2">
-      <div className="flex justify-between gap-x-2 my-2 md:m-0 text-sm md:text-md bg-white rounded-sm px-2">
-        <h1 className="text-3xl py-3">Program Head</h1>
+    <div className="flex flex-col w-full">
+      <div
+        className="flex justify-between gap-x-2  my-2 md:m-0 bg-white rounded-sm "
+        style={{ fontSize: "16px" }}
+      >
+        <h1 className="py-3" style={{ fontSize: "16px", color: "red" }}>
+          Program Head
+        </h1>
       </div>
-      <div style={{ boxShadow: `0px 4px 6px ${alpha(red[500], 0.9)}` }}>
-        <TableContainer component={Paper} className="">
-          <Table sx={{ minWidth: 500 }}>
+      <div>
+        <TableContainer component={Paper} sx={{ width: "100%" }}>
+          <Table sx={{ minWidth: 500, width: "100%" }}>
             <TableHead>
               <TableRow>
                 <th className="py-5 px-4 font-bold ">Name</th>
@@ -538,12 +544,14 @@ export default function UserManagement() {
               </TableRow>
             </TableFooter>
           </Table>
-          <Dialog open={open} onClose={handleClose}>
-            <DialogTitle>
-              Assign Program Chair to their Respective Departments
-            </DialogTitle>
-            <DialogContent>
-              {/* <FormControl fullWidth margin="dense" readOnly>
+        </TableContainer>
+      </div>
+      <Dialog open={open} onClose={handleClose}>
+        <DialogTitle>
+          Assign Program Chair to their Respective Departments
+        </DialogTitle>
+        <DialogContent>
+          {/* <FormControl fullWidth margin="dense" readOnly>
                 <InputLabel id="demo-simple-select-label" color="error">
                   Category
                 </InputLabel>
@@ -564,47 +572,45 @@ export default function UserManagement() {
                   <MenuItem value={"DEAN"}>Dean</MenuItem>
                 </Select>
               </FormControl> */}
-              <FormControl fullWidth margin="dense">
-                <InputLabel id="demo-simple-select-label" color="error">
-                  Department
-                </InputLabel>
-                <Select
-                  color="error"
-                  labelId="demo-simple-select-label"
-                  id="demo-simple-select"
-                  value={currentRow.assigned_department}
-                  label="Department"
-                  onChange={(e) =>
-                    setCurrentRow({
-                      ...currentRow,
-                      assigned_department: e.target.value,
-                    })
-                  }
-                >
-                  {/* <MenuItem value="">
+          <FormControl fullWidth margin="dense">
+            <InputLabel id="demo-simple-select-label" color="error">
+              Department
+            </InputLabel>
+            <Select
+              color="error"
+              labelId="demo-simple-select-label"
+              id="demo-simple-select"
+              value={currentRow.assigned_department}
+              label="Department"
+              onChange={(e) =>
+                setCurrentRow({
+                  ...currentRow,
+                  assigned_department: e.target.value,
+                })
+              }
+            >
+              {/* <MenuItem value="">
                     <em>None</em>
                   </MenuItem> */}
-                  {departmentRows.map((department) => {
-                    return (
-                      <MenuItem key={department.name} value={department.name}>
-                        {department.name}
-                      </MenuItem>
-                    );
-                  })}
-                </Select>
-              </FormControl>
-            </DialogContent>
-            <DialogActions>
-              <Button onClick={handleUpdate} color="error" disabled={isLoading}>
-                {isLoading ? "Saving...." : "Save"}
-              </Button>
-              <Button onClick={handleClose} color="error">
-                Cancel
-              </Button>
-            </DialogActions>
-          </Dialog>
-        </TableContainer>
-      </div>
+              {departmentRows.map((department) => {
+                return (
+                  <MenuItem key={department.name} value={department.name}>
+                    {department.name}
+                  </MenuItem>
+                );
+              })}
+            </Select>
+          </FormControl>
+        </DialogContent>
+        <DialogActions>
+          <Button onClick={handleUpdate} color="error" disabled={isLoading}>
+            {isLoading ? "Saving...." : "Save"}
+          </Button>
+          <Button onClick={handleClose} color="error">
+            Cancel
+          </Button>
+        </DialogActions>
+      </Dialog>
 
       <Snackbar
         open={alertMessage.open}
