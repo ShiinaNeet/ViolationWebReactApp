@@ -40,6 +40,7 @@ import formatDate from "../utils/moment";
 import DeleteOutlineIcon from "@mui/icons-material/DeleteOutline";
 import AddIcon from "@mui/icons-material/Add";
 import axios from "axios";
+import { ClipLoader } from "react-spinners";
 import QRScanner from "../components/QRScanner";
 import NoticeCaseDismissal from "../components/forms/NoticeCaseDismissalForm";
 import CallSlipForm from "../components/forms/CallSlipForm";
@@ -1065,11 +1066,11 @@ const Students = () => {
       </TableHead>
     );
   };
-  const GetTableRowLoading = () => {
+  const GetTableSpinner = () => {
     return (
       <TableRow>
         <TableCell colSpan={5} align="center">
-          Loading...
+          <ClipLoader color={"#f44336"} loading={true} size={50} />
         </TableCell>
       </TableRow>
     );
@@ -1140,7 +1141,7 @@ const Students = () => {
                 <TableBody>
                   <AnimatePresence>
                     {(isFetchingDone || isLoading || isViolationLoading) && (
-                      <GetTableRowLoading />
+                      <GetTableSpinner />
                     )}
 
                     {(!isFetchingDone || !isLoading || !isViolationLoading) &&

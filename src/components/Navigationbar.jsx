@@ -2,12 +2,12 @@ import React from "react";
 import reactsvg from "../assets/react.svg";
 import { Link } from "react-router-dom";
 import { useAuth } from "../auth/AuthProvider";
+import MenuIcon from "@mui/icons-material/Menu";
+import CloseRoundedIcon from "@mui/icons-material/CloseRounded";
 import {
-  alpha,
   AppBar,
   Box,
   Button,
-  Container,
   IconButton,
   styled,
   Toolbar,
@@ -15,9 +15,6 @@ import {
   MenuItem,
   Divider,
 } from "@mui/material";
-import MenuIcon from "@mui/icons-material/Menu";
-import CloseRoundedIcon from "@mui/icons-material/CloseRounded";
-import { red } from "@mui/material/colors";
 
 const StyledToolbar = styled(Toolbar)(() => ({
   display: "flex",

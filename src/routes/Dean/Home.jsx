@@ -1,6 +1,6 @@
 import ProgramHeadTable from "@components/Dean/ProgramHeadTable";
 // import DepartmentTable from "@components/Dean/DepartmentTable";
-import { Container, Box } from "@mui/material";
+import { Container } from "@mui/material";
 export default function Home() {
   return (
     <>

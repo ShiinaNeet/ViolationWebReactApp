@@ -7,7 +7,7 @@ export default function Notification() {
   const [anchorEl, setAnchorEl] = React.useState(null);
   const [notification, setNotification] = React.useState([]);
   // date-asc, date-desc, date-desc-a-z, date-desc-a-z
-  const [notificationQueryParams, setNotificationQueryParams] = React.useState({
+  const [notificationQueryParams] = React.useState({
     search: null,
     sort: "date-asc",
     sent: null,

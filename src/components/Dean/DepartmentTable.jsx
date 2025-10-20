@@ -14,32 +14,19 @@ import FirstPageIcon from "@mui/icons-material/FirstPage";
 import KeyboardArrowLeft from "@mui/icons-material/KeyboardArrowLeft";
 import KeyboardArrowRight from "@mui/icons-material/KeyboardArrowRight";
 import LastPageIcon from "@mui/icons-material/LastPage";
-import EditIcon from "@mui/icons-material/Edit";
-import DeleteIcon from "@mui/icons-material/Delete";
-import AddIcon from "@mui/icons-material/Add";
 import Button from "@mui/material/Button";
 import Dialog from "@mui/material/Dialog";
 import DialogActions from "@mui/material/DialogActions";
 import DialogContent from "@mui/material/DialogContent";
 import DialogTitle from "@mui/material/DialogTitle";
 import TextField from "@mui/material/TextField";
-import Tooltip from "@mui/material/Tooltip";
 import {
   Alert,
   AlertTitle,
-  Chip,
-  Container,
-  FormControl,
-  InputLabel,
-  MenuItem,
-  Select,
   Snackbar,
   TableHead,
 } from "@mui/material";
 import axios from "axios";
-import formatDate from "@src/utils/moment";
-import { alpha } from "@mui/material/styles";
-import { red } from "@mui/material/colors";
 
 function TablePaginationActions(props) {
   const { count, page, rowsPerPage, onPageChange } = props;
@@ -105,13 +92,6 @@ export default function DepartmentTable() {
   const [page, setPage] = React.useState(0);
   const [rowsPerPage, setRowsPerPage] = React.useState(6);
   const [rows, setRows] = React.useState([]);
-  const [open, setOpen] = React.useState(false);
-  const [openCreate, setOpenCreate] = React.useState(false);
-  const [openDelete, setopenDelete] = React.useState(false);
-  const [currentRow, setCurrentRow] = React.useState({
-    name: "",
-  });
-  const [search, setSearch] = React.useState("");
   const [department, setDepartment] = React.useState({
     name: "",
   });
@@ -129,41 +109,20 @@ export default function DepartmentTable() {
   const [isLoading, setIsLoading] = React.useState(false);
   const handleChangePage = (event, newPage) => {
     setPage(newPage);
-    fetchData(newPage * rowsPerPage, rowsPerPage);
+    fetchData();
   };
 
   const handleChangeRowsPerPage = (event) => {
     const newRowsPerPage = parseInt(event.target.value, 6);
     setRowsPerPage(newRowsPerPage);
     setPage(0);
-    fetchData(0, newRowsPerPage);
-  };
-
-  const handleOpen = (row) => {
-    setCurrentRow(row);
-    setOpen(true);
-  };
-  const handleCreateOpen = () => {
-    setOpenCreate(true);
+    fetchData();
   };
 
   const handleClose = () => {
-    setOpen(false);
-    setOpenCreate(false);
-    setopenDelete(false);
-    setCurrentRow({
-      name: "",
-    });
     setDepartment({
       name: "",
     });
-  };
-  const handleAlertClose = (event, reason) => {
-    if (reason === "clickaway") {
-      return;
-    }
-
-    setAlertMessage({ open: false });
   };
 
   const handleSave = async () => {
@@ -196,7 +155,7 @@ export default function DepartmentTable() {
             message: "Department has been created successfully",
             variant: "success",
           });
-          fetchData(page * rowsPerPage, rowsPerPage);
+          fetchData();
           setIsLoading(false);
           handleClose();
         } else {
@@ -230,7 +189,7 @@ export default function DepartmentTable() {
     };
   }, [page, rowsPerPage]);
 
-  const fetchData = async (skip, limit) => {
+  const fetchData = async () => {
     axios
       .get("/department", {
         params: {
@@ -347,7 +306,7 @@ export default function DepartmentTable() {
             </TableFooter>
           </Table>
         </TableContainer>
-        <Dialog open={openCreate} onClose={handleClose}>
+        <Dialog open={false} onClose={handleClose}>
           <DialogTitle>Create Department</DialogTitle>
           <DialogContent>
             <form>
@@ -383,12 +342,12 @@ export default function DepartmentTable() {
       <Snackbar
         open={alertMessage.open}
         autoHideDuration={3000}
-        onClose={handleAlertClose}
+        onClose={() => setAlertMessage({ open: false })}
         anchorOrigin={{ vertical, horizontal }}
         key={vertical + horizontal}
       >
         <Alert
-          onClose={handleAlertClose}
+          onClose={() => setAlertMessage({ open: false })}
           icon={false}
           severity="info"
           sx={{ width: "100%" }}

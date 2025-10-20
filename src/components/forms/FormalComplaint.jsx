@@ -50,7 +50,7 @@ const FormalComplaint = ({ studentDataToPass, alertMessageFunction }) => {
       },
     }));
     console.log("Student Form", formData);
-  }, [studentDataToPass]);
+  }, [studentDataToPass, formData]);
 
   const fetchCoordinator = async () => {
     try {

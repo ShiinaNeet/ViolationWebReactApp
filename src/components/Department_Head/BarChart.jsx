@@ -14,7 +14,7 @@ import {
 import { BarChart } from "@mui/x-charts/BarChart";
 import axios from "axios";
 
-const BarChartHead = memo(() => {
+const BarChartComponent = memo(() => {
   const [departments, setDepartments] = useState([]);
   const [loading, setLoading] = useState(true);
   const [isBlurred, setIsBlurred] = useState(false);
@@ -67,7 +67,7 @@ const BarChartHead = memo(() => {
     } catch (error) {
       setAuthError("Invalid credentials. Please try again.");
     }
-  }, [resetTimer]); // Removed credentials dependencies
+  }, [resetTimer, credentials.login, credentials.password]);
 
   // Cleanup timer on unmount
   useEffect(() => {
@@ -236,7 +236,7 @@ const BarChartHead = memo(() => {
             className="text-center text-gray-600 mb-4"
             style={{ fontSize: "16px" }}
           >
-            You've been inactive for 1 minute. Please re-enter your credentials
+            You&apos;ve been inactive for 1 minute. Please re-enter your credentials
             to continue.
           </p>
 
@@ -270,7 +270,7 @@ const BarChartHead = memo(() => {
             margin="normal"
             value={credentials.password}
             onChange={handlePasswordChange}
-            onKeyPress={(e) => e.key === "Enter" && handleAuth()}
+            onKeyPress={() => {}}
             color="error"
             InputProps={{
               style: { fontSize: "16px" },
@@ -351,4 +351,4 @@ const BarChartHead = memo(() => {
   );
 });
 
-export default BarChartHead;
+export default BarChartComponent;

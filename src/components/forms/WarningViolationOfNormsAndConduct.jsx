@@ -160,7 +160,7 @@ const WarningViolationOfNormsAndConduct = ({
   const handleSubmit = async (e) => {
     e.preventDefault();
     setIsLoading(true);
-    const { violations, ...newForm } = formData;
+    const { ...newForm } = formData;
     console.log(newForm);
     if (
       Object.values(formData).some(

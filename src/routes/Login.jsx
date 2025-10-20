@@ -48,6 +48,7 @@ const Login = () => {
     coordinator: "OSD_COORDINATOR",
   };
   const [activeForm, setActiveForm] = React.useState("login");
+
   const handleLogin = async (event) => {
     event.preventDefault();
     setIsLoading(true);
@@ -64,24 +65,29 @@ const Login = () => {
     try {
       const responseData = await login(account.name, account.password);
       setIsLoading(false);
-      // If there is time, use switch case instead of if else
-      if (responseData == userType.admin) {
-        navigate("/violations");
-      } else if (responseData == userType.dean) {
-        navigate("/dean/home");
-      } else if (responseData == userType.professor) {
-        navigate("/professor/home");
-      } else if (responseData == userType.department_head) {
-        navigate("/department-head/home");
-      } else if (responseData == userType.coordinator) {
-        navigate("/coordinator/home");
-      } else {
-        setAlertMessage({
-          open: true,
-          title: "Error",
-          message: "Invalid login credentials",
-          variant: "error",
-        });
+      switch (responseData) {
+        case userType.admin:
+          navigate("/violations");
+          break;
+        case userType.dean:
+          navigate("/dean/home");
+          break;
+        case userType.professor:
+          navigate("/professor/home");
+          break;
+        case userType.department_head:
+          navigate("/department-head/home");
+          break;
+        case userType.coordinator:
+          navigate("/coordinator/home");
+          break;
+        default:
+          setAlertMessage({
+            open: true,
+            title: "Error",
+            message: "Invalid login credentials",
+            variant: "error",
+          });
       }
     } catch (error) {
       setAlertMessage({
@@ -93,137 +99,157 @@ const Login = () => {
       setIsLoading(false);
     }
   };
+
   const handleSwitchForm = (nextForm) => {
     setActiveForm(nextForm);
   };
+
   return (
-    <div className="flex flex-col items-center justify-center h-screen w-full bg-gradient-to-br p-4 overflow-hidden">
-      <AnimatePresence mode="wait">
-        <motion.div
-          key={activeForm}
-          variants={formVariants}
-          initial="hidden"
-          animate="visible"
-          exit="exit"
-          transition={{ duration: 0.5 }}
-          className="sm:w-[450px] md:w-[550px] w-full- p-6 rounded-xl border border-gray-200 bg-white/80 backdrop-blur-md shadow-huge"
-        >
-          {activeForm === "request" ? (
-            <>
-              <DocumentList />
-              <Button
-                fullWidth
-                variant="outlined"
-                color="error"
-                onClick={() => handleSwitchForm("login")}
-                className="mt-4 my-2"
-              >
-                Back to Login
-              </Button>
-            </>
-          ) : (
-            <div className="flex flex-col gap-y-2">
-              <motion.div
-                variants={inputVariants}
-                initial="hidden"
-                animate="visible"
-                transition={{ delay: 0.1 }}
-              >
-                <Typography
-                  variant="h4"
-                  className="text-center font-bold text-gray-800"
-                  margin={3}
-                >
-                  🔐 Welcome back! Let&apos;s keep our campus safe and
-                  compliant.
-                </Typography>
-              </motion.div>
-              <motion.div
-                variants={inputVariants}
-                initial="hidden"
-                animate="visible"
-                transition={{ delay: 0.2 }}
-              >
-                <TextField
-                  fullWidth
-                  label="Username"
-                  variant="outlined"
-                  color="error"
-                  margin="none"
-                  onChange={(event) =>
-                    setAccount({ ...account, name: event.target.value })
-                  }
-                />
-              </motion.div>
-              <motion.div
-                variants={inputVariants}
-                initial="hidden"
-                animate="visible"
-                transition={{ delay: 0.3 }}
-              >
-                <TextField
-                  fullWidth
-                  label="Password"
-                  type="password"
-                  variant="outlined"
-                  color="error"
-                  className="mb-6"
-                  margin="normal"
-                  onChange={(event) =>
-                    setAccount({ ...account, password: event.target.value })
-                  }
-                />
-              </motion.div>
-              <motion.div
-                variants={buttonVariants}
-                initial="hidden"
-                animate="visible"
-                transition={{ delay: 0.4 }}
-              >
+    <div className="flex h-screen w-full overflow-hidden font-sans">
+      {/* Left side: Image and Branding */}
+      <div className="hidden md:flex md:w-1/2 lg:w-2/3 items-center justify-center bg-gray-900 relative">
+        <img
+          src="/bsu_image.jpg"
+          alt="University Campus"
+          className="h-full w-full object-cover opacity-30"
+        />
+        <div className="absolute text-white text-center p-8 z-10">
+          <motion.div
+            initial={{ opacity: 0, y: -20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.8, delay: 0.2 }}
+          >
+            <Typography variant="h2" component="h1" className="font-bold mb-4">
+              Violation Monitoring System
+            </Typography>
+          </motion.div>
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.8, delay: 0.4 }}
+          >
+            <Typography variant="h5" className="font-light">
+              Bulacan State University
+            </Typography>
+          </motion.div>
+        </div>
+      </div>
+
+      {/* Right side: Form */}
+      <div className="w-full md:w-1/2 lg:w-1/3 flex flex-col items-center justify-center bg-white p-6 md:p-12">
+        <h1>hello</h1>
+        <AnimatePresence mode="wait">
+          <motion.div
+            key={activeForm}
+            variants={formVariants}
+            initial="hidden"
+            animate="visible"
+            exit="exit"
+            transition={{ duration: 0.5 }}
+            className="w-full max-w-md"
+          >
+            {activeForm === "request" ? (
+              <>
+                <DocumentList />
                 <Button
                   fullWidth
                   variant="outlined"
                   color="error"
-                  onClick={handleLogin}
-                  disabled={isLoading}
-                  sx={{ marginBottom: 1, height: "100%" }}
+                  onClick={() => handleSwitchForm("login")}
+                  className="mt-4"
                 >
-                  {isLoading ? "Logging in..." : "Login"}
+                  Back to Login
                 </Button>
-              </motion.div>
-              <div className="flex justify-end w-full">
+              </>
+            ) : (
+              <form
+                onSubmit={handleLogin}
+                className="flex flex-col gap-y-5"
+              >
                 <motion.div
-                  variants={buttonVariants}
-                  initial="hidden"
-                  animate="visible"
-                  transition={{ delay: 0.5 }}
+                  variants={inputVariants}
+                  className="text-center"
                 >
                   <Typography
-                    variant="outlined"
-                    color="error"
-                    onClick={() => handleSwitchForm("request")}
-                    sx={{
-                      marginBottom: 1,
-                      textUnderlinePosition: "under",
-                      textDecoration: "underline",
-                      textAlign: "right",
-                      cursor: "pointer",
-                      "&:hover": {
-                        color: "error.dark",
-                        textDecorationThickness: "3px",
-                      },
-                    }}
+                    variant="h4"
+                    className="font-bold text-gray-800"
                   >
-                    <Tooltip title="Go to Download Page" arrow>
-                      <label htmlFor=""> Request File Access</label>
-                    </Tooltip>
+                    Login to Your Account
+                  </Typography>
+                  <Typography variant="body1" className="text-gray-600 mt-2">
+                    Welcome back! Please enter your details.
                   </Typography>
                 </motion.div>
-              </div>
-            </div>
-          )}
-        </motion.div>
-      </AnimatePresence>
+
+                <motion.div variants={inputVariants}>
+                  <TextField
+                    fullWidth
+                    label="Username"
+                    variant="outlined"
+                    color="error"
+                    onChange={(event) =>
+                      setAccount({ ...account, name: event.target.value })
+                    }
+                  />
+                </motion.div>
+
+                <motion.div variants={inputVariants}>
+                  <TextField
+                    fullWidth
+                    label="Password"
+                    type="password"
+                    variant="outlined"
+                    color="error"
+                    onChange={(event) =>
+                      setAccount({ ...account, password: event.target.value })
+                    }
+                  />
+                </motion.div>
+
+                <motion.div variants={buttonVariants}>
+                  <Button
+                    fullWidth
+                    type="submit"
+                    variant="contained"
+                    color="error"
+                    size="large"
+                    disabled={isLoading}
+                    sx={{
+                      paddingY: "14px",
+                      textTransform: "none",
+                      fontSize: "1rem",
+                    }}
+                  >
+                    {isLoading ? "Logging in..." : "Login"}
+                  </Button>
+                </motion.div>
+
+                <div className="flex justify-center w-full">
+                  <motion.div variants={buttonVariants}>
+                    <Typography
+                      variant="body2"
+                      color="text.secondary"
+                      onClick={() => handleSwitchForm("request")}
+                      sx={{
+                        cursor: "pointer",
+                        "&:hover": {
+                          textDecoration: "underline",
+                          color: "error.main",
+                        },
+                      }}
+                    >
+                      <Tooltip title="Go to Download Page" arrow>
+                        <span>Request File Access</span>
+                      </Tooltip>
+                    </Typography>
+                  </motion.div>
+                </div>
+              </form>
+            )}
+          </motion.div>
+        </AnimatePresence>
+      </div>
+
       <Snackbar
         open={alertMessage.open}
         autoHideDuration={6000}
@@ -233,6 +259,7 @@ const Login = () => {
         <Alert
           severity={alertMessage.variant}
           onClose={() => setAlertMessage({ ...alertMessage, open: false })}
+          sx={{ width: "100%" }}
         >
           <AlertTitle>{alertMessage.title}</AlertTitle>
           {alertMessage.message}

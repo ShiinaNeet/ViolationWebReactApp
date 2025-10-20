@@ -15,31 +15,19 @@ import KeyboardArrowLeft from "@mui/icons-material/KeyboardArrowLeft";
 import KeyboardArrowRight from "@mui/icons-material/KeyboardArrowRight";
 import LastPageIcon from "@mui/icons-material/LastPage";
 import EditIcon from "@mui/icons-material/Edit";
-import DeleteIcon from "@mui/icons-material/Delete";
-import AddIcon from "@mui/icons-material/Add";
 import Button from "@mui/material/Button";
 import Dialog from "@mui/material/Dialog";
 import DialogActions from "@mui/material/DialogActions";
 import DialogContent from "@mui/material/DialogContent";
 import DialogTitle from "@mui/material/DialogTitle";
-import TextField from "@mui/material/TextField";
 import Tooltip from "@mui/material/Tooltip";
 import {
   Alert,
   AlertTitle,
-  alpha,
-  Chip,
-  Container,
-  FormControl,
-  InputLabel,
-  MenuItem,
-  Select,
   Snackbar,
   TableHead,
 } from "@mui/material";
 import axios from "axios";
-import formatDate from "@src/utils/moment";
-import { red } from "@mui/material/colors";
 
 function TablePaginationActions(props) {
   const { count, page, rowsPerPage, onPageChange } = props;
@@ -106,19 +94,6 @@ export default function UserManagement() {
   const [rowsPerPage, setRowsPerPage] = React.useState(6);
   const [rows, setRows] = React.useState([]);
   const [departmentRows, setDepartmentRows] = React.useState([]);
-  const [open, setOpen] = React.useState(false);
-  const [openCreate, setOpenCreate] = React.useState(false);
-  const [openDelete, setopenDelete] = React.useState(false);
-  const [currentRow, setCurrentRow] = React.useState({
-    id: "",
-    first_name: "",
-    last_name: "",
-    username: "",
-    email: "",
-    type: "",
-    assigned_department: "",
-  });
-  const [search, setSearch] = React.useState("");
   const [user, setUser] = React.useState({
     first_name: "",
     last_name: "",
@@ -141,40 +116,17 @@ export default function UserManagement() {
   const [isLoading, setIsLoading] = React.useState(false);
   const handleChangePage = (event, newPage) => {
     setPage(newPage);
-    fetchData(newPage * rowsPerPage, rowsPerPage);
+    fetchData();
   };
 
   const handleChangeRowsPerPage = (event) => {
     const newRowsPerPage = parseInt(event.target.value, 6);
     setRowsPerPage(newRowsPerPage);
     setPage(0);
-    fetchData(0, newRowsPerPage);
-  };
-
-  const handleOpen = (row) => {
-    setCurrentRow({
-      ...row,
-      assigned_department: getDepartmentValue(row.assigned_department),
-    });
-
-    setOpen(true);
-  };
-  const handleCreateOpen = () => {
-    setOpenCreate(true);
+    fetchData();
   };
 
   const handleClose = () => {
-    setOpen(false);
-    setOpenCreate(false);
-    setopenDelete(false);
-    setCurrentRow({
-      _id: "",
-      first_name: "",
-      last_name: "",
-      email: "",
-      type: "",
-      assigned_department: "",
-    });
     setUser({
       first_name: "",
       last_name: "",
@@ -183,13 +135,6 @@ export default function UserManagement() {
       password: "",
       assigned_department: "",
     });
-  };
-  const handleAlertClose = (event, reason) => {
-    if (reason === "clickaway") {
-      return;
-    }
-
-    setAlertMessage({ open: false });
   };
 
   const handleSave = async () => {
@@ -234,7 +179,7 @@ export default function UserManagement() {
             message: "User has been created successfully",
             variant: "success",
           });
-          fetchData(page * rowsPerPage, rowsPerPage);
+          fetchData();
           setIsLoading(false);
           handleClose();
         } else {
@@ -380,7 +325,7 @@ export default function UserManagement() {
     };
   }, [page, rowsPerPage]);
 
-  const fetchData = async (skip, limit) => {
+  const fetchData = async () => {
     axios
       .get("admin", {
         params: {
@@ -446,11 +391,10 @@ export default function UserManagement() {
 
     // Check if department was found
     if (department) {
-      const { name } = department;
-      return name;
+      return department.name;
     } else {
       console.warn("Department not found for ID:", departmentId);
-      return null; // or you can return a default value
+      return null;
     }
   };
   return (

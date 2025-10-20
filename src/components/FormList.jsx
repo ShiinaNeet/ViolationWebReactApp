@@ -1,4 +1,5 @@
 import { useState, useEffect } from "react";
+import PropTypes from "prop-types";
 import {
   Dialog,
   DialogTitle,
@@ -69,12 +70,17 @@ export default function FormList() {
           form_type: filter,
         },
       });
-      if (response.status === 200) {
-        setFilteredForms(response.data);
-        console.log("Forms fetched:", response.data);
+      if (response.status === 200 && response.data.status === "success") {
+        setFilteredForms(response.data.data);
+        console.log("Forms fetched:", response.data.data);
+      } else {
+        // Handle cases where status is not success or data is not as expected
+        setFilteredForms([]);
+        console.log("Failed to fetch forms or no forms found:", response.data);
       }
     } catch (error) {
       console.error("Error fetching Forms:", error);
+      setFilteredForms([]); // Ensure filteredForms is an array on error
     } finally {
       setIsLoading(false);
     }
@@ -150,14 +156,15 @@ export default function FormList() {
   };
   const saveFormStatus = async (formId, status) => {
     console.log("Saving form status:", selectedEditForm);
-    return;
     try {
-      const response = await axios.post(`form/${formId}/status`, {
-        status: status,
-        reason: "Form status updated",
+      const response = await axios.patch(`form/${formId}/status`, {
+        status: status, // status is now a string, e.g., "pending"
+        reason: selectedEditForm.reason || "Form status updated",
       });
       if (response.status === 200) {
         console.log("Form status updated successfully");
+        // Refetch forms to update the list with the new status
+        fetchForms();
       }
     } catch (error) {
       console.error("Error updating form status:", error);
@@ -189,6 +196,7 @@ export default function FormList() {
       .map((word) => word.charAt(0).toUpperCase() + word.slice(1))
       .join(" ");
   };
+
   const getName = (form) => {
     if (form.name) return form.name;
     if (form.subject_of_complaint && form.subject_of_complaint.name)
@@ -206,6 +214,9 @@ export default function FormList() {
         <TableCell>{idx + 1}</TableCell>
         <TableCell>{getName(form)}</TableCell>
         <TableCell>{capitalizeFirstLetter(form.form_type)}</TableCell>
+        <TableCell style={{ textTransform: "capitalize" }}>
+          {form.status}
+        </TableCell>
         <TableCell align="center">
           <Button color="error" variant="text" onClick={() => handleView(form)}>
             View
@@ -220,7 +231,7 @@ export default function FormList() {
   const GetEmptyTableRowData = () => {
     return (
       <TableRow>
-        <TableCell colSpan={4} align="center">
+        <TableCell colSpan={5} align="center">
           No sent forms.
         </TableCell>
       </TableRow>
@@ -229,7 +240,7 @@ export default function FormList() {
   const GetTableLoadingRow = () => {
     return (
       <TableRow>
-        <TableCell colSpan={4} align="center">
+        <TableCell colSpan={5} align="center">
           Loading...
         </TableCell>
       </TableRow>
@@ -257,6 +268,7 @@ export default function FormList() {
           <TableCell sx={{ fontWeight: "bold" }}>#</TableCell>
           <TableCell sx={{ fontWeight: "bold" }}>Name</TableCell>
           <TableCell sx={{ fontWeight: "bold" }}>Type</TableCell>
+          <TableCell sx={{ fontWeight: "bold" }}>Status</TableCell>
           <TableCell sx={{ fontWeight: "bold" }} align="center">
             Action
           </TableCell>
@@ -272,6 +284,17 @@ export default function FormList() {
             Form Type: {capitalizeFirstLetter(selectedForm.form_type)}
           </strong>
         </p>
+        <TextField
+          fullWidth
+          label="Status"
+          value={capitalizeFirstLetter(selectedForm.status)}
+          InputProps={{
+            readOnly: true,
+          }}
+          color="error"
+          variant="outlined"
+          margin="normal"
+        />
 
         {selectedForm.form_type === "call_slip" && (
           <div className="my-2">
@@ -1461,17 +1484,8 @@ function EditFormDialog({
   onSave,
   capitalizeFirstLetter,
 }) {
-  // Default status to 0 if undefined/null to prevent MUI Select warning
-  const selectStatus =
-    form &&
-    (form.status === 0 ||
-      form.status === 1 ||
-      form.status === 2 ||
-      form.status === 3 ||
-      form.status === 4 ||
-      form.status === 5)
-      ? form.status
-      : 0;
+  // Default status to "pending" if undefined/null to prevent MUI Select warning
+  const selectStatus = form?.status || "pending";
   return (
     <Dialog open={open} onClose={onClose} fullWidth maxWidth="sm">
       <DialogTitle
@@ -1483,9 +1497,7 @@ function EditFormDialog({
       >
         <div>
           Form Details{" - "}
-          <span variant="text" color="error">
-            {form ? form.violation : ""}
-          </span>
+          <span style={{ color: "red" }}>{form ? form.violation : ""}</span>
         </div>
       </DialogTitle>
       <DialogContent>
@@ -1532,14 +1544,14 @@ function EditFormDialog({
           }}
           color="error"
           variant="outlined"
-          sx={{ textTransform: "uppercase" }}
+          sx={{ textTransform: "capitalize" }}
         >
-          <MenuItem value={0}>Pending</MenuItem>
-          <MenuItem value={1}>Under Review</MenuItem>
-          <MenuItem value={2}>Approved</MenuItem>
-          <MenuItem value={3}>Rejected</MenuItem>
-          <MenuItem value={4}>Completed</MenuItem>
-          <MenuItem value={5}>Archived</MenuItem>
+          <MenuItem value="pending">Pending</MenuItem>
+          <MenuItem value="under_review">Under Review</MenuItem>
+          <MenuItem value="approved">Approved</MenuItem>
+          <MenuItem value="rejected">Rejected</MenuItem>
+          <MenuItem value="completed">Completed</MenuItem>
+          <MenuItem value="archived">Archived</MenuItem>
         </Select>
         <TextField
           fullWidth
@@ -1555,7 +1567,7 @@ function EditFormDialog({
         <Button
           color="error"
           onClick={() => {
-            onSave(form._id, selectStatus);
+            onSave(form.id, selectStatus);
             onClose();
           }}
         >
@@ -1568,3 +1580,12 @@ function EditFormDialog({
     </Dialog>
   );
 }
+
+EditFormDialog.propTypes = {
+  open: PropTypes.bool.isRequired,
+  onClose: PropTypes.func.isRequired,
+  form: PropTypes.object.isRequired,
+  onChange: PropTypes.func.isRequired,
+  onSave: PropTypes.func.isRequired,
+  capitalizeFirstLetter: PropTypes.func.isRequired,
+};

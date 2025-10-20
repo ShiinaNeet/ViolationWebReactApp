@@ -1,5 +1,4 @@
 import { Container } from "@mui/material";
-import DocumentList from "../../components/DocumentList";
 import AlertMessageStudent from "../../components/AlertMessageStudent";
 export default function Home() {
   return (
