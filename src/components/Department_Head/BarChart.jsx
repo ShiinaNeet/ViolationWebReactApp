@@ -58,6 +58,10 @@ const BarChartComponent = memo(() => {
       });
 
       if (response.status === 200) {
+        if (response.data.status === "failed") {
+          setAuthError("Invalid credentials. Please try again.");
+          return;
+        }
         setIsBlurred(false);
         setShowAuthModal(false);
         setCredentials({ login: "", password: "" });
@@ -236,8 +240,8 @@ const BarChartComponent = memo(() => {
             className="text-center text-gray-600 mb-4"
             style={{ fontSize: "16px" }}
           >
-            You&apos;ve been inactive for 1 minute. Please re-enter your credentials
-            to continue.
+            You&apos;ve been inactive for 1 minute. Please re-enter your
+            credentials to continue.
           </p>
 
           {authError && (

@@ -26,6 +26,10 @@ import {
   AlertTitle,
   Snackbar,
   TableHead,
+  FormControl,
+  InputLabel,
+  Select,
+  MenuItem,
 } from "@mui/material";
 import axios from "axios";
 
@@ -114,6 +118,27 @@ export default function UserManagement() {
   const emptyRows =
     page > 0 ? Math.max(0, (1 + page) * rowsPerPage - rows.length) : 0;
   const [isLoading, setIsLoading] = React.useState(false);
+  const [open, setOpen] = React.useState(false);
+  const [currentRow, setCurrentRow] = React.useState({
+    id: "",
+    username: "",
+    first_name: "",
+    last_name: "",
+    assigned_department: "",
+    email: "",
+    password: "",
+    type: "",
+  });
+
+  const handleOpen = (row) => {
+    setCurrentRow(row);
+    setOpen(true);
+  };
+
+  const handleAlertClose = (event, reason) => {
+    if (reason === "clickaway") return;
+    setAlertMessage({ open: false });
+  };
   const handleChangePage = (event, newPage) => {
     setPage(newPage);
     fetchData();
@@ -127,6 +152,17 @@ export default function UserManagement() {
   };
 
   const handleClose = () => {
+    setOpen(false);
+    setCurrentRow({
+      id: "",
+      username: "",
+      first_name: "",
+      last_name: "",
+      assigned_department: "",
+      email: "",
+      password: "",
+      type: "",
+    });
     setUser({
       first_name: "",
       last_name: "",
@@ -567,7 +603,7 @@ export default function UserManagement() {
           onClose={handleAlertClose}
           icon={false}
           severity="info"
-          sx={{ width: "100</Button>%" }}
+          sx={{ width: "100%" }}
         >
           <AlertTitle>{alertMessage.title}</AlertTitle>
           {errorMessages.length > 0
