@@ -14,6 +14,8 @@ import DialogActions from "@mui/material/DialogActions";
 import DialogContent from "@mui/material/DialogContent";
 import DialogTitle from "@mui/material/DialogTitle";
 import TextField from "@mui/material/TextField";
+import ToggleButton from "@mui/material/ToggleButton";
+import ToggleButtonGroup from "@mui/material/ToggleButtonGroup";
 import {
   Alert,
   AlertTitle,
@@ -76,14 +78,19 @@ export default function Reports() {
 
     setAlertMessage({ open: false });
   };
-  const fetchData = async () => {
+  const fetchData = async (categoryParam) => {
     setIsLoading(true);
+    const params = {
+      skip: 0,
+      limit: 100,
+    };
+    // Add category filter if not "all"
+    if (categoryParam && categoryParam !== "all") {
+      params.category = categoryParam;
+    }
     axios
       .get("/statistic/reports", {
-        params: {
-          skip: 0,
-          limit: 100,
-        },
+        params,
         headers: {
           "Content-Type": "application/json",
         },
@@ -136,43 +143,97 @@ export default function Reports() {
         });
       });
   };
-  const filteredData = rows.flatMap((dept) =>
-    dept.programs.flatMap((program) =>
-      program.violations
-        .filter(
-          (violation) =>
-            violation.student.fullname
-              .toLowerCase()
-              .includes(searchFilter.toLowerCase()) &&
-            (semesterFilter ? dept.semester.name === semesterFilter : true)
-        )
-        .map((violation) => {
-          const summary = violation.student.violation_summary;
-          const minorCount =
-            summary && summary.categories
-              ? summary.categories.find((c) => c.category === "minor")?.count ||
-                0
-              : 1;
-          const majorCount =
-            summary && summary.categories
-              ? summary.categories.find((c) => c.category === "major")?.count ||
-                0
-              : 0;
+  const [violationRules, setViolationRules] = React.useState([]);
+  const [offenseFilter, setOffenseFilter] = React.useState("all"); // default to all
 
-          return {
-            department: dept.department_name,
-            program: program.program_name,
-            student: violation.student.fullname,
-            violationDetails: `${violation.code} - ${new Date(
-              violation.date_committed
-            ).toLocaleDateString()} (${dept.semester.name})`,
-            minorOffenses: minorCount,
-            majorOffenses: majorCount,
-          };
-        })
-    )
+  // ... (existing state)
+
+  // Fetch violation rules
+  React.useEffect(() => {
+    axios
+      .get("/violation", {
+        params: { skip: 0, limit: 100 },
+        headers: { "Content-Type": "application/json" },
+      })
+      .then((response) => {
+        if (response.data.status === "success") {
+          setViolationRules(response.data.data);
+        }
+      })
+      .catch((error) => console.error("Error fetching violations:", error));
+  }, []);
+
+  const getViolationCategory = (code) => {
+    if (!violationRules.length) return "unknown";
+    for (const rule of violationRules) {
+      // rule.violations is an array of objects with code property
+      const found = rule.violations.find((v) => v.code.trim() === code.trim());
+      if (found) return rule.category; // 'minor' or 'major'
+    }
+    return "unknown";
+  };
+
+  const filteredData = rows.flatMap(
+    (dept) =>
+      dept?.programs?.flatMap(
+        (program) =>
+          program.students
+            ?.filter(
+              (student) =>
+                student.fullname
+                  .toLowerCase()
+                  .includes(searchFilter.toLowerCase()) &&
+                (semesterFilter ? dept.semester.name === semesterFilter : true)
+            )
+            .flatMap((student) => {
+              const summary = student.violation_summary;
+              const minorCount =
+                summary && summary.categories
+                  ? summary.categories.find((c) => c.category === "minor")
+                      ?.count || 0
+                  : 0;
+              const majorCount =
+                summary && summary.categories
+                  ? summary.categories.find((c) => c.category === "major")
+                      ?.count || 0
+                  : 0;
+              const academicDishonestyCount =
+                summary && summary.categories
+                  ? summary.categories.find(
+                      (c) => c.category === "academic dishonesty"
+                    )?.count || 0
+                  : 0;
+
+              // Map each violation in code_list to a row
+              return (student.code_list || []).map((violation) => ({
+                department: dept.department_name,
+                program: program.program_name,
+                student: student.fullname,
+                srcode: student.srcode,
+                email: student.email,
+                violationCode: violation.code,
+                violationDescription: violation.description,
+                violationDetails: `${violation.code} - ${violation.description}`,
+                dateCommitted: new Date(
+                  violation.date_committed
+                ).toLocaleDateString(),
+                semester: dept.semester.name,
+                category: violation.category,
+                minorOffenses: minorCount,
+                majorOffenses: majorCount,
+                academicDishonestyOffenses: academicDishonestyCount,
+              }));
+            }) || []
+      ) || []
   );
   const GetHeader = () => {
+    const handleFilterChange = (event, newFilter) => {
+      if (newFilter !== null) {
+        setOffenseFilter(newFilter);
+        fetchData(newFilter);
+      }
+    };
+
     return (
       <div
         className="flex flex-col md:flex-row justify-between gap-x-2 bg-white my-2 rounded-md"
@@ -184,9 +245,26 @@ export default function Reports() {
         >
           Reports List
         </h1>
-        <Button onClick={() => setSearchFilterModal(true)} color="error">
-          Filter
-        </Button>
+        <div className="flex items-center gap-2">
+          <ToggleButtonGroup
+            color="error"
+            value={offenseFilter}
+            exclusive
+            onChange={handleFilterChange}
+            aria-label="Offense Filter"
+            size="small"
+          >
+            <ToggleButton value="minor">Minor</ToggleButton>
+            <ToggleButton value="major">Major</ToggleButton>
+            <ToggleButton value="academic_dishonesty">
+              Academic Dishonesty
+            </ToggleButton>
+            <ToggleButton value="all">All</ToggleButton>
+          </ToggleButtonGroup>
+          <Button onClick={() => setSearchFilterModal(true)} color="error">
+            Filter
+          </Button>
+        </div>
       </div>
     );
   };
@@ -195,11 +273,14 @@ export default function Reports() {
       <TableHead>
         <TableRow>
           <TableCell sx={{ fontWeight: "bold" }}>Student</TableCell>
+          <TableCell sx={{ fontWeight: "bold" }}>SR Code</TableCell>
           <TableCell sx={{ fontWeight: "bold" }}>Department</TableCell>
           <TableCell sx={{ fontWeight: "bold" }}>Program</TableCell>
-          <TableCell sx={{ fontWeight: "bold" }}>Violation Details</TableCell>
-          <TableCell sx={{ fontWeight: "bold" }}>Minor Offenses</TableCell>
-          <TableCell sx={{ fontWeight: "bold" }}>Major Offenses</TableCell>
+          <TableCell sx={{ fontWeight: "bold" }}>Violation Code</TableCell>
+          <TableCell sx={{ fontWeight: "bold" }}>Description</TableCell>
+          <TableCell sx={{ fontWeight: "bold" }}>Date Committed</TableCell>
+          <TableCell sx={{ fontWeight: "bold" }}>Category</TableCell>
+          <TableCell sx={{ fontWeight: "bold" }}>Semester</TableCell>
         </TableRow>
       </TableHead>
     );
@@ -208,7 +289,7 @@ export default function Reports() {
     if (isLoading) {
       return (
         <TableRow>
-          <TableCell colSpan={6} align="center">
+          <TableCell colSpan={9} align="center">
             Loading...
           </TableCell>
         </TableRow>
@@ -216,7 +297,7 @@ export default function Reports() {
     } else if (filteredData.length === 0 && isLoading === false) {
       return (
         <TableRow>
-          <TableCell colSpan={6} align="center">
+          <TableCell colSpan={9} align="center">
             No records found
           </TableCell>
         </TableRow>
@@ -227,11 +308,41 @@ export default function Reports() {
       .map((row, index) => (
         <TableRow key={index}>
           <TableCell>{row.student}</TableCell>
+          <TableCell>{row.srcode}</TableCell>
           <TableCell>{row.department}</TableCell>
           <TableCell>{row.program}</TableCell>
-          <TableCell>{row.violationDetails}</TableCell>
-          <TableCell>{row.minorOffenses}</TableCell>
-          <TableCell>{row.majorOffenses}</TableCell>
+          <TableCell>{row.violationCode}</TableCell>
+          <TableCell
+            sx={{ maxWidth: 200, whiteSpace: "normal", wordWrap: "break-word" }}
+          >
+            {row.violationDescription}
+          </TableCell>
+          <TableCell>{row.dateCommitted}</TableCell>
+          <TableCell>
+            <span
+              style={{
+                padding: "4px 8px",
+                borderRadius: "4px",
+                fontSize: "12px",
+                fontWeight: "bold",
+                backgroundColor:
+                  row.category === "minor"
+                    ? "#fff3cd"
+                    : row.category === "major"
+                    ? "#f8d7da"
+                    : "#cce5ff",
+                color:
+                  row.category === "minor"
+                    ? "#856404"
+                    : row.category === "major"
+                    ? "#721c24"
+                    : "#004085",
+              }}
+            >
+              {row.category?.toUpperCase()}
+            </span>
+          </TableCell>
+          <TableCell>{row.semester}</TableCell>
         </TableRow>
       ));
   };
@@ -268,7 +379,7 @@ export default function Reports() {
     );
   };
   React.useEffect(() => {
-    fetchData();
+    fetchData(offenseFilter);
     return () => {
       console.log("Reports component mounted");
     };
@@ -360,7 +471,7 @@ export default function Reports() {
             </DialogContent>
             <DialogActions sx={{ overflowX: "hidden", overflowY: "hidden" }}>
               <Button
-                onClick={fetchData}
+                onClick={() => fetchData(offenseFilter)}
                 className="flex w-full sm:w-1/2 justify-center slide-in-visible"
                 color="error"
               >

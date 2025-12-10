@@ -1,0 +1,238 @@
+{
+  "status": "success",
+  "server_response": "ok",
+  "data": [
+    {
+      "id": "679dda53780b24d06f628568",
+      "category": "minor",
+      "section": "12",
+      "offense_codes": [
+        "12.1.2",
+        "12.1.3",
+        "12.1.4",
+        "12.1.5",
+        "12.1.6",
+        "12.1.7",
+        "12.1.8",
+        "12.1.9",
+        "12.1.10",
+        "12.1.11",
+        "12.1.12",
+        "12.1.13",
+        "12.1.14"
+      ],
+      "sanctions": {
+        "first_offense": "Written Reprimand",
+        "second_offense": "Written Reprimand to One-day suspension",
+        "third_offense": "Two-day suspension, may include Disciplinary Probation"
+      },
+      "set": null,
+      "violations": [
+        {
+          "code": "12.1.2",
+          "description": "Violation of Section 10 (Proper Uniform, Dress Code and Related Rules/Regulations)"
+        },
+        {
+          "code": "12.1.3",
+          "description": "Unauthorized use of materials like chalk, board marker, board, and others inside the classrooms, laboratory rooms, library, audio visual room, auditorium, amphitheatre, multi-faith chapel, and other function rooms"
+        },
+        {
+          "code": "12.1.4",
+          "description": "Making all forms of disturbances such as excessive noise, loud use of mobile phones and other gadgets that tend to disrupt classes"
+        },
+        {
+          "code": "12.1.5",
+          "description": "Posting, distributing or disseminating notices, posters, leaflets without prior approval"
+        },
+        {
+          "code": "12.1.6",
+          "description": "Unauthorized removal of official notices, posters, streamers, tarpaulins"
+        },
+        {
+          "code": "12.1.7",
+          "description": "Littering within University premises"
+        },
+        {
+          "code": "12.1.8",
+          "description": "Smoking outside within 30-meter radius from the campus perimeter"
+        },
+        {
+          "code": "12.1.9",
+          "description": "Breaking into a class or College-sponsored activities without permission"
+        },
+        {
+          "code": "12.1.10",
+          "description": "Acts of mischief and/or misbehavior during University-sponsored activities"
+        },
+        {
+          "code": "12.1.11",
+          "description": "Unjust vexation or annoying/pestering any individual in the University"
+        },
+        {
+          "code": "12.1.12",
+          "description": "Provocation to a fight"
+        },
+        {
+          "code": "12.1.13",
+          "description": "Public Display of Affection (PDA)"
+        },
+        {
+          "code": "12.1.14",
+          "description": "Failure to attend required university activities and programs"
+        }
+      ]
+    },
+    {
+      "id": "679ddc70780b24d06f62856a",
+      "category": "major",
+      "section": "13",
+      "offense_codes": [
+        "13.1",
+        "13.2"
+      ],
+      "sanctions": {
+        "first_offense": "Two- to three-day suspension (2-3)",
+        "second_offense": "Three- to four-day suspension (3-4)",
+        "third_offense": "Four- to five-day suspension (4-5), may include Re-admission Probation"
+      },
+      "set": "A",
+      "violations": [
+        {
+          "code": "13.1",
+          "description": "Committing more than three (3) minor offenses of any nature within a semester"
+        },
+        {
+          "code": "13.2",
+          "description": "Refusal to obey legal order of a person of authority"
+        }
+      ]
+    },
+    {
+      "id": "679ddcef780b24d06f62856b",
+      "category": "major",
+      "section": "13",
+      "offense_codes": [
+        "13.3",
+        "13.4",
+        "13.5",
+        "13.6",
+        "13.7",
+        "13.8",
+        "13.9"
+      ],
+      "sanctions": {
+        "first_offense": "Three- to five-day suspension (3-5)",
+        "second_offense": "Five- to seven-day suspension (5-7), may include Re-admission Probation",
+        "third_offense": "Seven- to nine-day suspension (7-9), may include Non-readmission"
+      },
+      "set": "B",
+      "violations": [
+        {
+          "code": "13.3",
+          "description": "Smoking anytime within University premises"
+        },
+        {
+          "code": "13.4",
+          "description": "Possession of and/or intoxication with alcoholic beverages within University premises"
+        },
+        {
+          "code": "13.5",
+          "description": "Entering University premises in a drunken state"
+        },
+        {
+          "code": "13.6",
+          "description": "Unauthorized entry to the University premises or facilities"
+        },
+        {
+          "code": "13.7",
+          "description": "Unauthorized use of University facilities and properties"
+        },
+        {
+          "code": "13.8",
+          "description": "Acts which endanger the safety of any individual within University premises"
+        },
+        {
+          "code": "13.9",
+          "description": "Possession of gambling paraphernalia and/or engaging in gambling"
+        }
+      ]
+    },
+    {
+      "id": "679ddd42780b24d06f62856c",
+      "category": "academic dishonesty",
+      "section": "14",
+      "offense_codes": null,
+      "sanctions": {
+        "first_offense": "Grade of zero (0) in the test/exam/requirement and one-day (1) suspension",
+        "second_offense": "Failure in the subject or Failure in the academic requirement and three-day (3) suspension",
+        "third_offense": "Failure in the subject or Failure in the academic requirement and Non-readmission"
+      },
+      "set": null,
+      "violations": [
+        {
+          "code": "14.1",
+          "description": "Use of mobile phones during examinations"
+        },
+        {
+          "code": "14.2",
+          "description": "Talking with one another during examinations"
+        },
+        {
+          "code": "14.3",
+          "description": "Assisting or dictating answers to fellow examinees"
+        },
+        {
+          "code": "14.4",
+          "description": "Possession or passing of lecture notes or any materials during examination"
+        },
+        {
+          "code": "14.5",
+          "description": "Receiving information related to the exam from outside the examination room"
+        },
+        {
+          "code": "14.6",
+          "description": "Facilitating/aiding in the dissemination of leakage"
+        },
+        {
+          "code": "14.7",
+          "description": "Buying or selling of test questionnaires/papers or any portion thereof"
+        },
+        {
+          "code": "14.8",
+          "description": "Copying from or allowing another to copy from one's examination paper"
+        },
+        {
+          "code": "14.9",
+          "description": "Use of improvised or covert means/devices to carry out a cheating act during examination"
+        },
+        {
+          "code": "14.10",
+          "description": "Having somebody else to take the examination in his/her behalf"
+        },
+        {
+          "code": "14.11",
+          "description": "Passing as one's work any assigned report when copied from another"
+        },
+        {
+          "code": "14.12",
+          "description": "Asking another person to attend symposium, seminar, and exams in his/her behalf"
+        },
+        {
+          "code": "14.13",
+          "description": "Plagiarism in connection with any academic work"
+        },
+        {
+          "code": "14.14",
+          "description": "Misdeeds caught in the act or reported which may be determined as academic dishonesty"
+        }
+      ]
+    }
+  ],
+  "meta": {
+    "skip": 0,
+    "limit": 10,
+    "total": null,
+    "sort_by": null,
+    "sort_order": "asc"
+  }
+}

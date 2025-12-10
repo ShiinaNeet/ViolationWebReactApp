@@ -1,0 +1,176 @@
+[
+  {
+    "department_name": "CABEIHM",
+    "semester": {
+      "name": "First Semester",
+      "number": 1
+    },
+    "departmentViolationCount": 6,
+    "uniqueStudentCount": 2,
+    "programs": [
+      {
+        "program_name": "BSBA Financial Management",
+        "students": [
+          {
+            "srcode": "24-79935",
+            "fullname": "REYES, EZEKIEL P.",
+            "email": "24-79935@g.batstate-u.edu.ph",
+            "violation_summary": {
+              "categories": [
+                {
+                  "category": "major",
+                  "count": 3
+                }
+              ],
+              "total_violations": 3
+            },
+            "code": "13.6, 13.2, 13.3, 13.8, 13.1",
+            "code_list": [
+              {
+                "code": "13.6",
+                "description": "Unauthorized entry to the University premises or facilities",
+                "category": "major",
+                "section": "13",
+                "date_committed": "2025-05-14T12:50:10.772Z",
+                "sem_committed": 1,
+                "reported_by": "678f989629921bc07ebc2a23"
+              },
+              {
+                "code": "13.2",
+                "description": "Refusal to obey legal order of a person of authority",
+                "category": "major",
+                "section": "13",
+                "date_committed": "2025-05-14T12:50:10.772Z",
+                "sem_committed": 1,
+                "reported_by": "678f989629921bc07ebc2a23"
+              },
+              {
+                "code": "13.3",
+                "description": "Smoking anytime within University premises",
+                "category": "major",
+                "section": "13",
+                "date_committed": "2025-05-14T12:52:12.733Z",
+                "sem_committed": 1,
+                "reported_by": "678f989629921bc07ebc2a23"
+              },
+              {
+                "code": "13.8",
+                "description": "Acts which endanger the safety of any individual within University premises",
+                "category": "major",
+                "section": "13",
+                "date_committed": "2025-05-14T12:54:30.704Z",
+                "sem_committed": 1,
+                "reported_by": "678f989629921bc07ebc2a23"
+              },
+              {
+                "code": "13.1",
+                "description": "Committing more than three (3) minor offenses of any nature within a semester",
+                "category": "major",
+                "section": "13",
+                "date_committed": "2025-05-14T12:54:30.704Z",
+                "sem_committed": 1,
+                "reported_by": "678f989629921bc07ebc2a23"
+              }
+            ],
+            "semesters": [
+              {
+                "semester": "First Semester",
+                "semester_number": 1,
+                "violation_count": 5,
+                "category": "major"
+              }
+            ]
+          }
+        ],
+        "programViolationCount": 5,
+        "uniqueStudentCount": 1
+      },
+      {
+        "program_name": "BS Tourism",
+        "students": [
+          {
+            "srcode": "888885",
+            "fullname": "Andrea MD Brit",
+            "email": "Andrea@email.com",
+            "violation_summary": {},
+            "code": "12.1.3",
+            "code_list": [
+              {
+                "code": "12.1.3",
+                "description": "Unauthorized use of materials like chalk, board marker, board, and others inside the classrooms, laboratory rooms, library, audio visual room, auditorium, amphitheatre, multi-faith chapel, and other function rooms",
+                "category": "minor",
+                "section": "12",
+                "date_committed": "2025-03-30T13:37:53.344Z",
+                "sem_committed": 1,
+                "reported_by": null
+              }
+            ],
+            "semesters": [
+              {
+                "semester": "First Semester",
+                "semester_number": 1,
+                "violation_count": 1,
+                "category": "minor"
+              }
+            ]
+          }
+        ],
+        "programViolationCount": 1,
+        "uniqueStudentCount": 1
+      }
+    ]
+  },
+  {
+    "department_name": "CABEIHM",
+    "semester": {
+      "name": "Second Semester",
+      "number": 2
+    },
+    "departmentViolationCount": 2,
+    "uniqueStudentCount": 1,
+    "programs": [
+      {
+        "program_name": "BSBA Marketing Management",
+        "students": [
+          {
+            "srcode": "24-71452",
+            "fullname": "MACALALAD, SHANE SHAMMEL A.",
+            "email": "24-71452g.bastate-u.edu.ph",
+            "violation_summary": {},
+            "code": "13.5, 14.1",
+            "code_list": [
+              {
+                "code": "13.5",
+                "description": "Entering University premises in a drunken state",
+                "category": "major",
+                "section": "13",
+                "date_committed": "2025-05-15T09:58:31.519Z",
+                "sem_committed": 2,
+                "reported_by": "678f989629921bc07ebc2a23"
+              },
+              {
+                "code": "14.1",
+                "description": "Use of mobile phones during examinations",
+                "category": "academic dishonesty",
+                "section": "14",
+                "date_committed": "2025-05-15T09:58:31.519Z",
+                "sem_committed": 2,
+                "reported_by": "678f989629921bc07ebc2a23"
+              }
+            ],
+            "semesters": [
+              {
+                "semester": "Second Semester",
+                "semester_number": 2,
+                "violation_count": 2,
+                "category": "major"
+              }
+            ]
+          }
+        ],
+        "programViolationCount": 2,
+        "uniqueStudentCount": 1
+      }
+    ]
+  }
+]
