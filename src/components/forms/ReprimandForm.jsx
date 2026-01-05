@@ -224,14 +224,14 @@ const ReprimandForm = ({
     >
       <form onSubmit={handleSubmit} className="space-y-4 mt-4">
         <FormControl fullWidth>
-          <InputLabel id="demo-simple-select-helper-label" color="error">
+          <InputLabel id="demo-simple-select-helper-label" color="primary">
             Violation Code
           </InputLabel>
           <Select
             labelId="demo-simple-select-helper-label"
             label="Violation Code"
             id="demo-simple-select-helper"
-            color="error"
+            color="primary"
             name="violation_code"
             value={selectedViolation}
             onChange={(e) => {
@@ -261,7 +261,7 @@ const ReprimandForm = ({
             fullWidth
             label="Violation"
             id="violation"
-            color="error"
+            color="primary"
             value={formData.violation}
             onChange={(e) => {
               setFormData((prev) => ({
@@ -293,7 +293,7 @@ const ReprimandForm = ({
                   .replace(/_/g, " ")
                   .replace(/\b\w/g, (c) => c.toUpperCase())}
                 name={key}
-                color="error"
+                color="primary"
                 type={key.includes("date") ? "datetime-local" : "text"}
                 value={formData[key]}
                 onChange={handleChange}
@@ -308,7 +308,7 @@ const ReprimandForm = ({
           transition={{ delay: Object.keys(formData).length * 0.05 }}
         >
           <FormControl fullWidth required>
-            <InputLabel id="demo-simple-select-helper-label" color="error">
+            <InputLabel id="demo-simple-select-helper-label" color="primary">
               Coordinator Discipline Head
             </InputLabel>
             <Select
@@ -318,7 +318,7 @@ const ReprimandForm = ({
               name="coordinator_discipline_head"
               value={formData.coordinator_discipline_head}
               onChange={handleChange}
-              color="error"
+              color="primary"
             >
               {coordinatorUsers
                 .filter((user) => user.type === "OSD_COORDINATOR")
@@ -341,7 +341,7 @@ const ReprimandForm = ({
           <Button
             type="submit"
             variant="outlined"
-            color="error"
+            color="primary"
             fullWidth
             disabled={isLoading}
           >

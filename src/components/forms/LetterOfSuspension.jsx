@@ -239,7 +239,7 @@ const LetterOfSuspension = ({
       <form onSubmit={handleSubmit} className="space-y-4 w-full mt-4">
         {/* Violation Code Select Input */}
         <FormControl fullWidth>
-          <InputLabel id="demo-simple-select-helper-label" color="error">
+          <InputLabel id="demo-simple-select-helper-label" color="primary">
             Violation Code
           </InputLabel>
           <Select
@@ -262,7 +262,7 @@ const LetterOfSuspension = ({
                 sanction: sanctionDetails.sanction || "",
               }));
             }}
-            color="error"
+            color="primary"
           >
             {studentData.length > 0 &&
               studentData[0].violations.map((violation, index) => (
@@ -308,7 +308,7 @@ const LetterOfSuspension = ({
                     onChange={handleChange}
                     required
                     InputLabelProps={{ shrink: true }}
-                    color="error"
+                    color="primary"
                   />
                 </motion.div>
               );
@@ -341,7 +341,7 @@ const LetterOfSuspension = ({
                 onChange={handleChange}
                 required
                 InputLabelProps={{ shrink: true }}
-                color="error"
+                color="primary"
               />
             </motion.div>
           ) : null
@@ -358,7 +358,7 @@ const LetterOfSuspension = ({
             <Button
               type="submit"
               variant="outlined"
-              color="error"
+              color="primary"
               fullWidth
               disabled={isLoading}
             >

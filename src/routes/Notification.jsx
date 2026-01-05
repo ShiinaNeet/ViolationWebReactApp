@@ -192,7 +192,7 @@ function Notification() {
               animate={{ opacity: 1, y: 0 }}
               exit={{ opacity: 0, y: -10 }}
             >
-              <h1 className="text-red-600 py-3" style={{ fontSize: "16px" }}>
+              <h1 className="text-black py-3" style={{ fontSize: "16px" }}>
                 Notifications
               </h1>
             </motion.div>
@@ -352,7 +352,7 @@ function Notification() {
                             }}
                           >
                             <Button
-                              color="error"
+                              color="primary"
                               variant="text"
                               onClick={() => {
                                 setSelectedNotification(notif);
@@ -362,16 +362,16 @@ function Notification() {
                               sx={{
                                 padding: "5px",
                                 ":hover": {
-                                  backgroundColor: "#d54a2c",
-                                  color: "white",
+                                  backgroundColor: "#f3f4f6",
+                                  color: "black",
                                   "& .MuiSvgIcon-root": {
-                                    color: "white", // Changes icon color on hover
+                                    color: "black", // Changes icon color on hover
                                   },
                                 },
                               }}
                             >
                               <RemoveRedEyeIcon
-                                color="error"
+                                color="primary"
                                 sx={{
                                   cursor: "pointer",
                                   transition: "color 0.2s ease-in-out",
@@ -379,7 +379,7 @@ function Notification() {
                               />
                             </Button>
                             <Button
-                              color="error"
+                              color="primary"
                               variant="text"
                               onClick={() => {
                                 setIsDeleteModalOpen(true);
@@ -389,16 +389,16 @@ function Notification() {
                               sx={{
                                 padding: "5px",
                                 ":hover": {
-                                  backgroundColor: "#d54a2c",
-                                  color: "white",
+                                  backgroundColor: "#f3f4f6",
+                                  color: "black",
                                   "& .MuiSvgIcon-root": {
-                                    color: "white", // Changes icon color on hover
+                                    color: "black", // Changes icon color on hover
                                   },
                                 },
                               }}
                             >
                               <DeleteOutlineIcon
-                                color="error"
+                                color="primary"
                                 sx={{
                                   cursor: "pointer",
                                   transition: "color 0.2s ease-in-out",
@@ -459,7 +459,7 @@ function Notification() {
             )}
           </DialogContent>
           <DialogActions>
-            <Button onClick={handleClose} color="error">
+            <Button onClick={handleClose} color="primary">
               Close
             </Button>
           </DialogActions>
@@ -472,10 +472,10 @@ function Notification() {
             <p>Are you sure you want to delete this notification?</p>
           </DialogContent>
           <DialogActions>
-            <Button onClick={axiosDeleteNotification} color="error">
+            <Button onClick={axiosDeleteNotification} color="primary">
               Delete
             </Button>
-            <Button onClick={handleClose} color="error">
+            <Button onClick={handleClose} color="primary">
               Cancel
             </Button>
           </DialogActions>

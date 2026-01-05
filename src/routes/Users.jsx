@@ -217,7 +217,7 @@ function Users() {
         style={{ fontSize: "16px" }}
       >
         <h1
-          className="text-red-600 flex items-center py-3"
+          className="text-black flex items-center py-3"
           style={{ fontSize: "16px" }}
         >
           Users List
@@ -226,7 +226,7 @@ function Users() {
           <Button
             onClick={() => setOpenCreate(true)}
             className="p-2"
-            color="error"
+            color="primary"
           >
             Create User
           </Button>
@@ -471,7 +471,7 @@ function Users() {
           <DialogContent>
             <TextField
               autoFocus
-              color="error"
+              color="primary"
               margin="dense"
               label="First Name"
               type="text"
@@ -487,7 +487,7 @@ function Users() {
             />
             <TextField
               autoFocus
-              color="error"
+              color="primary"
               margin="dense"
               label="last Name"
               type="text"
@@ -504,7 +504,7 @@ function Users() {
             <TextField
               autoFocus
               margin="dense"
-              color="error"
+              color="primary"
               label="Username"
               autoComplete="username"
               type="text"
@@ -520,7 +520,7 @@ function Users() {
             />
             <TextField
               autoFocus
-              color="error"
+              color="primary"
               margin="dense"
               label="Email Address"
               type="text"
@@ -536,7 +536,7 @@ function Users() {
             />
             <TextField
               className="mb-1"
-              color="error"
+              color="primary"
               id="outlined-password-input"
               label="Password"
               type="password"
@@ -546,11 +546,11 @@ function Users() {
               autoComplete="current-password"
               onChange={(e) => setUser({ ...user, password: e.target.value })}
             />
-            <InputLabel id="demo-simple-select-label" color="error">
+            <InputLabel id="demo-simple-select-label" color="primary">
               Type
             </InputLabel>
             <Select
-              color="error"
+              color="primary"
               labelId="demo-simple-select-label"
               id="demo-simple-select"
               value={user.type}
@@ -570,11 +570,11 @@ function Users() {
             {user.type === "PROGRAM HEAD" ||
               (user.type === "OSD_COORDINATOR" && (
                 <>
-                  <InputLabel id="demo-simple-select-label" color="error">
+                  <InputLabel id="demo-simple-select-label" color="primary">
                     Assign a Department
                   </InputLabel>
                   <Select
-                    color="error"
+                    color="primary"
                     labelId="demo-simple-select-label"
                     id="demo-simple-select"
                     value={user.assigned_department}
@@ -597,11 +597,11 @@ function Users() {
               ))}
             {user.type === "PROFESSOR" && (
               <>
-                <InputLabel id="demo-simple-select-label" color="error">
+                <InputLabel id="demo-simple-select-label" color="primary">
                   Assign a Department
                 </InputLabel>
                 <Select
-                  color="error"
+                  color="primary"
                   labelId="demo-simple-select-label"
                   id="demo-simple-select"
                   value={user.assigned_department}
@@ -624,11 +624,11 @@ function Users() {
             )}
             {user.type === "DEAN" && (
               <>
-                <InputLabel id="demo-simple-select-label" color="error">
+                <InputLabel id="demo-simple-select-label" color="primary">
                   Assign to Department/s
                 </InputLabel>
                 <Select
-                  color="error"
+                  color="primary"
                   labelId="demo-simple-select-label"
                   id="demo-simple-select"
                   value={user.assigned_departments}
@@ -650,7 +650,7 @@ function Users() {
           <DialogActions sx={{ overflow: "hidden" }}>
             <Button
               onClick={handleSave}
-              color="error"
+              color="primary"
               disabled={isLoading}
               className="slide-in-from-bottom"
             >
@@ -658,7 +658,7 @@ function Users() {
             </Button>
             <Button
               onClick={handleClose}
-              color="error"
+              color="primary"
               className="slide-in-from-bottom"
             >
               Cancel

@@ -312,7 +312,7 @@ export default function DepartmentTable() {
             <form>
               <TextField
                 autoFocus
-                color="error"
+                color="primary"
                 margin="dense"
                 label="Department Name"
                 type="text"
@@ -329,10 +329,10 @@ export default function DepartmentTable() {
             </form>
           </DialogContent>
           <DialogActions>
-            <Button onClick={handleSave} color="error" disabled={isLoading}>
+            <Button onClick={handleSave} color="primary" disabled={isLoading}>
               {isLoading ? "Saving...." : "Create"}
             </Button>
-            <Button onClick={handleClose} color="error">
+            <Button onClick={handleClose} color="primary">
               Cancel
             </Button>
           </DialogActions>

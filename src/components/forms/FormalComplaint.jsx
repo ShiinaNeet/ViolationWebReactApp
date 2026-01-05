@@ -172,7 +172,7 @@ const FormalComplaint = ({ studentDataToPass, alertMessageFunction }) => {
                   value={typeof formData[key] === "string" ? formData[key] : ""}
                   onChange={handleChange}
                   required
-                  color="error"
+                  color="primary"
                 />
               </motion.div>
             )
@@ -194,7 +194,7 @@ const FormalComplaint = ({ studentDataToPass, alertMessageFunction }) => {
               value={formData.subject_of_complaint[field]}
               onChange={handleChange}
               required
-              color="error"
+              color="primary"
             />
           </motion.div>
         ))}
@@ -212,9 +212,9 @@ const FormalComplaint = ({ studentDataToPass, alertMessageFunction }) => {
               label="Witness"
               value={witnessInput}
               onChange={(e) => setWitnessInput(e.target.value)}
-              color="error"
+              color="primary"
             />
-            <Button onClick={handleAddWitness} color="error">
+            <Button onClick={handleAddWitness} color="primary">
               Add
             </Button>
           </div>
@@ -226,7 +226,7 @@ const FormalComplaint = ({ studentDataToPass, alertMessageFunction }) => {
             {formData.witnesses.map((witness, index) => (
               <li
                 key={index}
-                className="cursor-pointer border border-solid p-2 border-red-400"
+                className="cursor-pointer border border-solid p-2 border-gray-400"
                 onClick={() => handleRemoveWitness(index)}
               >
                 {`${index + 1}. ${witness}`}
@@ -249,9 +249,9 @@ const FormalComplaint = ({ studentDataToPass, alertMessageFunction }) => {
               label="Enclosed Evidence"
               value={evidenceInput}
               onChange={(e) => setEvidenceInput(e.target.value)}
-              color="error"
+              color="primary"
             />
-            <Button onClick={handleAddEvidence} color="error">
+            <Button onClick={handleAddEvidence} color="primary">
               Add
             </Button>
           </div>
@@ -264,7 +264,7 @@ const FormalComplaint = ({ studentDataToPass, alertMessageFunction }) => {
             {formData.enclosed_evidences.map((evidence, index) => (
               <li
                 key={index}
-                className="cursor-pointer border border-solid p-2 border-red-400"
+                className="cursor-pointer border border-solid p-2 border-gray-400"
                 onClick={() => handleRemoveEvidence(index)}
               >
                 {`${index + 1}. ${evidence}`}
@@ -281,7 +281,7 @@ const FormalComplaint = ({ studentDataToPass, alertMessageFunction }) => {
           }}
         >
           <FormControl fullWidth required>
-            <InputLabel id="demo-simple-select-helper-label" color="error">
+            <InputLabel id="demo-simple-select-helper-label" color="primary">
               Coordinator Discipline Head
             </InputLabel>
             <Select
@@ -291,7 +291,7 @@ const FormalComplaint = ({ studentDataToPass, alertMessageFunction }) => {
               name="coordinator_discipline_head"
               value={formData.coordinator_discipline_head}
               onChange={handleChange}
-              color="error"
+              color="primary"
             >
               {coordinatorUsers
                 .filter((user) => user.type === "OSD_COORDINATOR")
@@ -315,7 +315,7 @@ const FormalComplaint = ({ studentDataToPass, alertMessageFunction }) => {
           <Button
             type="submit"
             variant="outlined"
-            color="error"
+            color="primary"
             fullWidth
             disabled={isLoading}
           >

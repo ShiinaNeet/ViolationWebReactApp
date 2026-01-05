@@ -29,6 +29,7 @@ import {
   styled,
   TableHead,
   Toolbar,
+  Tooltip,
 } from "@mui/material";
 import axios from "axios";
 import TablePaginationActions from "../utils/TablePaginationActions";
@@ -48,6 +49,12 @@ const StyledToolbar = styled(Toolbar)(({ theme }) => ({
   boxShadow: `0px 10px 6px rgba(0, 0, 0, 0.1)`,
 }));
 export default function Reports() {
+  const truncateByWords = (text, maxWords) => {
+    if (!text) return "";
+    const words = text.split(/\s+/);
+    if (words.length <= maxWords) return text;
+    return words.slice(0, maxWords).join(" ") + "...";
+  };
   const position = { vertical: "bottom", horizontal: "right" };
   const { vertical, horizontal } = position;
   const [isLoading, setIsLoading] = React.useState(true);
@@ -163,15 +170,15 @@ export default function Reports() {
       .catch((error) => console.error("Error fetching violations:", error));
   }, []);
 
-  const getViolationCategory = (code) => {
-    if (!violationRules.length) return "unknown";
-    for (const rule of violationRules) {
-      // rule.violations is an array of objects with code property
-      const found = rule.violations.find((v) => v.code.trim() === code.trim());
-      if (found) return rule.category; // 'minor' or 'major'
-    }
-    return "unknown";
-  };
+  // const getViolationCategory = (code) => {
+  //   if (!violationRules.length) return "unknown";
+  //   for (const rule of violationRules) {
+  //     // rule.violations is an array of objects with code property
+  //     const found = rule.violations.find((v) => v.code.trim() === code.trim());
+  //     if (found) return rule.category; // 'minor' or 'major'
+  //   }
+  //   return "unknown";
+  // };
 
   const filteredData = rows.flatMap(
     (dept) =>
@@ -240,14 +247,14 @@ export default function Reports() {
         style={{ fontSize: "16px" }}
       >
         <h1
-          className="text-red-600 py-3 flex items-center"
+          className="text-black py-3 flex items-center"
           style={{ fontSize: "16px" }}
         >
           Reports List
         </h1>
         <div className="flex items-center gap-2">
           <ToggleButtonGroup
-            color="error"
+            color="primary"
             value={offenseFilter}
             exclusive
             onChange={handleFilterChange}
@@ -261,7 +268,7 @@ export default function Reports() {
             </ToggleButton>
             <ToggleButton value="all">All</ToggleButton>
           </ToggleButtonGroup>
-          <Button onClick={() => setSearchFilterModal(true)} color="error">
+          <Button onClick={() => setSearchFilterModal(true)} color="primary">
             Filter
           </Button>
         </div>
@@ -272,15 +279,15 @@ export default function Reports() {
     return (
       <TableHead>
         <TableRow>
-          <TableCell sx={{ fontWeight: "bold" }}>Student</TableCell>
-          <TableCell sx={{ fontWeight: "bold" }}>SR Code</TableCell>
-          <TableCell sx={{ fontWeight: "bold" }}>Department</TableCell>
-          <TableCell sx={{ fontWeight: "bold" }}>Program</TableCell>
-          <TableCell sx={{ fontWeight: "bold" }}>Violation Code</TableCell>
-          <TableCell sx={{ fontWeight: "bold" }}>Description</TableCell>
-          <TableCell sx={{ fontWeight: "bold" }}>Date Committed</TableCell>
-          <TableCell sx={{ fontWeight: "bold" }}>Category</TableCell>
-          <TableCell sx={{ fontWeight: "bold" }}>Semester</TableCell>
+          <TableCell align="center" sx={{ fontWeight: "bold" }}>Student</TableCell>
+          <TableCell align="center" sx={{ fontWeight: "bold" }}>SR Code</TableCell>
+          <TableCell align="center" sx={{ fontWeight: "bold" }}>Department</TableCell>
+          <TableCell align="center" sx={{ fontWeight: "bold" }}>Program</TableCell>
+          <TableCell align="center" sx={{ fontWeight: "bold" }}>Violation Code</TableCell>
+          <TableCell align="center" sx={{ fontWeight: "bold" }}>Description</TableCell>
+          <TableCell align="center" sx={{ fontWeight: "bold" }}>Date Committed</TableCell>
+          <TableCell align="center" sx={{ fontWeight: "bold" }}>Category</TableCell>
+          <TableCell align="center" sx={{ fontWeight: "bold" }}>Semester</TableCell>
         </TableRow>
       </TableHead>
     );
@@ -307,18 +314,21 @@ export default function Reports() {
       .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
       .map((row, index) => (
         <TableRow key={index}>
-          <TableCell>{row.student}</TableCell>
-          <TableCell>{row.srcode}</TableCell>
-          <TableCell>{row.department}</TableCell>
-          <TableCell>{row.program}</TableCell>
-          <TableCell>{row.violationCode}</TableCell>
+          <TableCell align="center">{row.student}</TableCell>
+          <TableCell align="center">{row.srcode}</TableCell>
+          <TableCell align="center">{row.department}</TableCell>
+          <TableCell align="center">{row.program}</TableCell>
+          <TableCell align="center">{row.violationCode}</TableCell>
           <TableCell
+            align="center"
             sx={{ maxWidth: 200, whiteSpace: "normal", wordWrap: "break-word" }}
           >
-            {row.violationDescription}
+            <Tooltip title={row.violationDescription}>
+              <span>{truncateByWords(row.violationDescription, 10)}</span>
+            </Tooltip>
           </TableCell>
-          <TableCell>{row.dateCommitted}</TableCell>
-          <TableCell>
+          <TableCell align="center">{row.dateCommitted}</TableCell>
+          <TableCell align="center">
             <span
               style={{
                 padding: "4px 8px",
@@ -327,22 +337,23 @@ export default function Reports() {
                 fontWeight: "bold",
                 backgroundColor:
                   row.category === "minor"
-                    ? "#fff3cd"
+                    ? "#f5f5f5"
                     : row.category === "major"
-                    ? "#f8d7da"
-                    : "#cce5ff",
+                    ? "black"
+                    : "#dcdcdc",
                 color:
                   row.category === "minor"
-                    ? "#856404"
+                    ? "black"
                     : row.category === "major"
-                    ? "#721c24"
-                    : "#004085",
+                    ? "white"
+                    : "black",
+                border: row.category === "minor" ? "1px solid #ddd" : "none",
               }}
             >
               {row.category?.toUpperCase()}
             </span>
           </TableCell>
-          <TableCell>{row.semester}</TableCell>
+          <TableCell align="center">{row.semester}</TableCell>
         </TableRow>
       ));
   };
@@ -415,16 +426,15 @@ export default function Reports() {
             }}
           >
             <DialogTitle
-              className="slide-in-visible mb-1 font-bold"
+              className="mb-1 font-bold"
               sx={{ fontSize: "16px" }}
             >
               Filter the reports by student name and semester
             </DialogTitle>
             <DialogContent sx={{ overflowX: "hidden", overflowY: "hidden" }}>
               <TextField
-                className="slide-in-from-right"
                 fullWidth
-                color="error"
+                color="primary"
                 value={searchFilter}
                 onChange={(e) => setSearchFilter(e.target.value)}
                 inputProps={{ "aria-label": "Without label" }}
@@ -439,16 +449,15 @@ export default function Reports() {
               <FormControl fullWidth margin="normal">
                 <InputLabel
                   id="semester"
-                  color="error"
+                  color="primary"
                   sx={{ fontSize: "16px" }}
                 >
                   Semester
                 </InputLabel>
                 <Select
                   label="Semester"
-                  className="slide-in-from-right font-medium"
                   fullWidth
-                  color="error"
+                  color="primary"
                   value={semesterFilter}
                   onChange={(e) =>
                     setSemesterFilter(
@@ -472,15 +481,15 @@ export default function Reports() {
             <DialogActions sx={{ overflowX: "hidden", overflowY: "hidden" }}>
               <Button
                 onClick={() => fetchData(offenseFilter)}
-                className="flex w-full sm:w-1/2 justify-center slide-in-visible"
-                color="error"
+                className="flex w-full sm:w-1/2 justify-center"
+                color="primary"
               >
                 Search
               </Button>
               <Button
-                className="flex w-full sm:w-1/2 justify-center slide-in-from-right"
+                className="flex w-full sm:w-1/2 justify-center"
                 onClick={() => setSearchFilterModal(false)}
-                color="error"
+                color="primary"
               >
                 Close
               </Button>

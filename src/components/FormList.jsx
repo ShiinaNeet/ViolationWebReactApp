@@ -218,10 +218,10 @@ export default function FormList() {
           {form.status}
         </TableCell>
         <TableCell align="center">
-          <Button color="error" variant="text" onClick={() => handleView(form)}>
+          <Button color="primary" variant="text" onClick={() => handleView(form)}>
             View
           </Button>
-          <Button color="error" variant="text" onClick={() => handleEdit(form)}>
+          <Button color="primary" variant="text" onClick={() => handleEdit(form)}>
             Edit
           </Button>
         </TableCell>
@@ -291,7 +291,7 @@ export default function FormList() {
           InputProps={{
             readOnly: true,
           }}
-          color="error"
+          color="primary"
           variant="outlined"
           margin="normal"
         />
@@ -305,7 +305,7 @@ export default function FormList() {
               InputProps={{
                 readOnly: true,
               }}
-              color="error"
+              color="primary"
               variant="outlined"
               margin="normal"
             />
@@ -318,7 +318,7 @@ export default function FormList() {
               InputProps={{
                 readOnly: true,
               }}
-              color="error"
+              color="primary"
               variant="outlined"
               margin="normal"
             />
@@ -329,13 +329,13 @@ export default function FormList() {
               InputProps={{
                 readOnly: true,
               }}
-              color="error"
+              color="primary"
               variant="outlined"
               margin="normal"
             />
             <TextField
               fullWidth
-              color="error"
+              color="primary"
               label="Program"
               value={getProgramName(selectedForm.program)}
               InputProps={{
@@ -351,13 +351,13 @@ export default function FormList() {
               InputProps={{
                 readOnly: true,
               }}
-              color="error"
+              color="primary"
               variant="outlined"
               margin="normal"
             />
             <TextField
               fullWidth
-              color="error"
+              color="primary"
               label="Campus"
               value={selectedForm.campus}
               InputProps={{
@@ -368,7 +368,7 @@ export default function FormList() {
             />
             <TextField
               fullWidth
-              color="error"
+              color="primary"
               label="Year"
               value={selectedForm.year}
               InputProps={{
@@ -379,7 +379,7 @@ export default function FormList() {
             />
             <TextField
               fullWidth
-              color="error"
+              color="primary"
               label="Section"
               value={selectedForm.section}
               InputProps={{
@@ -390,7 +390,7 @@ export default function FormList() {
             />
             <TextField
               fullWidth
-              color="error"
+              color="primary"
               label="Report Date"
               value={moment(selectedForm.report_date).format("MMMM DD, YYYY")}
               InputProps={{
@@ -401,7 +401,7 @@ export default function FormList() {
             />
             <TextField
               fullWidth
-              color="error"
+              color="primary"
               label="Report Time"
               value={selectedForm.report_time}
               InputProps={{
@@ -412,7 +412,7 @@ export default function FormList() {
             />
             <TextField
               fullWidth
-              color="error"
+              color="primary"
               label="Coordinator Discipline Head"
               value={
                 selectedForm.coordinator_discipline_head &&
@@ -426,7 +426,7 @@ export default function FormList() {
             />
             <TextField
               fullWidth
-              color="error"
+              color="primary"
               label="Date Signed"
               value={moment(selectedForm.date_signed).format("MMMM DD, YYYY")}
               InputProps={{
@@ -447,7 +447,7 @@ export default function FormList() {
               InputProps={{
                 readOnly: true,
               }}
-              color="error"
+              color="primary"
               variant="outlined"
               margin="normal"
             />
@@ -458,7 +458,7 @@ export default function FormList() {
               InputProps={{
                 readOnly: true,
               }}
-              color="error"
+              color="primary"
               variant="outlined"
               margin="normal"
             />
@@ -469,7 +469,7 @@ export default function FormList() {
               InputProps={{
                 readOnly: true,
               }}
-              color="error"
+              color="primary"
               variant="outlined"
               margin="normal"
             />
@@ -480,7 +480,7 @@ export default function FormList() {
               InputProps={{
                 readOnly: true,
               }}
-              color="error"
+              color="primary"
               variant="outlined"
               margin="normal"
             />
@@ -494,7 +494,7 @@ export default function FormList() {
               InputProps={{
                 readOnly: true,
               }}
-              color="error"
+              color="primary"
               variant="outlined"
               margin="normal"
             />
@@ -510,7 +510,7 @@ export default function FormList() {
               InputProps={{
                 readOnly: true,
               }}
-              color="error"
+              color="primary"
               variant="outlined"
               margin="normal"
             />
@@ -521,7 +521,7 @@ export default function FormList() {
               InputProps={{
                 readOnly: true,
               }}
-              color="error"
+              color="primary"
               variant="outlined"
               margin="normal"
             />
@@ -532,7 +532,7 @@ export default function FormList() {
               InputProps={{
                 readOnly: true,
               }}
-              color="error"
+              color="primary"
               variant="outlined"
               margin="normal"
             />
@@ -543,7 +543,7 @@ export default function FormList() {
               InputProps={{
                 readOnly: true,
               }}
-              color="error"
+              color="primary"
               variant="outlined"
               margin="normal"
             />
@@ -554,7 +554,7 @@ export default function FormList() {
               InputProps={{
                 readOnly: true,
               }}
-              color="error"
+              color="primary"
               variant="outlined"
               margin="normal"
             />
@@ -565,7 +565,7 @@ export default function FormList() {
               InputProps={{
                 readOnly: true,
               }}
-              color="error"
+              color="primary"
               variant="outlined"
               margin="normal"
             />
@@ -576,7 +576,7 @@ export default function FormList() {
               InputProps={{
                 readOnly: true,
               }}
-              color="error"
+              color="primary"
               variant="outlined"
               margin="normal"
             />
@@ -587,7 +587,7 @@ export default function FormList() {
               InputProps={{
                 readOnly: true,
               }}
-              color="error"
+              color="primary"
               variant="outlined"
               margin="normal"
             />
@@ -598,7 +598,7 @@ export default function FormList() {
               InputProps={{
                 readOnly: true,
               }}
-              color="error"
+              color="primary"
               variant="outlined"
               margin="normal"
             />
@@ -611,7 +611,7 @@ export default function FormList() {
               InputProps={{
                 readOnly: true,
               }}
-              color="error"
+              color="primary"
               variant="outlined"
               margin="normal"
             />
@@ -627,7 +627,7 @@ export default function FormList() {
               InputProps={{
                 readOnly: true,
               }}
-              color="error"
+              color="primary"
               variant="outlined"
               margin="normal"
             />
@@ -640,7 +640,7 @@ export default function FormList() {
               InputProps={{
                 readOnly: true,
               }}
-              color="error"
+              color="primary"
               variant="outlined"
               margin="normal"
             />
@@ -651,7 +651,7 @@ export default function FormList() {
               InputProps={{
                 readOnly: true,
               }}
-              color="error"
+              color="primary"
               variant="outlined"
               margin="normal"
             />
@@ -662,7 +662,7 @@ export default function FormList() {
               InputProps={{
                 readOnly: true,
               }}
-              color="error"
+              color="primary"
               variant="outlined"
               margin="normal"
             />
@@ -673,7 +673,7 @@ export default function FormList() {
               InputProps={{
                 readOnly: true,
               }}
-              color="error"
+              color="primary"
               variant="outlined"
               margin="normal"
             />
@@ -684,7 +684,7 @@ export default function FormList() {
               InputProps={{
                 readOnly: true,
               }}
-              color="error"
+              color="primary"
               variant="outlined"
               margin="normal"
             />
@@ -695,7 +695,7 @@ export default function FormList() {
               InputProps={{
                 readOnly: true,
               }}
-              color="error"
+              color="primary"
               variant="outlined"
               margin="normal"
             />
@@ -706,7 +706,7 @@ export default function FormList() {
               InputProps={{
                 readOnly: true,
               }}
-              color="error"
+              color="primary"
               variant="outlined"
               margin="normal"
             />
@@ -717,7 +717,7 @@ export default function FormList() {
               InputProps={{
                 readOnly: true,
               }}
-              color="error"
+              color="primary"
               variant="outlined"
               margin="normal"
             />
@@ -728,7 +728,7 @@ export default function FormList() {
               InputProps={{
                 readOnly: true,
               }}
-              color="error"
+              color="primary"
               variant="outlined"
               margin="normal"
             />
@@ -736,7 +736,7 @@ export default function FormList() {
               control={
                 <Checkbox
                   checked={selectedForm.reason_for_dismissal.is_without_merit}
-                  color="error"
+                  color="primary"
                   readOnly
                 />
               }
@@ -749,7 +749,7 @@ export default function FormList() {
               InputProps={{
                 readOnly: true,
               }}
-              color="error"
+              color="primary"
               variant="outlined"
               margin="normal"
             />
@@ -760,7 +760,7 @@ export default function FormList() {
               InputProps={{
                 readOnly: true,
               }}
-              color="error"
+              color="primary"
               variant="outlined"
               margin="normal"
             />
@@ -771,7 +771,7 @@ export default function FormList() {
               InputProps={{
                 readOnly: true,
               }}
-              color="error"
+              color="primary"
               variant="outlined"
               margin="normal"
             />
@@ -784,7 +784,7 @@ export default function FormList() {
               InputProps={{
                 readOnly: true,
               }}
-              color="error"
+              color="primary"
               variant="outlined"
               margin="normal"
             />
@@ -795,7 +795,7 @@ export default function FormList() {
               InputProps={{
                 readOnly: true,
               }}
-              color="error"
+              color="primary"
               variant="outlined"
               margin="normal"
             />
@@ -811,7 +811,7 @@ export default function FormList() {
               InputProps={{
                 readOnly: true,
               }}
-              color="error"
+              color="primary"
               variant="outlined"
               margin="normal"
             />
@@ -824,7 +824,7 @@ export default function FormList() {
               InputProps={{
                 readOnly: true,
               }}
-              color="error"
+              color="primary"
               variant="outlined"
               margin="normal"
             />
@@ -835,7 +835,7 @@ export default function FormList() {
               InputProps={{
                 readOnly: true,
               }}
-              color="error"
+              color="primary"
               variant="outlined"
               margin="normal"
             />
@@ -846,7 +846,7 @@ export default function FormList() {
               InputProps={{
                 readOnly: true,
               }}
-              color="error"
+              color="primary"
               variant="outlined"
               margin="normal"
             />
@@ -857,7 +857,7 @@ export default function FormList() {
               InputProps={{
                 readOnly: true,
               }}
-              color="error"
+              color="primary"
               variant="outlined"
               margin="normal"
             />
@@ -868,7 +868,7 @@ export default function FormList() {
               InputProps={{
                 readOnly: true,
               }}
-              color="error"
+              color="primary"
               variant="outlined"
               margin="normal"
             />
@@ -879,7 +879,7 @@ export default function FormList() {
               InputProps={{
                 readOnly: true,
               }}
-              color="error"
+              color="primary"
               variant="outlined"
               margin="normal"
             />
@@ -890,7 +890,7 @@ export default function FormList() {
               InputProps={{
                 readOnly: true,
               }}
-              color="error"
+              color="primary"
               variant="outlined"
               margin="normal"
             />
@@ -901,7 +901,7 @@ export default function FormList() {
               InputProps={{
                 readOnly: true,
               }}
-              color="error"
+              color="primary"
               variant="outlined"
               margin="normal"
             />
@@ -912,7 +912,7 @@ export default function FormList() {
               InputProps={{
                 readOnly: true,
               }}
-              color="error"
+              color="primary"
               variant="outlined"
               margin="normal"
             />
@@ -923,7 +923,7 @@ export default function FormList() {
               InputProps={{
                 readOnly: true,
               }}
-              color="error"
+              color="primary"
               variant="outlined"
               margin="normal"
             />
@@ -934,7 +934,7 @@ export default function FormList() {
               InputProps={{
                 readOnly: true,
               }}
-              color="error"
+              color="primary"
               variant="outlined"
               margin="normal"
             />
@@ -945,7 +945,7 @@ export default function FormList() {
               InputProps={{
                 readOnly: true,
               }}
-              color="error"
+              color="primary"
               variant="outlined"
               margin="normal"
             />
@@ -961,7 +961,7 @@ export default function FormList() {
               InputProps={{
                 readOnly: true,
               }}
-              color="error"
+              color="primary"
               variant="outlined"
               margin="normal"
             />
@@ -972,7 +972,7 @@ export default function FormList() {
               InputProps={{
                 readOnly: true,
               }}
-              color="error"
+              color="primary"
               variant="outlined"
               margin="normal"
             />
@@ -983,7 +983,7 @@ export default function FormList() {
               InputProps={{
                 readOnly: true,
               }}
-              color="error"
+              color="primary"
               variant="outlined"
               margin="normal"
             />
@@ -994,7 +994,7 @@ export default function FormList() {
               InputProps={{
                 readOnly: true,
               }}
-              color="error"
+              color="primary"
               variant="outlined"
               margin="normal"
             />
@@ -1005,7 +1005,7 @@ export default function FormList() {
               InputProps={{
                 readOnly: true,
               }}
-              color="error"
+              color="primary"
               variant="outlined"
               margin="normal"
             />
@@ -1016,7 +1016,7 @@ export default function FormList() {
               InputProps={{
                 readOnly: true,
               }}
-              color="error"
+              color="primary"
               variant="outlined"
               margin="normal"
             />
@@ -1027,7 +1027,7 @@ export default function FormList() {
               InputProps={{
                 readOnly: true,
               }}
-              color="error"
+              color="primary"
               variant="outlined"
               margin="normal"
             />
@@ -1038,7 +1038,7 @@ export default function FormList() {
               InputProps={{
                 readOnly: true,
               }}
-              color="error"
+              color="primary"
               variant="outlined"
               margin="normal"
             />
@@ -1049,7 +1049,7 @@ export default function FormList() {
               InputProps={{
                 readOnly: true,
               }}
-              color="error"
+              color="primary"
               variant="outlined"
               margin="normal"
             />
@@ -1060,7 +1060,7 @@ export default function FormList() {
               InputProps={{
                 readOnly: true,
               }}
-              color="error"
+              color="primary"
               variant="outlined"
               margin="normal"
             />
@@ -1071,7 +1071,7 @@ export default function FormList() {
               InputProps={{
                 readOnly: true,
               }}
-              color="error"
+              color="primary"
               variant="outlined"
               margin="normal"
             />
@@ -1082,7 +1082,7 @@ export default function FormList() {
               InputProps={{
                 readOnly: true,
               }}
-              color="error"
+              color="primary"
               variant="outlined"
               margin="normal"
             />
@@ -1099,7 +1099,7 @@ export default function FormList() {
               InputProps={{
                 readOnly: true,
               }}
-              color="error"
+              color="primary"
               variant="outlined"
               margin="normal"
             />
@@ -1110,7 +1110,7 @@ export default function FormList() {
               InputProps={{
                 readOnly: true,
               }}
-              color="error"
+              color="primary"
               variant="outlined"
               margin="normal"
             />
@@ -1123,7 +1123,7 @@ export default function FormList() {
               InputProps={{
                 readOnly: true,
               }}
-              color="error"
+              color="primary"
               variant="outlined"
               margin="normal"
             />
@@ -1134,7 +1134,7 @@ export default function FormList() {
               InputProps={{
                 readOnly: true,
               }}
-              color="error"
+              color="primary"
               variant="outlined"
               margin="normal"
             />
@@ -1145,7 +1145,7 @@ export default function FormList() {
               InputProps={{
                 readOnly: true,
               }}
-              color="error"
+              color="primary"
               variant="outlined"
               margin="normal"
             />
@@ -1156,7 +1156,7 @@ export default function FormList() {
               InputProps={{
                 readOnly: true,
               }}
-              color="error"
+              color="primary"
               variant="outlined"
               margin="normal"
             />
@@ -1178,7 +1178,7 @@ export default function FormList() {
               InputProps={{
                 readOnly: true,
               }}
-              color="error"
+              color="primary"
               variant="outlined"
               margin="normal"
             />
@@ -1194,7 +1194,7 @@ export default function FormList() {
               InputProps={{
                 readOnly: true,
               }}
-              color="error"
+              color="primary"
               variant="outlined"
               margin="normal"
             />
@@ -1205,7 +1205,7 @@ export default function FormList() {
               InputProps={{
                 readOnly: true,
               }}
-              color="error"
+              color="primary"
               variant="outlined"
               margin="normal"
             />
@@ -1216,7 +1216,7 @@ export default function FormList() {
               InputProps={{
                 readOnly: true,
               }}
-              color="error"
+              color="primary"
               variant="outlined"
               margin="normal"
             />
@@ -1227,7 +1227,7 @@ export default function FormList() {
               InputProps={{
                 readOnly: true,
               }}
-              color="error"
+              color="primary"
               variant="outlined"
               margin="normal"
             />
@@ -1238,7 +1238,7 @@ export default function FormList() {
               InputProps={{
                 readOnly: true,
               }}
-              color="error"
+              color="primary"
               variant="outlined"
               margin="normal"
             />
@@ -1249,7 +1249,7 @@ export default function FormList() {
               InputProps={{
                 readOnly: true,
               }}
-              color="error"
+              color="primary"
               variant="outlined"
               margin="normal"
             />
@@ -1257,7 +1257,7 @@ export default function FormList() {
               control={
                 <Checkbox
                   checked={selectedForm.check.fieldwork_workshop}
-                  color="error"
+                  color="primary"
                   readOnly
                 />
               }
@@ -1267,7 +1267,7 @@ export default function FormList() {
               control={
                 <Checkbox
                   checked={selectedForm.check.prolonged_standing}
-                  color="error"
+                  color="primary"
                   readOnly
                 />
               }
@@ -1279,7 +1279,7 @@ export default function FormList() {
                   checked={
                     selectedForm.check.foreign_student_on_short_special_course
                   }
-                  color="error"
+                  color="primary"
                   readOnly
                 />
               }
@@ -1289,7 +1289,7 @@ export default function FormList() {
               control={
                 <Checkbox
                   checked={selectedForm.check.pregnant}
-                  color="error"
+                  color="primary"
                   readOnly
                 />
               }
@@ -1299,7 +1299,7 @@ export default function FormList() {
               control={
                 <Checkbox
                   checked={selectedForm.check.special_cases}
-                  color="error"
+                  color="primary"
                   readOnly
                 />
               }
@@ -1309,7 +1309,7 @@ export default function FormList() {
               control={
                 <Checkbox
                   checked={selectedForm.check.force_majeure}
-                  color="error"
+                  color="primary"
                   readOnly
                 />
               }
@@ -1319,7 +1319,7 @@ export default function FormList() {
               control={
                 <Checkbox
                   checked={selectedForm.check.intern}
-                  color="error"
+                  color="primary"
                   readOnly
                 />
               }
@@ -1332,7 +1332,7 @@ export default function FormList() {
               InputProps={{
                 readOnly: true,
               }}
-              color="error"
+              color="primary"
               variant="outlined"
               margin="normal"
             />
@@ -1343,7 +1343,7 @@ export default function FormList() {
               InputProps={{
                 readOnly: true,
               }}
-              color="error"
+              color="primary"
               variant="outlined"
               margin="normal"
             />
@@ -1356,7 +1356,7 @@ export default function FormList() {
               InputProps={{
                 readOnly: true,
               }}
-              color="error"
+              color="primary"
               variant="outlined"
               margin="normal"
             />
@@ -1367,7 +1367,7 @@ export default function FormList() {
               InputProps={{
                 readOnly: true,
               }}
-              color="error"
+              color="primary"
               variant="outlined"
               margin="normal"
             />
@@ -1380,7 +1380,7 @@ export default function FormList() {
               InputProps={{
                 readOnly: true,
               }}
-              color="error"
+              color="primary"
               variant="outlined"
               margin="normal"
             />
@@ -1391,7 +1391,7 @@ export default function FormList() {
               InputProps={{
                 readOnly: true,
               }}
-              color="error"
+              color="primary"
               variant="outlined"
               margin="normal"
             />
@@ -1404,7 +1404,7 @@ export default function FormList() {
               InputProps={{
                 readOnly: true,
               }}
-              color="error"
+              color="primary"
               variant="outlined"
               margin="normal"
             />
@@ -1416,11 +1416,11 @@ export default function FormList() {
   const GetSelectFormTypes = () => {
     return (
       <FormControl sx={{ minWidth: 200 }}>
-        <InputLabel color="error">Form Type</InputLabel>
+        <InputLabel color="primary">Form Type</InputLabel>
         <Select
           size="small"
           label="Form Type"
-          color="error"
+          color="primary"
           value={filter}
           onChange={(e) => setFilter(e.target.value)}
         >
@@ -1447,7 +1447,7 @@ export default function FormList() {
           {selectedForm ? <GetDialogContent /> : <p>No form selected.</p>}
         </DialogContent>
         <DialogActions>
-          <Button color="error" onClick={handleClose}>
+          <Button color="primary" onClick={handleClose}>
             Close
           </Button>
         </DialogActions>
@@ -1457,7 +1457,7 @@ export default function FormList() {
   return (
     <div>
       <div className="flex items-end justify-between py-3">
-        <h1 className="text-red-600" style={{ fontSize: "16px" }}>
+        <h1 className="text-black" style={{ fontSize: "16px" }}>
           Sent Forms
         </h1>
         <GetSelectFormTypes />
@@ -1503,7 +1503,7 @@ function EditFormDialog({
       <DialogContent>
         <TextField
           fullWidth
-          color="error"
+          color="primary"
           label="Name"
           value={form ? form.name : ""}
           InputProps={{ readOnly: true }}
@@ -1513,7 +1513,7 @@ function EditFormDialog({
         />
         <TextField
           fullWidth
-          color="error"
+          color="primary"
           label="Violation Code"
           value={form ? form.violation_code : ""}
           InputProps={{ readOnly: true }}
@@ -1523,7 +1523,7 @@ function EditFormDialog({
         />
         <TextField
           fullWidth
-          color="error"
+          color="primary"
           label="Form Type"
           value={form ? capitalizeFirstLetter(form.form_type) : ""}
           InputProps={{ readOnly: true }}
@@ -1542,7 +1542,7 @@ function EditFormDialog({
             e.preventDefault();
             onChange({ ...form, status: e.target.value });
           }}
-          color="error"
+          color="primary"
           variant="outlined"
           sx={{ textTransform: "capitalize" }}
         >
@@ -1555,7 +1555,7 @@ function EditFormDialog({
         </Select>
         <TextField
           fullWidth
-          color="error"
+          color="primary"
           label="Reason"
           value={typeof form?.reason === "string" ? form.reason : ""}
           onChange={(e) => onChange({ ...form, reason: e.target.value })}
@@ -1565,7 +1565,7 @@ function EditFormDialog({
       </DialogContent>
       <DialogActions>
         <Button
-          color="error"
+          color="primary"
           onClick={() => {
             onSave(form.id, selectStatus);
             onClose();
@@ -1573,7 +1573,7 @@ function EditFormDialog({
         >
           Update Status
         </Button>
-        <Button color="error" onClick={onClose}>
+        <Button color="primary" onClick={onClose}>
           Close
         </Button>
       </DialogActions>

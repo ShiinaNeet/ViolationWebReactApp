@@ -126,7 +126,7 @@ const StudentIncidentReport = ({
                   value={formData[key]}
                   onChange={handleChange}
                   required
-                  color="error"
+                  color="primary"
                 />
               </motion.div>
             )
@@ -140,7 +140,7 @@ const StudentIncidentReport = ({
           }}
         >
           <FormControl fullWidth required>
-            <InputLabel id="demo-simple-select-helper-label" color="error">
+            <InputLabel id="demo-simple-select-helper-label" color="primary">
               Program
             </InputLabel>
             <Select
@@ -156,7 +156,7 @@ const StudentIncidentReport = ({
               }
               inputProps={{ "aria-label": "Without label" }}
               required
-              color="error"
+              color="primary"
             >
               {programData.map((program) => (
                 <MenuItem key={program.id} value={program.name}>
@@ -174,7 +174,7 @@ const StudentIncidentReport = ({
             delay: Object.keys(formData).length * 0.1,
           }}
         >
-          <Button type="submit" variant="outlined" color="error" fullWidth>
+          <Button type="submit" variant="outlined" color="primary" fullWidth>
             Submit
           </Button>
         </motion.div>

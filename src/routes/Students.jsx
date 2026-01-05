@@ -971,19 +971,19 @@ const Students = () => {
   const GetHeader = () => {
     return (
       <div className="flex flex-row justify-between h-fit rounded-md mt-5">
-        <h1 className="py-3 text-red-600" style={{ fontSize: "16px" }}>
+        <h1 className="py-3 text-black" style={{ fontSize: "16px" }}>
           Student Violations
         </h1>
         <div className="flex items-center ss:flex-row flex-col">
           <Button
-            className="bg-red-500 p-2 rounded-sm text-red cursor-pointer"
+            className="bg-black p-2 rounded-sm text-white cursor-pointer"
             onClick={() => setCreateStudentViolationModal(true)}
-            color="error"
+            color="primary"
             size="small"
             variant="text"
             sx={{
               cursor: "pointer",
-              ":hover": { backgroundColor: "#f44336", color: "white" },
+              ":hover": { backgroundColor: "gray", color: "white" },
             }}
           >
             <label className="text-[11px] sm:text-md cursor-pointer">
@@ -992,21 +992,21 @@ const Students = () => {
           </Button>
           <Button
             onClick={() => setSearchFilterModal(true)}
-            color="error"
+            color="primary"
             size="small"
             sx={{
               cursor: "pointer",
-              ":hover": { backgroundColor: "#f44336", color: "white" },
+              ":hover": { backgroundColor: "gray", color: "white" },
             }}
           >
             <label className="text-[11px] sm:text-md cursor-pointer">
               Filter
             </label>
             <FilterAltRoundedIcon
-              color="error"
+              color="primary"
               sx={{
                 fontSize: "16px",
-                ":hover": { backgroundColor: "#f44336", color: "white" },
+                ":hover": { backgroundColor: "gray", color: "white" },
               }}
             />
           </Button>
@@ -1070,7 +1070,7 @@ const Students = () => {
     return (
       <TableRow>
         <TableCell colSpan={5} align="center">
-          <ClipLoader color={"#f44336"} loading={true} size={50} />
+          <ClipLoader color={"#000000"} loading={true} size={50} />
         </TableCell>
       </TableRow>
     );
@@ -1180,7 +1180,7 @@ const Students = () => {
                                   key={violation.code}
                                   label={violation.code}
                                   variant="outlined"
-                                  color="error"
+                                  color="primary"
                                   margin="dense"
                                   size="medium"
                                   sx={{ mr: 0.5, mb: 0.5, p: 0.5 }}
@@ -1222,19 +1222,19 @@ const Students = () => {
                           >
                             <Tooltip title="View Student">
                               <Button
-                                className="rounded-sm text-white hover:bg-red-100 hover:text-red-700"
+                                className="rounded-sm text-white hover:bg-gray-100 hover:text-black"
                                 onClick={() =>
                                   handleViewViolationModal(student)
                                 }
-                                color="error"
+                                color="primary"
                                 size={isXs ? "small" : "medium"}
                               >
-                                <RemoveRedEyeIcon color="error" />
+                                <RemoveRedEyeIcon color="primary" />
                               </Button>
                             </Tooltip>
                             <Tooltip title="Forms">
                               <Button
-                                className="rounded-sm text-white hover:bg-red-100 hover:text-red-700"
+                                className="rounded-sm text-white hover:bg-gray-100 hover:text-black"
                                 onClick={() => {
                                   const programData = programList.find(
                                     (program) => program.id === student.course
@@ -1254,22 +1254,22 @@ const Students = () => {
                                   }
                                   setFormModal(true);
                                 }}
-                                color="error"
+                                color="primary"
                               >
-                                <SourceIcon color="error" />
+                                <SourceIcon color="primary" />
                               </Button>
                             </Tooltip>
                             {CurrentUserType == "ADMIN" ||
                             localStorage.getItem("userType") == "ADMIN" ? (
                               <Tooltip title="Edit Student">
                                 <Button
-                                  className="rounded-sm text-white hover:bg-red-100 hover:text-red-700"
+                                  className="rounded-sm text-white hover:bg-gray-100 hover:text-black"
                                   onClick={() =>
                                     handleUpdateViolationModal(student)
                                   }
-                                  color="error"
+                                  color="primary"
                                 >
-                                  <EditIcon color="error" />
+                                  <EditIcon color="primary" />
                                 </Button>
                               </Tooltip>
                             ) : (
@@ -1352,28 +1352,28 @@ const Students = () => {
               >
                 <Button
                   onClick={() => setActiveForm("callSlip")}
-                  color="error"
+                  color="primary"
                   sx={{ justifyContent: "left" }}
                 >
                   Call Slip
                 </Button>
                 <Button
                   onClick={() => setActiveForm("noticeCaseDismissal")}
-                  color="error"
+                  color="primary"
                   sx={{ justifyContent: "left" }}
                 >
                   Notice of Case Dismissal
                 </Button>
                 <Button
                   onClick={() => setActiveForm("letterOfSuspension")}
-                  color="error"
+                  color="primary"
                   sx={{ justifyContent: "left" }}
                 >
                   Letter of Suspension
                 </Button>
                 <Button
                   onClick={() => setActiveForm("studentIncidentReport")}
-                  color="error"
+                  color="primary"
                   sx={{ justifyContent: "left" }}
                 >
                   Student Incident Report
@@ -1382,35 +1382,35 @@ const Students = () => {
                   onClick={() =>
                     setActiveForm("warningViolationOfNormsAndConduct")
                   }
-                  color="error"
+                  color="primary"
                   sx={{ justifyContent: "left" }}
                 >
                   Warning Violation of Norms and Conduct
                 </Button>
                 <Button
                   onClick={() => setActiveForm("reprimandForm")}
-                  color="error"
+                  color="primary"
                   sx={{ justifyContent: "left" }}
                 >
                   Reprimand Form
                 </Button>
                 <Button
                   onClick={() => setActiveForm("temporaryGatePass")}
-                  color="error"
+                  color="primary"
                   sx={{ justifyContent: "left" }}
                 >
                   Temporary Gate Pass
                 </Button>
                 <Button
                   onClick={() => setActiveForm("nonWearingUniform")}
-                  color="error"
+                  color="primary"
                   sx={{ justifyContent: "left" }}
                 >
                   Non Wearing Uniform
                 </Button>
                 <Button
                   onClick={() => setActiveForm("formalComplaint")}
-                  color="error"
+                  color="primary"
                   sx={{ justifyContent: "left" }}
                 >
                   Formal Complaint
@@ -1489,7 +1489,7 @@ const Students = () => {
               <Button
                 style={{ marginTop: "10px" }}
                 onClick={() => setActiveForm(null)}
-                color="error"
+                color="primary"
               >
                 Back to Selection
               </Button>
@@ -1498,7 +1498,7 @@ const Students = () => {
             <Button
               style={{ marginTop: "10px" }}
               onClick={() => handleClose()}
-              color="error"
+              color="primary"
             >
               Close
             </Button>
@@ -1557,7 +1557,7 @@ const Students = () => {
                     readOnly: true,
                   },
                 }}
-                color="error"
+                color="primary"
               />
               <TextField
                 className="slide-in-down-visible"
@@ -1574,7 +1574,7 @@ const Students = () => {
                     readOnly: true,
                   },
                 }}
-                color="error"
+                color="primary"
               />
               <TextField
                 id="standard-read-only-input"
@@ -1592,7 +1592,7 @@ const Students = () => {
                     readOnly: true,
                   },
                 }}
-                color="error"
+                color="primary"
               />
               {console.log("Course: ", targetStudent.course)}
               <TextField
@@ -1607,7 +1607,7 @@ const Students = () => {
                     readOnly: true,
                   },
                 }}
-                color="error"
+                color="primary"
               />
               <TextField
                 id="standard-read-only-input"
@@ -1619,7 +1619,7 @@ const Students = () => {
                     readOnly: true,
                   },
                 }}
-                color="error"
+                color="primary"
               />
               <TextField
                 id="standard-read-only-input"
@@ -1637,7 +1637,7 @@ const Students = () => {
                     readOnly: true,
                   },
                 }}
-                color="error"
+                color="primary"
               />
             </div>
             <div>
@@ -1666,7 +1666,7 @@ const Students = () => {
                           <TableRow
                             key={index}
                             className={`${
-                              category.count > 3 ? "bg-red-100" : ""
+                              category.count > 3 ? "bg-gray-100" : ""
                             }`}
                           >
                             <TableCell sx={{ textTransform: "capitalize" }}>
@@ -1713,9 +1713,9 @@ const Students = () => {
           </DialogContent>
           <DialogActions>
             <Button
-              className="p-2 rounded-sm hover:bg-red-200 slide-in-from-right"
+              className="p-2 rounded-sm hover:bg-gray-200 slide-in-from-right"
               onClick={handleClose}
-              color="error"
+              color="primary"
             >
               <CloseIcon /> Close
             </Button>
@@ -1738,19 +1738,18 @@ const Students = () => {
           }}
         >
           <DialogTitle sx={{ overflowX: "hidden", overflowY: "hidden" }}>
-            <label className="slide-in-down-visible">
+            <label>
               Filter Student Violations
             </label>
           </DialogTitle>
           <DialogContent sx={{ overflowX: "hidden", overflowY: "hidden" }}>
             <FormControl fullWidth margin="dense">
-              <label className="slide-in-visible mb-1">
+              <label className="mb-1">
                 Violation Category
               </label>
               <Select
-                className="slide-in-visible font-medium"
                 fullWidth
-                color="error"
+                color="primary"
                 value={searchFilter.category}
                 onChange={(e) =>
                   setSearchFilter({
@@ -1769,13 +1768,12 @@ const Students = () => {
               </Select>
             </FormControl>
             <FormControl fullWidth margin="dense">
-              <label className="slide-in-visible mb-1 font-medium">
+              <label className="mb-1 font-medium">
                 User ID
               </label>
               <TextField
-                className="slide-in-visible"
                 fullWidth
-                color="error"
+                color="primary"
                 value={searchFilter.userid}
                 onChange={(e) =>
                   setSearchFilter({
@@ -1789,15 +1787,15 @@ const Students = () => {
           </DialogContent>
           <DialogActions sx={{ overflowX: "hidden", overflowY: "hidden" }}>
             <Button
-              className="flex w-full sm:w-1/2 justify-center slide-in-visible"
-              color="error"
+              className="flex w-full sm:w-1/2 justify-center"
+              color="primary"
               onClick={handleSearch}
             >
               Search
             </Button>
             <Button
-              className="flex w-full sm:w-1/2 justify-center slide-in-from-right"
-              color="error"
+              className="flex w-full sm:w-1/2 justify-center"
+              color="primary"
               onClick={() => setSearchFilterModal(false)}
             >
               Close
@@ -1829,10 +1827,10 @@ const Students = () => {
             <div className="sm:absolute sm:top-5 sm:right-3 w-fit overflow-x-hidden flex">
               <Button
                 onClick={handleOpenQRScanner}
-                color="error"
+                color="primary"
                 className="slide-in-from-right"
               >
-                <QrCode2Icon color="error" fontSize="large" />
+                <QrCode2Icon color="primary" fontSize="large" />
                 QR Scanner
               </Button>
             </div>
@@ -1861,16 +1859,16 @@ const Students = () => {
                     {createStudent.violations.map((violation, index) => (
                       <li
                         key={index}
-                        className="my-2 rounded-sm flex justify-between text-black border-2 border-solid border-red-500"
+                        className="my-2 rounded-sm flex justify-between text-black border-2 border-solid border-black"
                       >
                         <label className="p-2">
                           {truncateText(violation.code, 50)}
                         </label>
                         <Button
                           onClick={() => handleDeleteViolation(index, "create")}
-                          className="hover:border-1 hover:border-solid hover:border-red-500 hover:border- hover:text-white rounded-none"
+                          className="hover:border-1 hover:border-solid hover:border-black hover:border- hover:text-white rounded-none"
                         >
-                          <DeleteOutlineIcon color="error" />
+                          <DeleteOutlineIcon color="primary" />
                         </Button>
                       </li>
                     ))}
@@ -1880,7 +1878,7 @@ const Students = () => {
                   <h3 className="mb-3 slide-in-down-visible">Add Violation</h3>
                   <div className="flex ">
                     <Select
-                      color="error"
+                      color="primary"
                       className="slide-in-visible w-3/4"
                       size="small"
                       value={selectedViolation.code}
@@ -1925,14 +1923,14 @@ const Students = () => {
                             right: 0,
                             padding: 0,
                           }}
-                          color="error"
+                          color="primary"
                         >
                           <Button
                             // fullWidth
                             variant="text"
                             className="bg-red-100 flex self-end "
                             onClick={handleCloseMenu}
-                            color="error"
+                            color="primary"
                           >
                             <CloseIcon />
                             <label htmlFor="">close</label>
@@ -1943,7 +1941,7 @@ const Students = () => {
                       {violationList.flatMap((group, groupIdx) => [
                         <ListSubheader
                           key={`category-${groupIdx}`}
-                          sx={{ color: "red", fontWeight: "bold" }}
+                          sx={{ color: "black", fontWeight: "bold" }}
                         >
                           {group.category.toUpperCase()}
                         </ListSubheader>,
@@ -1970,10 +1968,10 @@ const Students = () => {
                     </Select>
                     <Button
                       onClick={() => handleAddViolation("create")}
-                      color="error"
+                      color="primary"
                       className="w-1/4 slide-in-from-right"
                     >
-                      <AddIcon color="error" /> Add
+                      <AddIcon color="primary" /> Add
                     </Button>
                   </div>
                   <div className="flex flex-col mt-2">
@@ -1983,7 +1981,7 @@ const Students = () => {
                       id="outlined-basic"
                       label="Student Number"
                       variant="outlined"
-                      color="error"
+                      color="primary"
                       fullWidth
                       required={true}
                       value={createStudent.userid}
@@ -2000,7 +1998,7 @@ const Students = () => {
                       id="outlined-basic"
                       label="First Name"
                       variant="outlined"
-                      color="error"
+                      color="primary"
                       fullWidth
                       required={true}
                       value={createStudent.firstName}
@@ -2017,7 +2015,7 @@ const Students = () => {
                       id="outlined-basic"
                       label="Middle Name"
                       variant="outlined"
-                      color="error"
+                      color="primary"
                       fullWidth
                       required={true}
                       value={createStudent.middleName}
@@ -2034,7 +2032,7 @@ const Students = () => {
                       id="outlined-basic"
                       label="Last Name"
                       variant="outlined"
-                      color="error"
+                      color="primary"
                       fullWidth
                       required={true}
                       value={createStudent.lastName}
@@ -2051,7 +2049,7 @@ const Students = () => {
                       id="outlined-basic"
                       label="Email Address (School Email Preferred)"
                       variant="outlined"
-                      color="error"
+                      color="primary"
                       fullWidth
                       required={true}
                       value={createStudent.email}
@@ -2067,7 +2065,7 @@ const Students = () => {
                     <FormControl fullWidth>
                       <InputLabel
                         id="demo-simple-select-helper-label"
-                        color="error"
+                        color="primary"
                       >
                         Term
                       </InputLabel>
@@ -2075,7 +2073,7 @@ const Students = () => {
                         labelId="demo-simple-select-helper-label"
                         id="demo-simple-select-helper"
                         label="Term"
-                        color="error"
+                        color="primary"
                         margin="dense"
                         fullWidth
                         value={createStudent.term}
@@ -2100,7 +2098,7 @@ const Students = () => {
                     <FormControl fullWidth>
                       <InputLabel
                         id="demo-simple-select-helper-label"
-                        color="error"
+                        color="primary"
                       >
                         Department
                       </InputLabel>
@@ -2108,7 +2106,7 @@ const Students = () => {
                         labelId="demo-simple-select-helper-label"
                         id="demo-simple-select-helper"
                         label="Department"
-                        color="error"
+                        color="primary"
                         margin="dense"
                         fullWidth
                         value={createStudent.department}
@@ -2130,7 +2128,7 @@ const Students = () => {
                     <FormControl fullWidth>
                       <InputLabel
                         id="demo-simple-select-helper-label"
-                        color="error"
+                        color="primary"
                       >
                         Course
                       </InputLabel>
@@ -2139,7 +2137,7 @@ const Students = () => {
                         id="demo-simple-select-helper"
                         label="Course"
                         margin="dense"
-                        color="error"
+                        color="primary"
                         fullWidth
                         value={createStudent.course}
                         onChange={(e) => {
@@ -2163,7 +2161,7 @@ const Students = () => {
                     <FormControl fullWidth>
                       <InputLabel
                         id="demo-simple-select-helper-label"
-                        color="error"
+                        color="primary"
                       >
                         School Year
                       </InputLabel>
@@ -2172,7 +2170,7 @@ const Students = () => {
                         labelId="demo-simple-select-helper-label"
                         id="demo-simple-select-helper"
                         label="School Year"
-                        color="error"
+                        color="primary"
                         margin="dense"
                         fullWidth
                         value={createStudent.year}
@@ -2213,23 +2211,23 @@ const Students = () => {
               <Button
                 className="text-center slide-in-from-bottom"
                 onClick={closeQrScanner}
-                color="error"
+                color="primary"
               >
                 Close Scanner
               </Button>
             ) : (
               <>
                 <Button
-                  className="bg-red-500 slide-in-from-bottom"
+                  className="bg-black slide-in-from-bottom"
                   onClick={handeSaveStudent}
                   disabled={isLoading}
-                  color="error"
+                  color="primary"
                 >
                   {isLoading ? "Saving Student Violation" : "Save violation"}
                 </Button>
                 <Button
                   onClick={handleClose}
-                  color="error"
+                  color="primary"
                   className="slide-in-from-bottom"
                 >
                   Cancel
@@ -2278,16 +2276,16 @@ const Students = () => {
                     {targetStudent.violations.map((violation, index) => (
                       <li
                         key={targetStudent.id + index}
-                        className="update-modal my-2 rounded-sm flex justify-between text-black border-2 border-solid border-red-500 "
+                        className="update-modal my-2 rounded-sm flex justify-between text-black border-2 border-solid border-black "
                       >
                         <label className="p-2">
                           {truncateText(violation.code, 50)}
                         </label>
                         <Button
                           onClick={() => handleDeleteViolation(index, "update")}
-                          className="hover:border-1 hover:border-solid hover:border-red-500 hover:border- hover:text-white rounded-none"
+                          className="hover:border-1 hover:border-solid hover:border-black hover:border- hover:text-white rounded-none"
                         >
-                          <DeleteOutlineIcon color="error" />
+                          <DeleteOutlineIcon color="primary" />
                         </Button>
                       </li>
                     ))}
@@ -2345,9 +2343,9 @@ const Students = () => {
                           <Button
                             // fullWidth
                             variant="text"
-                            className="bg-red-100 flex self-end "
+                            className="bg-gray-100 flex self-end "
                             onClick={handleCloseMenu}
-                            color="error"
+                            color="primary"
                           >
                             <CloseIcon />
                             <label htmlFor="">close</label>
@@ -2358,7 +2356,7 @@ const Students = () => {
                       {violationList.flatMap((group, groupIdx) => [
                         <ListSubheader
                           key={`category-${groupIdx}`}
-                          sx={{ color: "red", fontWeight: "bold" }}
+                          sx={{ color: "black", fontWeight: "bold" }}
                         >
                           {group.category.toUpperCase()}
                         </ListSubheader>,
@@ -2385,10 +2383,10 @@ const Students = () => {
                     </Select>
                     <Button
                       onClick={() => handleAddViolation("update")}
-                      color="error"
+                      color="primary"
                       className="slide-in-from-right w-1/4"
                     >
-                      <AddIcon color="error" /> Add
+                      <AddIcon color="primary" /> Add
                     </Button>
                   </div>
 
@@ -2494,13 +2492,13 @@ const Students = () => {
               className="slide-in-from-bottom"
               onClick={handleUpdateViolation}
               disabled={isLoading}
-              color="error"
+              color="primary"
             >
               {isLoading ? "Updating Student" : "Update Student"}
             </Button>
             <Button
               onClick={handleClose}
-              color="error"
+              color="primary"
               className="slide-in-from-bottom"
             >
               Cancel
@@ -2537,7 +2535,7 @@ const Students = () => {
                 {targetStudent.violations.map((violation, index) => (
                   <li
                     key={index}
-                    className="border-2 border-solid border-red-500 my-2 rounded-sm flex justify-between text-black"
+                    className="border-2 border-solid border-black my-2 rounded-sm flex justify-between text-black"
                   >
                     <label className="p-2">{violation.name} </label>
                   </li>
@@ -2547,13 +2545,13 @@ const Students = () => {
           </DialogContent>
           <DialogActions>
             <Button
-              className="bg-red-500"
+              className="bg-black"
               onClick={handleDelete}
               disabled={isLoading}
             >
               {isLoading ? "Deleting student..." : "Delete student"}
             </Button>
-            <Button onClick={handleClose} color="error">
+            <Button onClick={handleClose} color="primary">
               Cancel
             </Button>
           </DialogActions>

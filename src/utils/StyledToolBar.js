@@ -1,5 +1,4 @@
 import { alpha, styled, Toolbar } from "@mui/material";
-import { red } from "@mui/material/colors";
 
 export const StyledToolbar = styled(Toolbar)(({ theme }) => ({
   display: "flex",
@@ -25,7 +24,18 @@ export const StyledToolbarWithRed = styled(Toolbar)(({ theme }) => ({
   backdropFilter: "blur(24px)",
   border: "1px solid",
   borderColor: (theme.vars || theme).palette.divider,
-  backgroundColor: "red",
-  boxShadow: `0px 4px 6px ${alpha(red[500], 0.9)}`,
+  backgroundColor: "black",
+  boxShadow: `0px 4px 6px rgba(0, 0, 0, 0.9)`, // Extra
+  padding: "8px 12px",
+}));
+
+export const NavigationToolbar = styled(Toolbar)(() => ({
+  display: "flex",
+  alignItems: "center",
+  justifyContent: "space-between",
+  flexShrink: 0,
+  width: "100%",
+  backdropFilter: "blur(24px)",
+  backgroundColor: "black",
   padding: "8px 12px",
 }));

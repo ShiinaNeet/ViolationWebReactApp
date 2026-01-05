@@ -176,7 +176,7 @@ export default function AlertMessageStudent() {
               autoFocus
               id="standard-multiline-static"
               label="Subject"
-              color="error"
+              color="primary"
               multiline
               rows={2}
               variant="outlined"
@@ -197,7 +197,7 @@ export default function AlertMessageStudent() {
               autoFocus
               id="standard-multiline-static"
               label="User Type"
-              color="error"
+              color="primary"
               multiline
               rows={2}
               variant="outlined"
@@ -218,7 +218,7 @@ export default function AlertMessageStudent() {
               autoFocus
               id="standard-multiline-static"
               label="Message Body"
-              color="error"
+              color="primary"
               multiline
               rows={6}
               variant="outlined"
@@ -247,7 +247,7 @@ export default function AlertMessageStudent() {
                   value={recipient}
                   size="small"
                   onChange={(e) => handleRecipientChange(index, e.target.value)}
-                  color="error"
+                  color="primary"
                 />
               ))}
             </motion.div>
@@ -261,7 +261,7 @@ export default function AlertMessageStudent() {
               <Button
                 variant="outlined"
                 onClick={addRecipientField}
-                color="error"
+                color="primary"
                 className="w-full h-full"
               >
                 Add More User
@@ -288,7 +288,7 @@ export default function AlertMessageStudent() {
                 <div key={index} className="flex w-full h-fit whitespace-pre">
                   <label className="py-2">{file.name + "  "}</label>
                   <label
-                    className="py-2 px-2 rounded-sm text-blue-500 hover:bg-blue-100"
+                    className="py-2 px-2 rounded-sm text-black hover:bg-gray-100"
                     onClick={() => onRemoveItem(index)}
                   >
                     Remove
@@ -306,7 +306,7 @@ export default function AlertMessageStudent() {
           onClick={sendMessage}
           size="medium"
           disabled={isLoading}
-          color="error"
+          color="primary"
         >
           {isLoading ? "Sending..." : "Send"}
         </Button>

@@ -144,7 +144,7 @@ const CallSlipForm = ({ studentDataToPass, alertMessageFunction }) => {
                   value={formData[key]}
                   onChange={handleChange}
                   required
-                  color="error"
+                  color="primary"
                 />
               </motion.div>
             )
@@ -158,7 +158,7 @@ const CallSlipForm = ({ studentDataToPass, alertMessageFunction }) => {
           }}
         >
           <FormControl fullWidth required>
-            <InputLabel id="demo-simple-select-helper-label" color="error">
+            <InputLabel id="demo-simple-select-helper-label" color="primary">
               Coordinator Discipline Head
             </InputLabel>
             <Select
@@ -170,7 +170,7 @@ const CallSlipForm = ({ studentDataToPass, alertMessageFunction }) => {
               onChange={handleChange}
               inputProps={{ "aria-label": "Without label" }}
               required
-              color="error"
+              color="primary"
             >
               {coordinatorUsers
                 .filter((user) => user.type === "OSD_COORDINATOR")
@@ -193,7 +193,7 @@ const CallSlipForm = ({ studentDataToPass, alertMessageFunction }) => {
           <Button
             type="submit"
             variant="outlined"
-            color="error"
+            color="primary"
             fullWidth
             disabled={isLoading}
           >

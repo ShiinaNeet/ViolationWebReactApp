@@ -12,21 +12,9 @@ import {
   MenuItem,
   Divider,
   Typography,
-  Toolbar,
-  styled,
 } from "@mui/material";
 import { useAuth } from "../../auth/AuthProvider";
-
-const StyledToolbar = styled(Toolbar)(() => ({
-  display: "flex",
-  alignItems: "center",
-  justifyContent: "space-between",
-  flexShrink: 0,
-  width: "100%",
-  backdropFilter: "blur(24px)",
-  backgroundColor: "red",
-  padding: "8px 12px",
-}));
+import { NavigationToolbar as StyledToolbar } from "../../utils/StyledToolBar";
 
 const Department_Head_NavigationBar = () => {
   const { logout, isAuthenticated } = useAuth();
@@ -56,7 +44,7 @@ const Department_Head_NavigationBar = () => {
         left: 0,
         right: 0,
         width: "100%",
-        bgcolor: "red",
+        bgcolor: "black",
         color: "black",
         boxShadow: 3,
       }}
@@ -128,7 +116,7 @@ const Department_Head_NavigationBar = () => {
               variant="contained"
               sx={{
                 backgroundColor: "white",
-                color: "red",
+                color: "black",
                 "&:hover": {
                   backgroundColor: "rgba(255, 255, 255, 0.8)",
                 },
@@ -173,7 +161,7 @@ const Department_Head_NavigationBar = () => {
               <Divider sx={{ my: 2 }} />
 
               {isAuthenticated && (
-                <MenuItem onClick={logout} sx={{ color: "red" }}>
+                <MenuItem onClick={logout} sx={{ color: "black" }}>
                   Logout
                 </MenuItem>
               )}

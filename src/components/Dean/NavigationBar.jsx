@@ -9,24 +9,12 @@ import {
   Box,
   Button,
   IconButton,
-  styled,
-  Toolbar,
   Drawer,
   MenuItem,
   Divider,
   Typography,
 } from "@mui/material";
-
-const StyledToolbar = styled(Toolbar)(() => ({
-  display: "flex",
-  alignItems: "center",
-  justifyContent: "space-between",
-  flexShrink: 0,
-  width: "100%",
-  backdropFilter: "blur(24px)",
-  backgroundColor: "red",
-  padding: "8px 12px",
-}));
+import { NavigationToolbar as StyledToolbar } from "../../utils/StyledToolBar";
 
 const NavigationBar = () => {
   const { logout, isAuthenticated } = useAuth();
@@ -57,7 +45,7 @@ const NavigationBar = () => {
         left: 0,
         right: 0,
         width: "100%",
-        bgcolor: "red",
+        bgcolor: "black",
         color: "black",
         boxShadow: 3,
       }}
@@ -129,7 +117,7 @@ const NavigationBar = () => {
               variant="contained"
               sx={{
                 backgroundColor: "white",
-                color: "red",
+                color: "black",
                 "&:hover": {
                   backgroundColor: "rgba(255, 255, 255, 0.8)",
                 },
@@ -174,7 +162,7 @@ const NavigationBar = () => {
               <Divider sx={{ my: 2 }} />
 
               {isAuthenticated && (
-                <MenuItem onClick={logout} sx={{ color: "red" }}>
+                <MenuItem onClick={logout} sx={{ color: "black" }}>
                   Logout
                 </MenuItem>
               )}

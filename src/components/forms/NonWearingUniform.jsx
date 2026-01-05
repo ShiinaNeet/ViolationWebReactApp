@@ -153,7 +153,7 @@ const NonWearingUniformForm = ({
                   value={formData[key]}
                   onChange={handleChange}
                   required
-                  color="error"
+                  color="primary"
                 />
               </motion.div>
             )
@@ -168,7 +168,7 @@ const NonWearingUniformForm = ({
                     checked={formData.check[key]}
                     onChange={handleCheckboxChange}
                     name={key}
-                    color="error"
+                    color="primary"
                   />
                 }
                 label={key.replace(/_/g, " ").toUpperCase()}
@@ -186,7 +186,7 @@ const NonWearingUniformForm = ({
                     check: { ...prev.check, [key]: e.target.value },
                   }))
                 }
-                color="error"
+                color="primary"
               />
             )
           )}
@@ -207,7 +207,7 @@ const NonWearingUniformForm = ({
                 value={formData[field].name}
                 onChange={(e) => handleNestedChange(e, field)}
                 required
-                color="error"
+                color="primary"
               />
             </motion.div>
 
@@ -226,7 +226,7 @@ const NonWearingUniformForm = ({
                 value={formData[field].date}
                 onChange={(e) => handleNestedChange(e, field)}
                 required
-                color="error"
+                color="primary"
               />
             </motion.div>
           </div>
@@ -240,7 +240,7 @@ const NonWearingUniformForm = ({
           <Button
             type="submit"
             variant="outlined"
-            color="error"
+            color="primary"
             fullWidth
             disabled={isLoading}
           >

@@ -176,7 +176,7 @@ const NoticeCaseDismissal = ({ studentDataToPass, alertMessageFunction }) => {
                         name="is_without_merit"
                         checked={formData.reason_for_dismissal.is_without_merit}
                         onChange={handleChange}
-                        color="error"
+                        color="primary"
                       />
                     }
                     label="Without Merit"
@@ -216,7 +216,7 @@ const NoticeCaseDismissal = ({ studentDataToPass, alertMessageFunction }) => {
                   value={formData[key]}
                   onChange={handleChange}
                   variant="outlined"
-                  color="error"
+                  color="primary"
                 />
               </motion.div>
             );
@@ -256,7 +256,7 @@ const NoticeCaseDismissal = ({ studentDataToPass, alertMessageFunction }) => {
           <Button
             type="submit"
             variant="outlined"
-            color="error"
+            color="primary"
             className="w-full"
             disabled={isLoading}
           >

@@ -54,7 +54,7 @@ function DocumentList() {
     <>
       <Typography
         variant="h5"
-        color="error"
+        color="primary"
         className="text-left font-bold text-gray-800 mb-10 py-5"
       >
         Request File
@@ -83,7 +83,7 @@ function DocumentList() {
                   >
                     <Button
                       variant="contained"
-                      color="error"
+                      color="primary"
                       startIcon={<Download />}
                     >
                       Download

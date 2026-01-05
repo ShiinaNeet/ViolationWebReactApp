@@ -23,7 +23,7 @@ const StyledToolbar = styled(Toolbar)(() => ({
   flexShrink: 0,
   width: "100%",
   backdropFilter: "blur(24px)",
-  backgroundColor: "red",
+  backgroundColor: "black",
   padding: "8px 12px",
 }));
 
@@ -38,7 +38,7 @@ const Navigationbar = () => {
     <AppBar
       position="fixed"
       style={{
-        backgroundColor: "red",
+        backgroundColor: "black",
         top: 0,
         left: 0,
         right: 0,
@@ -71,7 +71,7 @@ const Navigationbar = () => {
 
           <Box sx={{ display: { xs: "none", md: "flex" } }}>
             {/* <Link
-                className="p-5 hover:bg-blue-700 hover:rounded-md hover:cursor-pointer"
+                className="p-5 hover:bg-gray-700 hover:rounded-md hover:cursor-pointer"
                 to="/Students"
               >
                 Students
@@ -87,7 +87,7 @@ const Navigationbar = () => {
         >
           <Button variant="text" color="white" size="medium">
             <Link
-              className=" hover:bg-red-100 hover:text-red-600 hover:rounded-md hover:cursor-pointer p-2"
+              className=" hover:bg-gray-100 hover:text-black hover:rounded-md hover:cursor-pointer p-2"
               to="/students"
             >
               Home
@@ -95,7 +95,7 @@ const Navigationbar = () => {
           </Button>
           <Button variant="text" color="white" size="small">
             <Link
-              className=" hover:bg-red-100 hover:text-red-600 hover:rounded-md hover:cursor-pointer p-2"
+              className=" hover:bg-gray-100 hover:text-black hover:rounded-md hover:cursor-pointer p-2"
               to="/Violations"
             >
               Violation
@@ -103,7 +103,7 @@ const Navigationbar = () => {
           </Button>
           <Button variant="text" color="white" size="small">
             <Link
-              className=" hover:bg-red-100 hover:text-red-600 hover:rounded-md hover:cursor-pointer p-2"
+              className=" hover:bg-gray-100 hover:text-black hover:rounded-md hover:cursor-pointer p-2"
               to="/Users"
             >
               Users
@@ -111,7 +111,7 @@ const Navigationbar = () => {
           </Button>
           <Button variant="text" color="white" size="small">
             <Link
-              className=" hover:bg-red-100 hover:text-red-600 hover:rounded-md hover:cursor-pointer p-2"
+              className=" hover:bg-gray-100 hover:text-black hover:rounded-md hover:cursor-pointer p-2"
               to="/Forms"
             >
               Forms
@@ -119,7 +119,7 @@ const Navigationbar = () => {
           </Button>
           <Button variant="text" color="white" size="small">
             <Link
-              className=" hover:bg-red-100 hover:text-red-600 hover:rounded-md hover:cursor-pointer p-2"
+              className=" hover:bg-gray-100 hover:text-black hover:rounded-md hover:cursor-pointer p-2"
               to="/Reports"
             >
               Reports
@@ -127,7 +127,7 @@ const Navigationbar = () => {
           </Button>
           <Button variant="text" color="white" size="small">
             <Link
-              className=" hover:bg-red-100 hover:text-red-600 hover:rounded-md hover:cursor-pointer p-2"
+              className=" hover:bg-gray-100 hover:text-black hover:rounded-md hover:cursor-pointer p-2"
               to="/Chart"
             >
               Charts
@@ -136,7 +136,7 @@ const Navigationbar = () => {
           <Button variant="text" color="white" size="small">
             {" "}
             <Link
-              className=" hover:bg-red-100 hover:text-red-600 hover:rounded-md hover:cursor-pointer p-2"
+              className=" hover:bg-gray-100 hover:text-black hover:rounded-md hover:cursor-pointer p-2"
               to="/Notification"
             >
               Notification
@@ -146,7 +146,7 @@ const Navigationbar = () => {
             <Button variant="text" color="white" size="small">
               {" "}
               <Link
-                className=" hover:bg-red-100 hover:text-red-600 hover:rounded-md hover:cursor-pointer p-2"
+                className=" hover:bg-gray-100 hover:text-black hover:rounded-md hover:cursor-pointer p-2"
                 onClick={logout}
               >
                 Logout

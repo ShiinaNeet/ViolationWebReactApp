@@ -98,14 +98,7 @@ export default function UserManagement() {
   const [rowsPerPage, setRowsPerPage] = React.useState(6);
   const [rows, setRows] = React.useState([]);
   const [departmentRows, setDepartmentRows] = React.useState([]);
-  const [user, setUser] = React.useState({
-    first_name: "",
-    last_name: "",
-    email: "",
-    type: "",
-    assigned_department: "",
-    password: "",
-  });
+
   const [alertMessage, setAlertMessage] = React.useState({
     open: false,
     title: "",
@@ -163,84 +156,10 @@ export default function UserManagement() {
       password: "",
       type: "",
     });
-    setUser({
-      first_name: "",
-      last_name: "",
-      email: "",
-      type: "",
-      password: "",
-      assigned_department: "",
-    });
+
   };
 
-  const handleSave = async () => {
-    setIsLoading(true);
-    if (
-      user.first_name === "" ||
-      user.last_name === "" ||
-      user.email === "" ||
-      user.type === "" ||
-      user.password === "" ||
-      user.username === ""
-    ) {
-      setAlertMessage({ open: true, title: "Error", variant: "error" });
-      setErrorMessages(["Please fill in all fields"]);
-      setIsLoading(false);
-      return;
-    }
-    axios
-      .post(
-        "/user/create/admin",
-        {
-          first_name: user.first_name,
-          last_name: user.last_name,
-          email: user.email,
-          type: user.type,
-          password: user.password,
-          username: user.username,
-        },
-        {
-          headers: {
-            "Content-Type": "application/json",
-          },
-        }
-      )
-      .then((response) => {
-        setErrorMessages([]);
-        if (response.data.status === "success") {
-          console.log("Saved");
-          setAlertMessage({
-            open: true,
-            title: "Success",
-            message: "User has been created successfully",
-            variant: "success",
-          });
-          fetchData();
-          setIsLoading(false);
-          handleClose();
-        } else {
-          console.log("Failed to save");
-          setAlertMessage({
-            open: true,
-            title: "Failed",
-            message: response.data.message,
-            variant: "info",
-          });
-        }
-        setIsLoading(false);
-      })
-      .catch((e) => {
-        console.log("Error Occurred: ", e);
-        setErrorMessages([]);
-        setIsLoading(false);
-        setAlertMessage({
-          open: true,
-          title: "Error Occurred!",
-          message: "Please try again later.",
-          variant: "error",
-        });
-      });
-  };
+
   const handleUpdate = async () => {
     setIsLoading(true);
     if (currentRow.type === "" || currentRow.assigned_department === "") {
@@ -310,48 +229,7 @@ export default function UserManagement() {
       });
     setIsLoading(false);
   };
-  const handleDelete = async (_id, name) => {
-    setIsLoading(false);
-    if (_id === "") {
-      setAlertMessage({ open: true, title: "Error", variant: "error" });
-      setErrorMessages(["User ID is missing. Please try again!"]);
-      return;
-    }
-    axios
-      .delete(`/admin/user/delete/${_id}`, {
-        headers: {
-          "Content-Type": "application/json",
-        },
-      })
-      .then((response) => {
-        setErrorMessages([]);
-        if (response.data.status === "success") {
-          setAlertMessage({
-            open: true,
-            title: "Success",
-            message: "User has been Deleted successfully",
-            variant: "warning",
-          });
-          console.log("Deleted");
-          fetchData(page * rowsPerPage, rowsPerPage);
-          handleClose();
-        } else {
-          console.log("Failed to Delete. Please Try again later");
-        }
-        setIsLoading(false);
-      })
-      .catch((e) => {
-        console.log("Error Occurred: ", e);
-        setErrorMessages([]);
-        setAlertMessage({
-          open: true,
-          title: "Error Occurred!",
-          message: "Please try again later.",
-          variant: "error",
-        });
-        setIsLoading(false);
-      });
-  };
+
 
   React.useEffect(() => {
     fetchData(page * rowsPerPage, rowsPerPage);
@@ -439,7 +317,7 @@ export default function UserManagement() {
         className="flex justify-between gap-x-2  my-2 md:m-0 bg-white rounded-sm "
         style={{ fontSize: "16px" }}
       >
-        <h1 className="py-3" style={{ fontSize: "16px", color: "red" }}>
+        <h1 className="py-3" style={{ fontSize: "16px", color: "black" }}>
           Program Head
         </h1>
       </div>
@@ -448,11 +326,11 @@ export default function UserManagement() {
           <Table sx={{ minWidth: 500, width: "100%" }}>
             <TableHead>
               <TableRow>
-                <th className="py-5 px-4 font-bold ">Name</th>
-                <th className="py-5 px-4 font-bold">Email address</th>
-                <th className="py-5 px-4 font-bold ">Department</th>
-                <th className="py-5 px-4 font-bold text-center">Type</th>
-                <th className="py-5 px-4 font-bold text-center">Actions</th>
+                <TableCell align="center" sx={{ fontWeight: "bold" }}>Name</TableCell>
+                <TableCell align="center" sx={{ fontWeight: "bold" }}>Email address</TableCell>
+                <TableCell align="center" sx={{ fontWeight: "bold" }}>Department</TableCell>
+                <TableCell align="center" sx={{ fontWeight: "bold" }}>Type</TableCell>
+                <TableCell align="center" sx={{ fontWeight: "bold" }}>Actions</TableCell>
               </TableRow>
             </TableHead>
             <TableBody>
@@ -464,15 +342,15 @@ export default function UserManagement() {
                 : rows
               ).map((row, index) => (
                 <TableRow key={index}>
-                  <TableCell component="th" scope="row">
+                  <TableCell align="center" component="th" scope="row">
                     {row.first_name && row.last_name
                       ? row.first_name + " " + row.last_name
                       : "No name attached"}
                   </TableCell>
-                  <TableCell>
+                  <TableCell align="center">
                     {row.email ? row.email : "No email address attached"}
                   </TableCell>
-                  <TableCell>
+                  <TableCell align="center">
                     {row.assigned_department
                       ? getDepartmentValue(row.assigned_department)
                       : "No department attached"}
@@ -480,7 +358,7 @@ export default function UserManagement() {
                   <TableCell align="center">
                     <Button
                       className="p-2 rounded-sm text-center error"
-                      color="error"
+                      color="primary"
                     >
                       {row.type ? row.type : "No type attached"}{" "}
                     </Button>
@@ -496,9 +374,9 @@ export default function UserManagement() {
                       <Button
                         className=" rounded-sm text-white"
                         onClick={() => handleOpen(row)}
-                        color="error"
+                        color="primary"
                       >
-                        <EditIcon color="error" />
+                        <EditIcon color="primary" />
                       </Button>
                     </Tooltip>
                   </TableCell>
@@ -532,12 +410,12 @@ export default function UserManagement() {
         </DialogTitle>
         <DialogContent>
           {/* <FormControl fullWidth margin="dense" readOnly>
-                <InputLabel id="demo-simple-select-label" color="error">
+                <InputLabel id="demo-simple-select-label" color="primary">
                   Category
                 </InputLabel>
                 <Select
                   readOnly
-                  color="error"
+                  color="primary"
                   labelId="demo-simple-select-label"
                   id="demo-simple-select"
                   value={currentRow.type}
@@ -553,11 +431,11 @@ export default function UserManagement() {
                 </Select>
               </FormControl> */}
           <FormControl fullWidth margin="dense">
-            <InputLabel id="demo-simple-select-label" color="error">
+            <InputLabel id="demo-simple-select-label" color="primary">
               Department
             </InputLabel>
             <Select
-              color="error"
+              color="primary"
               labelId="demo-simple-select-label"
               id="demo-simple-select"
               value={currentRow.assigned_department}
@@ -583,10 +461,10 @@ export default function UserManagement() {
           </FormControl>
         </DialogContent>
         <DialogActions>
-          <Button onClick={handleUpdate} color="error" disabled={isLoading}>
+          <Button onClick={handleUpdate} color="primary" disabled={isLoading}>
             {isLoading ? "Saving...." : "Save"}
           </Button>
-          <Button onClick={handleClose} color="error">
+          <Button onClick={handleClose} color="primary">
             Cancel
           </Button>
         </DialogActions>

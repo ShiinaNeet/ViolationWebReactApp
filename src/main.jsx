@@ -159,20 +159,21 @@ const router = createBrowserRouter([
     element: <Unauthorized />,
   },
 ]);
-createTheme({
+const theme = createTheme({
   palette: {
     primary: {
-      main: "#ff5722",
+      main: "#000000",
     },
     secondary: {
-      main: "#ff5722",
+      main: "#000000",
     },
   },
 });
+
 createRoot(document.getElementById("root")).render(
   <StrictMode>
     <AuthProvider>
-      <ThemeProvider theme={createTheme()}>
+      <ThemeProvider theme={theme}>
         <RouterProvider router={router} />
       </ThemeProvider>
     </AuthProvider>

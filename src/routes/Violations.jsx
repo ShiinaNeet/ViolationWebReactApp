@@ -127,7 +127,7 @@ export default function Violations() {
         style={{ fontSize: "16px" }}
       >
         <h1
-          className="text-red-600 flex items-center"
+          className="text-black flex items-center"
           style={{ fontSize: "16px" }}
         >
           Violation List
@@ -196,7 +196,7 @@ export default function Violations() {
       <>
         <TextField
           autoFocus
-          color="error"
+          color="primary"
           margin="dense"
           label="Category"
           type="text"
@@ -217,7 +217,7 @@ export default function Violations() {
         />
         <TextField
           autoFocus
-          color="error"
+          color="primary"
           margin="dense"
           label="Section"
           type="text"
@@ -249,7 +249,7 @@ export default function Violations() {
                   <Chip
                     label={offense_code}
                     variant="outlined"
-                    color="error"
+                    color="primary"
                     key={offense_code}
                     margin="dense"
                     size="medium"
@@ -267,7 +267,7 @@ export default function Violations() {
               <Chip
                 label={"No Data"}
                 variant="outlined"
-                color="error"
+                color="primary"
                 margin="dense"
                 size="medium"
                 sx={{
@@ -404,7 +404,7 @@ export default function Violations() {
                               <Button
                                 variant="text"
                                 color={
-                                  row.category === "major" ? "primary" : "error"
+                                  row.category === "major" ? "primary" : "primary"
                                 }
                                 sx={{ width: "50%" }}
                                 size="small"
@@ -421,10 +421,10 @@ export default function Violations() {
                         >
                           <Tooltip title="Edit">
                             <Button
-                              className="rounded-sm text-white hover:bg-red-100 hover:text-blue"
+                              className="rounded-sm text-white hover:bg-gray-100 hover:text-black"
                               onClick={() => handleOpen(row)}
                             >
-                              <RemoveRedEye color="error" />
+                              <RemoveRedEye color="primary" />
                             </Button>
                           </Tooltip>
                         </TableCell>
@@ -473,7 +473,7 @@ export default function Violations() {
             <GetDialogContent />
           </DialogContent>
           <DialogActions>
-            <Button onClick={() => setOpen(false)} color="error">
+            <Button onClick={() => setOpen(false)} color="primary">
               Close
             </Button>
           </DialogActions>

@@ -120,7 +120,7 @@ function CreateNotificationModal({ closeModal, sendAlert }) {
         margin="dense"
         id="standard-multiline-static"
         label="Subject"
-        color="error"
+        color="primary"
         multiline
         rows={2}
         fullWidth
@@ -136,7 +136,7 @@ function CreateNotificationModal({ closeModal, sendAlert }) {
         margin="dense"
         id="standard-multiline-static"
         label="Message"
-        color="error"
+        color="primary"
         multiline
         rows={6}
         fullWidth
@@ -152,7 +152,7 @@ function CreateNotificationModal({ closeModal, sendAlert }) {
         margin="dense"
         id="standard-multiline-static"
         label="Category"
-        color="error"
+        color="primary"
         fullWidth
         required={true}
         error={Notification.error}
@@ -166,7 +166,7 @@ function CreateNotificationModal({ closeModal, sendAlert }) {
         margin="dense"
         label="Send Notification At"
         type="datetime-local"
-        color="error"
+        color="primary"
         fullWidth
         required={true}
         error={Notification.error}
@@ -333,10 +333,10 @@ function CreateNotificationModal({ closeModal, sendAlert }) {
       </div>
 
       <DialogActions sx={{ padding: "0", marginY: "3px" }}>
-        <Button onClick={sendNotification} color="error">
+        <Button onClick={sendNotification} color="primary">
           Send Notification
         </Button>
-        <Button onClick={closeModal} color="error">
+        <Button onClick={closeModal} color="primary">
           Cancel
         </Button>
       </DialogActions>

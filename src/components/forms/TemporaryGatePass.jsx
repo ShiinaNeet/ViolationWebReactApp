@@ -127,7 +127,7 @@ const TemporaryGatePass = ({
               >
                 <TextField
                   fullWidth
-                  color="error"
+                  color="primary"
                   label={key
                     .replace(/_/g, " ")
                     .replace(/\b\w/g, (c) => c.toUpperCase())}
@@ -157,7 +157,7 @@ const TemporaryGatePass = ({
         >
           <TextField
             fullWidth
-            color="error"
+            color="primary"
             label="Issued By (Name)"
             name="issued_by_name"
             value={formData.issued_by.name}
@@ -181,7 +181,7 @@ const TemporaryGatePass = ({
         >
           <TextField
             fullWidth
-            color="error"
+            color="primary"
             label="Issued By (Date)"
             name="issued_by_date"
             type="datetime-local"
@@ -204,11 +204,11 @@ const TemporaryGatePass = ({
           }}
         >
           <FormControl fullWidth required>
-            <InputLabel id="demo-simple-select-helper-label" color="error">
+            <InputLabel id="demo-simple-select-helper-label" color="primary">
               Program
             </InputLabel>
             <Select
-              color="error"
+              color="primary"
               labelId="demo-simple-select-helper-label"
               label="Program"
               id="demo-simple-select-helper"
@@ -241,7 +241,7 @@ const TemporaryGatePass = ({
           <Button
             type="submit"
             variant="outlined"
-            color="error"
+            color="primary"
             fullWidth
             disabled={isLoading}
           >

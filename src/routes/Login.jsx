@@ -137,7 +137,6 @@ const Login = () => {
 
       {/* Right side: Form */}
       <div className="w-full md:w-1/2 lg:w-1/3 flex flex-col items-center justify-center bg-white p-6 md:p-12">
-        <h1>hello</h1>
         <AnimatePresence mode="wait">
           <motion.div
             key={activeForm}
@@ -154,7 +153,7 @@ const Login = () => {
                 <Button
                   fullWidth
                   variant="outlined"
-                  color="error"
+                  color="primary"
                   onClick={() => handleSwitchForm("login")}
                   className="mt-4"
                 >
@@ -186,7 +185,7 @@ const Login = () => {
                     fullWidth
                     label="Username"
                     variant="outlined"
-                    color="error"
+                    color="primary"
                     onChange={(event) =>
                       setAccount({ ...account, name: event.target.value })
                     }
@@ -199,7 +198,7 @@ const Login = () => {
                     label="Password"
                     type="password"
                     variant="outlined"
-                    color="error"
+                    color="primary"
                     onChange={(event) =>
                       setAccount({ ...account, password: event.target.value })
                     }
@@ -211,7 +210,7 @@ const Login = () => {
                     fullWidth
                     type="submit"
                     variant="contained"
-                    color="error"
+                    color="primary"
                     size="large"
                     disabled={isLoading}
                     sx={{
@@ -234,7 +233,7 @@ const Login = () => {
                         cursor: "pointer",
                         "&:hover": {
                           textDecoration: "underline",
-                          color: "error.main",
+                          color: "primary.main",
                         },
                       }}
                     >

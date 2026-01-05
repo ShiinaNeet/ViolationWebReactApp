@@ -68,7 +68,7 @@ const BarChartComponent = memo(() => {
         setAuthError("");
         resetTimer(); // Restart the timer after successful auth
       }
-    } catch (error) {
+    } catch {
       setAuthError("Invalid credentials. Please try again.");
     }
   }, [resetTimer, credentials.login, credentials.password]);
@@ -94,7 +94,7 @@ const BarChartComponent = memo(() => {
     ];
 
     // Add event listeners
-    events.forEach((event) => {
+    events.forEach(() => {
       // document.addEventListener(event, handleActivity, true);
     });
 
@@ -132,15 +132,23 @@ const BarChartComponent = memo(() => {
       console.log("Response: ", response);
       if (response.status === 200) {
         console.log("Data fetched successfully");
-        const departmentData = response.data.map((department) => ({
-          departmentViolationCount: department.departmentViolationCount,
-          name: department.department_name,
-          programs: department.programs.map((program) => ({
-            name:
-              program.program_name || "No Violations Recorded for this Program",
-            value: Number(program.programViolationCount) || 0,
-          })),
-        }));
+        const departmentData = response.data
+          .filter((department) => (department.departmentViolationCount || 0) > 0)
+          .map((department) => ({
+            departmentViolationCount: department.departmentViolationCount,
+            name: department.department_name,
+            programs: department.programs
+              .filter(
+                (program) => (Number(program.programViolationCount) || 0) > 0
+              )
+              .map((program) => ({
+                name:
+                  program.program_name ||
+                  "No Violations Recorded for this Program",
+                value: Number(program.programViolationCount) || 0,
+              })),
+          }))
+          .filter((dept) => dept.programs.length > 0);
         setDepartments(departmentData);
       } else {
         console.log("Failed to fetch data");
@@ -179,7 +187,7 @@ const BarChartComponent = memo(() => {
         </label>
         {department.programs.length > 0 ? (
           <BarChart
-            colors={["#FF0000"]}
+            colors={["#000000"]}
             height={300}
             xAxis={[
               {
@@ -229,7 +237,7 @@ const BarChartComponent = memo(() => {
           sx={{
             textAlign: "center",
             fontWeight: "bold",
-            color: "#d32f2f",
+            color: "black",
             fontSize: "16px",
           }}
         >
@@ -257,7 +265,7 @@ const BarChartComponent = memo(() => {
             margin="normal"
             value={credentials.login}
             onChange={handleLoginChange}
-            color="error"
+            color="primary"
             InputProps={{
               style: { fontSize: "16px" },
             }}
@@ -275,7 +283,7 @@ const BarChartComponent = memo(() => {
             value={credentials.password}
             onChange={handlePasswordChange}
             onKeyPress={() => {}}
-            color="error"
+            color="primary"
             InputProps={{
               style: { fontSize: "16px" },
             }}
@@ -288,7 +296,7 @@ const BarChartComponent = memo(() => {
           <Button
             onClick={handleAuth}
             variant="contained"
-            color="error"
+            color="primary"
             size="large"
             disabled={!credentials.login || !credentials.password}
             sx={{
@@ -355,4 +363,5 @@ const BarChartComponent = memo(() => {
   );
 });
 
+BarChartComponent.displayName = "BarChartComponent";
 export default BarChartComponent;

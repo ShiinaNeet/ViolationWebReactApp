@@ -206,14 +206,14 @@ const WarningViolationOfNormsAndConduct = ({
     >
       <form onSubmit={handleSubmit} className="space-y-4 mt-4">
         <FormControl fullWidth>
-          <InputLabel id="demo-simple-select-helper-label" color="error">
+          <InputLabel id="demo-simple-select-helper-label" color="primary">
             Violation Code
           </InputLabel>
           <Select
             labelId="demo-simple-select-helper-label"
             label="Violation Code"
             id="demo-simple-select-helper"
-            color="error"
+            color="primary"
             name="violation_code"
             value={selectedViolation}
             onChange={(e) => {
@@ -250,7 +250,7 @@ const WarningViolationOfNormsAndConduct = ({
             fullWidth
             label="Violation Description"
             id="violation-description"
-            color="error"
+            color="primary"
             value={formData.violation_description}
             onChange={(e) => {
               setFormData((prev) => ({
@@ -281,7 +281,7 @@ const WarningViolationOfNormsAndConduct = ({
                   .replace(/_/g, " ")
                   .replace(/\b\w/g, (c) => c.toUpperCase())}
                 name={key}
-                color="error"
+                color="primary"
                 type={key.includes("date") ? "datetime-local" : "text"}
                 value={formData[key]}
                 onChange={handleChange}
@@ -296,7 +296,7 @@ const WarningViolationOfNormsAndConduct = ({
           transition={{ delay: Object.keys(formData).length * 0.05 }}
         >
           <FormControl fullWidth required>
-            <InputLabel id="demo-simple-select-helper-label" color="error">
+            <InputLabel id="demo-simple-select-helper-label" color="primary">
               Department
             </InputLabel>
             <Select
@@ -306,7 +306,7 @@ const WarningViolationOfNormsAndConduct = ({
               name="department"
               value={formData.department}
               onChange={handleChange}
-              color="error"
+              color="primary"
             >
               {departmentData.map((department, idx) => (
                 <MenuItem key={idx} value={department._id}>
@@ -327,7 +327,7 @@ const WarningViolationOfNormsAndConduct = ({
           <Button
             type="submit"
             variant="outlined"
-            color="error"
+            color="primary"
             fullWidth
             disabled={isLoading}
           >
