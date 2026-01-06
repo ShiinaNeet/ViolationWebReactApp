@@ -142,9 +142,12 @@ const NavigationBar = () => {
           </IconButton>
 
           <Drawer anchor="top" open={open} onClose={toggleDrawer(false)}>
-            <Box sx={{ p: 2, backgroundColor: "white" }}>
+            <Box sx={{ p: 2, backgroundColor: "black" }}>
               <Box sx={{ display: "flex", justifyContent: "flex-end" }}>
-                <IconButton onClick={toggleDrawer(false)}>
+                <IconButton
+                  onClick={toggleDrawer(false)}
+                  sx={{ color: "white" }}
+                >
                   <CloseRoundedIcon />
                 </IconButton>
               </Box>
@@ -153,16 +156,16 @@ const NavigationBar = () => {
                 <Link
                   key={index}
                   to={item.link}
-                  style={{ textDecoration: "none", color: "inherit" }}
+                  style={{ textDecoration: "none", color: "white" }}
                 >
-                  <MenuItem>{item.name}</MenuItem>
+                  <MenuItem sx={{ color: "white" }}>{item.name}</MenuItem>
                 </Link>
               ))}
 
-              <Divider sx={{ my: 2 }} />
+              <Divider sx={{ my: 2, borderColor: "rgba(255,255,255,0.3)" }} />
 
               {isAuthenticated && (
-                <MenuItem onClick={logout} sx={{ color: "black" }}>
+                <MenuItem onClick={logout} sx={{ color: "white" }}>
                   Logout
                 </MenuItem>
               )}

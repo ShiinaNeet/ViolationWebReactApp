@@ -157,7 +157,11 @@ const Navigationbar = () => {
             window.location.replace("/login")}
         </Box>
         <Box sx={{ display: { xs: "flex", md: "none" }, gap: 1 }}>
-          <IconButton aria-label="Menu button" onClick={toggleDrawer(true)}>
+          <IconButton
+            aria-label="Menu button"
+            onClick={toggleDrawer(true)}
+            sx={{ color: "white" }}
+          >
             <MenuIcon />
           </IconButton>
 
@@ -172,41 +176,44 @@ const Navigationbar = () => {
               },
             }}
           >
-            <Box sx={{ p: 2, pt: 10, backgroundColor: "background.default" }}>
+            <Box sx={{ p: 2, pt: 10, backgroundColor: "black" }}>
               <Box
                 sx={{
                   display: "flex",
                   justifyContent: "flex-end",
                 }}
               >
-                <IconButton onClick={toggleDrawer(false)}>
+                <IconButton
+                  onClick={toggleDrawer(false)}
+                  sx={{ color: "white" }}
+                >
                   <CloseRoundedIcon />
                 </IconButton>
               </Box>
 
               <Link onClick={toggleDrawer(false)} to="/students">
-                <MenuItem>Students </MenuItem>
+                <MenuItem sx={{ color: "white" }}>Students </MenuItem>
               </Link>
               <Link onClick={toggleDrawer(false)} to="/Violations">
-                <MenuItem>Violation </MenuItem>
+                <MenuItem sx={{ color: "white" }}>Violation </MenuItem>
               </Link>
               <Link onClick={toggleDrawer(false)} to="/Users">
-                <MenuItem>User </MenuItem>
+                <MenuItem sx={{ color: "white" }}>User </MenuItem>
               </Link>
               {/* <Link onClick={toggleDrawer(false)} to="/Chart">
                   <MenuItem>Charts </MenuItem>
                 </Link> */}
               <Link onClick={toggleDrawer(false)} to="/Reports">
-                <MenuItem>Reports </MenuItem>
+                <MenuItem sx={{ color: "white" }}>Reports </MenuItem>
               </Link>
               <Link onClick={toggleDrawer(false)} to="/Notification">
-                <MenuItem>Notifications </MenuItem>
+                <MenuItem sx={{ color: "white" }}>Notifications </MenuItem>
               </Link>
-              <Divider sx={{ my: 3 }} />
+              <Divider sx={{ my: 3, borderColor: "rgba(255,255,255,0.3)" }} />
               {isAuthenticated && (
                 <Link onClick={logout}>
                   {" "}
-                  <MenuItem>Logout </MenuItem>
+                  <MenuItem sx={{ color: "white" }}>Logout </MenuItem>
                 </Link>
               )}
               {localStorage.getItem("accessToken") === null &&
