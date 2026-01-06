@@ -159,14 +159,27 @@ const NavigationBar = () => {
                   to={button.link}
                   style={{ textDecoration: "none", color: "white" }}
                 >
-                  <MenuItem sx={{ color: "white" }}>{button.name}</MenuItem>
+                  <MenuItem
+                    sx={{
+                      color: "white",
+                      "&:hover": { backgroundColor: "rgba(255,255,255,0.1)" },
+                    }}
+                  >
+                    {button.name}
+                  </MenuItem>
                 </Link>
               ))}
 
               <Divider sx={{ my: 2, borderColor: "rgba(255,255,255,0.3)" }} />
 
               {isAuthenticated && (
-                <MenuItem onClick={logout} sx={{ color: "white" }}>
+                <MenuItem
+                  onClick={logout}
+                  sx={{
+                    color: "white",
+                    "&:hover": { backgroundColor: "rgba(255,255,255,0.1)" },
+                  }}
+                >
                   Logout
                 </MenuItem>
               )}

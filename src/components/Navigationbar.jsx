@@ -65,7 +65,7 @@ const Navigationbar = () => {
             alt="React Logo"
             className="h-fit mx-2 flex justify-center self-center "
           />
-          <h1 className="text-white-500 hidden lg:block">
+          <h1 className="text-white hidden lg:block">
             Batangas State University Disciplinary Management
           </h1>
 
@@ -85,68 +85,68 @@ const Navigationbar = () => {
             alignItems: "center",
           }}
         >
-          <Button variant="text" color="white" size="medium">
+          <Button variant="text" sx={{ color: "white" }} size="medium">
             <Link
-              className=" hover:bg-gray-100 hover:text-black hover:rounded-md hover:cursor-pointer p-2"
+              className="text-white hover:bg-white hover:text-black hover:rounded-md hover:cursor-pointer p-2"
               to="/students"
             >
               Home
             </Link>
           </Button>
-          <Button variant="text" color="white" size="small">
+          <Button variant="text" sx={{ color: "white" }} size="small">
             <Link
-              className=" hover:bg-gray-100 hover:text-black hover:rounded-md hover:cursor-pointer p-2"
+              className="text-white hover:bg-white hover:text-black hover:rounded-md hover:cursor-pointer p-2"
               to="/Violations"
             >
               Violation
             </Link>
           </Button>
-          <Button variant="text" color="white" size="small">
+          <Button variant="text" sx={{ color: "white" }} size="small">
             <Link
-              className=" hover:bg-gray-100 hover:text-black hover:rounded-md hover:cursor-pointer p-2"
+              className="text-white hover:bg-white hover:text-black hover:rounded-md hover:cursor-pointer p-2"
               to="/Users"
             >
               Users
             </Link>
           </Button>
-          <Button variant="text" color="white" size="small">
+          <Button variant="text" sx={{ color: "white" }} size="small">
             <Link
-              className=" hover:bg-gray-100 hover:text-black hover:rounded-md hover:cursor-pointer p-2"
+              className="text-white hover:bg-white hover:text-black hover:rounded-md hover:cursor-pointer p-2"
               to="/Forms"
             >
               Forms
             </Link>
           </Button>
-          <Button variant="text" color="white" size="small">
+          <Button variant="text" sx={{ color: "white" }} size="small">
             <Link
-              className=" hover:bg-gray-100 hover:text-black hover:rounded-md hover:cursor-pointer p-2"
+              className="text-white hover:bg-white hover:text-black hover:rounded-md hover:cursor-pointer p-2"
               to="/Reports"
             >
               Reports
             </Link>
           </Button>
-          <Button variant="text" color="white" size="small">
+          <Button variant="text" sx={{ color: "white" }} size="small">
             <Link
-              className=" hover:bg-gray-100 hover:text-black hover:rounded-md hover:cursor-pointer p-2"
+              className="text-white hover:bg-white hover:text-black hover:rounded-md hover:cursor-pointer p-2"
               to="/Chart"
             >
               Charts
             </Link>
           </Button>
-          <Button variant="text" color="white" size="small">
+          <Button variant="text" sx={{ color: "white" }} size="small">
             {" "}
             <Link
-              className=" hover:bg-gray-100 hover:text-black hover:rounded-md hover:cursor-pointer p-2"
+              className="text-white hover:bg-white hover:text-black hover:rounded-md hover:cursor-pointer p-2"
               to="/Notification"
             >
               Notification
             </Link>
           </Button>{" "}
           {isAuthenticated && (
-            <Button variant="text" color="white" size="small">
+            <Button variant="text" sx={{ color: "white" }} size="small">
               {" "}
               <Link
-                className=" hover:bg-gray-100 hover:text-black hover:rounded-md hover:cursor-pointer p-2"
+                className="text-white hover:bg-white hover:text-black hover:rounded-md hover:cursor-pointer p-2"
                 onClick={logout}
               >
                 Logout
@@ -192,28 +192,70 @@ const Navigationbar = () => {
               </Box>
 
               <Link onClick={toggleDrawer(false)} to="/students">
-                <MenuItem sx={{ color: "white" }}>Students </MenuItem>
+                <MenuItem
+                  sx={{
+                    color: "white",
+                    "&:hover": { backgroundColor: "rgba(255,255,255,0.1)" },
+                  }}
+                >
+                  Students{" "}
+                </MenuItem>
               </Link>
               <Link onClick={toggleDrawer(false)} to="/Violations">
-                <MenuItem sx={{ color: "white" }}>Violation </MenuItem>
+                <MenuItem
+                  sx={{
+                    color: "white",
+                    "&:hover": { backgroundColor: "rgba(255,255,255,0.1)" },
+                  }}
+                >
+                  Violation{" "}
+                </MenuItem>
               </Link>
               <Link onClick={toggleDrawer(false)} to="/Users">
-                <MenuItem sx={{ color: "white" }}>User </MenuItem>
+                <MenuItem
+                  sx={{
+                    color: "white",
+                    "&:hover": { backgroundColor: "rgba(255,255,255,0.1)" },
+                  }}
+                >
+                  User{" "}
+                </MenuItem>
               </Link>
               {/* <Link onClick={toggleDrawer(false)} to="/Chart">
                   <MenuItem>Charts </MenuItem>
                 </Link> */}
               <Link onClick={toggleDrawer(false)} to="/Reports">
-                <MenuItem sx={{ color: "white" }}>Reports </MenuItem>
+                <MenuItem
+                  sx={{
+                    color: "white",
+                    "&:hover": { backgroundColor: "rgba(255,255,255,0.1)" },
+                  }}
+                >
+                  Reports{" "}
+                </MenuItem>
               </Link>
               <Link onClick={toggleDrawer(false)} to="/Notification">
-                <MenuItem sx={{ color: "white" }}>Notifications </MenuItem>
+                <MenuItem
+                  sx={{
+                    color: "white",
+                    "&:hover": { backgroundColor: "rgba(255,255,255,0.1)" },
+                  }}
+                >
+                  Notifications{" "}
+                </MenuItem>
               </Link>
               <Divider sx={{ my: 3, borderColor: "rgba(255,255,255,0.3)" }} />
               {isAuthenticated && (
                 <Link onClick={logout}>
                   {" "}
-                  <MenuItem sx={{ color: "white" }}>Logout </MenuItem>
+                  <MenuItem
+                    sx={{
+                      color: "white",
+                      "&:hover": { backgroundColor: "rgba(255,255,255,0.1)" },
+                    }}
+                  >
+                    Logout{" "}
+                  </MenuItem>
                 </Link>
               )}
               {localStorage.getItem("accessToken") === null &&

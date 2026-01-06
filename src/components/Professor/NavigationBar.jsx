@@ -146,13 +146,26 @@ const ProfessorNavigationBar = () => {
                 to="/professor/home"
                 style={{ textDecoration: "none", color: "white" }}
               >
-                <MenuItem sx={{ color: "white" }}>Professor</MenuItem>
+                <MenuItem
+                  sx={{
+                    color: "white",
+                    "&:hover": { backgroundColor: "rgba(255,255,255,0.1)" },
+                  }}
+                >
+                  Professor
+                </MenuItem>
               </Link>
 
               <Divider sx={{ my: 2, borderColor: "rgba(255,255,255,0.3)" }} />
 
               {isAuthenticated && (
-                <MenuItem onClick={logout} sx={{ color: "white" }}>
+                <MenuItem
+                  onClick={logout}
+                  sx={{
+                    color: "white",
+                    "&:hover": { backgroundColor: "rgba(255,255,255,0.1)" },
+                  }}
+                >
                   Logout
                 </MenuItem>
               )}
