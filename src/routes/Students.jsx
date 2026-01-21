@@ -353,18 +353,30 @@ const Students = () => {
       if (studentResponse.data.status === "success") {
         console.log("Student fetched successfully", studentResponse.data.data);
 
-        const completedDataWithViolationName = studentResponse.data.data.map(
-          (student) => {
-            const updatedViolations = student.violations.map((violation) => ({
-              ...violation,
-              description:
-                violationMap.get(violation.code) || "Unknown Violation",
-            }));
+        const completedDataWithViolationName = studentResponse.data.data
+          .map((student) => {
+            const updatedViolations = student.violations
+              .map((violation) => ({
+                ...violation,
+                description:
+                  violationMap.get(violation.code) || "Unknown Violation",
+              }))
+              .sort(
+                (a, b) => new Date(b.date_committed) - new Date(a.date_committed)
+              );
 
             console.log("Updated Violations:", updatedViolations);
             return { ...student, violations: updatedViolations };
-          }
-        );
+          })
+          .sort((a, b) => {
+            const latestA = a.violations[0]?.date_committed
+              ? new Date(a.violations[0].date_committed)
+              : new Date(0);
+            const latestB = b.violations[0]?.date_committed
+              ? new Date(b.violations[0].date_committed)
+              : new Date(0);
+            return latestB - latestA;
+          });
 
         setRows(completedDataWithViolationName);
         if (studentResponse.data.data.length === 0) {
