@@ -33,6 +33,7 @@ import {
 } from "@mui/material";
 import axios from "axios";
 import TablePaginationActions from "../utils/TablePaginationActions";
+import { useTheme } from "../context/ThemeContext";
 
 const StyledToolbar = styled(Toolbar)(({ theme }) => ({
   display: "flex",
@@ -57,6 +58,7 @@ export default function Reports() {
   };
   const position = { vertical: "bottom", horizontal: "right" };
   const { vertical, horizontal } = position;
+  const { isDarkMode } = useTheme();
   const [isLoading, setIsLoading] = React.useState(true);
   const [page, setPage] = React.useState(0);
   const [rowsPerPage, setRowsPerPage] = React.useState(10);
@@ -243,11 +245,11 @@ export default function Reports() {
 
     return (
       <div
-        className="flex flex-col md:flex-row justify-between gap-x-2 bg-white my-2 rounded-md"
+        className="flex flex-col md:flex-row justify-between gap-x-2 bg-white dark:bg-dark-paper my-2 rounded-md px-4 transition-colors duration-300"
         style={{ fontSize: "16px" }}
       >
         <h1
-          className="text-black py-3 flex items-center"
+          className="text-black dark:text-white py-3 flex items-center"
           style={{ fontSize: "16px" }}
         >
           Reports List
@@ -260,6 +262,16 @@ export default function Reports() {
             onChange={handleFilterChange}
             aria-label="Offense Filter"
             size="small"
+            sx={{
+              '& .MuiToggleButton-root': {
+                color: isDarkMode ? 'rgba(255, 255, 255, 0.7)' : 'inherit',
+                borderColor: isDarkMode ? 'rgba(255, 255, 255, 0.23)' : 'inherit',
+                '&.Mui-selected': {
+                  backgroundColor: isDarkMode ? 'rgba(255, 255, 255, 0.08)' : 'rgba(0, 0, 0, 0.08)',
+                  color: isDarkMode ? '#fff' : 'inherit',
+                }
+              }
+            }}
           >
             <ToggleButton value="minor">Minor</ToggleButton>
             <ToggleButton value="major">Major</ToggleButton>
@@ -337,16 +349,16 @@ export default function Reports() {
                 fontWeight: "bold",
                 backgroundColor:
                   row.category === "minor"
-                    ? "#f5f5f5"
+                    ? (isDarkMode ? "#2e2e42" : "#f5f5f5")
                     : row.category === "major"
-                    ? "black"
-                    : "#dcdcdc",
+                    ? (isDarkMode ? "#ff5252" : "black")
+                    : (isDarkMode ? "#3d3d5c" : "#dcdcdc"),
                 color:
                   row.category === "minor"
-                    ? "black"
+                    ? (isDarkMode ? "#fff" : "black")
                     : row.category === "major"
                     ? "white"
-                    : "black",
+                    : (isDarkMode ? "#fff" : "black"),
                 border: row.category === "minor" ? "1px solid #ddd" : "none",
               }}
             >
@@ -404,7 +416,7 @@ export default function Reports() {
         alignItems: "center",
         pt: { xs: 10, sm: 15 },
         pb: { xs: 8, sm: 12 },
-        height: "100vh",
+        minHeight: "100vh",
         width: "90%",
         mx: "auto",
       }}

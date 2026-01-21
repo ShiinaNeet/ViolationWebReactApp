@@ -1455,9 +1455,9 @@ export default function FormList() {
     );
   };
   return (
-    <div>
-      <div className="flex items-end justify-between py-3">
-        <h1 className="text-black" style={{ fontSize: "16px" }}>
+    <div className="transition-colors duration-300">
+      <div className="flex items-end justify-between py-3 px-4 bg-white dark:bg-dark-paper my-2 rounded-md transition-colors duration-300">
+        <h1 className="text-black dark:text-white" style={{ fontSize: "16px" }}>
           Sent Forms
         </h1>
         <GetSelectFormTypes />

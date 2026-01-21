@@ -4,7 +4,7 @@ import "../index.css";
 
 const Layout = () => {
   return (
-    <div className="overflow-x-scroll:hidden w-full h-full">
+    <div className="overflow-x-scroll:hidden w-full h-full min-h-screen bg-white dark:bg-dark-bg transition-colors duration-300">
       <Navigationbar />
       <Outlet />
     </div>

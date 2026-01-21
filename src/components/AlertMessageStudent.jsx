@@ -160,7 +160,7 @@ export default function AlertMessageStudent() {
             initial="hidden"
             animate="visible"
           >
-            <label className="font-bold" style={{ fontSize: "16px" }}>
+            <label className="font-bold dark:text-white" style={{ fontSize: "16px" }}>
               Send Email
             </label>
             <br />
@@ -275,20 +275,20 @@ export default function AlertMessageStudent() {
           >
             <div
               {...getRootProps({ className: "dropzone" })}
-              className="border-solid border rounded-sm border-gray-400 p-4 text-center"
+              className="border-solid border rounded-sm border-gray-400 p-4 text-center dark:border-gray-600 dark:text-gray-300"
             >
               <input {...getInputProps()} />
               <p>Drag & drop some files here, or click to select files</p>
-              <em>
+              <em className="dark:text-gray-400">
                 (Only PDF, MP4, DOCX, Word, and Excel files will be accepted)
               </em>
             </div>
             <div>
               {message.files.map((file, index) => (
-                <div key={index} className="flex w-full h-fit whitespace-pre">
+                <div key={index} className="flex w-full h-fit whitespace-pre dark:text-white">
                   <label className="py-2">{file.name + "  "}</label>
                   <label
-                    className="py-2 px-2 rounded-sm text-black hover:bg-gray-100"
+                    className="py-2 px-2 rounded-sm text-black dark:text-white hover:bg-gray-100 dark:hover:bg-gray-700 cursor-pointer"
                     onClick={() => onRemoveItem(index)}
                   >
                     Remove

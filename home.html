@@ -1,0 +1,1178 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CodeAI Pro - AI Agentic Coding Platform</title>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;700;800&family=Antonio:wght@700&display=swap" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --cream: #F5F3EE;
+            --black: #000000;
+            --lime: #CCFF00;
+            --orange: #FF6B00;
+            --gray: #666666;
+            --light-gray: #DDDDDD;
+        }
+
+        body {
+            font-family: 'JetBrains Mono', monospace;
+            line-height: 1.6;
+            color: var(--black);
+            background: var(--cream);
+            overflow-x: hidden;
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 0 30px;
+        }
+
+        /* Cursor */
+        body {
+            cursor: crosshair;
+        }
+
+        a, button {
+            cursor: pointer;
+        }
+
+        /* Navigation */
+        nav {
+            background: var(--black);
+            border-bottom: 8px solid var(--lime);
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+        }
+
+        .nav-container {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 1.5rem 0;
+        }
+
+        .logo {
+            font-family: 'Antonio', sans-serif;
+            font-size: 2rem;
+            font-weight: 700;
+            color: var(--lime);
+            text-transform: uppercase;
+            letter-spacing: -2px;
+        }
+
+        .logo::before {
+            content: '> ';
+            color: var(--orange);
+        }
+
+        .nav-links {
+            display: flex;
+            gap: 3rem;
+            list-style: none;
+        }
+
+        .nav-links a {
+            text-decoration: none;
+            color: var(--cream);
+            font-weight: 700;
+            text-transform: uppercase;
+            font-size: 0.9rem;
+            letter-spacing: 1px;
+            transition: color 0.2s;
+            position: relative;
+        }
+
+        .nav-links a::before {
+            content: '[';
+            color: var(--lime);
+            opacity: 0;
+            transform: translateX(5px);
+            transition: all 0.2s;
+        }
+
+        .nav-links a::after {
+            content: ']';
+            color: var(--lime);
+            opacity: 0;
+            transform: translateX(-5px);
+            transition: all 0.2s;
+        }
+
+        .nav-links a:hover {
+            color: var(--lime);
+        }
+
+        .nav-links a:hover::before,
+        .nav-links a:hover::after {
+            opacity: 1;
+            transform: translateX(0);
+        }
+
+        .cta-button {
+            background: var(--lime);
+            color: var(--black);
+            padding: 0.8rem 2rem;
+            border: 4px solid var(--black);
+            text-decoration: none;
+            font-weight: 800;
+            text-transform: uppercase;
+            display: inline-block;
+            font-size: 0.85rem;
+            letter-spacing: 1px;
+            transition: all 0.2s;
+            position: relative;
+        }
+
+        .cta-button:hover {
+            background: var(--orange);
+            transform: translate(-4px, -4px);
+            box-shadow: 4px 4px 0 var(--black);
+        }
+
+        /* Hero Section */
+        .hero {
+            background: var(--black);
+            color: var(--cream);
+            padding: 8rem 0 10rem;
+            position: relative;
+            overflow: hidden;
+            border-bottom: 8px solid var(--lime);
+        }
+
+        .hero::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-image:
+                repeating-linear-gradient(0deg, transparent, transparent 2px, var(--lime) 2px, var(--lime) 3px),
+                repeating-linear-gradient(90deg, transparent, transparent 2px, var(--lime) 2px, var(--lime) 3px);
+            opacity: 0.03;
+            animation: gridMove 20s linear infinite;
+        }
+
+        @keyframes gridMove {
+            0% { transform: translate(0, 0); }
+            100% { transform: translate(50px, 50px); }
+        }
+
+        .hero-content {
+            position: relative;
+            z-index: 1;
+            max-width: 1100px;
+        }
+
+        .terminal-prefix {
+            color: var(--lime);
+            font-size: 1.2rem;
+            margin-bottom: 1rem;
+            opacity: 0;
+            animation: fadeIn 0.5s forwards;
+        }
+
+        @keyframes fadeIn {
+            to { opacity: 1; }
+        }
+
+        .hero h1 {
+            font-family: 'Antonio', sans-serif;
+            font-size: 6rem;
+            margin-bottom: 2rem;
+            font-weight: 700;
+            line-height: 0.9;
+            text-transform: uppercase;
+            letter-spacing: -4px;
+            color: var(--lime);
+            opacity: 0;
+            animation: slideUp 0.8s 0.2s forwards;
+        }
+
+        @keyframes slideUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .hero h1 span {
+            color: var(--orange);
+            display: block;
+        }
+
+        .hero p {
+            font-size: 1.1rem;
+            margin-bottom: 3rem;
+            max-width: 700px;
+            line-height: 1.8;
+            border-left: 4px solid var(--orange);
+            padding-left: 20px;
+            opacity: 0;
+            animation: slideUp 0.8s 0.4s forwards;
+        }
+
+        .hero-buttons {
+            display: flex;
+            gap: 2rem;
+            flex-wrap: wrap;
+            opacity: 0;
+            animation: slideUp 0.8s 0.6s forwards;
+        }
+
+        .button-primary {
+            background: var(--lime);
+            color: var(--black);
+            padding: 1.2rem 3rem;
+            border: 4px solid var(--lime);
+            text-decoration: none;
+            font-weight: 800;
+            text-transform: uppercase;
+            display: inline-block;
+            font-size: 1rem;
+            letter-spacing: 1px;
+            transition: all 0.2s;
+            position: relative;
+        }
+
+        .button-primary:hover {
+            background: var(--black);
+            color: var(--lime);
+            transform: translate(-6px, -6px);
+            box-shadow: 6px 6px 0 var(--orange);
+        }
+
+        .button-secondary {
+            background: transparent;
+            color: var(--cream);
+            padding: 1.2rem 3rem;
+            border: 4px solid var(--cream);
+            text-decoration: none;
+            font-weight: 800;
+            text-transform: uppercase;
+            display: inline-block;
+            font-size: 1rem;
+            letter-spacing: 1px;
+            transition: all 0.2s;
+        }
+
+        .button-secondary:hover {
+            background: var(--cream);
+            color: var(--black);
+            transform: translate(-6px, -6px);
+            box-shadow: 6px 6px 0 var(--lime);
+        }
+
+        /* Terminal Stats */
+        .terminal-stats {
+            background: var(--black);
+            border: 6px solid var(--lime);
+            padding: 3rem;
+            margin-top: -80px;
+            position: relative;
+            z-index: 10;
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 3rem;
+        }
+
+        .terminal-stat {
+            text-align: center;
+        }
+
+        .terminal-stat-value {
+            font-size: 4rem;
+            font-weight: 800;
+            color: var(--lime);
+            font-family: 'Antonio', sans-serif;
+            line-height: 1;
+        }
+
+        .terminal-stat-label {
+            color: var(--cream);
+            margin-top: 0.5rem;
+            text-transform: uppercase;
+            font-size: 0.8rem;
+            letter-spacing: 1px;
+        }
+
+        /* Features Section */
+        .features {
+            padding: 8rem 0;
+            background: var(--cream);
+        }
+
+        .section-title {
+            margin-bottom: 5rem;
+        }
+
+        .section-title-prefix {
+            color: var(--orange);
+            font-size: 1rem;
+            margin-bottom: 0.5rem;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+        }
+
+        .section-title h2 {
+            font-family: 'Antonio', sans-serif;
+            font-size: 4rem;
+            margin-bottom: 1rem;
+            color: var(--black);
+            text-transform: uppercase;
+            letter-spacing: -2px;
+            line-height: 1;
+        }
+
+        .section-title p {
+            font-size: 1.1rem;
+            color: var(--gray);
+            max-width: 600px;
+        }
+
+        .features-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 2rem;
+        }
+
+        .feature-card {
+            background: var(--cream);
+            border: 4px solid var(--black);
+            padding: 2.5rem;
+            transition: all 0.3s;
+            position: relative;
+        }
+
+        .feature-card::before {
+            content: '';
+            position: absolute;
+            top: -4px;
+            left: -4px;
+            right: -4px;
+            bottom: -4px;
+            background: var(--lime);
+            z-index: -1;
+            opacity: 0;
+            transition: opacity 0.3s;
+        }
+
+        .feature-card:hover::before {
+            opacity: 1;
+        }
+
+        .feature-card:hover {
+            transform: translate(-8px, -8px);
+        }
+
+        .feature-number {
+            font-family: 'Antonio', sans-serif;
+            font-size: 3rem;
+            color: var(--orange);
+            line-height: 1;
+            margin-bottom: 1rem;
+        }
+
+        .feature-card h3 {
+            font-size: 1.3rem;
+            margin-bottom: 1rem;
+            color: var(--black);
+            text-transform: uppercase;
+            letter-spacing: -0.5px;
+            font-weight: 800;
+        }
+
+        .feature-card p {
+            color: var(--gray);
+            font-size: 0.95rem;
+            line-height: 1.7;
+        }
+
+        /* Comparison Section */
+        .comparison {
+            padding: 8rem 0;
+            background: var(--black);
+            border-top: 8px solid var(--lime);
+            border-bottom: 8px solid var(--orange);
+        }
+
+        .comparison .section-title-prefix {
+            color: var(--lime);
+        }
+
+        .comparison .section-title h2 {
+            color: var(--lime);
+        }
+
+        .comparison .section-title p {
+            color: var(--cream);
+        }
+
+        .chart-container {
+            max-width: 1000px;
+            margin: 3rem auto;
+            padding: 3rem;
+            background: var(--cream);
+            border: 6px solid var(--lime);
+            position: relative;
+        }
+
+        .chart-container::after {
+            content: 'DATA_VISUALIZATION';
+            position: absolute;
+            top: -12px;
+            left: 20px;
+            background: var(--black);
+            color: var(--lime);
+            padding: 0 10px;
+            font-size: 0.75rem;
+            letter-spacing: 2px;
+        }
+
+        /* Pricing Section */
+        .pricing {
+            padding: 8rem 0;
+            background: var(--cream);
+        }
+
+        .pricing-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 3rem;
+            margin-top: 5rem;
+        }
+
+        .pricing-card {
+            background: var(--cream);
+            border: 6px solid var(--black);
+            padding: 3rem 2.5rem;
+            transition: all 0.3s;
+            position: relative;
+        }
+
+        .pricing-card.featured {
+            background: var(--black);
+            border-color: var(--lime);
+        }
+
+        .pricing-card.featured * {
+            color: var(--lime);
+        }
+
+        .pricing-card.featured .price {
+            color: var(--lime);
+        }
+
+        .pricing-card.featured .features-list li::before {
+            color: var(--orange);
+        }
+
+        .pricing-card:hover {
+            transform: translate(-8px, -8px);
+            box-shadow: 8px 8px 0 var(--lime);
+        }
+
+        .pricing-card.featured:hover {
+            box-shadow: 8px 8px 0 var(--orange);
+        }
+
+        .badge {
+            position: absolute;
+            top: -18px;
+            right: 20px;
+            background: var(--orange);
+            color: var(--black);
+            padding: 0.5rem 1.5rem;
+            font-size: 0.75rem;
+            font-weight: 800;
+            letter-spacing: 2px;
+            text-transform: uppercase;
+            border: 3px solid var(--black);
+        }
+
+        .pricing-card h3 {
+            font-family: 'Antonio', sans-serif;
+            font-size: 2rem;
+            margin-bottom: 0.5rem;
+            color: var(--black);
+            text-transform: uppercase;
+            letter-spacing: -1px;
+        }
+
+        .pricing-card.featured h3 {
+            color: var(--lime);
+        }
+
+        .price {
+            font-family: 'Antonio', sans-serif;
+            font-size: 4rem;
+            font-weight: 700;
+            color: var(--black);
+            margin: 1.5rem 0;
+            line-height: 1;
+        }
+
+        .price span {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 1rem;
+            color: var(--gray);
+        }
+
+        .pricing-card.featured .price span {
+            color: var(--cream);
+        }
+
+        .features-list {
+            list-style: none;
+            margin: 2rem 0 3rem;
+        }
+
+        .features-list li {
+            padding: 0.8rem 0;
+            border-bottom: 2px solid var(--light-gray);
+            display: flex;
+            align-items: center;
+            font-size: 0.9rem;
+        }
+
+        .pricing-card.featured .features-list li {
+            border-bottom-color: rgba(245, 243, 238, 0.2);
+        }
+
+        .features-list li::before {
+            content: ">";
+            color: var(--lime);
+            font-weight: bold;
+            margin-right: 1rem;
+            font-size: 1.2rem;
+        }
+
+        .pricing-button {
+            width: 100%;
+            background: var(--black);
+            color: var(--lime);
+            padding: 1.2rem;
+            border: 4px solid var(--black);
+            font-weight: 800;
+            cursor: pointer;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.9rem;
+            transition: all 0.2s;
+        }
+
+        .pricing-button:hover {
+            background: var(--lime);
+            color: var(--black);
+            transform: translateY(-4px);
+            box-shadow: 0 4px 0 var(--black);
+        }
+
+        .pricing-card.featured .pricing-button {
+            background: var(--lime);
+            color: var(--black);
+            border-color: var(--lime);
+        }
+
+        .pricing-card.featured .pricing-button:hover {
+            background: var(--orange);
+            border-color: var(--orange);
+        }
+
+        /* CTA Section */
+        .cta-section {
+            padding: 8rem 0;
+            background: var(--lime);
+            text-align: center;
+            border-top: 8px solid var(--black);
+            border-bottom: 8px solid var(--black);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .cta-section::before {
+            content: 'READY?';
+            position: absolute;
+            font-family: 'Antonio', sans-serif;
+            font-size: 20rem;
+            font-weight: 700;
+            color: rgba(0, 0, 0, 0.03);
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            letter-spacing: -10px;
+        }
+
+        .cta-content {
+            position: relative;
+            z-index: 1;
+        }
+
+        .cta-section h2 {
+            font-family: 'Antonio', sans-serif;
+            font-size: 4rem;
+            margin-bottom: 1.5rem;
+            text-transform: uppercase;
+            letter-spacing: -2px;
+            line-height: 1.1;
+        }
+
+        .cta-section p {
+            font-size: 1.2rem;
+            margin-bottom: 3rem;
+            max-width: 600px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+
+        /* Footer */
+        footer {
+            background: var(--black);
+            color: var(--cream);
+            padding: 5rem 0 2rem;
+            border-top: 8px solid var(--orange);
+        }
+
+        .footer-content {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 4rem;
+            margin-bottom: 4rem;
+        }
+
+        .footer-section h4 {
+            font-family: 'Antonio', sans-serif;
+            margin-bottom: 1.5rem;
+            color: var(--lime);
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            font-size: 1.2rem;
+        }
+
+        .footer-section ul {
+            list-style: none;
+        }
+
+        .footer-section a {
+            color: var(--cream);
+            text-decoration: none;
+            display: block;
+            margin-bottom: 0.8rem;
+            transition: color 0.2s;
+            font-size: 0.9rem;
+        }
+
+        .footer-section a::before {
+            content: '→ ';
+            color: var(--orange);
+            opacity: 0;
+            margin-right: -15px;
+            transition: all 0.2s;
+        }
+
+        .footer-section a:hover::before {
+            opacity: 1;
+            margin-right: 5px;
+        }
+
+        .footer-section a:hover {
+            color: var(--lime);
+        }
+
+        .footer-bottom {
+            text-align: center;
+            padding-top: 3rem;
+            border-top: 2px solid var(--gray);
+            color: var(--gray);
+            font-size: 0.9rem;
+        }
+
+        /* Responsive */
+        @media (max-width: 1024px) {
+            .hero h1 {
+                font-size: 4rem;
+            }
+
+            .features-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+
+            .pricing-grid {
+                grid-template-columns: 1fr;
+                max-width: 600px;
+                margin-left: auto;
+                margin-right: auto;
+            }
+
+            .footer-content {
+                grid-template-columns: repeat(2, 1fr);
+            }
+        }
+
+        @media (max-width: 768px) {
+            .hero h1 {
+                font-size: 3rem;
+                letter-spacing: -2px;
+            }
+
+            .nav-links {
+                display: none;
+            }
+
+            .features-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .section-title h2 {
+                font-size: 3rem;
+            }
+
+            .footer-content {
+                grid-template-columns: 1fr;
+                gap: 2rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Navigation -->
+    <nav>
+        <div class="container nav-container">
+            <div class="logo">CodeAI</div>
+            <ul class="nav-links">
+                <li><a href="#features">Features</a></li>
+                <li><a href="#comparison">Benchmarks</a></li>
+                <li><a href="#pricing">Pricing</a></li>
+                <li><a href="#contact">Deploy</a></li>
+            </ul>
+            <a href="#pricing" class="cta-button">Init Trial</a>
+        </div>
+    </nav>
+
+    <!-- Hero Section -->
+    <section class="hero">
+        <div class="container">
+            <div class="hero-content">
+                <div class="terminal-prefix">$ ./launch_agent.sh --mode=autonomous</div>
+                <h1>
+                    AI AGENTS<br>
+                    <span>WRITE CODE</span>
+                    AT SPEED
+                </h1>
+                <p>
+                    Multi-agent systems that understand context, generate production-ready code,
+                    and refactor at scale. Built by developers who got tired of waiting.
+                </p>
+                <div class="hero-buttons">
+                    <a href="#pricing" class="button-primary">Start Building →</a>
+                    <a href="#comparison" class="button-secondary">View Benchmarks</a>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Terminal Stats -->
+    <section class="container">
+        <div class="terminal-stats">
+            <div class="terminal-stat">
+                <div class="terminal-stat-value">10x</div>
+                <div class="terminal-stat-label">Faster Generation</div>
+            </div>
+            <div class="terminal-stat">
+                <div class="terminal-stat-value">95%</div>
+                <div class="terminal-stat-label">Code Accuracy</div>
+            </div>
+            <div class="terminal-stat">
+                <div class="terminal-stat-value">50%</div>
+                <div class="terminal-stat-label">Time Saved</div>
+            </div>
+            <div class="terminal-stat">
+                <div class="terminal-stat-value">99.9%</div>
+                <div class="terminal-stat-label">Uptime SLA</div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Features Section -->
+    <section class="features" id="features">
+        <div class="container">
+            <div class="section-title">
+                <div class="section-title-prefix">// CAPABILITIES</div>
+                <h2>Built for Production</h2>
+                <p>No toy demos. No half-baked prototypes. These are the tools we use to ship code every day.</p>
+            </div>
+            <div class="features-grid">
+                <div class="feature-card">
+                    <div class="feature-number">01</div>
+                    <h3>Multi-Agent Architecture</h3>
+                    <p>Specialized agents collaborate in real-time. One writes, another reviews, a third optimizes. Like having a senior team on every commit.</p>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-number">02</div>
+                    <h3>Context-Aware Generation</h3>
+                    <p>Agents parse your entire codebase, understand patterns, and match your style. No generic templates. Just code that fits.</p>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-number">03</div>
+                    <h3>Terminal-Native Interface</h3>
+                    <p>CLI-first design for developers who live in the terminal. Git integration, hot reload, and zero friction deployment.</p>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-number">04</div>
+                    <h3>Automated Refactoring</h3>
+                    <p>Eliminate tech debt before it compounds. Agents continuously improve code quality, catch anti-patterns, and enforce best practices.</p>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-number">05</div>
+                    <h3>Zero-Config Security</h3>
+                    <p>SOC 2 Type II certified. End-to-end encryption. Private cloud deployment. Your code never leaves your infrastructure.</p>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-number">06</div>
+                    <h3>Real-Time Metrics</h3>
+                    <p>Track velocity, quality, and agent performance. Export data via API. Integrate with your existing analytics stack.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Comparison Section -->
+    <section class="comparison" id="comparison">
+        <div class="container">
+            <div class="section-title">
+                <div class="section-title-prefix">// BENCHMARKS</div>
+                <h2>Performance Data</h2>
+                <p>We measure everything. Here's how we compare against the competition.</p>
+            </div>
+
+            <div class="chart-container">
+                <canvas id="performanceChart"></canvas>
+            </div>
+
+            <div class="chart-container">
+                <canvas id="featuresChart"></canvas>
+            </div>
+        </div>
+    </section>
+
+    <!-- Pricing Section -->
+    <section class="pricing" id="pricing">
+        <div class="container">
+            <div class="section-title">
+                <div class="section-title-prefix">// PRICING</div>
+                <h2>Choose Your Plan</h2>
+                <p>No hidden fees. No surprise charges. Just transparent pricing that scales with your team.</p>
+            </div>
+            <div class="pricing-grid">
+                <div class="pricing-card">
+                    <h3>Starter</h3>
+                    <div class="price">$29<span>/mo</span></div>
+                    <ul class="features-list">
+                        <li>1 AI Agent</li>
+                        <li>500 requests/day</li>
+                        <li>Basic code generation</li>
+                        <li>Email support</li>
+                        <li>Community access</li>
+                        <li>Basic analytics</li>
+                    </ul>
+                    <button class="pricing-button">Deploy Now</button>
+                </div>
+
+                <div class="pricing-card featured">
+                    <div class="badge">Popular</div>
+                    <h3>Professional</h3>
+                    <div class="price">$79<span>/mo</span></div>
+                    <ul class="features-list">
+                        <li>5 AI Agents</li>
+                        <li>Unlimited requests</li>
+                        <li>Advanced generation</li>
+                        <li>Priority 24/7 support</li>
+                        <li>Team collaboration</li>
+                        <li>Advanced analytics</li>
+                        <li>Custom integrations</li>
+                        <li>Automated reviews</li>
+                    </ul>
+                    <button class="pricing-button">Deploy Now</button>
+                </div>
+
+                <div class="pricing-card">
+                    <h3>Enterprise</h3>
+                    <div class="price">$299<span>/mo</span></div>
+                    <ul class="features-list">
+                        <li>Unlimited agents</li>
+                        <li>Unlimited requests</li>
+                        <li>Custom AI training</li>
+                        <li>Dedicated support</li>
+                        <li>Private cloud deploy</li>
+                        <li>SLA guarantee</li>
+                        <li>Advanced security</li>
+                        <li>Custom workflows</li>
+                        <li>Full API access</li>
+                    </ul>
+                    <button class="pricing-button">Contact Sales</button>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- CTA Section -->
+    <section class="cta-section" id="contact">
+        <div class="container">
+            <div class="cta-content">
+                <h2>Stop Writing.<br>Start Shipping.</h2>
+                <p>Join 10,000+ developers building production software with AI agents. Free trial. No credit card required.</p>
+                <a href="#pricing" class="button-primary">Initialize Free Trial →</a>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer>
+        <div class="container">
+            <div class="footer-content">
+                <div class="footer-section">
+                    <h4>Product</h4>
+                    <ul>
+                        <li><a href="#features">Features</a></li>
+                        <li><a href="#pricing">Pricing</a></li>
+                        <li><a href="#">Documentation</a></li>
+                        <li><a href="#">API Reference</a></li>
+                        <li><a href="#">CLI Tools</a></li>
+                    </ul>
+                </div>
+                <div class="footer-section">
+                    <h4>Company</h4>
+                    <ul>
+                        <li><a href="#">About</a></li>
+                        <li><a href="#">Blog</a></li>
+                        <li><a href="#">Careers</a></li>
+                        <li><a href="#">Press Kit</a></li>
+                        <li><a href="#">Contact</a></li>
+                    </ul>
+                </div>
+                <div class="footer-section">
+                    <h4>Resources</h4>
+                    <ul>
+                        <li><a href="#">Tutorials</a></li>
+                        <li><a href="#">Community</a></li>
+                        <li><a href="#">Support</a></li>
+                        <li><a href="#">Status</a></li>
+                        <li><a href="#">Changelog</a></li>
+                    </ul>
+                </div>
+                <div class="footer-section">
+                    <h4>Legal</h4>
+                    <ul>
+                        <li><a href="#">Privacy</a></li>
+                        <li><a href="#">Terms</a></li>
+                        <li><a href="#">Security</a></li>
+                        <li><a href="#">Compliance</a></li>
+                        <li><a href="#">GDPR</a></li>
+                    </ul>
+                </div>
+            </div>
+            <div class="footer-bottom">
+                <p>© 2024 CodeAI Pro. Built by developers, for developers.</p>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Charts Script -->
+    <script>
+        // Performance Comparison Chart
+        const performanceCtx = document.getElementById('performanceChart').getContext('2d');
+        const performanceChart = new Chart(performanceCtx, {
+            type: 'bar',
+            data: {
+                labels: ['Gen Speed', 'Accuracy', 'Context', 'Bug Detection', 'Refactoring'],
+                datasets: [
+                    {
+                        label: 'CodeAI Pro',
+                        data: [95, 95, 92, 90, 93],
+                        backgroundColor: '#CCFF00',
+                        borderColor: '#000000',
+                        borderWidth: 3
+                    },
+                    {
+                        label: 'Competitor A',
+                        data: [75, 80, 70, 75, 72],
+                        backgroundColor: '#FF6B00',
+                        borderColor: '#000000',
+                        borderWidth: 3
+                    },
+                    {
+                        label: 'Competitor B',
+                        data: [70, 75, 68, 70, 69],
+                        backgroundColor: '#666666',
+                        borderColor: '#000000',
+                        borderWidth: 3
+                    }
+                ]
+            },
+            options: {
+                responsive: true,
+                plugins: {
+                    title: {
+                        display: true,
+                        text: 'PERFORMANCE_METRICS [score/100]',
+                        font: {
+                            size: 16,
+                            weight: 'bold',
+                            family: "'JetBrains Mono', monospace"
+                        },
+                        color: '#000000'
+                    },
+                    legend: {
+                        display: true,
+                        position: 'top',
+                        labels: {
+                            font: {
+                                family: "'JetBrains Mono', monospace",
+                                weight: 'bold'
+                            },
+                            color: '#000000'
+                        }
+                    }
+                },
+                scales: {
+                    y: {
+                        beginAtZero: true,
+                        max: 100,
+                        ticks: {
+                            font: {
+                                family: "'JetBrains Mono', monospace"
+                            }
+                        },
+                        grid: {
+                            color: '#DDDDDD'
+                        }
+                    },
+                    x: {
+                        ticks: {
+                            font: {
+                                family: "'JetBrains Mono', monospace",
+                                weight: 'bold'
+                            }
+                        },
+                        grid: {
+                            display: false
+                        }
+                    }
+                }
+            }
+        });
+
+        // Features Comparison Chart
+        const featuresCtx = document.getElementById('featuresChart').getContext('2d');
+        const featuresChart = new Chart(featuresCtx, {
+            type: 'radar',
+            data: {
+                labels: ['Multi-Agent', 'IDE Support', 'Security', 'Learning', 'Collab', 'Custom'],
+                datasets: [
+                    {
+                        label: 'CodeAI Pro',
+                        data: [95, 90, 95, 92, 88, 90],
+                        fill: true,
+                        backgroundColor: 'rgba(204, 255, 0, 0.3)',
+                        borderColor: '#CCFF00',
+                        borderWidth: 4,
+                        pointBackgroundColor: '#CCFF00',
+                        pointBorderColor: '#000000',
+                        pointBorderWidth: 3,
+                        pointRadius: 6
+                    },
+                    {
+                        label: 'Competitor A',
+                        data: [70, 85, 80, 75, 70, 75],
+                        fill: true,
+                        backgroundColor: 'rgba(255, 107, 0, 0.3)',
+                        borderColor: '#FF6B00',
+                        borderWidth: 4,
+                        pointBackgroundColor: '#FF6B00',
+                        pointBorderColor: '#000000',
+                        pointBorderWidth: 3,
+                        pointRadius: 6
+                    },
+                    {
+                        label: 'Competitor B',
+                        data: [65, 80, 75, 70, 65, 70],
+                        fill: true,
+                        backgroundColor: 'rgba(102, 102, 102, 0.3)',
+                        borderColor: '#666666',
+                        borderWidth: 4,
+                        pointBackgroundColor: '#666666',
+                        pointBorderColor: '#000000',
+                        pointBorderWidth: 3,
+                        pointRadius: 6
+                    }
+                ]
+            },
+            options: {
+                responsive: true,
+                plugins: {
+                    title: {
+                        display: true,
+                        text: 'FEATURE_COMPARISON [normalized_score]',
+                        font: {
+                            size: 16,
+                            weight: 'bold',
+                            family: "'JetBrains Mono', monospace"
+                        },
+                        color: '#000000'
+                    },
+                    legend: {
+                        display: true,
+                        position: 'top',
+                        labels: {
+                            font: {
+                                family: "'JetBrains Mono', monospace",
+                                weight: 'bold'
+                            },
+                            color: '#000000'
+                        }
+                    }
+                },
+                scales: {
+                    r: {
+                        beginAtZero: true,
+                        max: 100,
+                        ticks: {
+                            stepSize: 20,
+                            font: {
+                                family: "'JetBrains Mono', monospace"
+                            }
+                        },
+                        pointLabels: {
+                            font: {
+                                family: "'JetBrains Mono', monospace",
+                                weight: 'bold',
+                                size: 11
+                            }
+                        },
+                        grid: {
+                            color: '#DDDDDD'
+                        }
+                    }
+                }
+            }
+        });
+    </script>
+</body>
+</html>

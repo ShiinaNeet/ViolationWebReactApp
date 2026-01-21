@@ -312,13 +312,13 @@ export default function UserManagement() {
     }
   };
   return (
-    <div className="flex flex-col w-full">
+    <div className="flex flex-col w-full transition-colors duration-300">
       <div
-        className="flex justify-between gap-x-2  my-2 md:m-0 bg-white rounded-sm "
+        className="flex justify-between gap-x-2 my-2 md:m-0 bg-white dark:bg-dark-paper px-4 rounded-md transition-colors duration-300"
         style={{ fontSize: "16px" }}
       >
         <h1 className="py-3" style={{ fontSize: "16px", color: "black" }}>
-          Program Head
+          <span className="dark:text-white">Program Head</span>
         </h1>
       </div>
       <div>

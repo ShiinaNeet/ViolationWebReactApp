@@ -1,5 +1,6 @@
 import React from "react";
 import { useAuth } from "../auth/AuthProvider";
+import { useTheme } from "../context/ThemeContext";
 import { useNavigate } from "react-router-dom";
 import Button from "@mui/material/Button";
 import TextField from "@mui/material/TextField";
@@ -13,10 +14,12 @@ import {
 import "../animations.css";
 import { motion, AnimatePresence } from "framer-motion";
 import DocumentList from "../components/DocumentList";
+import ThemeToggle from "../components/ThemeToggle";
 
 const Login = () => {
   const vertical = "bottom";
   const horizontal = "right";
+  const { isDarkMode } = useTheme();
   const formVariants = {
     hidden: { opacity: 0, y: 50 },
     visible: { opacity: 1, y: 0 },
@@ -136,7 +139,12 @@ const Login = () => {
       </div>
 
       {/* Right side: Form */}
-      <div className="w-full md:w-1/2 lg:w-1/3 flex flex-col items-center justify-center bg-white p-6 md:p-12">
+      <div className={`w-full md:w-1/2 lg:w-1/3 flex flex-col items-center justify-center p-6 md:p-12 transition-colors duration-300 ${isDarkMode ? 'bg-dark-bg' : 'bg-white'}`}>
+        {/* Theme Toggle */}
+        <div className="absolute top-4 right-4">
+          <ThemeToggle />
+        </div>
+        
         <AnimatePresence mode="wait">
           <motion.div
             key={activeForm}
@@ -171,11 +179,11 @@ const Login = () => {
                 >
                   <Typography
                     variant="h4"
-                    className="font-bold text-gray-800"
+                    className={`font-bold ${isDarkMode ? 'text-white' : 'text-gray-800'}`}
                   >
                     Login to Your Account
                   </Typography>
-                  <Typography variant="body1" className="text-gray-600 mt-2">
+                  <Typography variant="body1" className={`mt-2 ${isDarkMode ? 'text-gray-300' : 'text-gray-600'}`}>
                     Welcome back! Please enter your details.
                   </Typography>
                 </motion.div>

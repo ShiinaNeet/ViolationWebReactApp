@@ -11,7 +11,7 @@ function Forms() {
         alignItems: "center",
         pt: { xs: 15, sm: 15 },
         pb: { xs: 8, sm: 12 },
-        height: "100vh",
+        minHeight: "100vh",
         width: "90%",
         mx: "auto",
       }}

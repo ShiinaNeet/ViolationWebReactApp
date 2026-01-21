@@ -2,6 +2,8 @@ import React from "react";
 import reactsvg from "@src/assets/react.svg";
 import { Link } from "react-router-dom";
 import { useAuth } from "../../auth/AuthProvider";
+import { useTheme } from "../../context/ThemeContext";
+import ThemeToggle from "../ThemeToggle";
 
 import MenuIcon from "@mui/icons-material/Menu";
 import CloseRoundedIcon from "@mui/icons-material/CloseRounded";
@@ -19,7 +21,11 @@ import { NavigationToolbar as StyledToolbar } from "../../utils/StyledToolBar";
 
 const ProfessorNavigationBar = () => {
   const { logout, isAuthenticated, userType } = useAuth();
+  const { isDarkMode } = useTheme();
   const [open, setOpen] = React.useState(false);
+
+  const navBgColor = isDarkMode ? "#0f3460" : "black";
+  const drawerBgColor = isDarkMode ? "#16213e" : "black";
 
   const toggleDrawer = (newOpen) => (event) => {
     if (
@@ -40,8 +46,8 @@ const ProfessorNavigationBar = () => {
         left: 0,
         right: 0,
         width: "100%",
-        bgcolor: "black",
-        color: "black",
+        bgcolor: navBgColor,
+        color: "white",
         boxShadow: 3,
       }}
     >
@@ -119,10 +125,12 @@ const ProfessorNavigationBar = () => {
               Logout
             </Button>
           )}
+          <ThemeToggle />
         </Box>
 
         {/* Mobile Menu */}
-        <Box sx={{ display: { xs: "flex", md: "none" } }}>
+        <Box sx={{ display: { xs: "flex", md: "none" }, gap: 1 }}>
+          <ThemeToggle />
           <IconButton
             aria-label="Menu button"
             onClick={toggleDrawer(true)}
@@ -132,7 +140,7 @@ const ProfessorNavigationBar = () => {
           </IconButton>
 
           <Drawer anchor="top" open={open} onClose={toggleDrawer(false)}>
-            <Box sx={{ p: 2, backgroundColor: "black" }}>
+            <Box sx={{ p: 2, backgroundColor: drawerBgColor }}>
               <Box sx={{ display: "flex", justifyContent: "flex-end" }}>
                 <IconButton
                   onClick={toggleDrawer(false)}

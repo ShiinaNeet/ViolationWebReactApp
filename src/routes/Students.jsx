@@ -971,7 +971,7 @@ const Students = () => {
   const GetHeader = () => {
     return (
       <div className="flex flex-row justify-between h-fit rounded-md mt-5">
-        <h1 className="py-3 text-black" style={{ fontSize: "16px" }}>
+        <h1 className="py-3 text-black dark:text-white" style={{ fontSize: "16px" }}>
           Student Violations
         </h1>
         <div className="flex items-center ss:flex-row flex-col">

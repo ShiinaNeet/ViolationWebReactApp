@@ -213,11 +213,11 @@ function Users() {
   const GetHeader = () => {
     return (
       <div
-        className="flex flex-col md:flex-row justify-between gap-x-2 bg-white my-2 rounded-md"
+        className="flex flex-col md:flex-row justify-between gap-x-2 bg-white dark:bg-dark-paper my-2 rounded-md px-4 transition-colors duration-300"
         style={{ fontSize: "16px" }}
       >
         <h1
-          className="text-black flex items-center py-3"
+          className="text-black dark:text-white flex items-center py-3"
           style={{ fontSize: "16px" }}
         >
           Users List
@@ -225,7 +225,7 @@ function Users() {
         <Tooltip title="Create User">
           <Button
             onClick={() => setOpenCreate(true)}
-            className="p-2"
+            className="p-2 dark:text-white"
             color="primary"
           >
             Create User
@@ -365,7 +365,7 @@ function Users() {
           alignItems: "center",
           pt: { xs: 15, sm: 15 },
           pb: { xs: 8, sm: 12 },
-          height: "100vh",
+          minHeight: "100vh",
           width: "90%",
           mx: "auto",
         }}

@@ -123,11 +123,11 @@ export default function Violations() {
   const GetHeader = () => {
     return (
       <div
-        className="flex flex-col md:flex-row justify-between gap-x-2 bg-white my-2 rounded-md py-3"
+        className="flex flex-col md:flex-row justify-between gap-x-2 bg-white dark:bg-dark-paper my-2 rounded-md py-3 px-4 transition-colors duration-300"
         style={{ fontSize: "16px" }}
       >
         <h1
-          className="text-black flex items-center"
+          className="text-black dark:text-white flex items-center"
           style={{ fontSize: "16px" }}
         >
           Violation List
@@ -333,7 +333,7 @@ export default function Violations() {
         alignItems: "center",
         pt: { xs: 10, sm: 15 },
         pb: { xs: 8, sm: 12 },
-        height: "100vh",
+        minHeight: "100vh",
         width: "90%",
         mx: "auto",
       }}

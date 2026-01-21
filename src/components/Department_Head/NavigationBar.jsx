@@ -3,6 +3,7 @@ import reactsvg from "@src/assets/react.svg";
 import { Link } from "react-router-dom";
 import MenuIcon from "@mui/icons-material/Menu";
 import CloseRoundedIcon from "@mui/icons-material/CloseRounded";
+import ThemeToggle from "../ThemeToggle";
 import {
   AppBar,
   Box,
@@ -14,16 +15,21 @@ import {
   Typography,
 } from "@mui/material";
 import { useAuth } from "../../auth/AuthProvider";
+import { useTheme } from "../../context/ThemeContext";
 import { NavigationToolbar as StyledToolbar } from "../../utils/StyledToolBar";
 
 const Department_Head_NavigationBar = () => {
   const { logout, isAuthenticated } = useAuth();
+  const { isDarkMode } = useTheme();
   const [open, setOpen] = React.useState(false);
   const MenuButtonItems = [
     { name: "Program Head", link: "/department-head/home" },
     { name: "Graph", link: "/department-head/graph" },
     { name: "Notification", link: "/department-head/Notification" },
   ];
+
+  const navBgColor = isDarkMode ? "#0f3460" : "black";
+  const drawerBgColor = isDarkMode ? "#16213e" : "black";
 
   const toggleDrawer = (newOpen) => (event) => {
     if (
@@ -44,8 +50,8 @@ const Department_Head_NavigationBar = () => {
         left: 0,
         right: 0,
         width: "100%",
-        bgcolor: "black",
-        color: "black",
+        bgcolor: navBgColor,
+        color: "white",
         boxShadow: 3,
       }}
     >
@@ -126,12 +132,14 @@ const Department_Head_NavigationBar = () => {
               Logout
             </Button>
           )}
+          <ThemeToggle />
           {localStorage.getItem("accessToken") === null &&
             window.location.replace("/login")}
         </Box>
 
         {/* Mobile Menu */}
-        <Box sx={{ display: { xs: "flex", md: "none" } }}>
+        <Box sx={{ display: { xs: "flex", md: "none" }, gap: 1 }}>
+          <ThemeToggle />
           <IconButton
             aria-label="Menu button"
             onClick={toggleDrawer(true)}
@@ -141,7 +149,7 @@ const Department_Head_NavigationBar = () => {
           </IconButton>
 
           <Drawer anchor="top" open={open} onClose={toggleDrawer(false)}>
-            <Box sx={{ p: 2, backgroundColor: "black" }}>
+            <Box sx={{ p: 2, backgroundColor: drawerBgColor }}>
               <Box sx={{ display: "flex", justifyContent: "flex-end" }}>
                 <IconButton
                   onClick={toggleDrawer(false)}

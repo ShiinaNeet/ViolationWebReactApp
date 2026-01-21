@@ -2,8 +2,10 @@ import React from "react";
 import reactsvg from "../assets/react.svg";
 import { Link } from "react-router-dom";
 import { useAuth } from "../auth/AuthProvider";
+import { useTheme } from "../context/ThemeContext";
 import MenuIcon from "@mui/icons-material/Menu";
 import CloseRoundedIcon from "@mui/icons-material/CloseRounded";
+import ThemeToggle from "./ThemeToggle";
 import {
   AppBar,
   Box,
@@ -16,20 +18,24 @@ import {
   Divider,
 } from "@mui/material";
 
-const StyledToolbar = styled(Toolbar)(() => ({
+const StyledToolbar = styled(Toolbar)(({ theme }) => ({
   display: "flex",
   alignItems: "center",
   justifyContent: "space-between",
   flexShrink: 0,
   width: "100%",
   backdropFilter: "blur(24px)",
-  backgroundColor: "black",
+  backgroundColor: theme.palette.mode === "dark" ? "#0f3460" : "black",
   padding: "8px 12px",
 }));
 
 const Navigationbar = () => {
   const { logout, isAuthenticated } = useAuth();
+  const { isDarkMode } = useTheme();
   const [open, setOpen] = React.useState(false);
+
+  const navBgColor = isDarkMode ? "#0f3460" : "black";
+  const drawerBgColor = isDarkMode ? "#16213e" : "black";
 
   const toggleDrawer = (newOpen) => () => {
     setOpen(newOpen);
@@ -38,7 +44,7 @@ const Navigationbar = () => {
     <AppBar
       position="fixed"
       style={{
-        backgroundColor: "black",
+        backgroundColor: navBgColor,
         top: 0,
         left: 0,
         right: 0,
@@ -153,10 +159,12 @@ const Navigationbar = () => {
               </Link>
             </Button>
           )}
+          <ThemeToggle />
           {localStorage.getItem("accessToken") === null &&
             window.location.replace("/login")}
         </Box>
         <Box sx={{ display: { xs: "flex", md: "none" }, gap: 1 }}>
+          <ThemeToggle />
           <IconButton
             aria-label="Menu button"
             onClick={toggleDrawer(true)}
@@ -176,7 +184,7 @@ const Navigationbar = () => {
               },
             }}
           >
-            <Box sx={{ p: 2, pt: 10, backgroundColor: "black" }}>
+            <Box sx={{ p: 2, pt: 10, backgroundColor: drawerBgColor }}>
               <Box
                 sx={{
                   display: "flex",
