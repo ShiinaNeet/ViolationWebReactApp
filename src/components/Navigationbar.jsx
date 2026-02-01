@@ -2,7 +2,7 @@ import React from "react";
 import bsuLogo from "../assets/bsu_logo_no_bg.png";
 import { Link } from "react-router-dom";
 import { useAuth } from "../auth/AuthProvider";
-import { useTheme } from "../context/ThemeContext";
+import { useTheme, THEME_COLORS } from "../context/ThemeContext";
 import MenuIcon from "@mui/icons-material/Menu";
 import CloseRoundedIcon from "@mui/icons-material/CloseRounded";
 import ThemeToggle from "./ThemeToggle";
@@ -20,24 +20,25 @@ import {
   useTheme as useMuiTheme,
 } from "@mui/material";
 
-const StyledToolbar = styled(Toolbar)(({ theme }) => ({
+const StyledToolbar = styled(Toolbar)(() => ({
   display: "flex",
   alignItems: "center",
   justifyContent: "space-between",
   flexShrink: 0,
   width: "100%",
   backdropFilter: "blur(24px)",
-  backgroundColor: theme.palette.primary.main,
   padding: "8px 12px",
 }));
 
 const Navigationbar = () => {
   const { logout, isAuthenticated } = useAuth();
-  const { isDarkMode } = useTheme();
+  const { isDarkMode, themeColor } = useTheme();
   const muiTheme = useMuiTheme();
   const [open, setOpen] = React.useState(false);
 
-  const navBgColor = muiTheme.palette.primary.main;
+  // Always use the 'light' version of the color for the navbar background
+  const selectedColor = THEME_COLORS.find(c => c.name === themeColor) || THEME_COLORS[0];
+  const navBgColor = selectedColor.light;
   const drawerBgColor = isDarkMode ? "#16213e" : muiTheme.palette.primary.main;
 
   const toggleDrawer = (newOpen) => () => {

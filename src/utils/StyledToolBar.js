@@ -29,13 +29,12 @@ export const StyledToolbarWithRed = styled(Toolbar)(({ theme }) => ({
   padding: "8px 12px",
 }));
 
-export const NavigationToolbar = styled(Toolbar)(({ theme }) => ({
+export const NavigationToolbar = styled(Toolbar)(() => ({
   display: "flex",
   alignItems: "center",
   justifyContent: "space-between",
   flexShrink: 0,
   width: "100%",
   backdropFilter: "blur(24px)",
-  backgroundColor: theme.palette.primary.main,
   padding: "8px 12px",
 }));

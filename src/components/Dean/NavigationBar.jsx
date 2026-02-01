@@ -2,7 +2,7 @@ import React from "react";
 import bsuLogo from "@src/assets/bsu_logo_no_bg.png";
 import { Link } from "react-router-dom";
 import { useAuth } from "../../auth/AuthProvider";
-import { useTheme } from "../../context/ThemeContext";
+import { useTheme, THEME_COLORS } from "../../context/ThemeContext";
 import MenuIcon from "@mui/icons-material/Menu";
 import CloseRoundedIcon from "@mui/icons-material/CloseRounded";
 import ThemeToggle from "../ThemeToggle";
@@ -22,7 +22,7 @@ import { NavigationToolbar as StyledToolbar } from "../../utils/StyledToolBar";
 
 const NavigationBar = () => {
   const { logout, isAuthenticated } = useAuth();
-  const { isDarkMode } = useTheme();
+  const { isDarkMode, themeColor } = useTheme();
   const muiTheme = useMuiTheme();
   const [open, setOpen] = React.useState(false);
   const MenuButtonItems = [
@@ -32,7 +32,8 @@ const NavigationBar = () => {
     { name: "Notification", link: "/dean/Notification" },
   ];
 
-  const navBgColor = muiTheme.palette.primary.main;
+  const selectedColor = THEME_COLORS.find(c => c.name === themeColor) || THEME_COLORS[0];
+  const navBgColor = selectedColor.light;
   const drawerBgColor = isDarkMode ? "#16213e" : muiTheme.palette.primary.main;
 
   const toggleDrawer = (newOpen) => (event) => {

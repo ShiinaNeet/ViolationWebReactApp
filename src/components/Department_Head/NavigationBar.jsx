@@ -16,13 +16,13 @@ import {
   useTheme as useMuiTheme,
 } from "@mui/material";
 import { useAuth } from "../../auth/AuthProvider";
-import { useTheme } from "../../context/ThemeContext";
+import { useTheme, THEME_COLORS } from "../../context/ThemeContext";
 import ThemeColorPicker from "../ThemeColorPicker";
 import { NavigationToolbar as StyledToolbar } from "../../utils/StyledToolBar";
 
 const Department_Head_NavigationBar = () => {
   const { logout, isAuthenticated } = useAuth();
-  const { isDarkMode } = useTheme();
+  const { isDarkMode, themeColor } = useTheme();
   const muiTheme = useMuiTheme();
   const [open, setOpen] = React.useState(false);
   const MenuButtonItems = [
@@ -31,7 +31,8 @@ const Department_Head_NavigationBar = () => {
     { name: "Notification", link: "/department-head/Notification" },
   ];
 
-  const navBgColor = muiTheme.palette.primary.main;
+  const selectedColor = THEME_COLORS.find(c => c.name === themeColor) || THEME_COLORS[0];
+  const navBgColor = selectedColor.light;
   const drawerBgColor = isDarkMode ? "#16213e" : muiTheme.palette.primary.main;
 
   const toggleDrawer = (newOpen) => (event) => {
