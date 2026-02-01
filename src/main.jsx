@@ -26,6 +26,7 @@ import Notification from "./routes/Notification";
 import Students from "./routes/Students";
 import Violations from "./routes/Violations";
 import Chart from "./routes/Chart";
+import Dashboard from "./routes/Dashboard";
 import Login from "./routes/Login";
 import Unauthorized from "./routes/Unauthorized";
 import Users from "./routes/Users";
@@ -48,6 +49,10 @@ const router = createBrowserRouter([
     path: "/",
     element: <ProtectedRoute element={<Layout />} />,
     children: [
+      {
+        path: "dashboard",
+        element: <ProtectedRoute element={<Dashboard />} />,
+      },
       {
         path: "/students",
         element: <ProtectedRoute element={<Students />} />,

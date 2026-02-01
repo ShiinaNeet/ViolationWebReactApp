@@ -1,5 +1,5 @@
 import React from "react";
-import reactsvg from "@src/assets/react.svg";
+import bsuLogo from "@src/assets/bsu_logo_no_bg.png";
 import { Link } from "react-router-dom";
 import { useAuth } from "../../auth/AuthProvider";
 import { useTheme } from "../../context/ThemeContext";
@@ -15,12 +15,15 @@ import {
   MenuItem,
   Divider,
   Typography,
+  useTheme as useMuiTheme,
 } from "@mui/material";
+import ThemeColorPicker from "../ThemeColorPicker";
 import { NavigationToolbar as StyledToolbar } from "../../utils/StyledToolBar";
 
 const NavigationBar = () => {
   const { logout, isAuthenticated } = useAuth();
   const { isDarkMode } = useTheme();
+  const muiTheme = useMuiTheme();
   const [open, setOpen] = React.useState(false);
   const MenuButtonItems = [
     { name: "Home", link: "/dean/home" },
@@ -29,8 +32,8 @@ const NavigationBar = () => {
     { name: "Notification", link: "/dean/Notification" },
   ];
 
-  const navBgColor = isDarkMode ? "#0f3460" : "black";
-  const drawerBgColor = isDarkMode ? "#16213e" : "black";
+  const navBgColor = muiTheme.palette.primary.main;
+  const drawerBgColor = isDarkMode ? "#16213e" : muiTheme.palette.primary.main;
 
   const toggleDrawer = (newOpen) => (event) => {
     if (
@@ -66,11 +69,13 @@ const NavigationBar = () => {
         >
           <Box
             component="img"
-            src={reactsvg}
-            alt="React Logo"
+            src={bsuLogo}
+            alt="BSU Logo"
             sx={{
               height: 40,
+              width: 40,
               mr: 2,
+              objectFit: "contain",
             }}
           />
           <Typography
@@ -133,6 +138,7 @@ const NavigationBar = () => {
               Logout
             </Button>
           )}
+          <ThemeColorPicker />
           <ThemeToggle />
           {localStorage.getItem("accessToken") === null &&
             window.location.replace("/login")}
@@ -140,6 +146,7 @@ const NavigationBar = () => {
 
         {/* Mobile Menu */}
         <Box sx={{ display: { xs: "flex", md: "none" }, gap: 1 }}>
+          <ThemeColorPicker />
           <ThemeToggle />
           <IconButton
             aria-label="Menu button"

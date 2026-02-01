@@ -8,8 +8,9 @@
   --text-primary: #000000;
   --text-secondary: #666666;
   --border-color: #dddddd;
-  --nav-bg: #000000;
+  --nav-bg: var(--primary-color);
   --nav-text: #ffffff;
+  --primary-color: #000000;
 }
 
 .dark {
@@ -18,7 +19,7 @@
   --text-primary: #ffffff;
   --text-secondary: #b0b0b0;
   --border-color: rgba(255, 255, 255, 0.12);
-  --nav-bg: #0f3460;
+  --nav-bg: var(--primary-color);
   --nav-text: #ffffff;
 }
 
@@ -168,7 +169,7 @@ table {
   font-weight: bold;
   font-size: large;
   text-align: left;
-  border-bottom: 2px solid var(--border-color);
+  border-bottom: 2px solid var(--primary-color);
 }
 
 .dark .MuiTableHead-root {

@@ -34,6 +34,9 @@ import {
 import axios from "axios";
 import TablePaginationActions from "../utils/TablePaginationActions";
 import { useTheme } from "../context/ThemeContext";
+import * as XLSX from "xlsx";
+import DownloadIcon from "@mui/icons-material/Download";
+
 
 const StyledToolbar = styled(Toolbar)(({ theme }) => ({
   display: "flex",
@@ -152,25 +155,11 @@ export default function Reports() {
         });
       });
   };
-  const [violationRules, setViolationRules] = React.useState([]);
   const [offenseFilter, setOffenseFilter] = React.useState("all"); // default to all
 
-  // ... (existing state)
-
-  // Fetch violation rules
   React.useEffect(() => {
-    axios
-      .get("/violation", {
-        params: { skip: 0, limit: 100 },
-        headers: { "Content-Type": "application/json" },
-      })
-      .then((response) => {
-        if (response.data.status === "success") {
-          setViolationRules(response.data.data);
-        }
-      })
-      .catch((error) => console.error("Error fetching violations:", error));
-  }, []);
+    fetchData(offenseFilter);
+  }, [offenseFilter]);
 
   // const getViolationCategory = (code) => {
   //   if (!violationRules.length) return "unknown";
@@ -235,6 +224,30 @@ export default function Reports() {
             }) || []
       ) || []
   );
+
+  const handleDownloadExcel = () => {
+    const ws = XLSX.utils.json_to_sheet(
+      filteredData.map((row) => ({
+        "Student Name": row.student,
+        "SR Code": row.srcode,
+        Email: row.email,
+        Department: row.department,
+        Program: row.program,
+        "Violation Code": row.violationCode,
+        Description: row.violationDescription,
+        "Date Committed": row.dateCommitted,
+        Category: row.category?.toUpperCase(),
+        Semester: row.semester,
+        "Minor Offenses": row.minorOffenses,
+        "Major Offenses": row.majorOffenses,
+        "Academic Dishonesty": row.academicDishonestyOffenses,
+      }))
+    );
+    const wb = XLSX.utils.book_new();
+    XLSX.utils.book_append_sheet(wb, ws, "Reports");
+    XLSX.writeFile(wb, "Student_Violations_Report.xlsx");
+  };
+
   const GetHeader = () => {
     const handleFilterChange = (event, newFilter) => {
       if (newFilter !== null) {
@@ -267,8 +280,12 @@ export default function Reports() {
                 color: isDarkMode ? 'rgba(255, 255, 255, 0.7)' : 'inherit',
                 borderColor: isDarkMode ? 'rgba(255, 255, 255, 0.23)' : 'inherit',
                 '&.Mui-selected': {
-                  backgroundColor: isDarkMode ? 'rgba(255, 255, 255, 0.08)' : 'rgba(0, 0, 0, 0.08)',
-                  color: isDarkMode ? '#fff' : 'inherit',
+                  backgroundColor: 'var(--primary-color)',
+                  color: '#fff',
+                  '&:hover': {
+                    backgroundColor: 'var(--primary-color)',
+                    opacity: 0.9
+                  }
                 }
               }
             }}
@@ -280,12 +297,27 @@ export default function Reports() {
             </ToggleButton>
             <ToggleButton value="all">All</ToggleButton>
           </ToggleButtonGroup>
-          <Button onClick={() => setSearchFilterModal(true)} color="primary">
+          <Button
+            onClick={() => setSearchFilterModal(true)}
+            color="primary"
+            variant="outlined"
+            size="small"
+          >
             Filter
+          </Button>
+          <Button
+            onClick={handleDownloadExcel}
+            color="primary"
+            variant="outlined"
+            size="small"
+            startIcon={<DownloadIcon />}
+          >
+            Download Excel
           </Button>
         </div>
       </div>
     );
+
   };
   const GetTableHead = () => {
     return (
@@ -349,17 +381,17 @@ export default function Reports() {
                 fontWeight: "bold",
                 backgroundColor:
                   row.category === "minor"
-                    ? (isDarkMode ? "#2e2e42" : "#f5f5f5")
+                    ? (isDarkMode ? "rgba(255, 255, 255, 0.05)" : "#f5f5f5")
                     : row.category === "major"
-                    ? (isDarkMode ? "#ff5252" : "black")
-                    : (isDarkMode ? "#3d3d5c" : "#dcdcdc"),
+                    ? "var(--primary-color)"
+                    : (isDarkMode ? "rgba(255, 255, 255, 0.1)" : "#dcdcdc"),
                 color:
                   row.category === "minor"
                     ? (isDarkMode ? "#fff" : "black")
                     : row.category === "major"
                     ? "white"
                     : (isDarkMode ? "#fff" : "black"),
-                border: row.category === "minor" ? "1px solid #ddd" : "none",
+                border: row.category === "minor" ? "1px solid var(--primary-color)" : "none",
               }}
             >
               {row.category?.toUpperCase()}
@@ -401,12 +433,7 @@ export default function Reports() {
       </StyledToolbar>
     );
   };
-  React.useEffect(() => {
-    fetchData(offenseFilter);
-    return () => {
-      console.log("Reports component mounted");
-    };
-  }, []);
+
   return (
     <Container
       maxWidth={false}

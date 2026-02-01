@@ -24,7 +24,7 @@ export const StyledToolbarWithRed = styled(Toolbar)(({ theme }) => ({
   backdropFilter: "blur(24px)",
   border: "1px solid",
   borderColor: theme.palette.divider,
-  backgroundColor: theme.palette.mode === "dark" ? "#0f3460" : "black",
+  backgroundColor: theme.palette.primary.main,
   boxShadow: `0px 4px 6px rgba(0, 0, 0, 0.9)`, // Extra
   padding: "8px 12px",
 }));
@@ -36,6 +36,6 @@ export const NavigationToolbar = styled(Toolbar)(({ theme }) => ({
   flexShrink: 0,
   width: "100%",
   backdropFilter: "blur(24px)",
-  backgroundColor: theme.palette.mode === "dark" ? "#0f3460" : "black",
+  backgroundColor: theme.palette.primary.main,
   padding: "8px 12px",
 }));

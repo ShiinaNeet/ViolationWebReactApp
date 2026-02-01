@@ -249,7 +249,6 @@ export default function Violations() {
                   <Chip
                     label={offense_code}
                     variant="outlined"
-                    color="primary"
                     key={offense_code}
                     margin="dense"
                     size="medium"
@@ -257,6 +256,8 @@ export default function Violations() {
                       mr: 0.5,
                       mb: 0.5,
                       p: 0.5,
+                      borderColor: 'var(--primary-color)',
+                      color: 'var(--primary-color)',
                       "& .MuiChip-label": { fontSize: "16px" },
                     }}
                   />
@@ -267,13 +268,14 @@ export default function Violations() {
               <Chip
                 label={"No Data"}
                 variant="outlined"
-                color="primary"
                 margin="dense"
                 size="medium"
                 sx={{
                   mr: 0.5,
                   mb: 0.5,
                   p: 0.5,
+                  borderColor: 'var(--primary-color)',
+                  color: 'var(--primary-color)',
                   "& .MuiChip-label": { fontSize: "16px" },
                 }}
               />
@@ -424,7 +426,7 @@ export default function Violations() {
                               className="rounded-sm text-white hover:bg-gray-100 hover:text-black"
                               onClick={() => handleOpen(row)}
                             >
-                              <RemoveRedEye color="primary" />
+                              <RemoveRedEye sx={{ color: 'var(--primary-color)' }} />
                             </Button>
                           </Tooltip>
                         </TableCell>

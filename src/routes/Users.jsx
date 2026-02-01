@@ -414,16 +414,15 @@ function Users() {
                                 "-"
                               ) : (
                                 <Button
-                                  className={`p-2 rounded-sm text-center ${
-                                    row.type === "ADMIN"
-                                      ? "primary"
-                                      : "secondary"
-                                  }`}
-                                  color={
-                                    row.type === "ADMIN"
-                                      ? "primary"
-                                      : "secondary"
-                                  }
+                                  className="p-2 rounded-sm text-center"
+                                  sx={{
+                                    backgroundColor: 'var(--primary-color)',
+                                    color: 'white',
+                                    '&:hover': {
+                                      backgroundColor: 'var(--primary-color)',
+                                      opacity: 0.9
+                                    }
+                                  }}
                                 >
                                   {row.type || "No type attached"}
                                 </Button>

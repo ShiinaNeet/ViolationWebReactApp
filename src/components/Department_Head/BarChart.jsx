@@ -13,8 +13,10 @@ import {
 } from "@mui/material";
 import { BarChart } from "@mui/x-charts/BarChart";
 import axios from "axios";
+import { useTheme } from "../../context/ThemeContext";
 
 const BarChartComponent = memo(() => {
+  const { isDarkMode } = useTheme();
   const [departments, setDepartments] = useState([]);
   const [loading, setLoading] = useState(true);
   const [isBlurred, setIsBlurred] = useState(false);
@@ -174,25 +176,40 @@ const BarChartComponent = memo(() => {
         sx={{
           marginTop: "30px",
           marginBottom: "30px",
-          padding: "10px",
-          borderRadius: "5px",
-          backgroundColor: "white",
+          padding: "20px",
+          borderRadius: "12px",
+          backgroundColor: isDarkMode ? "#16213e" : "white",
+          border: isDarkMode ? "1px solid rgba(255,255,255,0.1)" : "1px solid rgba(0,0,0,0.05)",
+          boxShadow: isDarkMode ? "0 4px 20px rgba(0,0,0,0.4)" : "0 4px 20px rgba(0,0,0,0.05)",
+          transition: "all 0.3s ease",
         }}
       >
-        <h1 className="font-semibold" style={{ fontSize: "16px" }}>
+        <h1 className="font-semibold" style={{ fontSize: "18px", color: isDarkMode ? "white" : "black" }}>
           {department.name} - Program Violations
         </h1>
-        <label className="text-gray-500" style={{ fontSize: "16px" }}>
+        <label className="text-gray-500" style={{ fontSize: "14px", display: "block", marginBottom: "10px" }}>
           Total Department Violation : {department.departmentViolationCount}
         </label>
         {department.programs.length > 0 ? (
           <BarChart
-            colors={["#000000"]}
+            colors={["var(--primary-color)"]}
             height={300}
             xAxis={[
               {
                 scaleType: "band",
                 data: department.programs.map((program) => program.name),
+                label: "Programs",
+                labelStyle: {
+                  fontWeight: "bold",
+                },
+              },
+            ]}
+            yAxis={[
+              {
+                label: "Violation Count",
+                labelStyle: {
+                  fontWeight: "bold",
+                },
               },
             ]}
             series={[
@@ -209,7 +226,7 @@ const BarChartComponent = memo(() => {
         )}
       </Box>
     ));
-  }, [departments]);
+  }, [departments, isDarkMode]);
 
   const GetNoDataToDisplay = useMemo(() => {
     return (
@@ -228,8 +245,9 @@ const BarChartComponent = memo(() => {
         fullWidth
         PaperProps={{
           style: {
-            backgroundColor: "white",
-            borderRadius: "8px",
+            backgroundColor: isDarkMode ? "#16213e" : "white",
+            borderRadius: "12px",
+            border: isDarkMode ? "1px solid rgba(255,255,255,0.1)" : "none",
           },
         }}
       >
@@ -237,15 +255,15 @@ const BarChartComponent = memo(() => {
           sx={{
             textAlign: "center",
             fontWeight: "bold",
-            color: "black",
-            fontSize: "16px",
+            color: isDarkMode ? "white" : "black",
+            fontSize: "18px",
           }}
         >
           Session Timeout - Re-authentication Required
         </DialogTitle>
         <DialogContent>
           <p
-            className="text-center text-gray-600 mb-4"
+            className={`text-center mb-4 ${isDarkMode ? "text-gray-300" : "text-gray-600"}`}
             style={{ fontSize: "16px" }}
           >
             You&apos;ve been inactive for 1 minute. Please re-enter your
@@ -317,6 +335,7 @@ const BarChartComponent = memo(() => {
     handleLoginChange,
     handlePasswordChange,
     handleAuth,
+    isDarkMode,
   ]);
 
   useEffect(() => {

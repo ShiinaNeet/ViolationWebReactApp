@@ -12,13 +12,13 @@ import Dialog from "@mui/material/Dialog";
 import DialogActions from "@mui/material/DialogActions";
 import DialogContent from "@mui/material/DialogContent";
 import DialogTitle from "@mui/material/DialogTitle";
+import MoreVertIcon from "@mui/icons-material/MoreVert";
+import Menu from "@mui/material/Menu";
+import IconButton from "@mui/material/IconButton";
 import QrCode2Icon from "@mui/icons-material/QrCode2";
 import CloseIcon from "@mui/icons-material/Close";
-import RemoveRedEyeIcon from "@mui/icons-material/RemoveRedEye";
-import EditIcon from "@mui/icons-material/Edit";
 import Tooltip from "@mui/material/Tooltip";
 import FilterAltRoundedIcon from "@mui/icons-material/FilterAltRounded";
-import SourceIcon from "@mui/icons-material/Source";
 import "../animations.css";
 import {
   Alert,
@@ -54,14 +54,12 @@ import FormalComplaint from "../components/forms/FormalComplaint";
 import TablePaginationActions from "../utils/TablePaginationActions";
 import { StyledToolbar } from "../utils/StyledToolBar";
 import { AnimatePresence, motion } from "framer-motion";
-import useMediaQuery from "@mui/material/useMediaQuery";
 
 const Students = () => {
   const vertical = "bottom";
   const horizontal = "right";
   const yearList = ["1st year", "2nd year", "3rd year", "4th year", "5th year"];
   const searchViolationCategory = ["academic_dishonesty", "major", "minor"];
-  const isXs = useMediaQuery((theme) => theme.breakpoints.down("xs"));
   //Page & State
   const [page, setPage] = React.useState(0);
   const [rows, setRows] = React.useState([]);
@@ -109,6 +107,9 @@ const Students = () => {
   const [searchFilter, setSearchFilter] = React.useState({
     category: "",
     userid: "",
+    semester: "",
+    name: "",
+    year: "",
   });
   const [isSelectViolationComponentOpen, setIsSelectViolationComponentOpen] =
     useState(false);
@@ -135,6 +136,41 @@ const Students = () => {
   const [messageStudentModal, setMessageStudentModal] = React.useState(false);
   const [formModal, setFormModal] = React.useState(false);
   const [activeForm, setActiveForm] = useState(null);
+  const [anchorEl, setAnchorEl] = React.useState(null);
+  const [menuStudent, setMenuStudent] = React.useState(null);
+  const openMenu = Boolean(anchorEl);
+
+  const handleMenuClick = (event, student) => {
+    setAnchorEl(event.currentTarget);
+    setMenuStudent(student);
+  };
+
+  const handleMenuClose = () => {
+    setAnchorEl(null);
+    setMenuStudent(null);
+  };
+
+  const handleAction = (action) => {
+    if (!menuStudent) return;
+    
+    if (action === 'view') {
+      handleViewViolationModal(menuStudent);
+    } else if (action === 'forms') {
+      const student = menuStudent;
+      const programData = programList.find(
+        (program) => program.id === student.course
+      )?.name;
+      if (programData) {
+        setTargetStudent({ ...student, course: programData });
+      } else {
+        setTargetStudent(student);
+      }
+      setFormModal(true);
+    } else if (action === 'edit') {
+      handleUpdateViolationModal(menuStudent);
+    }
+    handleMenuClose();
+  };
   const rowVariants = {
     hidden: { opacity: 0, y: 20 },
     visible: (index) => ({
@@ -323,20 +359,25 @@ const Students = () => {
       const schoolTermResponse = await axios.get("/term", {
         params: { skip: 0, limit: 100 },
       });
+      let terms = [];
       if (schoolTermResponse.data.status === "success") {
-        setSchoolTermList(schoolTermResponse.data.data);
+        terms = schoolTermResponse.data.data;
+        console.log("Terms fetched:", terms);
+        setSchoolTermList(terms);
       }
       const violationResponse = await axios.get("/violation", {
         params: { skip: 0, limit: 100 },
       });
+      let currentViolations = violationList;
       if (violationResponse.data.status === "success") {
-        const violationList = violationResponse.data.data;
-        setViolationList(violationList);
-        console.log("Violation List in FetchALlFunction: ", violationList);
+        currentViolations = violationResponse.data.data;
+        setViolationList(currentViolations);
+        console.log("Violation List in FetchAllFunction: ", currentViolations);
+        console.log("Search Filter:", searchFilter);
       }
 
       const violationMap = new Map();
-      violationList.forEach((violationGroup) => {
+      currentViolations.forEach((violationGroup) => {
         violationGroup.violations.forEach((vio) => {
           violationMap.set(vio.code, vio.description);
         });
@@ -348,27 +389,110 @@ const Students = () => {
           limit: 100,
           userid: searchFilter.userid || undefined,
           violation_category: searchFilter.category || undefined,
+          semester: searchFilter.semester || undefined,
         },
       });
       if (studentResponse.data.status === "success") {
         console.log("Student fetched successfully", studentResponse.data.data);
 
         const completedDataWithViolationName = studentResponse.data.data
+          .filter((student) => {
+            // Apply Filters locally
+            const matchesName = searchFilter.name
+              ? student.fullname
+                  .toLowerCase()
+                  .includes(searchFilter.name.toLowerCase())
+              : true;
+
+            const matchesUserid = searchFilter.userid
+              ? student.userid.toString().includes(searchFilter.userid)
+              : true;
+
+            // Helper to check if a violation matches specific filters
+            const isViolationMatch = (v) => {
+               const semMatch = searchFilter.semester 
+                  ? v.sem_committed === searchFilter.semester 
+                  : true;
+                  
+                  // Refined Category Check
+                   let strictCatMatch = true;
+                   if (searchFilter.category) {
+                       strictCatMatch = false;
+                        for (const group of currentViolations) {
+                            if (
+                              group.category === searchFilter.category &&
+                              group.violations.some((vio) => vio.code === v.code)
+                            ) {
+                              strictCatMatch = true;
+                              break;
+                            }
+                        }
+                   }
+               
+               return semMatch && strictCatMatch;
+            };
+
+            const hasMatchingViolation = student.violations.some(isViolationMatch);
+
+            const matchesYear = searchFilter.year
+              ? student.year_and_department?.split(" - ")[0] === searchFilter.year
+              : true;
+
+            return matchesName && matchesUserid && hasMatchingViolation && matchesYear;
+          })
           .map((student) => {
+             // Helper to check match again for sorting
+             const isViolationMatch = (v) => {
+               const semMatch = searchFilter.semester 
+                  ? v.sem_committed === searchFilter.semester 
+                  : true;
+               
+               let strictCatMatch = true;
+               if (searchFilter.category) {
+                   strictCatMatch = false;
+                    for (const group of currentViolations) {
+                        if (
+                          group.category === searchFilter.category &&
+                          group.violations.some((vio) => vio.code === v.code)
+                        ) {
+                          strictCatMatch = true;
+                          break;
+                        }
+                    }
+               }
+               return semMatch && strictCatMatch;
+            };
+
             const updatedViolations = student.violations
               .map((violation) => ({
                 ...violation,
                 description:
                   violationMap.get(violation.code) || "Unknown Violation",
               }))
-              .sort(
-                (a, b) => new Date(b.date_committed) - new Date(a.date_committed)
-              );
+              .sort((a, b) => {
+                 // Priority Sort: Matches first
+                 const matchA = isViolationMatch(a);
+                 const matchB = isViolationMatch(b);
+                 
+                 if (matchA && !matchB) return -1;
+                 if (!matchA && matchB) return 1;
 
-            console.log("Updated Violations:", updatedViolations);
-            return { ...student, violations: updatedViolations };
+                 // Date Sort: Newest first
+                 return new Date(b.date_committed) - new Date(a.date_committed);
+              });
+
+            const latestViolation = updatedViolations[0];
+            const semester = terms.find(
+              (t) => (t._id || t.id || t.number) === latestViolation?.sem_committed
+            );
+
+            return {
+              ...student,
+              violations: updatedViolations,
+              semester_name: semester?.name || "No Data",
+            };
           })
-          .sort((a, b) => {
+          .sort((a, b) => { // Sort students by their primary (first) violation date
             const latestA = a.violations[0]?.date_committed
               ? new Date(a.violations[0].date_committed)
               : new Date(0);
@@ -379,11 +503,11 @@ const Students = () => {
           });
 
         setRows(completedDataWithViolationName);
-        if (studentResponse.data.data.length === 0) {
+        if (completedDataWithViolationName.length === 0) {
           setAlertMessage({
             open: true,
             title: "No Data",
-            message: "No student data found.",
+            message: "No student data found matching your filters.",
             variant: "info",
           });
         }
@@ -1040,6 +1164,15 @@ const Students = () => {
           <TableCell
             sx={{
               fontWeight: "bold",
+              textAlign: "center",
+            }}
+          align="center"
+          >
+            SR Code
+          </TableCell>
+          <TableCell
+            sx={{
+              fontWeight: "bold",
               display: "table-cell", // Default display
               "@media (max-width: 400px)": {
                 display: "none", // Hide when screen width is 400px or less
@@ -1047,6 +1180,15 @@ const Students = () => {
             }}
           >
             Violation
+          </TableCell>
+          <TableCell
+            sx={{
+              display: { xs: "none", sm: "table-cell" },
+              fontWeight: "bold",
+              textAlign: "center",
+            }}
+          >
+            Semester
           </TableCell>
           <TableCell
             sx={{
@@ -1064,7 +1206,7 @@ const Students = () => {
               textAlign: "center",
             }}
           >
-            Date
+            Date Committed
           </TableCell>
           <TableCell
             sx={{
@@ -1081,7 +1223,7 @@ const Students = () => {
   const GetTableSpinner = () => {
     return (
       <TableRow>
-        <TableCell colSpan={5} align="center">
+        <TableCell colSpan={7} align="center">
           <ClipLoader color={"#000000"} loading={true} size={50} />
         </TableCell>
       </TableRow>
@@ -1090,7 +1232,7 @@ const Students = () => {
   const GetTableRowNoStudentData = () => {
     return (
       <TableRow style={{ height: 53 * emptyRows }}>
-        <TableCell colSpan={6} align="center">
+        <TableCell colSpan={7} align="center">
           No student...
         </TableCell>
       </TableRow>
@@ -1143,8 +1285,8 @@ const Students = () => {
           <StyledToolbar variant="dense" disableGutters sx={{ width: "100%" }}>
             <TableContainer component={Paper} sx={{ width: "100%" }}>
               <Table
+                size="small"
                 sx={{
-                  minHeight: 1150,
                   width: "100%",
                 }}
                 aria-label="custom pagination table"
@@ -1175,8 +1317,11 @@ const Students = () => {
                           custom={index}
                           layout
                         >
-                          <TableCell className="py-5 px-4 border-b">
+                          <TableCell className="py-1 px-4 border-b">
                             {student.fullname}
+                          </TableCell>
+                          <TableCell className="py-1 px-4 border-b text-center" align="center">
+                            {student.srcode}
                           </TableCell>
                           <TableCell
                             sx={{
@@ -1186,25 +1331,85 @@ const Students = () => {
                               },
                             }}
                           >
-                            {student.violations.slice(0, 2).map((violation) => {
-                              return (
-                                <Chip
-                                  key={violation.code}
-                                  label={violation.code}
-                                  variant="outlined"
-                                  color="primary"
-                                  margin="dense"
-                                  size="medium"
-                                  sx={{ mr: 0.5, mb: 0.5, p: 0.5 }}
-                                />
-                              );
-                            })}
+                            <div className="flex items-center gap-1">
+                              {student.violations.length > 0 && (
+                                <Tooltip title={`${student.violations[0].code} - ${student.violations[0].description}`}>
+                                  <Chip
+                                    label={`${student.violations[0].code} - ${student.violations[0].description}`}
+                                    variant="outlined"
+                                    color="primary"
+                                    size="small"
+                                    sx={{ 
+                                      width: student.violations.length > 2 ? '300px' : '400px',
+                                      maxWidth: "300px",
+                                      cursor: "pointer",
+                                      '& .MuiChip-label': {
+                                        overflow: 'hidden',
+                                        textOverflow: 'ellipsis',
+                                        display: 'block'
+                                      }
+                                    }}
+                                  />
+                                </Tooltip>
+                              )}
+                              {student.violations.length > 1 && (
+                                <Tooltip title={`${student.violations[1].code} - ${student.violations[1].description}`}>
+                                  <Chip
+                                    label={`${student.violations[1].code} - ${student.violations[1].description}`}
+                                    variant="outlined"
+                                    color="primary"
+                                    size="small"
+                                    sx={{ 
+                                      maxWidth: '180px',
+                                      cursor: "pointer",
+                                      '& .MuiChip-label': {
+                                        overflow: 'hidden',
+                                        textOverflow: 'ellipsis',
+                                        display: 'block'
+                                      }
+                                    }}
+                                  />
+                                </Tooltip>
+                              )}
+
+                              {student.violations.length > 2 && (
+                                <Tooltip
+                                  title={
+                                    <div className="flex flex-col gap-1 p-1 max-w-[250px]">
+                                      {student.violations.slice(2).map((v, i) => (
+                                        <div key={i} className="break-words">
+                                          {v.code} - {v.description}
+                                        </div>
+                                      ))}
+                                    </div>
+                                  }
+                                >
+                                  <Chip
+                                    label={`+${student.violations.length - 1}`}
+                                    variant="outlined"
+                                    color="secondary"
+                                    size="small"
+                                    sx={{ cursor: "pointer" }}
+                                  />
+                                </Tooltip>
+                              )}
+                            </div>
                           </TableCell>
                           <TableCell
                             sx={{
                               display: { xs: "none", sm: "table-cell" },
                             }}
-                            className="py-5 px-4 border-b"
+                            className="py-1 px-4 border-b text-center"
+                            align="center"
+                          >
+                            {student.semester_name || "No Data"}
+                          </TableCell>
+                          <TableCell
+                            sx={{
+                              display: { xs: "none", sm: "table-cell" },
+                            }}
+                            className="py-1 px-4 border-b text-center"
+                            align="center"
                           >
                             {student.year_and_department
                               ? `${
@@ -1217,7 +1422,8 @@ const Students = () => {
                             sx={{
                               display: { xs: "none", sm: "table-cell" },
                             }}
-                            className="py-5 px-4 border-b"
+                            className="py-1 px-4 border-b text-center"
+                            align="center"
                           >
                             {student.violations
                               ? formatDate(
@@ -1231,62 +1437,18 @@ const Students = () => {
                             sx={{
                               width: "fit-content",
                             }}
+                             align="center"
                           >
-                            <Tooltip title="View Student">
-                              <Button
-                                className="rounded-sm text-white hover:bg-gray-100 hover:text-black"
-                                onClick={() =>
-                                  handleViewViolationModal(student)
-                                }
-                                color="primary"
-                                size={isXs ? "small" : "medium"}
-                              >
-                                <RemoveRedEyeIcon color="primary" />
-                              </Button>
-                            </Tooltip>
-                            <Tooltip title="Forms">
-                              <Button
-                                className="rounded-sm text-white hover:bg-gray-100 hover:text-black"
-                                onClick={() => {
-                                  const programData = programList.find(
-                                    (program) => program.id === student.course
-                                  )?.name;
-                                  if (programData) {
-                                    const newstudent = {
-                                      ...student,
-                                      course: programData,
-                                    };
-                                    setTargetStudent(newstudent);
-                                  } else {
-                                    console.error(
-                                      "Program not found for student course:",
-                                      student.course
-                                    );
-                                    setTargetStudent(student);
-                                  }
-                                  setFormModal(true);
-                                }}
-                                color="primary"
-                              >
-                                <SourceIcon color="primary" />
-                              </Button>
-                            </Tooltip>
-                            {CurrentUserType == "ADMIN" ||
-                            localStorage.getItem("userType") == "ADMIN" ? (
-                              <Tooltip title="Edit Student">
-                                <Button
-                                  className="rounded-sm text-white hover:bg-gray-100 hover:text-black"
-                                  onClick={() =>
-                                    handleUpdateViolationModal(student)
-                                  }
-                                  color="primary"
-                                >
-                                  <EditIcon color="primary" />
-                                </Button>
-                              </Tooltip>
-                            ) : (
-                              ""
-                            )}
+                            <IconButton
+                              aria-label="more"
+                              aria-controls={openMenu ? 'long-menu' : undefined}
+                              aria-expanded={openMenu ? 'true' : undefined}
+                              aria-haspopup="true"
+                              onClick={(e) => handleMenuClick(e, student)}
+                              color="primary"
+                            >
+                              <MoreVertIcon />
+                            </IconButton>
                           </TableCell>
                         </TableRow>
                       ))}
@@ -1313,6 +1475,24 @@ const Students = () => {
           </StyledToolbar>
         </div>
       </Container>
+      <Menu
+        id="long-menu"
+        anchorEl={anchorEl}
+        open={openMenu}
+        onClose={handleMenuClose}
+        PaperProps={{
+          style: {
+            maxHeight: 48 * 4.5,
+            width: '20ch',
+          },
+        }}
+      >
+        <MenuItem onClick={() => handleAction('view')}>View</MenuItem>
+        <MenuItem onClick={() => handleAction('forms')}>Forms</MenuItem>
+        {(CurrentUserType === "ADMIN" || localStorage.getItem("userType") === "ADMIN") && (
+          <MenuItem onClick={() => handleAction('edit')}>Edit</MenuItem>
+        )}
+      </Menu>
       {formModal && (
         <Dialog
           open={formModal}
@@ -1370,11 +1550,11 @@ const Students = () => {
                   Call Slip
                 </Button>
                 <Button
-                  onClick={() => setActiveForm("noticeCaseDismissal")}
+                  onClick={() => setActiveForm("formalComplaint")}
                   color="primary"
                   sx={{ justifyContent: "left" }}
                 >
-                  Notice of Case Dismissal
+                  Formal Complaint
                 </Button>
                 <Button
                   onClick={() => setActiveForm("letterOfSuspension")}
@@ -1384,20 +1564,18 @@ const Students = () => {
                   Letter of Suspension
                 </Button>
                 <Button
-                  onClick={() => setActiveForm("studentIncidentReport")}
+                  onClick={() => setActiveForm("nonWearingUniform")}
                   color="primary"
                   sx={{ justifyContent: "left" }}
                 >
-                  Student Incident Report
+                  Non Wearing Uniform
                 </Button>
                 <Button
-                  onClick={() =>
-                    setActiveForm("warningViolationOfNormsAndConduct")
-                  }
+                  onClick={() => setActiveForm("noticeCaseDismissal")}
                   color="primary"
                   sx={{ justifyContent: "left" }}
                 >
-                  Warning Violation of Norms and Conduct
+                  Notice of Case Dismissal
                 </Button>
                 <Button
                   onClick={() => setActiveForm("reprimandForm")}
@@ -1407,6 +1585,13 @@ const Students = () => {
                   Reprimand Form
                 </Button>
                 <Button
+                  onClick={() => setActiveForm("studentIncidentReport")}
+                  color="primary"
+                  sx={{ justifyContent: "left" }}
+                >
+                  Student Incident Report
+                </Button>
+                <Button
                   onClick={() => setActiveForm("temporaryGatePass")}
                   color="primary"
                   sx={{ justifyContent: "left" }}
@@ -1414,18 +1599,13 @@ const Students = () => {
                   Temporary Gate Pass
                 </Button>
                 <Button
-                  onClick={() => setActiveForm("nonWearingUniform")}
+                  onClick={() =>
+                    setActiveForm("warningViolationOfNormsAndConduct")
+                  }
                   color="primary"
                   sx={{ justifyContent: "left" }}
                 >
-                  Non Wearing Uniform
-                </Button>
-                <Button
-                  onClick={() => setActiveForm("formalComplaint")}
-                  color="primary"
-                  sx={{ justifyContent: "left" }}
-                >
-                  Formal Complaint
+                  Warning Violation of Norms and Conduct
                 </Button>
               </div>
             )}
@@ -1437,14 +1617,34 @@ const Students = () => {
                 alertMessageFunction={setAlertFunction}
               />
             )}
-            {activeForm === "noticeCaseDismissal" && (
-              <NoticeCaseDismissal
+            {activeForm === "formalComplaint" && (
+              <FormalComplaint
                 studentDataToPass={targetStudent}
                 alertMessageFunction={setAlertFunction}
               />
             )}
             {activeForm === "letterOfSuspension" && (
               <LetterOfSuspension
+                studentDataToPass={targetStudent}
+                alertMessageFunction={setAlertFunction}
+                violationData={violationList}
+              />
+            )}
+            {activeForm === "nonWearingUniform" && (
+              <NonWearingUniform
+                studentDataToPass={targetStudent}
+                programData={programList}
+                alertMessageFunction={setAlertFunction}
+              />
+            )}
+            {activeForm === "noticeCaseDismissal" && (
+              <NoticeCaseDismissal
+                studentDataToPass={targetStudent}
+                alertMessageFunction={setAlertFunction}
+              />
+            )}
+            {activeForm === "reprimandForm" && (
+              <ReprimandForm
                 studentDataToPass={targetStudent}
                 alertMessageFunction={setAlertFunction}
                 violationData={violationList}
@@ -1458,6 +1658,13 @@ const Students = () => {
                 programData={programList}
               />
             )}
+            {activeForm === "temporaryGatePass" && (
+              <TemporaryGatePass
+                studentDataToPass={targetStudent}
+                programData={programList}
+                alertMessageFunction={setAlertFunction}
+              />
+            )}
             {targetStudent &&
               activeForm === "warningViolationOfNormsAndConduct" && (
                 <WarningViolationOfNormsAndConduct
@@ -1467,34 +1674,6 @@ const Students = () => {
                   departmentData={departments}
                 />
               )}
-
-            {activeForm === "reprimandForm" && (
-              <ReprimandForm
-                studentDataToPass={targetStudent}
-                alertMessageFunction={setAlertFunction}
-                violationData={violationList}
-              />
-            )}
-            {activeForm === "temporaryGatePass" && (
-              <TemporaryGatePass
-                studentDataToPass={targetStudent}
-                programData={programList}
-                alertMessageFunction={setAlertFunction}
-              />
-            )}
-            {activeForm === "nonWearingUniform" && (
-              <NonWearingUniform
-                studentDataToPass={targetStudent}
-                programData={programList}
-                alertMessageFunction={setAlertFunction}
-              />
-            )}
-            {activeForm === "formalComplaint" && (
-              <FormalComplaint
-                studentDataToPass={targetStudent}
-                alertMessageFunction={setAlertFunction}
-              />
-            )}
           </DialogContent>
           <DialogActions>
             {activeForm && (
@@ -1563,6 +1742,18 @@ const Students = () => {
                 id="standard-read-only-input"
                 label="Full Name"
                 value={targetStudent.fullname}
+                variant="standard"
+                slotProps={{
+                  input: {
+                    readOnly: true,
+                  },
+                }}
+                color="primary"
+              />
+              <TextField
+                id="standard-read-only-input"
+                label="SR Code"
+                value={targetStudent.srcode}
                 variant="standard"
                 slotProps={{
                   input: {
@@ -1757,6 +1948,23 @@ const Students = () => {
           <DialogContent sx={{ overflowX: "hidden", overflowY: "hidden" }}>
             <FormControl fullWidth margin="dense">
               <label className="mb-1">
+                Search by Student Name
+              </label>
+              <TextField
+                fullWidth
+                color="primary"
+                value={searchFilter.name}
+                onChange={(e) =>
+                  setSearchFilter({
+                    ...searchFilter,
+                    name: e.target.value,
+                  })
+                }
+                inputProps={{ "aria-label": "Without label" }}
+              />
+            </FormControl>
+            <FormControl fullWidth margin="dense">
+              <label className="mb-1">
                 Violation Category
               </label>
               <Select
@@ -1781,6 +1989,30 @@ const Students = () => {
             </FormControl>
             <FormControl fullWidth margin="dense">
               <label className="mb-1 font-medium">
+                Semester
+              </label>
+              <Select
+                fullWidth
+                color="primary"
+                value={searchFilter.semester}
+                onChange={(e) =>
+                  setSearchFilter({
+                    ...searchFilter,
+                    semester: e.target.value,
+                  })
+                }
+                inputProps={{ "aria-label": "Without label" }}
+              >
+                <MenuItem value=""> All </MenuItem>
+                {schoolTermList.map((term, index) => (
+                  <MenuItem key={index} value={term._id || term.id || term.number}>
+                    {term.name}
+                  </MenuItem>
+                ))}
+              </Select>
+            </FormControl>
+            <FormControl fullWidth margin="dense">
+              <label className="mb-1 font-medium">
                 User ID
               </label>
               <TextField
@@ -1795,6 +2027,30 @@ const Students = () => {
                 }
                 inputProps={{ "aria-label": "Without label" }}
               />
+            </FormControl>
+            <FormControl fullWidth margin="dense">
+              <label className="mb-1 font-medium">
+                Year
+              </label>
+              <Select
+                fullWidth
+                color="primary"
+                value={searchFilter.year}
+                onChange={(e) =>
+                  setSearchFilter({
+                    ...searchFilter,
+                    year: e.target.value,
+                  })
+                }
+                inputProps={{ "aria-label": "Without label" }}
+              >
+                <MenuItem value=""> All </MenuItem>
+                {yearList.map((year, index) => (
+                  <MenuItem key={index} value={year}>
+                    {year}
+                  </MenuItem>
+                ))}
+              </Select>
             </FormControl>
           </DialogContent>
           <DialogActions sx={{ overflowX: "hidden", overflowY: "hidden" }}>

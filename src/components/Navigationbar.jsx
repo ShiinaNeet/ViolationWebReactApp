@@ -1,11 +1,12 @@
 import React from "react";
-import reactsvg from "../assets/react.svg";
+import bsuLogo from "../assets/bsu_logo_no_bg.png";
 import { Link } from "react-router-dom";
 import { useAuth } from "../auth/AuthProvider";
 import { useTheme } from "../context/ThemeContext";
 import MenuIcon from "@mui/icons-material/Menu";
 import CloseRoundedIcon from "@mui/icons-material/CloseRounded";
 import ThemeToggle from "./ThemeToggle";
+import ThemeColorPicker from "./ThemeColorPicker";
 import {
   AppBar,
   Box,
@@ -16,6 +17,7 @@ import {
   Drawer,
   MenuItem,
   Divider,
+  useTheme as useMuiTheme,
 } from "@mui/material";
 
 const StyledToolbar = styled(Toolbar)(({ theme }) => ({
@@ -25,17 +27,18 @@ const StyledToolbar = styled(Toolbar)(({ theme }) => ({
   flexShrink: 0,
   width: "100%",
   backdropFilter: "blur(24px)",
-  backgroundColor: theme.palette.mode === "dark" ? "#0f3460" : "black",
+  backgroundColor: theme.palette.primary.main,
   padding: "8px 12px",
 }));
 
 const Navigationbar = () => {
   const { logout, isAuthenticated } = useAuth();
   const { isDarkMode } = useTheme();
+  const muiTheme = useMuiTheme();
   const [open, setOpen] = React.useState(false);
 
-  const navBgColor = isDarkMode ? "#0f3460" : "black";
-  const drawerBgColor = isDarkMode ? "#16213e" : "black";
+  const navBgColor = muiTheme.palette.primary.main;
+  const drawerBgColor = isDarkMode ? "#16213e" : muiTheme.palette.primary.main;
 
   const toggleDrawer = (newOpen) => () => {
     setOpen(newOpen);
@@ -67,9 +70,9 @@ const Navigationbar = () => {
           }}
         >
           <img
-            src={reactsvg}
-            alt="React Logo"
-            className="h-fit mx-2 flex justify-center self-center "
+            src={bsuLogo}
+            alt="BSU Logo"
+            className="h-10 w-10 mx-2 flex justify-center self-center object-contain"
           />
           <h1 className="text-white hidden lg:block">
             Batangas State University Disciplinary Management
@@ -159,11 +162,13 @@ const Navigationbar = () => {
               </Link>
             </Button>
           )}
+          <ThemeColorPicker />
           <ThemeToggle />
           {localStorage.getItem("accessToken") === null &&
             window.location.replace("/login")}
         </Box>
         <Box sx={{ display: { xs: "flex", md: "none" }, gap: 1 }}>
+          <ThemeColorPicker />
           <ThemeToggle />
           <IconButton
             aria-label="Menu button"

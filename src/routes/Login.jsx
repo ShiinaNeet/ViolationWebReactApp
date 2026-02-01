@@ -70,7 +70,7 @@ const Login = () => {
       setIsLoading(false);
       switch (responseData) {
         case userType.admin:
-          navigate("/violations");
+          navigate("/dashboard");
           break;
         case userType.dean:
           navigate("/dean/home");
@@ -132,7 +132,7 @@ const Login = () => {
             transition={{ duration: 0.8, delay: 0.4 }}
           >
             <Typography variant="h5" className="font-light">
-              Bulacan State University
+              Batangas State University
             </Typography>
           </motion.div>
         </div>

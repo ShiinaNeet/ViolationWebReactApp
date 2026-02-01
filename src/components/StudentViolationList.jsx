@@ -67,12 +67,12 @@ export default function StudentViolationList(props) {
                 className="slide-in-down-visible"
                 style={{ fontWeight: 600 }}
               >
-                <TableCell style={{ fontWeight: "bold" }}>Name</TableCell>
+                <TableCell style={{ fontWeight: "bold" }}>Violation</TableCell>
                 <TableCell align="center" style={{ fontWeight: "bold" }}>
                   Semester
                 </TableCell>
                 <TableCell align="center" style={{ fontWeight: "bold" }}>
-                  Date
+                  Date Committed
                 </TableCell>
                 <TableCell align="center" style={{ fontWeight: "bold" }}>
                   Reported By
@@ -88,9 +88,9 @@ export default function StudentViolationList(props) {
                     className="slide-in"
                     sx={{ padding: 5 }}
                   >
-                    <TableCell>{row.code}</TableCell>
+                    <TableCell>{row.code} - {row.description}</TableCell>
                     <TableCell align="center">
-                      {terms.find((term) => term.number === row.sem_committed)
+                      {terms.find((term) => (term._id || term.id || term.number) === row.sem_committed)
                         ?.name ?? "Unknown"}
                     </TableCell>
                     <TableCell align="center">
