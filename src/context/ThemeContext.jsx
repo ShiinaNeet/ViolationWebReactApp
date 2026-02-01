@@ -22,12 +22,7 @@ export const THEME_COLORS = [
   { name: "Teal", light: "#009688", dark: "#4db6ac" },
 ];
 
-const getSystemPreference = () => {
-  if (typeof window !== "undefined" && window.matchMedia) {
-    return window.matchMedia("(prefers-color-scheme: dark)").matches;
-  }
-  return false;
-};
+
 
 const getStoredPreference = () => {
   if (typeof window !== "undefined") {
@@ -48,7 +43,7 @@ const getStoredColorPreference = () => {
 export const ThemeProvider = ({ children }) => {
   const [isDarkMode, setIsDarkMode] = useState(() => {
     const stored = getStoredPreference();
-    return stored !== null ? stored : getSystemPreference();
+    return stored !== null ? stored : true;
   });
 
   const [themeColor, setThemeColor] = useState(getStoredColorPreference());
