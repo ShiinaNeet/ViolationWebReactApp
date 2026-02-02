@@ -98,6 +98,14 @@ const Navigationbar = () => {
           <Button variant="text" sx={{ color: "white" }} size="medium">
             <Link
               className="text-white hover:bg-white hover:text-black hover:rounded-md hover:cursor-pointer p-2"
+              to="/dashboard"
+            >
+              Dashboard
+            </Link>
+          </Button>
+          <Button variant="text" sx={{ color: "white" }} size="medium">
+            <Link
+              className="text-white hover:bg-white hover:text-black hover:rounded-md hover:cursor-pointer p-2"
               to="/students"
             >
               Home
@@ -205,6 +213,16 @@ const Navigationbar = () => {
                 </IconButton>
               </Box>
 
+              <Link onClick={toggleDrawer(false)} to="/dashboard">
+                <MenuItem
+                  sx={{
+                    color: "white",
+                    "&:hover": { backgroundColor: "rgba(255,255,255,0.1)" },
+                  }}
+                >
+                  Dashboard
+                </MenuItem>
+              </Link>
               <Link onClick={toggleDrawer(false)} to="/students">
                 <MenuItem
                   sx={{

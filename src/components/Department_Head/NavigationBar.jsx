@@ -26,6 +26,7 @@ const Department_Head_NavigationBar = () => {
   const muiTheme = useMuiTheme();
   const [open, setOpen] = React.useState(false);
   const MenuButtonItems = [
+    { name: "Dashboard", link: "/dashboard" },
     { name: "Program Head", link: "/department-head/home" },
     { name: "Graph", link: "/department-head/graph" },
     { name: "Notification", link: "/department-head/Notification" },

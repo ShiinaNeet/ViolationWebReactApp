@@ -26,6 +26,7 @@ const NavigationBar = () => {
   const muiTheme = useMuiTheme();
   const [open, setOpen] = React.useState(false);
   const MenuButtonItems = [
+    { name: "Dashboard", link: "/dashboard" },
     { name: "Home", link: "/dean/home" },
     { name: "Students", link: "/dean/students" },
     { name: "Departments", link: "/dean/departments" },

@@ -105,6 +105,26 @@ const ProfessorNavigationBar = () => {
             }}
           >
             <Link
+              to="/dashboard"
+              style={{
+                textDecoration: "none",
+                color: "white",
+                padding: "8px 16px",
+              }}
+            >
+              Dashboard
+            </Link>
+          </Button>
+          <Button
+            variant="text"
+            sx={{
+              color: "white",
+              "&:hover": {
+                backgroundColor: "rgba(255, 255, 255, 0.2)",
+              },
+            }}
+          >
+            <Link
               to="/professor/home"
               style={{
                 textDecoration: "none",
@@ -158,6 +178,19 @@ const ProfessorNavigationBar = () => {
                 </IconButton>
               </Box>
 
+              <Link
+                to="/dashboard"
+                style={{ textDecoration: "none", color: "white" }}
+              >
+                <MenuItem
+                  sx={{
+                    color: "white",
+                    "&:hover": { backgroundColor: "rgba(255,255,255,0.1)" },
+                  }}
+                >
+                  Dashboard
+                </MenuItem>
+              </Link>
               <Link
                 to="/professor/home"
                 style={{ textDecoration: "none", color: "white" }}

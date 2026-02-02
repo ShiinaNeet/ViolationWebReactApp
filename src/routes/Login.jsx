@@ -73,16 +73,16 @@ const Login = () => {
           navigate("/dashboard");
           break;
         case userType.dean:
-          navigate("/dean/home");
+          navigate("/dashboard");
           break;
         case userType.professor:
-          navigate("/professor/home");
+          navigate("/dashboard");
           break;
         case userType.department_head:
-          navigate("/department-head/home");
+          navigate("/dashboard");
           break;
         case userType.coordinator:
-          navigate("/coordinator/home");
+          navigate("/dashboard");
           break;
         default:
           setAlertMessage({

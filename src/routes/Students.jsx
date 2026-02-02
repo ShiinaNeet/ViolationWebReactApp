@@ -2004,11 +2004,23 @@ const Students = () => {
                 inputProps={{ "aria-label": "Without label" }}
               >
                 <MenuItem value=""> All </MenuItem>
-                {schoolTermList.map((term, index) => (
-                  <MenuItem key={index} value={term._id || term.id || term.number}>
-                    {term.name}
-                  </MenuItem>
-                ))}
+                {schoolTermList
+                  .filter((term) => {
+                    const name = term.name.toLowerCase();
+                    return (
+                      name.includes("first") ||
+                      name.includes("second") ||
+                      name.includes("summer")
+                    );
+                  })
+                  .map((term, index) => (
+                    <MenuItem
+                      key={index}
+                      value={term._id || term.id || term.number}
+                    >
+                      {term.name}
+                    </MenuItem>
+                  ))}
               </Select>
             </FormControl>
             <FormControl fullWidth margin="dense">

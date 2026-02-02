@@ -27,6 +27,7 @@ const NavigationBar = () => {
   const [open, setOpen] = React.useState(false);
 
   const MenuButtons = [
+    { name: "Dashboard", link: "/dashboard" },
     { name: "Home", link: "/coordinator/home" },
     { name: "Students", link: "/coordinator/students" },
     { name: "Forms", link: "/coordinator/forms" },

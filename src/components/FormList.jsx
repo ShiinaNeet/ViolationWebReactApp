@@ -1424,7 +1424,7 @@ export default function FormList() {
           value={filter}
           onChange={(e) => setFilter(e.target.value)}
         >
-          {formTypes.map((type) => (
+          {formTypes.slice().sort().map((type) => (
             <MenuItem key={type} value={type}>
               {capitalizeFirstLetter(type)}
             </MenuItem>
