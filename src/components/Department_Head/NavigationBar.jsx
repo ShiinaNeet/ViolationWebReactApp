@@ -1,5 +1,5 @@
 import React from "react";
-import bsuLogo from "@src/assets/bsu_logo.png";
+
 import { Link } from "react-router-dom";
 import MenuIcon from "@mui/icons-material/Menu";
 import CloseRoundedIcon from "@mui/icons-material/CloseRounded";
@@ -70,7 +70,7 @@ const Department_Head_NavigationBar = () => {
         >
           <Box
             component="img"
-            src={bsuLogo}
+            src="/bsu_logo.png"
             alt="BSU Logo"
             sx={{
               height: 40,

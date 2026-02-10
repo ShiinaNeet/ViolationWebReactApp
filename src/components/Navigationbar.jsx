@@ -1,5 +1,5 @@
 import React from "react";
-import bsuLogo from "../assets/bsu_logo.png";
+
 import { Link } from "react-router-dom";
 import { useAuth } from "../auth/AuthProvider";
 import { useTheme, THEME_COLORS } from "../context/ThemeContext";
@@ -71,7 +71,7 @@ const Navigationbar = () => {
           }}
         >
           <img
-            src={bsuLogo}
+            src="/bsu_logo.png"
             alt="BSU Logo"
             className="h-10 w-10 mx-2 flex justify-center self-center object-contain"
           />
