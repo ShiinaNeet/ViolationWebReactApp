@@ -1,5 +1,5 @@
 import React from "react";
-import bsuLogo from "@src/assets/bsu_logo_no_bg.png";
+import bsuLogo from "@src/assets/bsu_logo.png";
 import { Link } from "react-router-dom";
 import MenuIcon from "@mui/icons-material/Menu";
 import CloseRoundedIcon from "@mui/icons-material/CloseRounded";
